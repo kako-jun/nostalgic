@@ -22,6 +22,7 @@ interface RedisLike {
   rpush(key: string, ...values: string[]): Promise<any>
   // Sorted Set operations
   zadd(key: string, score: number, member: string): Promise<any>
+  zrange(key: string, start: number, end: number, withScores?: string): Promise<string[]>
   zrevrange(key: string, start: number, end: number, withScores?: string): Promise<string[]>
   zcard(key: string): Promise<number>
   zremrangebyrank(key: string, start: number, end: number): Promise<any>

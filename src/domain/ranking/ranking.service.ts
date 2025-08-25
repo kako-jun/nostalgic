@@ -10,6 +10,7 @@ import { getRankingLimits } from '@/lib/core/config'
 import { RepositoryFactory, SortedSetRepository } from '@/lib/core/repository'
 import { getRedis } from '@/lib/core/db'
 import { createHash } from 'crypto'
+import { RANKING } from '@/lib/validation/schema-constants'
 import {
   RankingEntity,
   RankingData,
@@ -54,7 +55,8 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       url,
       created: new Date(),
       totalEntries: 0,
-      maxEntries: params.maxEntries || 100,
+      maxEntries: params.maxEntries || RANKING.LIMIT.DEFAULT,
+      sortOrder: params.sortOrder || RANKING.SORT_ORDER.DEFAULT,
       title: params.title
     }
 
@@ -71,7 +73,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
    */
   public async transformEntityToData(entity: RankingEntity): Promise<Result<RankingData, ValidationError>> {
     // ランキングエントリを取得
-    const entriesResult = await this.getTopEntries(entity.id, 10)
+    const entriesResult = await this.getTopEntries(entity.id, RANKING.LIMIT.DEFAULT, entity.sortOrder)
     const entries = entriesResult.success ? entriesResult.data : []
 
     const data: RankingData = {
@@ -80,6 +82,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       entries,
       totalEntries: entity.totalEntries,
       maxEntries: entity.maxEntries,
+      sortOrder: entity.sortOrder,
       title: entity.title,
     }
 
@@ -427,10 +430,15 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
   }
 
   /**
-   * トップエントリを取得
+   * トップエントリを取得（ソート順対応）
    */
-  private async getTopEntries(id: string, limit: number): Promise<Result<RankingEntry[], ValidationError>> {
-    const entriesResult = await this.sortedSetRepository.getRangeWithScores(`${id}:scores`, 0, limit - 1)
+  private async getTopEntries(id: string, limit: number, sortOrder: 'desc' | 'asc' = 'desc'): Promise<Result<RankingEntry[], ValidationError>> {
+    const entriesResult = await this.sortedSetRepository.getRangeWithScores(
+      `${id}:scores`, 
+      0, 
+      limit - 1,
+      sortOrder === 'asc'  // ascending = true for asc, false for desc
+    )
     if (!entriesResult.success) {
       return Ok([]) // エラーの場合は空配列を返す
     }
@@ -488,7 +496,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
     const entity = entityResult.data
     
     // 指定された数のエントリを取得
-    const entriesResult = await this.getTopEntries(entity.id, limit)
+    const entriesResult = await this.getTopEntries(entity.id, limit, entity.sortOrder)
     const entries = entriesResult.success ? entriesResult.data : []
 
     const data: RankingData = {
@@ -497,6 +505,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       entries,
       totalEntries: entity.totalEntries,
       maxEntries: entity.maxEntries,
+      sortOrder: entity.sortOrder,
       title: entity.title,
     }
 

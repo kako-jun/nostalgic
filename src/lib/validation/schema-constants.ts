@@ -69,6 +69,11 @@ export const RANKING = {
     MIN_LENGTH: 1,
     MAX_LENGTH: 50,
   },
+  
+  SORT_ORDER: {
+    VALUES: ['desc', 'asc'] as const,
+    DEFAULT: 'desc' as const,
+  },
 } as const;
 
 // === BBS サービス ===

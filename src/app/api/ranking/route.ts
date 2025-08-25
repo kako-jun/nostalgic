@@ -23,9 +23,10 @@ import {
 const createHandler = ApiHandler.create({
   paramsSchema: RankingSchemas.create,
   resultSchema: UnifiedAPISchemas.createSuccess,
-  handler: async ({ url, token, max }, request) => {
+  handler: async ({ url, token, max, sortOrder }, request) => {
     const createResult = await rankingService.create(url, token, {
-      maxEntries: max
+      maxEntries: max,
+      sortOrder
     })
     
     if (!createResult.success) {

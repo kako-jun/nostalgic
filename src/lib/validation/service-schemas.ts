@@ -129,7 +129,8 @@ export const RankingSchemas = {
     url: CommonSchemas.url,
     token: CommonSchemas.token,
     title: CommonSchemas.shortText.optional(),
-    max: RankingFieldSchemas.maxEntries.default(RANKING.LIMIT.DEFAULT)
+    max: RankingFieldSchemas.maxEntries.default(RANKING.LIMIT.DEFAULT),
+    sortOrder: RankingFieldSchemas.sortOrder.default(RANKING.SORT_ORDER.DEFAULT)
   }),
 
   // スコア送信用パラメータ
@@ -207,7 +208,8 @@ export const RankingSchemas = {
       score: RankingFieldSchemas.score,
       displayScore: RankingFieldSchemas.displayScore.optional()
     })),
-    maxEntries: RankingFieldSchemas.maxEntries
+    maxEntries: RankingFieldSchemas.maxEntries,
+    sortOrder: RankingFieldSchemas.sortOrder
   })
 } as const
 
