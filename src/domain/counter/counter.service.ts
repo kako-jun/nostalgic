@@ -230,13 +230,17 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
   }
 
   /**
-   * アトミックな訪問マーク（競合状態を解決）
+   * アトミックな訪問マーク（競合状態を解決、日付ベース制限）
    */
   private async atomicMarkVisit(id: string, userHash: string): Promise<Result<boolean, ValidationError>> {
     const visitKey = `visit:${id}:${userHash}`
     const visitRepo = RepositoryFactory.createEntity(z.string(), 'visit_check')
-    const limits = getServiceLimits('counter') as { visitTTL: number }
-    const ttl = limits.visitTTL // 24時間
+    
+    // 今日の終わりまでのTTLを計算
+    const now = new Date()
+    const endOfDay = new Date(now)
+    endOfDay.setHours(23, 59, 59, 999)
+    const ttl = Math.floor((endOfDay.getTime() - now.getTime()) / 1000)
 
     try {
       // Redis SET NX EX を使用してアトミックにチェック＆設定
@@ -268,13 +272,17 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
   }
 
   /**
-   * 訪問をマーク（後方互換性のため保持）
+   * 訪問をマーク（日付ベース制限）
    */
   private async markVisit(id: string, userHash: string): Promise<Result<void, ValidationError>> {
     const visitKey = `visit:${id}:${userHash}`
     const visitRepo = RepositoryFactory.createEntity(z.string(), 'visit_check')
-    const limits = getServiceLimits('counter') as { visitTTL: number }
-    const ttl = limits.visitTTL // 24時間
+    
+    // 今日の終わりまでのTTLを計算
+    const now = new Date()
+    const endOfDay = new Date(now)
+    endOfDay.setHours(23, 59, 59, 999)
+    const ttl = Math.floor((endOfDay.getTime() - now.getTime()) / 1000)
 
     const saveResult = await visitRepo.saveWithTTL(visitKey, new Date().toISOString(), ttl)
     if (!saveResult.success) {
