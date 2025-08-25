@@ -8,23 +8,25 @@ A comprehensive nostalgic web tools platform that brings back the 90s internet c
 
 ### 📊 Counter Service
 - Multiple time periods: Total, today, yesterday, weekly, monthly statistics
-- 24-hour duplicate prevention per visitor
+- Daily duplicate prevention (resets at midnight)
 - 3 nostalgic display styles: Classic, Modern, Retro
 - Web Components for easy embedding
 
 ### 💖 Like Service
 - Toggle-based like/unlike functionality
 - User state tracking (IP + UserAgent)
+- Daily limit: One like per day per user (resets at midnight)
 - Instant feedback with current state
 
 ### 🏆 Ranking Service  
 - Score leaderboards with automatic sorting
 - Score management (submit, update, remove)
 - Configurable entry limits
-- Real-time ranking updates
+- Real-time ranking updates with formatted display scores
 
 ### 💬 BBS Service
-- Message board with pagination
+- Message board with fixed height display (400px)
+- Pagination that starts at latest messages
 - Customizable dropdown selections
 - Author-based message editing
 - Icon selection for posts

@@ -102,7 +102,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=create&url=https://example.
 
 ### 2. カウントアップ
 
-カウンターを1増やします（24時間重複防止）。
+カウンターを1増やします（1日1回、毎日0時リセット）。
 
 **Endpoint**: `GET /api/visit?action=increment`
 
@@ -616,8 +616,8 @@ curl "https://nostalgic.llll-ll.com/api/ranking?action=submit&id=mygame-c9d3e6f0
 無料運用のため、以下の制限があります：
 
 - リクエスト: 100req/分 per IP
-- カウンター: 同一IPから24時間に1回のみカウント
-- いいね: 同一ユーザーの状態は24時間保持
+- カウンター: 同一IPから1日1回のみカウント（0時リセット）
+- いいね: 同一ユーザーの状態はその日の終わりまで保持（0時リセット）
 - BBS: 同一IPから1分に5投稿まで
 
 ## エラー時の対処

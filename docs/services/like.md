@@ -168,7 +168,7 @@ console.log('Current likes:', state.total)
 
 - **Toggle Functionality**: Users can like and unlike
 - **User State Tracking**: Remembers if current user has liked
-- **Duplicate Prevention**: Based on IP+UserAgent hash
+- **Daily Limit**: One like per day per user (resets at midnight)
 - **Instant Feedback**: Immediate response with new state
 - **Public Access**: Anyone can view like count with public ID
 

@@ -130,7 +130,7 @@ await fetch('/api/bbs?action=clear&url=https://mysite.com&token=my-secret')
 - **投稿者確認**: ユーザーは自分の投稿を編集/削除可能
 - **オーナー管理**: BBSオーナーは任意のメッセージを削除可能
 - **カスタマイズ可能オプション**: アイコンとドロップダウン選択
-- **ページネーション**: 効率的なメッセージ閲覧
+- **固定高さ表示**: 400pxの固定高さで最新メッセージから表示
 - **メッセージ履歴**: 投稿作成と更新時刻を追跡
 - **プライバシー保護**: IPアドレスはハッシュ化
 
@@ -156,9 +156,14 @@ await fetch('/api/bbs?action=clear&url=https://mysite.com&token=my-secret')
 **属性:**
 - `id`: 公開BBS ID
 - `theme`: 表示スタイル（classic, modern, retro）
-- `page`: 表示ページ番号（デフォルト: 1）
+- `page`: 表示ページ番号（デフォルト: 最終ページで最新メッセージ表示）
 - `format`: 表示形式（interactive, text）- デフォルト: interactive
 - `api-base`: カスタムAPIベースURL（オプション）
+
+**表示特徴:**
+- メッセージ数に関わらず400pxの固定高さ
+- ページネーション形式: "2/3"（現在/全ページ）
+- 初期表示時に最新メッセージを自動表示
 
 ## TypeScript サポート
 

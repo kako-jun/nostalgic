@@ -52,8 +52,8 @@ counter:{id}:daily:{YYYY-MM-DD} → number
 # オーナートークン（ハッシュ化）
 counter:{id}:owner → hashed_token
 
-# 訪問記録（24時間TTL）
-visit:counter:{id}:{user_hash} → 1 (expires in 24h)
+# 訪問記録（その日の23:59:59まで自動削除）
+visit:counter:{id}:{user_hash} → timestamp (expires at end of day)
 ```
 
 ### 削除時の処理
@@ -84,8 +84,8 @@ like:{id} → JSON {
 # いいね総数
 like:{id}:total → number
 
-# ユーザー状態（24時間TTL）
-like:{id}:users:{user_hash} → 1 (expires in 24h)
+# ユーザー状態（その日の23:59:59まで自動削除）
+like_users:{id}:user:{user_hash} → 'true' or 'false' (expires at end of day)
 
 # オーナートークン（ハッシュ化）
 like:{id}:owner → hashed_token
@@ -233,7 +233,7 @@ A: `npm run redis:service {service}` で確認できます。
 - [ ] 関連データ（total, scores, messages等）を削除したか
 - [ ] オーナートークンを削除したか
 - [ ] インデックスから削除したか
-- [ ] TTL付きデータ（visit, users）も考慮したか
+- [ ] TTL付きデータ（visit, users）も考慮したか（日付境界で自動削除）
 
 ## 参考：既存APIの削除処理
 

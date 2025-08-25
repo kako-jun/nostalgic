@@ -217,5 +217,5 @@ document.querySelector('#counter').src =
 
 - Owner tokens are stored as SHA256 hashes
 - Public IDs are safe to expose (display/count only)
-- 24-hour duplicate prevention per IP+UserAgent
+- Daily duplicate prevention per IP+UserAgent (resets at midnight)
 - Tokens should not be reused across sites
