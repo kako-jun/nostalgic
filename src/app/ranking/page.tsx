@@ -17,6 +17,7 @@ export default function RankingPage() {
   const nameRef = useRef<HTMLInputElement>(null);
   const scoreRef = useRef<HTMLInputElement>(null);
   const maxRef = useRef<HTMLInputElement>(null);
+  const sortOrderRef = useRef<HTMLSelectElement>(null);
   
   useEffect(() => {
     const hash = window.location.hash.slice(1);
@@ -47,6 +48,7 @@ export default function RankingPage() {
     const name = nameRef.current?.value;
     const score = scoreRef.current?.value;
     const max = maxRef.current?.value;
+    const sortOrder = sortOrderRef.current?.value;
 
     let apiUrl = '';
 
@@ -59,8 +61,13 @@ export default function RankingPage() {
       if (!url || !token) return;
       apiUrl = `/api/ranking?action=${mode}&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
       
-      if (mode === "create" && max) {
-        apiUrl += `&max=${max}`;
+      if (mode === "create") {
+        if (max) {
+          apiUrl += `&max=${max}`;
+        }
+        if (sortOrder) {
+          apiUrl += `&sortOrder=${sortOrder}`;
+        }
       }
       if (mode === "update" && name && score) {
         apiUrl += `&name=${encodeURIComponent(name)}&score=${score}`;
@@ -247,11 +254,31 @@ export default function RankingPage() {
                       fontSize: "16px"
                     }}
                   />
+                </p>
+
+                <p>
+                  <b>ソート順（オプション）：</b>
+                  <select
+                    ref={sortOrderRef}
+                    style={{
+                      marginLeft: "10px",
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  >
+                    <option value="desc">高い順（スコア系ゲーム用）</option>
+                    <option value="asc">低い順（タイム系ゲーム用）</option>
+                  </select>
+                </p>
+
+                <p>
                   <button
                     type="button"
                     style={{
-                      marginLeft: "10px",
-                      padding: "4px 12px",
+                      padding: "6px 16px",
                       backgroundColor: "#2196F3",
                       color: "white",
                       border: "2px outset #2196F3",
@@ -265,7 +292,7 @@ export default function RankingPage() {
                       handleSubmit(e);
                     }}
                   >
-                    作成
+                    ランキング作成
                   </button>
                 </p>
               </form>
@@ -1156,15 +1183,16 @@ declare module 'react' {
               <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
                 GET /api/ranking?action=create&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
                 <span style={{ color: "#008000" }}>オーナートークン</span>&max=
-                <span style={{ color: "#008000" }}>最大エントリー数</span>
+                <span style={{ color: "#008000" }}>最大エントリー数</span>&sortOrder=
+                <span style={{ color: "#008000" }}>ソート順(desc|asc)</span>
               </p>
               <p style={{ lineHeight: "1.2" }}>
-                ランキングを作成します。maxパラメータで最大エントリー数を制限可能。
+                ランキングを作成します。maxパラメータで最大エントリー数、sortOrderパラメータでソート順を設定可能。
                 <br />
                 レスポンス:{" "}
                 <span
                   style={{ backgroundColor: "#000000", color: "#ffffff", padding: "2px 4px", fontFamily: "monospace" }}
-                >{`{ "id": "公開ID", "url": "サイトURL", "max": 10 }`}</span>
+                >{`{ "id": "公開ID", "url": "サイトURL", "max": 10, "sortOrder": "desc" }`}</span>
               </p>
             </div>
 
@@ -1199,7 +1227,7 @@ declare module 'react' {
                 レスポンス:{" "}
                 <span
                   style={{ backgroundColor: "#000000", color: "#ffffff", padding: "2px 4px", fontFamily: "monospace" }}
-                >{`{ "ranking": [{"name": "Player1", "score": 1000}, ...] }`}</span>
+                >{`{ "ranking": [{"name": "Player1", "score": 1000}, ...], "sortOrder": "desc" }`}</span>
               </p>
             </div>
 

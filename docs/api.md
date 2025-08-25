@@ -76,8 +76,11 @@ curl "https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.
 
 ### Ranking
 ```bash
-# Create ranking
-curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100"
+# Create ranking (score-based game, high score wins)
+curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=desc"
+
+# Create ranking (time-based game, lower time wins)
+curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=asc"
 
 # Submit score
 curl "https://nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursite.com&token=your-secret&name=Player1&score=1000"

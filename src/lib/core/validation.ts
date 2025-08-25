@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod'
-import { Result, Ok, Err, ValidationError, StorageError } from './result'
+import { Result, Ok, Err, ValidationError, StorageError } from '@/lib/core/result'
 import {
   TOKEN, PUBLIC_ID, URL, THEMES, DEFAULT_THEME,
   COUNTER, LIKE, RANKING, BBS, LIMITS

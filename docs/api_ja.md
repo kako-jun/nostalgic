@@ -76,8 +76,11 @@ curl "https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.
 
 ### ランキング
 ```bash
-# ランキング作成
-curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100"
+# スコア系ゲーム用ランキング作成（高スコア優先）
+curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=desc"
+
+# タイム系ゲーム用ランキング作成（低タイム優先）
+curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=asc"
 
 # スコア送信
 curl "https://nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursite.com&token=your-secret&name=Player1&score=1000"

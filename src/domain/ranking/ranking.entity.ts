@@ -7,27 +7,14 @@ import { CommonSchemas } from '@/lib/core/validation'
 import { RANKING } from '@/lib/validation/schema-constants'
 
 /**
- * Ranking制限値定数
- */
-export const RANKING_LIMITS = {
-  PLAYER_NAME_MIN: 1,
-  PLAYER_NAME_MAX: 50,
-  MAX_ENTRIES_MIN: 1,
-  MAX_ENTRIES_MAX: 10000,
-  LIMIT_MIN: 1,
-  LIMIT_MAX: 1000,
-} as const
-
-
-/**
  * Ranking固有のフィールドスキーマ
  */
 export const RankingFieldSchemas = {
-  playerName: z.string().min(RANKING_LIMITS.PLAYER_NAME_MIN).max(RANKING_LIMITS.PLAYER_NAME_MAX),
+  playerName: z.string().min(RANKING.NAME.MIN_LENGTH).max(RANKING.NAME.MAX_LENGTH),
   score: CommonSchemas.nonNegativeInt,
-  displayScore: z.string().min(1).max(100),
-  maxEntries: z.coerce.number().int().min(RANKING_LIMITS.MAX_ENTRIES_MIN).max(RANKING_LIMITS.MAX_ENTRIES_MAX),
-  limit: z.coerce.number().int().min(RANKING_LIMITS.LIMIT_MIN).max(RANKING_LIMITS.LIMIT_MAX),
+  displayScore: z.string().min(RANKING.DISPLAY_SCORE.MIN_LENGTH).max(RANKING.DISPLAY_SCORE.MAX_LENGTH),
+  maxEntries: z.coerce.number().int().min(RANKING.MAX_ENTRIES.MIN).max(RANKING.MAX_ENTRIES.MAX),
+  limit: z.coerce.number().int().min(RANKING.LIMIT.MIN).max(RANKING.LIMIT.MAX),
   format: z.enum(['interactive']),
   sortOrder: z.enum(RANKING.SORT_ORDER.VALUES).default(RANKING.SORT_ORDER.DEFAULT)
 } as const
@@ -144,8 +131,8 @@ export const RankingDataSchema = z.object({
 })
 
 export const RankingCreateParamsSchema = z.object({
-  maxEntries: RankingFieldSchemas.maxEntries.default(1000),
-  sortOrder: RankingFieldSchemas.sortOrder.default('desc'),
+  maxEntries: RankingFieldSchemas.maxEntries.default(RANKING.LIMIT.DEFAULT),
+  sortOrder: RankingFieldSchemas.sortOrder.default(RANKING.SORT_ORDER.DEFAULT),
   title: CommonSchemas.title.default('RANKING')
 })
 
@@ -166,7 +153,7 @@ export const RankingRemoveParamsSchema = z.object({
 
 export const RankingDisplayParamsSchema = z.object({
   id: CommonSchemas.publicId,
-  limit: RankingFieldSchemas.limit.default(10)
+  limit: RankingFieldSchemas.limit.default(RANKING.LIMIT.DEFAULT)
 })
 
 /**
