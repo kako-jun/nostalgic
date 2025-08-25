@@ -79,6 +79,28 @@ await fetch('/api/ranking?action=submit&id=' + data.id + '&name=Bob&score=1200')
 const ranking = await fetch('/api/ranking?action=get&id=mygame-a7b9c3d4&limit=10')
 const leaderboard = await ranking.json()
 console.log('上位プレイヤー:', leaderboard.entries)
+// レスポンス例:
+// {
+//   "id": "mygame-a7b9c3d4",
+//   "url": "https://mygame.com",
+//   "entries": [
+//     {
+//       "name": "Bob",
+//       "score": 1200,
+//       "displayScore": "1,200",
+//       "rank": 1,
+//       "timestamp": "2025-08-13T10:00:00Z"
+//     },
+//     {
+//       "name": "Alice",
+//       "score": 1000,
+//       "displayScore": "1,000",
+//       "rank": 2,
+//       "timestamp": "2025-08-13T09:30:00Z"
+//     }
+//   ],
+//   "totalEntries": 2
+// }
 ```
 
 ### スコア管理
@@ -99,6 +121,7 @@ await fetch('/api/ranking?action=clear&url=https://mygame.com&token=game-secret'
 - **エントリー制限**: 設定可能な最大エントリー数
 - **スコア管理**: 個別スコアの送信・更新・削除
 - **一括操作**: すべてのスコアを一度にクリア
+- **フォーマット済みスコア表示**: カンマ区切りのdisplayScoreフィールド
 - **リアルタイム更新**: 即座のリーダーボード更新
 - **公開アクセス**: 公開IDでランキング閲覧
 
@@ -127,6 +150,11 @@ await fetch('/api/ranking?action=clear&url=https://mygame.com&token=game-secret'
 - `limit`: 表示エントリー数（1-100、デフォルト: 10）
 - `format`: 表示形式（interactive, text）- デフォルト: interactive
 - `api-base`: カスタムAPIベースURL（オプション）
+
+**表示特徴:**
+- 横幅: 300px～500px（レスポンシブ）
+- 名前とスコアの間隔: 40px
+- スコア表示: カンマ区切りフォーマット（displayScore）
 
 ## TypeScript サポート
 

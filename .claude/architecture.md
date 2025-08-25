@@ -240,12 +240,12 @@ counter:{id}                  # メタデータ
 counter:{id}:total           # 累計カウント
 counter:{id}:daily:{date}    # 日別カウント
 counter:{id}:owner           # オーナートークン（ハッシュ化）
-visit:counter:{id}:{hash}    # 重複防止（24h TTL）
+visit:counter:{id}:{hash}    # 重複防止（その日の23:59:59までTTL）
 
 # Like Service  
 like:{id}                    # メタデータ
 like:{id}:total             # いいね総数
-like:{id}:users:{hash}      # ユーザー状態（24h TTL）
+like_users:{id}:user:{hash}  # ユーザー状態（その日の23:59:59までTTL）
 like:{id}:owner             # オーナートークン
 
 # Ranking Service
@@ -460,7 +460,7 @@ sequenceDiagram
 
 1. **URL → ID マッピング**: 永続キャッシュ
 2. **表示データ**: 60秒キャッシュ（Cache-Control）
-3. **重複防止**: 24時間TTL（Redis）
+3. **重複防止**: 日付境界までTTL（Redis）
 
 ### バッチ処理
 

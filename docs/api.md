@@ -45,7 +45,7 @@ Message board with customizable options and author-based editing.
 
 ### Security Features
 - SHA256 hashed token storage
-- 24-hour duplicate prevention
+- Daily duplicate prevention (resets at midnight)
 - Public ID system prevents unauthorized access
 - Author verification for post editing/removal
 

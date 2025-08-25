@@ -18,25 +18,27 @@
 
 ### 📊 Counter Service
 - ✅ 複数期間統計（累計・今日・昨日・週間・月間）
-- ✅ 24時間重複防止
+- ✅ 1日1回重複防止（0時リセット）
 - ✅ SVG画像生成（3スタイル：classic/modern/retro）
 - ✅ Web Components による埋め込み
 
 ### 💖 Like Service  
 - ✅ トグル型いいね/取り消し機能
 - ✅ ユーザー状態管理（IP+UserAgent）
+- ✅ 1日1回制限（0時リセット）
 - ✅ 即座のフィードバック
 
 ### 🏆 Ranking Service
 - ✅ Redis Sorted Setによる自動ソート
 - ✅ スコア管理（submit/update/remove/clear）
 - ✅ 最大エントリー数制限
+- ✅ フォーマット済みスコア表示（displayScore）
 
 ### 💬 BBS Service
 - ✅ メッセージ投稿・取得
 - ✅ カスタマイズ可能なドロップダウン（3つ）
 - ✅ アイコン選択機能
-- ✅ ページネーション
+- ✅ 固定高さ表示（400px）、最新メッセージから表示
 - ✅ 投稿者による自分の投稿編集・削除
 
 ## API構成（統一アクション型・GET専用）

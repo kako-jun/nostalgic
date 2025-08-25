@@ -251,7 +251,7 @@ await fetch('/api/bbs?action=clear&url=https://mysite.com&token=my-secret')
 - **Author Verification**: Users can edit/remove their own posts
 - **Owner Management**: BBS owners can remove any message
 - **Customizable Options**: Icons and dropdown selections
-- **Pagination**: Efficient message browsing
+- **Pagination**: Fixed height display (400px), starts at latest page
 - **Message History**: Tracks post creation and update times
 - **Privacy Protection**: IP addresses are hashed
 
@@ -277,9 +277,14 @@ Messages are stored as JSON in Redis Lists:
 **Attributes:**
 - `id`: BBS public ID
 - `theme`: Visual style (classic, modern, retro)
-- `page`: Page number to display (default: 1)
+- `page`: Page number to display (default: last page for latest messages)
 - `format`: Display format (interactive, text) - default: interactive
 - `api-base`: Custom API base URL (optional)
+
+**Display Features:**
+- Fixed height of 400px regardless of message count
+- Pagination format: "2/3" (current/total pages)
+- Automatically shows latest messages on initial load
 
 ## TypeScript Support
 

@@ -50,6 +50,7 @@ GET /api/ranking?action=submit&id={ID}&name={PLAYER_NAME}&score={SCORE}
     {
       "name": "Player1",
       "score": 1000,
+      "displayScore": "1,000",
       "rank": 1,
       "timestamp": "2025-08-13T10:00:00Z"
     }
@@ -152,12 +153,14 @@ GET /api/ranking?action=get&id={ID}&limit={LIMIT}
     {
       "name": "Player1",
       "score": 1500,
+      "displayScore": "1,500",
       "rank": 1,
       "timestamp": "2025-08-13T10:00:00Z"
     },
     {
       "name": "Player2", 
       "score": 1200,
+      "displayScore": "1,200",
       "rank": 2,
       "timestamp": "2025-08-13T09:30:00Z"
     }

@@ -9,7 +9,7 @@
   - [x] 値設定（set）
   - [x] 表示（display）- SVG、JSON、テキスト
   - [x] 削除（delete）
-  - [x] 重複防止機能（24時間）
+  - [x] 重複防止機能（1日1回、0時リセット）
   - [x] 日別統計の自動集計
 
 ### 2. Like Service ✅
@@ -20,7 +20,7 @@
   - [x] 表示（display）
   - [x] 値設定（set）
   - [x] 削除（delete）
-  - [x] ユーザー状態の24時間保持
+  - [x] ユーザー状態の日付境界まで保持
 
 ### 3. Ranking Service ✅
 - [x] **API実装**: `/api/ranking`
