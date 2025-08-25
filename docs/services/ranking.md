@@ -10,13 +10,14 @@ Score leaderboard system with automatic sorting, score management, and configura
 Create a new ranking leaderboard.
 
 ```
-GET /api/ranking?action=create&url={URL}&token={TOKEN}&max={MAX_ENTRIES}
+GET /api/ranking?action=create&url={URL}&token={TOKEN}&max={MAX_ENTRIES}&sortOrder={SORT_ORDER}
 ```
 
 **Parameters:**
 - `url` (required): Target URL for ranking
 - `token` (required): Owner token (8-16 characters)
 - `max` (optional): Maximum entries (1-1000, default: 100)
+- `sortOrder` (optional): Sort order - "desc" for high scores first, "asc" for low times first (default: "desc")
 
 **Response:**
 ```json
@@ -25,6 +26,8 @@ GET /api/ranking?action=create&url={URL}&token={TOKEN}&max={MAX_ENTRIES}
   "url": "https://yoursite.com",
   "entries": [],
   "totalEntries": 0,
+  "maxEntries": 100,
+  "sortOrder": "desc",
   "message": "Ranking created successfully"
 }
 ```
@@ -56,6 +59,8 @@ GET /api/ranking?action=submit&id={ID}&name={PLAYER_NAME}&score={SCORE}
     }
   ],
   "totalEntries": 1,
+  "maxEntries": 100,
+  "sortOrder": "desc",
   "message": "Score submitted successfully"
 }
 ```
@@ -173,8 +178,8 @@ GET /api/ranking?action=get&id={ID}&limit={LIMIT}
 
 ### Basic Ranking Setup
 ```javascript
-// 1. Create ranking
-const response = await fetch('/api/ranking?action=create&url=https://mygame.com&token=game-secret&max=50')
+// 1. Create ranking for score-based game (high scores win)
+const response = await fetch('/api/ranking?action=create&url=https://mygame.com&token=game-secret&max=50&sortOrder=desc')
 const data = await response.json()
 console.log('Ranking ID:', data.id)
 
@@ -186,6 +191,20 @@ await fetch('/api/ranking?action=submit&id=' + data.id + '&name=Bob&score=1200')
 const ranking = await fetch('/api/ranking?action=get&id=mygame-a7b9c3d4&limit=10')
 const leaderboard = await ranking.json()
 console.log('Top players:', leaderboard.entries)
+```
+
+### Time-based Ranking Setup
+```javascript
+// 1. Create ranking for time-based game (lower times win)
+const response = await fetch('/api/ranking?action=create&url=https://racegame.com&token=race-secret&max=100&sortOrder=asc')
+const data = await response.json()
+console.log('Race Ranking ID:', data.id)
+
+// 2. Submit times (lower is better)
+await fetch('/api/ranking?action=submit&id=' + data.id + '&name=Speedster&score=1750&displayScore=17.50s')
+await fetch('/api/ranking?action=submit&id=' + data.id + '&name=Racer&score=1820&displayScore=18.20s')
+
+// Better time (17.50s) will rank higher than worse time (18.20s)
 ```
 
 ### Score Management

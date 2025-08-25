@@ -487,7 +487,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
   /**
    * IDでランキングデータを取得（パブリックメソッド）
    */
-  public async getRankingData(id: string, limit: number = 10): Promise<Result<RankingData, ValidationError | NotFoundError>> {
+  public async getRankingData(id: string, limit: number = RANKING.LIMIT.DEFAULT): Promise<Result<RankingData, ValidationError | NotFoundError>> {
     const entityResult = await this.getById(id)
     if (!entityResult.success) {
       return entityResult

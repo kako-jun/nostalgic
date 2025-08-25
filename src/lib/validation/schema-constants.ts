@@ -74,6 +74,16 @@ export const RANKING = {
     VALUES: ['desc', 'asc'] as const,
     DEFAULT: 'desc' as const,
   },
+  
+  DISPLAY_SCORE: {
+    MIN_LENGTH: 1,
+    MAX_LENGTH: 100,
+  },
+  
+  MAX_ENTRIES: {
+    MIN: 1,
+    MAX: 10000,
+  },
 } as const;
 
 // === BBS サービス ===

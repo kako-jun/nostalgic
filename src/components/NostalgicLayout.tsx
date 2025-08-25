@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Script from "next/script";
 import { usePathname } from 'next/navigation';
-import NostalgicSidebar from "./NostalgicSidebar";
+import NostalgicSidebar from "@/components/NostalgicSidebar";
 import "../app/nostalgic.css";
 
 interface NostalgicLayoutProps {
