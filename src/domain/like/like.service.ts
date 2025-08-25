@@ -120,16 +120,16 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
     const currentlyLiked = userLikedResult.success ? userLikedResult.data : false
 
     if (currentlyLiked) {
-      // いいねを取り消し（アトミック操作）
-      const removeResult = await this.removeUserLikeStatus(id, userHash)
-      if (!removeResult.success) {
-        return Err(new ValidationError('Failed to remove user like status', { error: removeResult.error }))
+      // いいねを取り消し（24時間制限を維持するためキーは削除せず値を更新）
+      const updateResult = await this.updateUserLikeStatus(id, userHash, false)
+      if (!updateResult.success) {
+        return Err(new ValidationError('Failed to update user like status', { error: updateResult.error }))
       }
 
       const decrementResult = await this.incrementValue(`${id}:total`, -1)
       if (!decrementResult.success) {
         // ロールバック: ユーザー状態を復元
-        await this.setUserLikeStatus(id, userHash)
+        await this.updateUserLikeStatus(id, userHash, true)
         return decrementResult
       }
       
@@ -170,7 +170,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
       if (currentlyLiked) {
         // 取り消し処理の場合のロールバック
         await this.incrementValue(`${id}:total`, 1)
-        await this.setUserLikeStatus(id, userHash)
+        await this.updateUserLikeStatus(id, userHash, true)
       } else {
         // 追加処理の場合のロールバック
         await this.incrementValue(`${id}:total`, -1)
@@ -277,12 +277,14 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
     const userKey = `${id}:user:${userHash}`
     const userRepo = RepositoryFactory.createEntity(z.string(), 'like_users')
     
-    const existsResult = await userRepo.exists(userKey)
-    if (!existsResult.success) {
-      return Err(new ValidationError('Failed to check user status', { error: existsResult.error }))
+    const getResult = await userRepo.get(userKey)
+    if (!getResult.success) {
+      // キーが存在しない場合はfalse
+      return Ok(false)
     }
-
-    return Ok(existsResult.data)
+    
+    // 値が'true'の場合のみtrue、それ以外はfalse
+    return Ok(getResult.data === 'true')
   }
 
   /**
@@ -293,9 +295,25 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
     const userRepo = RepositoryFactory.createEntity(z.string(), 'like_users')
     const ttl = getLikeLimits().userStateTTL
 
-    const saveResult = await userRepo.saveWithTTL(userKey, new Date().toISOString(), ttl)
+    const saveResult = await userRepo.saveWithTTL(userKey, 'true', ttl)
     if (!saveResult.success) {
       return Err(new ValidationError('Failed to set user status', { error: saveResult.error }))
+    }
+
+    return Ok(undefined)
+  }
+
+  /**
+   * ユーザーのいいね状態を更新（24時間制限を維持）
+   */
+  private async updateUserLikeStatus(id: string, userHash: string, liked: boolean): Promise<Result<void, ValidationError>> {
+    const userKey = `${id}:user:${userHash}`
+    const userRepo = RepositoryFactory.createEntity(z.string(), 'like_users')
+    const ttl = getLikeLimits().userStateTTL
+
+    const saveResult = await userRepo.saveWithTTL(userKey, liked ? 'true' : 'false', ttl)
+    if (!saveResult.success) {
+      return Err(new ValidationError('Failed to update user status', { error: saveResult.error }))
     }
 
     return Ok(undefined)
@@ -310,13 +328,29 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
     const ttl = getLikeLimits().userStateTTL
 
     try {
-      // Redis SET NX EX を使用してアトミックにチェック＆設定
-      const result = await userRepo.setIfNotExists(userKey, new Date().toISOString(), ttl)
+      // まずキーが存在するかチェック
+      const getResult = await userRepo.get(userKey)
+      if (getResult.success) {
+        // キーが存在する場合、値をチェック
+        if (getResult.data === 'true') {
+          // 既にいいね済み
+          return Ok(false)
+        } else {
+          // いいね取り消し状態だが24時間制限中 - 値を'true'に更新
+          const updateResult = await this.updateUserLikeStatus(id, userHash, true)
+          if (!updateResult.success) {
+            return Err(new ValidationError('Failed to update user status', { error: updateResult.error }))
+          }
+          return Ok(true)
+        }
+      }
+      
+      // キーが存在しない場合、新規作成
+      const result = await userRepo.setIfNotExists(userKey, 'true', ttl)
       if (!result.success) {
         return Err(new ValidationError('Failed to atomically set user status', { error: result.error }))
       }
       
-      // true = 新規いいね、false = 既にいいね済み
       return Ok(result.data)
     } catch (error) {
       return Err(new ValidationError('Redis operation failed', { error }))
