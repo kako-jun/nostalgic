@@ -302,10 +302,13 @@ export class SortedSetRepository {
   async getRangeWithScores(
     key: string, 
     start: number = 0, 
-    end: number = -1
+    end: number = -1,
+    ascending: boolean = false
   ): Promise<Result<Array<{member: string, score: number}>, StorageError | ValidationError>> {
     try {
-      const rawEntries = await this.redis.zrevrange(this.buildKey(key), start, end, 'WITHSCORES')
+      const rawEntries = ascending 
+        ? await this.redis.zrange(this.buildKey(key), start, end, 'WITHSCORES')
+        : await this.redis.zrevrange(this.buildKey(key), start, end, 'WITHSCORES')
       
       if (!Array.isArray(rawEntries)) {
         return Err(new StorageError('sorted set range', 'Invalid response format'))

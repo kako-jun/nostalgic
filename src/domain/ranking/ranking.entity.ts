@@ -4,6 +4,7 @@
 
 import { z } from 'zod'
 import { CommonSchemas } from '@/lib/core/validation'
+import { RANKING } from '@/lib/validation/schema-constants'
 
 /**
  * Ranking制限値定数
@@ -17,6 +18,7 @@ export const RANKING_LIMITS = {
   LIMIT_MAX: 1000,
 } as const
 
+
 /**
  * Ranking固有のフィールドスキーマ
  */
@@ -26,7 +28,8 @@ export const RankingFieldSchemas = {
   displayScore: z.string().min(1).max(100),
   maxEntries: z.coerce.number().int().min(RANKING_LIMITS.MAX_ENTRIES_MIN).max(RANKING_LIMITS.MAX_ENTRIES_MAX),
   limit: z.coerce.number().int().min(RANKING_LIMITS.LIMIT_MIN).max(RANKING_LIMITS.LIMIT_MAX),
-  format: z.enum(['interactive'])
+  format: z.enum(['interactive']),
+  sortOrder: z.enum(RANKING.SORT_ORDER.VALUES).default(RANKING.SORT_ORDER.DEFAULT)
 } as const
 
 /**
@@ -39,6 +42,7 @@ export interface RankingEntity {
   lastSubmit?: Date
   totalEntries: number
   maxEntries: number
+  sortOrder: 'desc' | 'asc' // 'desc'=高いスコア順, 'asc'=低いスコア順（タイム系）
   title?: string
 }
 
@@ -62,6 +66,7 @@ export interface RankingData {
   entries: RankingEntry[]
   totalEntries: number
   maxEntries: number
+  sortOrder: 'desc' | 'asc'
   title?: string
 }
 
@@ -70,6 +75,7 @@ export interface RankingData {
  */
 export interface RankingCreateParams {
   maxEntries?: number
+  sortOrder?: 'desc' | 'asc'
   title?: string
 }
 
@@ -115,6 +121,7 @@ export const RankingEntitySchema = z.object({
   lastSubmit: CommonSchemas.date.optional(),
   totalEntries: CommonSchemas.nonNegativeInt,
   maxEntries: CommonSchemas.nonNegativeInt,
+  sortOrder: RankingFieldSchemas.sortOrder,
   title: CommonSchemas.title.optional()
 })
 
@@ -132,11 +139,13 @@ export const RankingDataSchema = z.object({
   entries: z.array(RankingEntrySchema),
   totalEntries: CommonSchemas.nonNegativeInt,
   maxEntries: CommonSchemas.nonNegativeInt,
+  sortOrder: RankingFieldSchemas.sortOrder,
   title: CommonSchemas.title.optional()
 })
 
 export const RankingCreateParamsSchema = z.object({
   maxEntries: RankingFieldSchemas.maxEntries.default(1000),
+  sortOrder: RankingFieldSchemas.sortOrder.default('desc'),
   title: CommonSchemas.title.default('RANKING')
 })
 
