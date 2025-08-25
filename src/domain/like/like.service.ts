@@ -120,7 +120,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
     const currentlyLiked = userLikedResult.success ? userLikedResult.data : false
 
     if (currentlyLiked) {
-      // いいねを取り消し（24時間制限を維持するためキーは削除せず値を更新）
+      // いいねを取り消し（日付制限を維持するためキーは削除せず値を更新）
       const updateResult = await this.updateUserLikeStatus(id, userHash, false)
       if (!updateResult.success) {
         return Err(new ValidationError('Failed to update user like status', { error: updateResult.error }))
@@ -277,23 +277,30 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
     const userKey = `${id}:user:${userHash}`
     const userRepo = RepositoryFactory.createEntity(z.string(), 'like_users')
     
+    console.log(`[LIKE] Check: ${userKey}`)
     const getResult = await userRepo.get(userKey)
     if (!getResult.success) {
-      // キーが存在しない場合はfalse
+      console.log(`[LIKE] Key not found`)
       return Ok(false)
     }
     
-    // 値が'true'の場合のみtrue、それ以外はfalse
-    return Ok(getResult.data === 'true')
+    const liked = getResult.data === 'true'
+    console.log(`[LIKE] Key found: value=${getResult.data}, liked=${liked}`)
+    return Ok(liked)
   }
 
   /**
-   * ユーザーのいいね状態を設定
+   * ユーザーのいいね状態を設定（日付ベース制限）
    */
   private async setUserLikeStatus(id: string, userHash: string): Promise<Result<void, ValidationError>> {
     const userKey = `${id}:user:${userHash}`
     const userRepo = RepositoryFactory.createEntity(z.string(), 'like_users')
-    const ttl = getLikeLimits().userStateTTL
+    
+    // 今日の終わりまでのTTLを計算
+    const now = new Date()
+    const endOfDay = new Date(now)
+    endOfDay.setHours(23, 59, 59, 999)
+    const ttl = Math.floor((endOfDay.getTime() - now.getTime()) / 1000)
 
     const saveResult = await userRepo.saveWithTTL(userKey, 'true', ttl)
     if (!saveResult.success) {
@@ -304,15 +311,22 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
   }
 
   /**
-   * ユーザーのいいね状態を更新（24時間制限を維持）
+   * ユーザーのいいね状態を更新（日付ベース制限）
    */
   private async updateUserLikeStatus(id: string, userHash: string, liked: boolean): Promise<Result<void, ValidationError>> {
     const userKey = `${id}:user:${userHash}`
     const userRepo = RepositoryFactory.createEntity(z.string(), 'like_users')
-    const ttl = getLikeLimits().userStateTTL
+    
+    // 今日の終わりまでのTTLを計算
+    const now = new Date()
+    const endOfDay = new Date(now)
+    endOfDay.setHours(23, 59, 59, 999)
+    const ttl = Math.floor((endOfDay.getTime() - now.getTime()) / 1000)
 
+    console.log(`[LIKE] Update: ${userKey} = ${liked ? 'true' : 'false'}, TTL=${ttl}s until midnight`)
     const saveResult = await userRepo.saveWithTTL(userKey, liked ? 'true' : 'false', ttl)
     if (!saveResult.success) {
+      console.log(`[LIKE] Update failed:`, saveResult.error)
       return Err(new ValidationError('Failed to update user status', { error: saveResult.error }))
     }
 
@@ -325,7 +339,12 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
   private async atomicSetUserLikeStatus(id: string, userHash: string): Promise<Result<boolean, ValidationError>> {
     const userKey = `${id}:user:${userHash}`
     const userRepo = RepositoryFactory.createEntity(z.string(), 'like_users')
-    const ttl = getLikeLimits().userStateTTL
+    
+    // 今日の終わりまでのTTLを計算
+    const now = new Date()
+    const endOfDay = new Date(now)
+    endOfDay.setHours(23, 59, 59, 999)
+    const ttl = Math.floor((endOfDay.getTime() - now.getTime()) / 1000)
 
     try {
       // まずキーが存在するかチェック
@@ -336,7 +355,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
           // 既にいいね済み
           return Ok(false)
         } else {
-          // いいね取り消し状態だが24時間制限中 - 値を'true'に更新
+          // いいね取り消し状態 - 値を'true'に更新
           const updateResult = await this.updateUserLikeStatus(id, userHash, true)
           if (!updateResult.success) {
             return Err(new ValidationError('Failed to update user status', { error: updateResult.error }))
@@ -345,7 +364,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
         }
       }
       
-      // キーが存在しない場合、新規作成
+      // キーが存在しない場合、新規作成（TTL付き）
       const result = await userRepo.setIfNotExists(userKey, 'true', ttl)
       if (!result.success) {
         return Err(new ValidationError('Failed to atomically set user status', { error: result.error }))
