@@ -206,10 +206,10 @@ class NostalgicBBS extends HTMLElement {
           --bbs-message-bg: ${style.messageBg};
           --bbs-text-color: ${style.textColor};
           --bbs-border-radius: 4px;
-          --bbs-min-width: 300px;
-          --bbs-max-width: 600px;
-          --bbs-message-padding: 8px;
-          --bbs-message-margin: 5px;
+          --bbs-min-width: 280px;
+          --bbs-max-width: 100%;
+          --bbs-message-padding: 6px;
+          --bbs-message-margin: 4px;
           --bbs-max-height: 400px;
           display: block;
           max-width: 100%;
@@ -222,7 +222,7 @@ class NostalgicBBS extends HTMLElement {
           box-shadow: 3px 3px 0px var(--bbs-border-color);
           width: 100%;
           max-width: var(--bbs-max-width);
-          min-width: 0;
+          min-width: var(--bbs-min-width);
           box-sizing: border-box;
         }
         .bbs-header {
@@ -286,7 +286,7 @@ class NostalgicBBS extends HTMLElement {
         }
         .message-author {
           font-weight: bold;
-          font-size: 13px;
+          font-size: 12px;
           font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
         }
         .message-time {
@@ -449,7 +449,7 @@ class NostalgicBBS extends HTMLElement {
             messages.map((message, index) => `
               <div class="message-item">
                 <div class="message-header">
-                  <span class="message-author">${startNumber + index + 1}. ${this.escapeHtml(message.author || 'Anonymous')}${message.icon ? ` ${message.icon}` : ''}</span>
+                  <span class="message-author"><span style="display:inline-block;min-width:2.5em;text-align:right;">${startNumber + index + 1}.</span> ${this.escapeHtml(message.author || 'Anonymous')}${message.icon ? ` ${message.icon}` : ''}</span>
                   <div class="message-time-actions">
                     <span class="message-time">${this.formatDate(message.timestamp)}</span>
                     <div class="message-actions">
