@@ -60,6 +60,7 @@ export interface BBSEntity {
   totalMessages: number
   lastMessage?: Date
   settings: BBSSettings
+  webhookUrl?: string
 }
 
 /**
@@ -124,6 +125,7 @@ export interface BBSCreateParams {
   messagesPerPage?: number
   icons?: string[]
   selects?: BBSSelectOption[]
+  webhookUrl?: string
 }
 
 /**
@@ -187,7 +189,8 @@ export const BBSEntitySchema = z.object({
   created: CommonSchemas.date,
   totalMessages: CommonSchemas.nonNegativeInt,
   lastMessage: CommonSchemas.date.optional(),
-  settings: BBSSettingsSchema
+  settings: BBSSettingsSchema,
+  webhookUrl: z.string().url().optional()
 })
 
 export const BBSMessageSchema = z.object({
@@ -223,7 +226,8 @@ export const BBSCreateParamsSchema = z.object({
   maxMessages: BBSFieldSchemas.maxMessages.default(1000),
   messagesPerPage: BBSFieldSchemas.messagesPerPage.default(10),
   icons: z.array(BBSFieldSchemas.iconForArray).max(20).default([]),
-  selects: z.array(BBSSelectOptionSchema).max(3).default([])
+  selects: z.array(BBSSelectOptionSchema).max(3).default([]),
+  webhookUrl: z.string().url().optional()
 })
 
 export const BBSPostParamsSchema = z.object({

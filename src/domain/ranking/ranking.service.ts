@@ -312,6 +312,30 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
     }
 
+    // Webhook 通知を送信（webhookUrlが設定されている場合のみ）
+    if (entity.webhookUrl) {
+      const webhookPayload = {
+        event: 'ranking.submit',
+        timestamp: new Date().toISOString(),
+        serviceId: entity.id,
+        url: entity.url,
+        data: {
+          name: params.name,
+          score: params.score,
+          displayScore: params.displayScore || params.score.toString()
+        }
+      }
+
+      // シンプルなWebhook送信（失敗してもメイン処理は継続）
+      fetch(entity.webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(webhookPayload)
+      }).catch(error => {
+        console.warn('Webhook delivery failed for ranking submit:', error)
+      })
+    }
+
     return await this.transformEntityToData(entity)
   }
 

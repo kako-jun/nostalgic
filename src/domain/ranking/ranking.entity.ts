@@ -31,6 +31,7 @@ export interface RankingEntity {
   maxEntries: number
   sortOrder: 'desc' | 'asc' // 'desc'=高いスコア順, 'asc'=低いスコア順（タイム系）
   title?: string
+  webhookUrl?: string
 }
 
 /**
@@ -64,6 +65,7 @@ export interface RankingCreateParams {
   maxEntries?: number
   sortOrder?: 'desc' | 'asc'
   title?: string
+  webhookUrl?: string
 }
 
 /**
@@ -109,7 +111,8 @@ export const RankingEntitySchema = z.object({
   totalEntries: CommonSchemas.nonNegativeInt,
   maxEntries: CommonSchemas.nonNegativeInt,
   sortOrder: RankingFieldSchemas.sortOrder,
-  title: CommonSchemas.title.optional()
+  title: CommonSchemas.title.optional(),
+  webhookUrl: z.string().url().optional()
 })
 
 export const RankingEntrySchema = z.object({
@@ -133,7 +136,8 @@ export const RankingDataSchema = z.object({
 export const RankingCreateParamsSchema = z.object({
   maxEntries: RankingFieldSchemas.maxEntries.default(RANKING.LIMIT.DEFAULT),
   sortOrder: RankingFieldSchemas.sortOrder.default(RANKING.SORT_ORDER.DEFAULT),
-  title: CommonSchemas.title.default('RANKING')
+  title: CommonSchemas.title.default('RANKING'),
+  webhookUrl: z.string().url().optional()
 })
 
 export const RankingSubmitParamsSchema = z.object({
