@@ -156,24 +156,24 @@ class NostalgicRanking extends HTMLElement {
     const themeStyles = {
       light: {
         bgColor: '#ffffff',
-        borderColor: '#cccccc',
+        borderColor: '#000000',
         headerBg: '#f5f5f5',
         headerColor: '#000000',
         textColor: '#000000'
       },
       dark: {
         bgColor: '#2a2a2a',
-        borderColor: '#444444',
+        borderColor: '#ffffff',
         headerBg: '#333333',
         headerColor: '#ffffff',
         textColor: '#ffffff'
       },
       kawaii: {
-        bgColor: '#ffe4e1',
-        borderColor: '#ffb6c1',
-        headerBg: '#ffc0cb',
+        bgColor: '#e0f7fa',
+        borderColor: '#9c27b0',
+        headerBg: '#b2ebf2',
         headerColor: '#ff69b4',
-        textColor: '#ff69b4'
+        textColor: '#f06292'
       }
     };
 

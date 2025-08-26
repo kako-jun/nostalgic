@@ -163,10 +163,10 @@ const svgHandler = ApiHandler.createSpecialResponse(
           icon: '#ff6b6b'
         },
         kawaii: {
-          bg: '#ffe4e1',
+          bg: '#e0f7fa',
           text: '#ff69b4',
-          border: '#ffb6c1',
-          icon: '#ff1493'
+          border: '#9c27b0',
+          icon: '#ff69b4'
         }
       }
       
