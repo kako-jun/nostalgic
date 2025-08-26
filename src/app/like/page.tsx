@@ -280,7 +280,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-like': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'classic' | 'modern' | 'retro';
+        theme?: 'light' | 'dark' | 'kawaii';
         icon?: 'heart' | 'star' | 'thumb';
       };
     }
@@ -759,7 +759,7 @@ declare module 'react' {
                 <p>公開ID: <span style={{ backgroundColor: "#ffff00", padding: "2px 4px", fontFamily: "monospace" }}>{publicId}</span></p>
                 <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px", wordBreak: "break-all" }}>
 {`<script src="https://nostalgic.llll-ll.com/components/like.js"></script>
-<nostalgic-like id="${publicId}" theme="classic" icon="heart"></nostalgic-like>`}
+<nostalgic-like id="${publicId}" theme="dark" icon="heart"></nostalgic-like>`}
                 </p>
               </div>
             )}

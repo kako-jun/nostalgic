@@ -10,9 +10,9 @@ export const GENERAL_LIMITS = {
 export const COUNTER_LIMITS = {
   DEFAULT_DIGITS: 6,
   MAX_DIGITS: 10,
-  THEMES: ['classic', 'modern', 'retro'] as const,
+  THEMES: ['light', 'dark', 'kawaii'] as const,
   FORMATS: ['text', 'image'] as const,
-  DEFAULT_THEME: 'classic' as const,
+  DEFAULT_THEME: 'dark' as const,
   DEFAULT_FORMAT: 'image' as const,
 } as const
 
@@ -20,9 +20,9 @@ export const COUNTER_LIMITS = {
 export const LIKE_LIMITS = {
   DEFAULT_DIGITS: 6,
   MAX_DIGITS: 10,
-  THEMES: ['classic', 'modern', 'retro'] as const,
+  THEMES: ['light', 'dark', 'kawaii'] as const,
   FORMATS: ['text', 'image'] as const,
-  DEFAULT_THEME: 'classic' as const,
+  DEFAULT_THEME: 'dark' as const,
   DEFAULT_FORMAT: 'image' as const,
 } as const
 

@@ -3,38 +3,38 @@ import { CounterType } from '@/types/counter'
 export interface CounterImageOptions {
   value: number
   type: CounterType
-  style?: 'classic' | 'modern' | 'retro'
+  style?: 'light' | 'dark' | 'kawaii'
   digits?: number
 }
 
 export function generateCounterSVG(options: CounterImageOptions): string {
-  const { value, type, style = 'classic', digits } = options
+  const { value, type, style = 'dark', digits } = options
   
   // digitsが指定されている場合のみゼロパディング
   const paddedValue = digits ? value.toString().padStart(digits, '0') : value.toString()
   
   // スタイル設定
   const styles = {
-    classic: {
-      backgroundColor: '#000000',
-      textColor: '#00ff00',
+    light: {
+      backgroundColor: '#ffffff',
+      textColor: '#000000',
       fontFamily: 'Courier New, Consolas, Monaco, Liberation Mono, DejaVu Sans Mono, monospace',
       fontSize: '16',
-      border: '#333333'
+      border: '#cccccc'
     },
-    modern: {
+    dark: {
       backgroundColor: '#1a1a1a',
       textColor: '#ffffff',
-      fontFamily: 'Arial, Helvetica, Helvetica Neue, Roboto, Segoe UI, sans-serif',
-      fontSize: '14',
-      border: '#666666'
-    },
-    retro: {
-      backgroundColor: '#800080',
-      textColor: '#ffff00',
       fontFamily: 'Courier New, Consolas, Monaco, Liberation Mono, DejaVu Sans Mono, monospace',
+      fontSize: '16',
+      border: '#444444'
+    },
+    kawaii: {
+      backgroundColor: '#ffe4e1',
+      textColor: '#ff69b4',
+      fontFamily: 'Comic Sans MS, Chalkboard SE, Comic Neue, cursive',
       fontSize: '18',
-      border: '#ff00ff'
+      border: '#ffb6c1'
     }
   }
   
@@ -48,7 +48,7 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       <rect width="${width}" height="${height}" fill="${currentStyle.backgroundColor}" stroke="${currentStyle.border}" stroke-width="1"/>
       
       <!-- カウンター値 -->
-      <text x="${width / 2}" y="${style === 'classic' ? (height / 2) + 1 : (height / 2)}" 
+      <text x="${width / 2}" y="${style === 'light' ? (height / 2) + 1 : (height / 2)}" 
             fill="${currentStyle.textColor}" 
             font-family="${currentStyle.fontFamily}" 
             font-size="${currentStyle.fontSize}" 

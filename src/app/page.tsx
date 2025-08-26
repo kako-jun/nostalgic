@@ -153,7 +153,7 @@ export default function HomePage() {
                     ようこそ！
                     <br />
                     <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
-                      <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="classic" />
+                      <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="light" />
                       回も閲覧されました！
                     </span>
                   </p>
@@ -162,14 +162,14 @@ export default function HomePage() {
                   <b>今日</b>
                   <br />
                   <div style={{ marginTop: "10px" }}>
-                    <nostalgic-counter id="nostalgic-b89803bb" type="today" theme="modern" digits="3" />
+                    <nostalgic-counter id="nostalgic-b89803bb" type="today" theme="dark" digits="3" />
                   </div>
                 </div>
                 <div className="nostalgic-counter-item">
                   <b>昨日</b>
                   <br />
                   <div style={{ marginTop: "10px" }}>
-                    <nostalgic-counter id="nostalgic-b89803bb" type="yesterday" theme="modern" digits="3" />
+                    <nostalgic-counter id="nostalgic-b89803bb" type="yesterday" theme="dark" digits="3" />
                   </div>
                 </div>
                 <div style={{ margin: "0 15px" }}></div>
@@ -177,14 +177,14 @@ export default function HomePage() {
                   <b>今週</b>
                   <br />
                   <div style={{ marginTop: "10px" }}>
-                    <nostalgic-counter id="nostalgic-b89803bb" type="week" theme="retro" digits="4" />
+                    <nostalgic-counter id="nostalgic-b89803bb" type="week" theme="kawaii" digits="4" />
                   </div>
                 </div>
                 <div className="nostalgic-counter-item">
                   <b>今月</b>
                   <br />
                   <div style={{ marginTop: "10px" }}>
-                    <nostalgic-counter id="nostalgic-b89803bb" type="month" theme="retro" digits="4" />
+                    <nostalgic-counter id="nostalgic-b89803bb" type="month" theme="kawaii" digits="4" />
                   </div>
                 </div>
               </div>
@@ -198,7 +198,7 @@ export default function HomePage() {
               </p>
               <div style={{ textAlign: "center", margin: "20px 0" }}>
                 <p style={{ marginBottom: "10px" }}>このサイトが気に入ったら、いいねを押してください！</p>
-                <nostalgic-like id="nostalgic-b89803bb" theme="classic" />
+                <nostalgic-like id="nostalgic-b89803bb" theme="dark" />
               </div>
             </div>
 
@@ -210,7 +210,7 @@ export default function HomePage() {
               </p>
               
               <div style={{ margin: "20px 0" }}>
-                <nostalgic-ranking id="nostalgic-9c044ad0" theme="classic" />
+                <nostalgic-ranking id="nostalgic-9c044ad0" theme="light" />
               </div>
               
               <p>どのサービスが一番人気か投票してみよう！</p>
@@ -320,7 +320,7 @@ export default function HomePage() {
                 </span>
               </p>
               <div style={{ margin: "20px 0" }}>
-                <nostalgic-ranking id="llll-ll-a235b610" theme="modern" />
+                <nostalgic-ranking id="llll-ll-a235b610" theme="dark" />
               </div>
               <div style={{ textAlign: "center", marginTop: "15px" }}>
                 <a href="https://llll-ll.com/easter-egg" className="nostalgic-old-link" target="_blank" rel="noopener noreferrer">
@@ -336,7 +336,7 @@ export default function HomePage() {
                 </span>
               </p>
               <div style={{ margin: "20px 0" }}>
-                <nostalgic-ranking id="noun-gender-d0bb6d1f" theme="retro" />
+                <nostalgic-ranking id="noun-gender-d0bb6d1f" theme="kawaii" />
               </div>
               <div style={{ textAlign: "center", marginTop: "15px" }}>
                 <a href="https://noun-gender.llll-ll.com/quiz" className="nostalgic-old-link" target="_blank" rel="noopener noreferrer">
@@ -354,7 +354,7 @@ export default function HomePage() {
               <div style={{ margin: "20px 0", display: "flex", justifyContent: "center" }}>
                 <div>
                   <p style={{ marginBottom: "10px", textAlign: "center" }}>訪問の記念に、足あとを残していってください！</p>
-                  <nostalgic-bbs id="nostalgic-b89803bb" theme="classic" />
+                  <nostalgic-bbs id="nostalgic-b89803bb" theme="dark" />
                 </div>
               </div>
             </div>

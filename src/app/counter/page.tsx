@@ -270,7 +270,7 @@ declare module 'react' {
       'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         type?: 'total' | 'today' | 'yesterday' | 'week' | 'month';
-        theme?: 'classic' | 'modern' | 'retro';
+        theme?: 'light' | 'dark' | 'kawaii';
         digits?: string;
         scale?: string;
       };
@@ -293,26 +293,26 @@ declare module 'react' {
                   <div style={{ textAlign: "center", margin: "20px 0" }}>
                     <div style={{ display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap" }}>
                       <div style={{ textAlign: "center" }}>
-                        <p style={{ fontSize: "14px", marginBottom: "10px" }}>Classic</p>
+                        <p style={{ fontSize: "14px", marginBottom: "10px" }}>Light</p>
                         <img 
-                          src={`/api/visit?action=display&id=${publicId}&type=total&theme=classic`}
-                          alt="Classic Counter"
+                          src={`/api/visit?action=display&id=${publicId}&type=total&theme=light`}
+                          alt="Light Counter"
                           style={{ border: "1px solid #ccc" }}
                         />
                       </div>
                       <div style={{ textAlign: "center" }}>
-                        <p style={{ fontSize: "14px", marginBottom: "10px" }}>Modern</p>
+                        <p style={{ fontSize: "14px", marginBottom: "10px" }}>Dark</p>
                         <img 
-                          src={`/api/visit?action=display&id=${publicId}&type=total&theme=modern`}
-                          alt="Modern Counter"
+                          src={`/api/visit?action=display&id=${publicId}&type=total&theme=dark`}
+                          alt="Dark Counter"
                           style={{ border: "1px solid #ccc" }}
                         />
                       </div>
                       <div style={{ textAlign: "center" }}>
-                        <p style={{ fontSize: "14px", marginBottom: "10px" }}>Retro</p>
+                        <p style={{ fontSize: "14px", marginBottom: "10px" }}>Kawaii</p>
                         <img 
-                          src={`/api/visit?action=display&id=${publicId}&type=total&theme=retro`}
-                          alt="Retro Counter"
+                          src={`/api/visit?action=display&id=${publicId}&type=total&theme=kawaii`}
+                          alt="Kawaii Counter"
                           style={{ border: "1px solid #ccc" }}
                         />
                       </div>
@@ -697,11 +697,11 @@ declare module 'react' {
                 <p>公開ID: <span style={{ backgroundColor: "#ffff00", padding: "2px 4px", fontFamily: "monospace" }}>{publicId}</span></p>
                 <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px", wordBreak: "break-all" }}>
 {`<script src="https://nostalgic.llll-ll.com/components/visit.js"></script>
-<nostalgic-counter id="${publicId}" type="total" theme="classic"></nostalgic-counter>`}
+<nostalgic-counter id="${publicId}" type="total" theme="dark"></nostalgic-counter>`}
                 </p>
                 <p>表示URL:</p>
                 <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px", wordBreak: "break-all" }}>
-                  {`https://nostalgic.llll-ll.com/api/visit?action=display&id=${publicId}&type=total&theme=classic`}
+                  {`https://nostalgic.llll-ll.com/api/visit?action=display&id=${publicId}&type=total&theme=dark`}
                 </p>
               </div>
             )}
@@ -844,7 +844,7 @@ declare module 'react' {
                 SVG画像を返します。img タグの src に直接指定可能。
               </p>
               <p>
-                ※typeとthemeは省略可能（type=total, theme=classicがデフォルト）
+                ※typeとthemeは省略可能（type=total, theme=darkがデフォルト）
               </p>
             </div>
 
