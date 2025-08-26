@@ -48,6 +48,11 @@ export default function LikePage() {
       // getモードでは公開IDを使用
       if (!publicId) return;
       apiUrl = `/api/like?action=get&id=${encodeURIComponent(publicId)}`;
+    } else if (mode === "display") {
+      // displayモードでは公開IDを使用
+      if (!publicId) return;
+      const format = valueRef.current?.value || "json";
+      apiUrl = `/api/like?action=display&id=${encodeURIComponent(publicId)}&format=${format}`;
     } else {
       // その他のモードでは従来通りurl+tokenを使用
       if (!url || !token) return;
@@ -60,11 +65,22 @@ export default function LikePage() {
 
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
-      const data = await res.json();
-      setResponse(JSON.stringify(data, null, 2));
+      
+      if (mode === "display" && valueRef.current?.value === "svg") {
+        // SVGの場合はテキストとして取得
+        const svgText = await res.text();
+        setResponse(svgText);
+      } else if (mode === "display" && valueRef.current?.value === "text") {
+        // テキスト形式の場合もテキストとして取得
+        const textResponse = await res.text();
+        setResponse(textResponse);
+      } else {
+        const data = await res.json();
+        setResponse(JSON.stringify(data, null, 2));
 
-      if (data.id) {
-        setPublicId(data.id);
+        if (data.id) {
+          setPublicId(data.id);
+        }
       }
     } catch (error) {
       setResponse(`エラー: ${error}`);
@@ -219,7 +235,7 @@ export default function LikePage() {
 <nostalgic-like id="`}
                 <span style={{ color: "#008000" }}>公開ID</span>
                 {`" theme="`}
-                <span style={{ color: "#008000" }}>classic</span>
+                <span style={{ color: "#008000" }}>dark</span>
                 {`" icon="`}
                 <span style={{ color: "#008000" }}>heart</span>
                 {`"></nostalgic-like>`}
@@ -245,9 +261,9 @@ export default function LikePage() {
                   </span>
                 </p>
                 <p>
-                  • <span style={{ color: "#008000" }}>classic</span> - クラシック（グレー系）
-                  <br />• <span style={{ color: "#008000" }}>modern</span> - モダン（白系）
-                  <br />• <span style={{ color: "#008000" }}>retro</span> - レトロ（黄系）
+                  • <span style={{ color: "#008000" }}>light</span> - ライト（白系モノクロ）
+                  <br />• <span style={{ color: "#008000" }}>dark</span> - ダーク（黒系モノクロ）
+                  <br />• <span style={{ color: "#008000" }}>kawaii</span> - かわいい（パステル系）
                 </p>
               </div>
 
@@ -749,6 +765,94 @@ declare module 'react' {
               )}
             </div>
 
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆いいね表示データを取得したいときは？◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/like?action=display&id=<span style={{ color: "#008000" }}>公開ID</span>
+                &format=<span style={{ color: "#008000" }}>形式</span>&theme=<span style={{ color: "#008000" }}>テーマ</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームでデータを取得できます。</p>
+              
+              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+                <p>
+                  <b>公開ID：</b>
+                  <span style={{ marginLeft: "10px", fontFamily: "monospace", fontSize: "16px", fontWeight: "bold", color: publicId ? "#008000" : "#999" }}>
+                    {publicId || "STEP 1で作成後に表示されます"}
+                  </span>
+                </p>
+
+                <p>
+                  <b>形式：</b>
+                  <select
+                    ref={valueRef}
+                    style={{
+                      marginLeft: "10px",
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  >
+                    <option value="json">JSON</option>
+                    <option value="text">テキスト</option>
+                    <option value="svg">SVG画像</option>
+                  </select>
+                  
+                  {publicId && (
+                    <button
+                      type="submit"
+                      style={{
+                        marginLeft: "10px",
+                        padding: "4px 12px",
+                        backgroundColor: "#2196F3",
+                        color: "white",
+                        border: "2px outset #2196F3",
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                        cursor: "pointer",
+                        fontFamily: "inherit"
+                      }}
+                      onClick={(e) => {
+                        setMode("display");
+                        handleSubmit(e);
+                      }}
+                    >
+                      表示データ取得
+                    </button>
+                  )}
+                </p>
+              </form>
+
+              {response && (
+                <div className="nostalgic-section">
+                  <p>
+                    <span className="nostalgic-section-title">
+                      <b>◆APIレスポンス◆</b>
+                    </span>
+                  </p>
+                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
+                    {response}
+                  </pre>
+                </div>
+              )}
+            </div>
+
             {publicId && (
               <div className="nostalgic-section">
                 <p>
@@ -763,6 +867,16 @@ declare module 'react' {
                 </p>
               </div>
             )}
+
+            <hr />
+
+            <p style={{ textAlign: "center" }}>
+              これ以上の詳しい説明は{" "}
+              <a href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md" className="nostalgic-old-link">
+                【GitHub】
+              </a>{" "}
+              へ
+            </p>
 
           </>
         );
@@ -836,115 +950,6 @@ declare module 'react' {
           </>
         );
 
-      case "api":
-        return (
-          <>
-            <div className="nostalgic-title-bar">
-              ★ Nostalgic Like ★
-              <br />
-              API仕様
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆いいねボタン作成◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/like?action=create&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
-                <span style={{ color: "#008000" }}>オーナートークン</span>
-              </p>
-              <p style={{ lineHeight: "1.2" }}>
-                新しいいいねボタンを作成し、公開IDを取得します。
-                <br />
-                レスポンス:{" "}
-                <span
-                  style={{ backgroundColor: "#000000", color: "#ffffff", padding: "2px 4px", fontFamily: "monospace" }}
-                >{`{ "id": "公開ID", "url": "サイトURL" }`}</span>
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆いいねトグル◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/like?action=toggle&id=<span style={{ color: "#008000" }}>公開ID</span>
-              </p>
-              <p style={{ lineHeight: "1.2" }}>
-                いいねの状態をトグル（オン/オフ切り替え）します。24時間ユーザー記憶機能付き。
-                <br />
-                <br />
-                ※Web Componentsを使用している場合は自動でトグルされるため、通常は直接呼ぶ必要はありません。
-                <br />
-                <br />
-                レスポンス:{" "}
-                <span
-                  style={{ backgroundColor: "#000000", color: "#ffffff", padding: "2px 4px", fontFamily: "monospace" }}
-                >{`{ "total": 数値, "userLiked": true/false }`}</span>
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆いいね数取得◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/like?action=get&id=<span style={{ color: "#008000" }}>公開ID</span>
-              </p>
-              <p style={{ lineHeight: "1.2" }}>
-                現在のいいね数とユーザーのいいね状態を取得します。
-                <br />
-                レスポンス:{" "}
-                <span
-                  style={{ backgroundColor: "#000000", color: "#ffffff", padding: "2px 4px", fontFamily: "monospace" }}
-                >{`{ "total": 数値, "userLiked": true/false }`}</span>
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆いいね数設定◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/like?action=set&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
-                <span style={{ color: "#008000" }}>オーナートークン</span>&total=
-                <span style={{ color: "#008000" }}>数値</span>
-              </p>
-              <p>いいね数を手動で設定します。オーナートークンが必要。</p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆いいね削除◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/like?action=delete&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
-                <span style={{ color: "#008000" }}>オーナートークン</span>
-              </p>
-              <p>いいねを完全に削除します。オーナートークンが必要。</p>
-            </div>
-
-            <hr />
-
-            <p style={{ textAlign: "center" }}>
-              これ以上の詳しい説明は{" "}
-              <a href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md" className="nostalgic-old-link">
-                【GitHub】
-              </a>{" "}
-              へ
-            </p>
-          </>
-        );
 
       default:
         return null;

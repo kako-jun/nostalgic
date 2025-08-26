@@ -74,18 +74,11 @@ export default function NostalgicSidebar({
             <a href="/counter#features" className="nostalgic-old-link" onClick={() => onClose?.()}>機能一覧</a>
           )}
           <br />
-          <span style={{ marginLeft: "1em" }}>├</span>
+          <span style={{ marginLeft: "1em" }}>└</span>
           {(currentService === 'counter' && currentPage === "usage") ? (
             <span className="nostalgic-nav-active">使い方</span>
           ) : (
             <a href="/counter#usage" className="nostalgic-old-link" onClick={() => onClose?.()}>使い方</a>
-          )}
-          <br />
-          <span style={{ marginLeft: "1em" }}>└</span>
-          {(currentService === 'counter' && currentPage === "api") ? (
-            <span className="nostalgic-nav-active">API仕様</span>
-          ) : (
-            <a href="/counter#api" className="nostalgic-old-link" onClick={() => onClose?.()}>API仕様</a>
           )}
           <br />
         </>
@@ -102,18 +95,11 @@ export default function NostalgicSidebar({
             <a href="/like#features" className="nostalgic-old-link" onClick={() => onClose?.()}>機能一覧</a>
           )}
           <br />
-          <span style={{ marginLeft: "1em" }}>├</span>
+          <span style={{ marginLeft: "1em" }}>└</span>
           {(currentService === 'like' && currentPage === "usage") ? (
             <span className="nostalgic-nav-active">使い方</span>
           ) : (
             <a href="/like#usage" className="nostalgic-old-link" onClick={() => onClose?.()}>使い方</a>
-          )}
-          <br />
-          <span style={{ marginLeft: "1em" }}>└</span>
-          {(currentService === 'like' && currentPage === "api") ? (
-            <span className="nostalgic-nav-active">API仕様</span>
-          ) : (
-            <a href="/like#api" className="nostalgic-old-link" onClick={() => onClose?.()}>API仕様</a>
           )}
           <br />
         </>
@@ -130,18 +116,11 @@ export default function NostalgicSidebar({
             <a href="/ranking#features" className="nostalgic-old-link" onClick={() => onClose?.()}>機能一覧</a>
           )}
           <br />
-          <span style={{ marginLeft: "1em" }}>├</span>
+          <span style={{ marginLeft: "1em" }}>└</span>
           {(currentService === 'ranking' && currentPage === "usage") ? (
             <span className="nostalgic-nav-active">使い方</span>
           ) : (
             <a href="/ranking#usage" className="nostalgic-old-link" onClick={() => onClose?.()}>使い方</a>
-          )}
-          <br />
-          <span style={{ marginLeft: "1em" }}>└</span>
-          {(currentService === 'ranking' && currentPage === "api") ? (
-            <span className="nostalgic-nav-active">API仕様</span>
-          ) : (
-            <a href="/ranking#api" className="nostalgic-old-link" onClick={() => onClose?.()}>API仕様</a>
           )}
           <br />
         </>
@@ -158,18 +137,11 @@ export default function NostalgicSidebar({
             <a href="/bbs#features" className="nostalgic-old-link" onClick={() => onClose?.()}>機能一覧</a>
           )}
           <br />
-          <span style={{ marginLeft: "1em" }}>├</span>
+          <span style={{ marginLeft: "1em" }}>└</span>
           {(currentService === 'bbs' && currentPage === "usage") ? (
             <span className="nostalgic-nav-active">使い方</span>
           ) : (
             <a href="/bbs#usage" className="nostalgic-old-link" onClick={() => onClose?.()}>使い方</a>
-          )}
-          <br />
-          <span style={{ marginLeft: "1em" }}>└</span>
-          {(currentService === 'bbs' && currentPage === "api") ? (
-            <span className="nostalgic-nav-active">API仕様</span>
-          ) : (
-            <a href="/bbs#api" className="nostalgic-old-link" onClick={() => onClose?.()}>API仕様</a>
           )}
           <br />
         </>
