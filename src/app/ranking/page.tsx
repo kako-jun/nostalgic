@@ -20,6 +20,7 @@ export default function RankingPage() {
   const scoreRef = useRef<HTMLInputElement>(null);
   const maxRef = useRef<HTMLInputElement>(null);
   const sortOrderRef = useRef<HTMLSelectElement>(null);
+  const webhookUrlRef = useRef<HTMLInputElement>(null);
   
   useEffect(() => {
     const hash = window.location.hash.slice(1);
@@ -51,6 +52,7 @@ export default function RankingPage() {
     const score = scoreRef.current?.value;
     const max = maxRef.current?.value;
     const sortOrder = sortOrderRef.current?.value;
+    const webhookUrl = webhookUrlRef.current?.value;
 
     let apiUrl = '';
 
@@ -78,6 +80,10 @@ export default function RankingPage() {
       }
       if (mode === "update" && name && score) {
         apiUrl += `&name=${encodeURIComponent(name)}&score=${score}`;
+      }
+      
+      if (webhookUrl && (mode === "create" || mode === "update")) {
+        apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
       }
       if (mode === "remove" && name) {
         apiUrl += `&name=${encodeURIComponent(name)}`;
@@ -281,6 +287,23 @@ export default function RankingPage() {
                     <option value="desc">高い順（スコア系ゲーム用）</option>
                     <option value="asc">低い順（タイム系ゲーム用）</option>
                   </select>
+                </p>
+
+                <p>
+                  <b>Webhook URL：</b>
+                  <input
+                    ref={webhookUrlRef}
+                    type="url"
+                    placeholder="https://hooks.slack.com/... (任意)"
+                    style={{
+                      marginLeft: "10px",
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
                 </p>
 
                 <p>
@@ -779,6 +802,26 @@ declare module 'react' {
                     }}
                     required
                   />
+                </p>
+
+                <p>
+                  <b>Webhook URL：</b>
+                  <input
+                    ref={webhookUrlRef}
+                    type="url"
+                    placeholder="https://hooks.slack.com/... (任意)"
+                    style={{
+                      marginLeft: "10px",
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
                   <button
                     type="button"
                     style={{

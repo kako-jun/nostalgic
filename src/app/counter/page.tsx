@@ -15,6 +15,7 @@ export default function CounterPage() {
   const urlRef = useRef<HTMLInputElement>(null);
   const tokenRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
+  const webhookUrlRef = useRef<HTMLInputElement>(null);
   const selectRef = useRef<HTMLSelectElement>(null);
   const formatRef = useRef<HTMLSelectElement>(null);
   
@@ -45,6 +46,7 @@ export default function CounterPage() {
     const url = urlRef.current?.value;
     const token = tokenRef.current?.value;
     const value = valueRef.current?.value;
+    const webhookUrl = webhookUrlRef.current?.value;
 
     let apiUrl = '';
 
@@ -68,6 +70,10 @@ export default function CounterPage() {
       
       if (mode === "set" && value) {
         apiUrl += `&total=${value}`;
+      }
+      
+      if (webhookUrl && (mode === "create" || mode === "set")) {
+        apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
       }
     }
 
@@ -173,6 +179,26 @@ export default function CounterPage() {
                     }}
                     required
                   />
+                </p>
+
+                <p>
+                  <b>Webhook URL：</b>
+                  <input
+                    ref={webhookUrlRef}
+                    type="url"
+                    placeholder="https://hooks.slack.com/... (任意)"
+                    style={{
+                      marginLeft: "10px",
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
                   <button
                     type="submit"
                     style={{
@@ -328,7 +354,7 @@ export default function CounterPage() {
                 {`" type="`}
                 <span style={{ color: "#008000" }}>total</span>
                 {`" theme="`}
-                <span style={{ color: "#008000" }}>classic</span>
+                <span style={{ color: "#008000" }}>dark</span>
                 {`"></nostalgic-counter>`}
               </pre>
               
@@ -354,9 +380,9 @@ export default function CounterPage() {
                   </span>
                 </p>
                 <p>
-                  • <span style={{ color: "#008000" }}>classic</span> - クラシック（緑のデジタル）
-                  <br />• <span style={{ color: "#008000" }}>modern</span> - モダン（青のデジタル）
-                  <br />• <span style={{ color: "#008000" }}>retro</span> - レトロ（赤のドット）
+                  • <span style={{ color: "#008000" }}>light</span> - ライトテーマ（明るい背景）
+                  <br />• <span style={{ color: "#008000" }}>dark</span> - ダークテーマ（暗い背景）
+                  <br />• <span style={{ color: "#008000" }}>kawaii</span> - かわいいテーマ（ピンク系）
                 </p>
               </div>
 
@@ -588,6 +614,26 @@ declare module 'react' {
                     }}
                     required
                   />
+                </p>
+
+                <p>
+                  <b>Webhook URL：</b>
+                  <input
+                    ref={webhookUrlRef}
+                    type="url"
+                    placeholder="https://hooks.slack.com/... (任意)"
+                    style={{
+                      marginLeft: "10px",
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
                   <button
                     type="submit"
                     style={{
