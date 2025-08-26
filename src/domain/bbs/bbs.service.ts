@@ -68,7 +68,8 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
       url,
       created: new Date(),
       totalMessages: 0,
-      settings
+      settings,
+      webhookUrl: params.webhookUrl
     }
 
     const validationResult = ValidationFramework.output(BBSEntitySchema, entity)
@@ -212,6 +213,32 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
         await this.removePostMark(entity.id, userHash)
       }
       return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
+    }
+
+    // Webhook 通知を送信（webhookUrlが設定されている場合のみ）
+    if (entity.webhookUrl) {
+      const webhookPayload = {
+        event: 'bbs.post',
+        timestamp: new Date().toISOString(),
+        serviceId: entity.id,
+        url: entity.url,
+        data: {
+          messageId,
+          author: message.author,
+          message: message.message,
+          icon: message.icon,
+          selects: message.selects
+        }
+      }
+
+      // シンプルなWebhook送信（失敗してもメイン処理は継続）
+      fetch(entity.webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(webhookPayload)
+      }).catch(error => {
+        console.warn('Webhook delivery failed for BBS post:', error)
+      })
     }
 
     return await this.transformEntityToData(entity)
@@ -482,6 +509,9 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     }
     if (params.selects !== undefined) {
       entity.settings.selects = params.selects
+    }
+    if (params.webhookUrl !== undefined) {
+      entity.webhookUrl = params.webhookUrl
     }
 
     // エンティティ保存
@@ -842,6 +872,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
 
     return await this.transformEntityToData(entity)
   }
+
 }
 
 // シングルトンインスタンス

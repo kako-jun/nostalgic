@@ -77,7 +77,7 @@ export const LikeEntitySchema = z.object({
   created: CommonSchemas.date,
   totalLikes: CommonSchemas.nonNegativeInt,
   lastLike: CommonSchemas.date.optional(),
-  webhookUrl: z.string().url().optional()
+  webhookUrl: CommonSchemas.url.optional()
 })
 
 export const LikeDataSchema = z.object({
@@ -89,7 +89,7 @@ export const LikeDataSchema = z.object({
 })
 
 export const LikeCreateParamsSchema = z.object({
-  webhookUrl: z.string().url().optional()
+  webhookUrl: CommonSchemas.url.optional()
 })
 
 export const LikeToggleParamsSchema = z.object({

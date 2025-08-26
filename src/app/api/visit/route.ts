@@ -77,8 +77,8 @@ const incrementHandler = ApiHandler.create({
 const setHandler = ApiHandler.create({
   paramsSchema: CounterSchemas.set,
   resultSchema: CounterSchemas.data,
-  handler: async ({ url, token, total }) => {
-    return await counterService.setCounterValue(url, token, total)
+  handler: async ({ url, token, total, webhookUrl }) => {
+    return await counterService.setCounterValue(url, token, total, webhookUrl)
   }
 })
 
@@ -178,34 +178,6 @@ const deleteHandler = ApiHandler.create({
   }
 })
 
-/**
- * SET WEBHOOK URL アクション
- */
-const setWebhookUrlHandler = ApiHandler.create({
-  paramsSchema: z.object({
-    url: CommonSchemas.url,
-    token: CommonSchemas.token,
-    webhookUrl: z.string().url().optional()
-  }),
-  resultSchema: z.object({
-    success: z.literal(true),
-    message: z.string(),
-    data: z.any()
-  }),
-  handler: async ({ url, token, webhookUrl }) => {
-    const result = await counterService.setWebhookUrl(url, token, webhookUrl)
-    
-    if (!result.success) {
-      return result
-    }
-
-    return map(result, data => ({
-      success: true as const,
-      message: webhookUrl ? 'Webhook URL set successfully' : 'Webhook URL removed successfully',
-      data
-    }))
-  }
-})
 
 /**
  * ルーティング関数
@@ -243,9 +215,6 @@ async function routeRequest(request: NextRequest) {
       
       case 'delete':
         return await deleteHandler(request)
-      
-      case 'setWebhookUrl':
-        return await setWebhookUrlHandler(request)
       
       default:
         return ApiHandler.create({

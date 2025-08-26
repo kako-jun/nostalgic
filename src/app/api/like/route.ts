@@ -26,8 +26,8 @@ import { CounterFieldSchemas } from '@/domain/counter/counter.entity'
 const createHandler = ApiHandler.create({
   paramsSchema: LikeSchemas.create,
   resultSchema: UnifiedAPISchemas.createSuccess,
-  handler: async ({ url, token }, request) => {
-    const createResult = await likeService.create(url, token, {})
+  handler: async ({ url, token, webhookUrl }, request) => {
+    const createResult = await likeService.create(url, token, { webhookUrl })
     
     if (!createResult.success) {
       return createResult
@@ -201,18 +201,12 @@ const svgHandler = ApiHandler.createSpecialResponse(
 const setHandler = ApiHandler.create({
   paramsSchema: LikeSchemas.set,
   resultSchema: LikeSchemas.data,
-  handler: async ({ url, token, value }, request) => {
+  handler: async ({ url, token, value, webhookUrl }, request) => {
     const ip = getClientIP(request)
     const userAgent = getUserAgent(request)
     const userHash = likeService.generateUserHash(ip, userAgent)
     
-    const setResult = await likeService.setLikeValue(url, token, value, userHash)
-    
-    if (!setResult.success) {
-      return setResult
-    }
-
-    return setResult
+    return await likeService.setLikeValue(url, token, value, userHash, webhookUrl)
   }
 })
 

@@ -255,7 +255,8 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
     url: string,
     token: string,
     value: number,
-    userHash: string
+    userHash: string,
+    webhookUrl?: string
   ): Promise<Result<LikeData, ValidationError | NotFoundError>> {
     // オーナーシップ検証
     const ownershipResult = await this.verifyOwnership(url, token)
@@ -288,6 +289,9 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
     // エンティティ更新
     entity.totalLikes = value
     entity.lastLike = new Date()
+    if (webhookUrl !== undefined) {
+      entity.webhookUrl = webhookUrl
+    }
     
     const saveResult = await this.entityRepository.save(entity.id, entity)
     if (!saveResult.success) {
@@ -428,6 +432,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
       .digest('hex')
       .substring(0, 16)
   }
+
 
   /**
    * IDでいいねデータを取得（パブリックメソッド）

@@ -22,7 +22,7 @@ import {
 const createHandler = ApiHandler.create({
   paramsSchema: BBSSchemas.create,
   resultSchema: UnifiedAPISchemas.createSuccess,
-  handler: async ({ url, token, title, messagesPerPage, max, enableIcons, enableSelects }, request) => {
+  handler: async ({ url, token, title, messagesPerPage, max, enableIcons, enableSelects, webhookUrl }, request) => {
     const icons = enableIcons ? ['😀', '😉', '😎', '😠', '😢', '😮'] : []
     const selects = enableSelects ? [
       { label: '地域', options: ['東京', '大阪', '名古屋', '福岡', 'その他'] },
@@ -35,7 +35,8 @@ const createHandler = ApiHandler.create({
       messagesPerPage,
       maxMessages: max,
       icons,
-      selects
+      selects,
+      webhookUrl
     })
     
     if (!createResult.success) {
