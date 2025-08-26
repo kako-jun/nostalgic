@@ -13,6 +13,8 @@ export default function CounterPage() {
   const urlRef = useRef<HTMLInputElement>(null);
   const tokenRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
+  const selectRef = useRef<HTMLSelectElement>(null);
+  const formatRef = useRef<HTMLSelectElement>(null);
   
   useEffect(() => {
     const hash = window.location.hash.slice(1);
@@ -51,8 +53,8 @@ export default function CounterPage() {
     } else if (mode === "display") {
       // displayモードでは公開IDを使用
       if (!publicId) return;
-      const type = valueRef.current?.value || "total";
-      const format = tokenRef.current?.value || "svg";
+      const type = selectRef.current?.value || "total";
+      const format = formatRef.current?.value || "svg";
       apiUrl = `/api/visit?action=display&id=${encodeURIComponent(publicId)}&type=${type}&format=${format}`;
     } else {
       // その他のモードでは従来通りurl+tokenを使用
@@ -67,7 +69,7 @@ export default function CounterPage() {
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
       
-      if (mode === "display" && tokenRef.current?.value === "svg") {
+      if (mode === "display" && formatRef.current?.value === "svg") {
         // SVGの場合はテキストとして取得
         const svgText = await res.text();
         setResponse(svgText);
@@ -331,6 +333,115 @@ declare module 'react' {
                       </div>
                     </div>
                   </div>
+                </div>
+              )}
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆STEP 2: カウンター表示データ取得◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/visit?action=display&id=<span style={{ color: "#008000" }}>公開ID</span>
+                &type=<span style={{ color: "#008000" }}>期間タイプ</span>&theme=<span style={{ color: "#008000" }}>テーマ</span>&format=<span style={{ color: "#008000" }}>形式</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームでデータを取得できます。</p>
+              
+              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+                <p>
+                  <b>公開ID：</b>
+                  <span style={{ marginLeft: "10px", fontFamily: "monospace", fontSize: "16px", fontWeight: "bold", color: publicId ? "#008000" : "#999" }}>
+                    {publicId || "STEP 1で作成後に表示されます"}
+                  </span>
+                </p>
+
+                <p>
+                  <b>期間タイプ：</b>
+                  <select
+                    ref={selectRef}
+                    style={{
+                      marginLeft: "10px",
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  >
+                    <option value="total">累計</option>
+                    <option value="today">今日</option>
+                    <option value="yesterday">昨日</option>
+                    <option value="week">今週</option>
+                    <option value="month">今月</option>
+                  </select>
+                </p>
+
+                <p>
+                  <b>形式：</b>
+                  <select
+                    ref={formatRef}
+                    style={{
+                      marginLeft: "10px",
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  >
+                    <option value="svg">SVG画像</option>
+                    <option value="text">テキスト</option>
+                    <option value="json">JSON</option>
+                  </select>
+                  
+                  {publicId && (
+                    <button
+                      type="submit"
+                      style={{
+                        marginLeft: "10px",
+                        padding: "4px 12px",
+                        backgroundColor: "#2196F3",
+                        color: "white",
+                        border: "2px outset #2196F3",
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                        cursor: "pointer",
+                        fontFamily: "inherit"
+                      }}
+                      onClick={(e) => {
+                        setMode("display");
+                        handleSubmit(e);
+                      }}
+                    >
+                      表示データ取得
+                    </button>
+                  )}
+                </p>
+              </form>
+
+              {response && (
+                <div className="nostalgic-section">
+                  <p>
+                    <span className="nostalgic-section-title">
+                      <b>◆APIレスポンス◆</b>
+                    </span>
+                  </p>
+                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
+                    {response}
+                  </pre>
                 </div>
               )}
             </div>
@@ -682,115 +793,6 @@ declare module 'react' {
                   >
                     削除
                   </button>
-                </p>
-              </form>
-
-              {response && (
-                <div className="nostalgic-section">
-                  <p>
-                    <span className="nostalgic-section-title">
-                      <b>◆APIレスポンス◆</b>
-                    </span>
-                  </p>
-                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
-                    {response}
-                  </pre>
-                </div>
-              )}
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆カウンター表示データを取得したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/visit?action=display&id=<span style={{ color: "#008000" }}>公開ID</span>
-                &type=<span style={{ color: "#008000" }}>期間タイプ</span>&theme=<span style={{ color: "#008000" }}>テーマ</span>&format=<span style={{ color: "#008000" }}>形式</span>
-              </p>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
-              <p>または、以下のフォームでデータを取得できます。</p>
-              
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-                <p>
-                  <b>公開ID：</b>
-                  <span style={{ marginLeft: "10px", fontFamily: "monospace", fontSize: "16px", fontWeight: "bold", color: publicId ? "#008000" : "#999" }}>
-                    {publicId || "STEP 1で作成後に表示されます"}
-                  </span>
-                </p>
-
-                <p>
-                  <b>期間タイプ：</b>
-                  <select
-                    ref={valueRef}
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                  >
-                    <option value="total">累計</option>
-                    <option value="today">今日</option>
-                    <option value="yesterday">昨日</option>
-                    <option value="week">今週</option>
-                    <option value="month">今月</option>
-                  </select>
-                </p>
-
-                <p>
-                  <b>形式：</b>
-                  <select
-                    ref={tokenRef}
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                  >
-                    <option value="svg">SVG画像</option>
-                    <option value="text">テキスト</option>
-                    <option value="json">JSON</option>
-                  </select>
-                  
-                  {publicId && (
-                    <button
-                      type="submit"
-                      style={{
-                        marginLeft: "10px",
-                        padding: "4px 12px",
-                        backgroundColor: "#2196F3",
-                        color: "white",
-                        border: "2px outset #2196F3",
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        fontFamily: "inherit"
-                      }}
-                      onClick={(e) => {
-                        setMode("display");
-                        handleSubmit(e);
-                      }}
-                    >
-                      表示データ取得
-                    </button>
-                  )}
                 </p>
               </form>
 

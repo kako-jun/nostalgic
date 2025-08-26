@@ -259,6 +259,73 @@ export default function BBSPage() {
                   <b>◆STEP 2: BBS表示◆</b>
                 </span>
               </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=get&id=<span style={{ color: "#008000" }}>公開ID</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで取得できます。</p>
+              
+              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+                <p>
+                  <b>公開ID：</b>
+                  <span style={{ marginLeft: "10px", fontFamily: "monospace", fontSize: "16px", fontWeight: "bold", color: publicId ? "#008000" : "#999" }}>
+                    {publicId || "STEP 1で作成後に表示されます"}
+                  </span>
+                  {publicId && (
+                    <button
+                      type="submit"
+                      style={{
+                        marginLeft: "10px",
+                        padding: "4px 12px",
+                        backgroundColor: "#2196F3",
+                        color: "white",
+                        border: "2px outset #2196F3",
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                        cursor: "pointer",
+                        fontFamily: "inherit"
+                      }}
+                      onClick={(e) => {
+                        setMode("get");
+                        handleSubmit(e);
+                      }}
+                    >
+                      メッセージ取得
+                    </button>
+                  )}
+                </p>
+              </form>
+
+              {response && (
+                <div className="nostalgic-section">
+                  <p>
+                    <span className="nostalgic-section-title">
+                      <b>◆APIレスポンス◆</b>
+                    </span>
+                  </p>
+                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
+                    {response}
+                  </pre>
+                </div>
+              )}
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆STEP 3: BBS埋め込み◆</b>
+                </span>
+              </p>
               <p>あなたのサイトのHTMLに以下のコードを追加してください。</p>
               <pre style={{ backgroundColor: "#f0f0f0", padding: "10px", overflow: "auto", fontSize: "14px", margin: "10px 0" }}>
                 {`<script src="https://nostalgic.llll-ll.com/components/bbs.js"></script>
@@ -639,74 +706,7 @@ declare module 'react' {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆BBSメッセージを取得したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=get&id=<span style={{ color: "#008000" }}>公開ID</span>
-              </p>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
-              <p>または、以下のフォームで取得できます。</p>
-              
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-                <p>
-                  <b>公開ID：</b>
-                  <span style={{ marginLeft: "10px", fontFamily: "monospace", fontSize: "16px", fontWeight: "bold", color: publicId ? "#008000" : "#999" }}>
-                    {publicId || "STEP 1で作成後に表示されます"}
-                  </span>
-                  {publicId && (
-                    <button
-                      type="submit"
-                      style={{
-                        marginLeft: "10px",
-                        padding: "4px 12px",
-                        backgroundColor: "#2196F3",
-                        color: "white",
-                        border: "2px outset #2196F3",
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        fontFamily: "inherit"
-                      }}
-                      onClick={(e) => {
-                        setMode("get");
-                        handleSubmit(e);
-                      }}
-                    >
-                      メッセージ取得
-                    </button>
-                  )}
-                </p>
-              </form>
-
-              {response && (
-                <div className="nostalgic-section">
-                  <p>
-                    <span className="nostalgic-section-title">
-                      <b>◆APIレスポンス◆</b>
-                    </span>
-                  </p>
-                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
-                    {response}
-                  </pre>
-                </div>
-              )}
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆メッセージを編集したいときは？◆</b>
+                  <b>◆オーナーがメッセージを編集したいときは？◆</b>
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
@@ -857,7 +857,7 @@ declare module 'react' {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆メッセージを削除したいときは？◆</b>
+                  <b>◆オーナーがメッセージを削除したいときは？◆</b>
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
@@ -1086,7 +1086,7 @@ declare module 'react' {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆BBSを完全削除したいときは？◆</b>
+                  <b>◆BBSを削除したいときは？◆</b>
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
