@@ -22,8 +22,8 @@ export const URL = {
 } as const;
 
 // === テーマ関連 ===
-export const THEMES = ['classic', 'modern', 'retro'] as const;
-export const DEFAULT_THEME = 'classic' as const;
+export const THEMES = ['light', 'dark', 'kawaii'] as const;
+export const DEFAULT_THEME = 'dark' as const;
 
 // === Counter サービス ===
 export const COUNTER = {

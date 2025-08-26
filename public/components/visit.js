@@ -3,7 +3,7 @@
  * 
  * 使用方法:
  * <script src="/components/visit.js"></script>
- * <nostalgic-counter id="your-counter-id" type="total" theme="classic"></nostalgic-counter>
+ * <nostalgic-counter id="your-counter-id" type="total" theme="dark"></nostalgic-counter>
  */
 
 // バリデーション定数は不要になりました（API側でデフォルト値処理）

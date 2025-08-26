@@ -204,21 +204,22 @@ class NostalgicLike extends HTMLElement {
       
       // テーマ別デフォルト色（CSS変数のフォールバック）
       const textThemes = {
-        classic: {
-          color: userLiked ? '#0000ff' : '#0066cc',
-          hoverColor: userLiked ? '#000080' : '#004499'
+        light: {
+          color: userLiked ? '#000000' : '#666666',
+          hoverColor: userLiked ? '#333333' : '#000000'
         },
-        modern: {
-          color: userLiked ? '#3742fa' : '#2f3542',
-          hoverColor: userLiked ? '#2f32e2' : '#1e2328'
+        dark: {
+          color: userLiked ? '#ffffff' : '#999999',
+          hoverColor: userLiked ? '#cccccc' : '#ffffff'
         },
-        retro: {
-          color: userLiked ? '#8b0000' : '#b22222',
-          hoverColor: userLiked ? '#660000' : '#8b1a1a'
+        kawaii: {
+          color: userLiked ? '#ff69b4' : '#ff1493',
+          hoverColor: userLiked ? '#ff1493' : '#c71585'
         }
       };
       
-      const textStyle = textThemes[theme] || textThemes.classic;
+      // デフォルトテーマはdark
+      const textStyle = textThemes[theme] || textThemes.dark;
       const likedClass = userLiked ? 'liked' : 'unliked';
       
       this.shadowRoot.innerHTML = `
@@ -270,41 +271,50 @@ class NostalgicLike extends HTMLElement {
     
     const displayIcon = iconMapping[icon] || iconMapping.heart;
     
-    // アイコンの色設定
-    const iconColor = {
-      heart: userLiked ? '#ff0000' : '#999999',  // 赤いハート / グレー
-      star: userLiked ? '#ffd700' : '#999999',   // 黄色い星 / グレー  
-      thumb: userLiked ? '#3742fa' : '#999999'   // 青い親指 / グレー
+    // アイコンの色設定（テーマ別）
+    const getIconColor = () => {
+      if (theme === 'light') {
+        return userLiked ? '#000000' : '#999999';
+      } else if (theme === 'dark') {
+        return userLiked ? '#ffffff' : '#666666';
+      } else if (theme === 'kawaii') {
+        if (icon === 'heart') return userLiked ? '#ff69b4' : '#ffb6c1';
+        if (icon === 'star') return userLiked ? '#ff1493' : '#ffb6c1';
+        if (icon === 'thumb') return userLiked ? '#ff69b4' : '#ffb6c1';
+      }
+      // デフォルト（dark）
+      return userLiked ? '#ffffff' : '#666666';
     };
     
-    const currentIconColor = iconColor[icon] || iconColor.heart;
+    const currentIconColor = getIconColor();
     
     // テーマ別のスタイル
     const themeStyles = {
-      classic: {
-        bgColor: '#f0f0f0',
-        hoverBgColor: '#e8e8e8',
-        textColor: '#333',
-        borderColor: '#333',
-        shadowColor: '#333'
+      light: {
+        bgColor: '#ffffff',
+        hoverBgColor: '#f5f5f5',
+        textColor: '#000000',
+        borderColor: '#cccccc',
+        shadowColor: 'rgba(0, 0, 0, 0.1)'
       },
-      modern: {
-        bgColor: '#fff',
-        hoverBgColor: '#f8f9fa',
-        textColor: '#2f3542',
-        borderColor: '#ddd',
-        shadowColor: '#ddd'
+      dark: {
+        bgColor: '#2a2a2a',
+        hoverBgColor: '#333333',
+        textColor: '#ffffff',
+        borderColor: '#444444',
+        shadowColor: 'rgba(0, 0, 0, 0.4)'
       },
-      retro: {
-        bgColor: '#ffe066',
-        hoverBgColor: '#ffdd44',
-        textColor: '#2d3436',
-        borderColor: '#2d3436',
-        shadowColor: '#2d3436'
+      kawaii: {
+        bgColor: '#ffe4e1',
+        hoverBgColor: '#ffc0cb',
+        textColor: '#ff69b4',
+        borderColor: '#ffb6c1',
+        shadowColor: 'rgba(255, 182, 193, 0.3)'
       }
     };
     
-    const style = themeStyles[theme] || themeStyles.classic;
+    // デフォルトテーマはdark
+    const style = themeStyles[theme] || themeStyles.dark;
     
     this.shadowRoot.innerHTML = `
       <style>
@@ -317,14 +327,14 @@ class NostalgicLike extends HTMLElement {
           align-items: center;
           gap: 6px;
           padding: 8px 12px;
-          background: ${style.bgColor};
-          color: ${style.textColor};
-          border: 2px solid ${style.borderColor};
-          border-radius: 4px;
-          box-shadow: 3px 3px 0px ${style.shadowColor};
+          background: var(--like-bg, ${style.bgColor});
+          color: var(--like-text, ${style.textColor});
+          border: 2px solid var(--like-border, ${style.borderColor});
+          border-radius: var(--like-radius, 4px);
+          box-shadow: 3px 3px 0px var(--like-shadow, ${style.shadowColor});
           cursor: pointer;
-          font-family: 'Courier New', monospace;
-          font-size: 14px;
+          font-family: var(--like-font, 'Courier New', monospace);
+          font-size: var(--like-font-size, 14px);
           font-weight: bold;
           user-select: none;
           transition: all 0.2s ease;
@@ -332,15 +342,15 @@ class NostalgicLike extends HTMLElement {
         }
         
         .like-button:hover:not(.loading) {
-          background: ${style.hoverBgColor};
+          background: var(--like-hover-bg, ${style.hoverBgColor});
           transform: translate(-1px, -1px);
-          box-shadow: 4px 4px 0px ${style.shadowColor};
+          box-shadow: 4px 4px 0px var(--like-shadow, ${style.shadowColor});
         }
         
         .heart-icon {
-          font-size: 16px;
+          font-size: var(--like-icon-size, 16px);
           line-height: 1;
-          color: ${currentIconColor};
+          color: var(--like-icon-color, ${currentIconColor});
           width: 16px;
           text-align: center;
           display: inline-block;
