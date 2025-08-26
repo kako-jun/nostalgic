@@ -374,7 +374,7 @@ declare module 'react' {
       'nostalgic-ranking': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         max?: string;
-        theme?: 'classic' | 'modern' | 'retro';
+        theme?: 'light' | 'dark' | 'kawaii';
         limit?: string;
       };
     }
@@ -448,17 +448,17 @@ declare module 'react' {
                       <div style={{ display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap" }}>
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Classic</p>
-                          <nostalgic-ranking id={publicId} theme="classic" limit="5" />
+                          <nostalgic-ranking id={publicId} theme="light" limit="5" />
                         </div>
                         
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Modern</p>
-                          <nostalgic-ranking id={publicId} theme="modern" limit="5" />
+                          <nostalgic-ranking id={publicId} theme="dark" limit="5" />
                         </div>
                         
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Retro</p>
-                          <nostalgic-ranking id={publicId} theme="retro" limit="5" />
+                          <nostalgic-ranking id={publicId} theme="kawaii" limit="5" />
                         </div>
                       </div>
                       

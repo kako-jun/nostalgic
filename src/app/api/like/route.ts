@@ -150,23 +150,23 @@ const svgHandler = ApiHandler.createSpecialResponse(
       
       // テーマ別の色設定
       const themes = {
-        classic: {
+        light: {
           bg: '#ffffff',
-          text: '#333333',
+          text: '#000000',
           border: '#cccccc',
           icon: '#ff6b6b'
         },
-        modern: {
-          bg: '#f8f9fa',
-          text: '#495057',
-          border: '#dee2e6',
-          icon: '#e91e63'
+        dark: {
+          bg: '#2a2a2a',
+          text: '#ffffff',
+          border: '#444444',
+          icon: '#ff6b6b'
         },
-        retro: {
-          bg: '#fdf6e3',
-          text: '#586e75',
-          border: '#93a1a1',
-          icon: '#dc322f'
+        kawaii: {
+          bg: '#ffe4e1',
+          text: '#ff69b4',
+          border: '#ffb6c1',
+          icon: '#ff1493'
         }
       }
       

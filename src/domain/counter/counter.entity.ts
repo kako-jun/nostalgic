@@ -56,7 +56,7 @@ export const CounterSetParamsSchema = z.object({
 export const CounterDisplayParamsSchema = z.object({
   id: CommonSchemas.publicId,
   type: CounterFieldSchemas.counterType.default('total'),
-  theme: CommonSchemas.theme.default('classic'),
+  theme: CommonSchemas.theme.default('dark'),
   digits: CounterFieldSchemas.counterDigits,
   format: CounterFieldSchemas.counterFormat.default('image')
 })

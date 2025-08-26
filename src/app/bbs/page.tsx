@@ -291,7 +291,7 @@ declare module 'react' {
       'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         max?: string;
-        theme?: 'classic' | 'modern' | 'retro';
+        theme?: 'light' | 'dark' | 'kawaii';
         perPage?: string;
       };
     }
@@ -392,17 +392,17 @@ declare module 'react' {
                       <div style={{ display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap" }}>
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Classic</p>
-                          <nostalgic-bbs id={publicId} theme="classic" />
+                          <nostalgic-bbs id={publicId} theme="light" />
                         </div>
                         
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Modern</p>
-                          <nostalgic-bbs id={publicId} theme="modern" />
+                          <nostalgic-bbs id={publicId} theme="dark" />
                         </div>
                         
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Retro</p>
-                          <nostalgic-bbs id={publicId} theme="retro" />
+                          <nostalgic-bbs id={publicId} theme="kawaii" />
                         </div>
                       </div>
                       
