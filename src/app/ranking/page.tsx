@@ -3,10 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import NostalgicLayout from "@/components/NostalgicLayout";
 import { ServiceStructuredData, BreadcrumbStructuredData } from "@/components/StructuredData";
+import ResponseDisplay from "@/components/ResponseDisplay";
 
 export default function RankingPage() {
   const [currentPage, setCurrentPage] = useState("features");
   const [response, setResponse] = useState("");
+  const [responseType, setResponseType] = useState<'json' | 'text' | 'svg'>('json');
   const [publicId, setPublicId] = useState("");
   const [mode, setMode] = useState("create");
   const [votingResults, setVotingResults] = useState<any[]>([]);
@@ -86,12 +88,14 @@ export default function RankingPage() {
       const res = await fetch(apiUrl, { method: 'GET' });
       const data = await res.json();
       setResponse(JSON.stringify(data, null, 2));
+      setResponseType('json'); // Always JSON for ranking
 
       if (data.id) {
         setPublicId(data.id);
       }
     } catch (error) {
       setResponse(`エラー: ${error}`);
+      setResponseType('json');
     }
   };
 
@@ -302,18 +306,7 @@ export default function RankingPage() {
                 </p>
               </form>
 
-              {response && (
-                <div className="nostalgic-section">
-                  <p>
-                    <span className="nostalgic-section-title">
-                      <b>◆APIレスポンス◆</b>
-                    </span>
-                  </p>
-                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
-                    {response}
-                  </pre>
-                </div>
-              )}
+              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
               {publicId && (
                 <div
                   style={{
@@ -384,18 +377,7 @@ export default function RankingPage() {
                 </p>
               </form>
 
-              {response && (
-                <div className="nostalgic-section">
-                  <p>
-                    <span className="nostalgic-section-title">
-                      <b>◆APIレスポンス◆</b>
-                    </span>
-                  </p>
-                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
-                    {response}
-                  </pre>
-                </div>
-              )}
+              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
             </div>
 
             <div className="nostalgic-section">
@@ -622,18 +604,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              {response && (
-                <div className="nostalgic-section">
-                  <p>
-                    <span className="nostalgic-section-title">
-                      <b>◆APIレスポンス◆</b>
-                    </span>
-                  </p>
-                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
-                    {response}
-                  </pre>
-                </div>
-              )}
+              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
             </div>
 
             <div className="nostalgic-section">
@@ -710,18 +681,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              {response && (
-                <div className="nostalgic-section">
-                  <p>
-                    <span className="nostalgic-section-title">
-                      <b>◆APIレスポンス◆</b>
-                    </span>
-                  </p>
-                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
-                    {response}
-                  </pre>
-                </div>
-              )}
+              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
             </div>
 
             <div className="nostalgic-section">
@@ -842,18 +802,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              {response && (
-                <div className="nostalgic-section">
-                  <p>
-                    <span className="nostalgic-section-title">
-                      <b>◆APIレスポンス◆</b>
-                    </span>
-                  </p>
-                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
-                    {response}
-                  </pre>
-                </div>
-              )}
+              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
             </div>
 
             <div className="nostalgic-section">
@@ -955,18 +904,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              {response && (
-                <div className="nostalgic-section">
-                  <p>
-                    <span className="nostalgic-section-title">
-                      <b>◆APIレスポンス◆</b>
-                    </span>
-                  </p>
-                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
-                    {response}
-                  </pre>
-                </div>
-              )}
+              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
             </div>
 
             <div className="nostalgic-section">
@@ -1053,18 +991,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              {response && (
-                <div className="nostalgic-section">
-                  <p>
-                    <span className="nostalgic-section-title">
-                      <b>◆APIレスポンス◆</b>
-                    </span>
-                  </p>
-                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
-                    {response}
-                  </pre>
-                </div>
-              )}
+              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
             </div>
 
             <div className="nostalgic-section">
@@ -1151,18 +1078,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              {response && (
-                <div className="nostalgic-section">
-                  <p>
-                    <span className="nostalgic-section-title">
-                      <b>◆APIレスポンス◆</b>
-                    </span>
-                  </p>
-                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
-                    {response}
-                  </pre>
-                </div>
-              )}
+              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
             </div>
 
             <hr />

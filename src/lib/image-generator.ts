@@ -20,21 +20,21 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       textColor: '#000000',
       fontFamily: 'Courier New, Consolas, Monaco, Liberation Mono, DejaVu Sans Mono, monospace',
       fontSize: '16',
-      border: '#cccccc'
+      border: '#000000'
     },
     dark: {
       backgroundColor: '#1a1a1a',
       textColor: '#ffffff',
       fontFamily: 'Courier New, Consolas, Monaco, Liberation Mono, DejaVu Sans Mono, monospace',
       fontSize: '16',
-      border: '#444444'
+      border: '#ffffff'
     },
     kawaii: {
-      backgroundColor: '#ffe4e1',
+      backgroundColor: '#e0f7fa',
       textColor: '#ff69b4',
       fontFamily: 'Comic Sans MS, Chalkboard SE, Comic Neue, cursive',
       fontSize: '18',
-      border: '#ffb6c1'
+      border: '#9c27b0'
     }
   }
   

@@ -23,11 +23,11 @@ const generateCounterSVG = (options) => {
       border: '#666666'
     },
     kawaii: {
-      backgroundColor: '#800080',
-      textColor: '#ffff00',
+      backgroundColor: '#e0f7fa',
+      textColor: '#ff69b4',
       fontFamily: 'Courier New, Liberation Mono, DejaVu Sans Mono, monospace',
       fontSize: '18',
-      border: '#ff00ff'
+      border: '#9c27b0'
     }
   };
   

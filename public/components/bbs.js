@@ -161,7 +161,7 @@ class NostalgicBBS extends HTMLElement {
     const themeStyles = {
       light: {
         bgColor: '#ffffff',
-        borderColor: '#cccccc',
+        borderColor: '#000000',
         headerBg: '#f5f5f5',
         headerColor: '#000000',
         messageBg: '#ffffff',
@@ -169,19 +169,19 @@ class NostalgicBBS extends HTMLElement {
       },
       dark: {
         bgColor: '#2a2a2a',
-        borderColor: '#444444',
+        borderColor: '#ffffff',
         headerBg: '#333333',
         headerColor: '#ffffff',
         messageBg: '#1a1a1a',
         textColor: '#ffffff'
       },
       kawaii: {
-        bgColor: '#ffe4e1',
-        borderColor: '#ffb6c1',
-        headerBg: '#ffc0cb',
+        bgColor: '#e0f7fa',
+        borderColor: '#9c27b0',
+        headerBg: '#b2ebf2',
         headerColor: '#ff69b4',
-        messageBg: '#fff0f5',
-        textColor: '#ff69b4'
+        messageBg: '#e0f7fa',
+        textColor: '#f06292'
       }
     };
 
@@ -309,16 +309,16 @@ class NostalgicBBS extends HTMLElement {
         .pagination {
           padding: 10px;
           text-align: center;
-          border-top: 1px solid ${style.borderColor};
+          border-top: 1px solid var(--bbs-border-color);
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 4px;
         }
         .pagination button {
-          background: ${style.headerBg};
-          color: ${style.headerColor};
-          border: 1px solid ${style.borderColor};
+          background: var(--bbs-header-bg);
+          color: var(--bbs-header-color);
+          border: 1px solid var(--bbs-border-color);
           padding: 4px 8px;
           cursor: pointer;
           font-family: inherit;
@@ -334,7 +334,7 @@ class NostalgicBBS extends HTMLElement {
         .pagination .current-page {
           font-size: 12px;
           font-family: inherit;
-          color: ${style.textColor};
+          color: var(--bbs-text-color);
           padding: 4px 8px;
         }
         .empty-message {

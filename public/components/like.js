@@ -213,8 +213,8 @@ class NostalgicLike extends HTMLElement {
           hoverColor: userLiked ? '#cccccc' : '#ffffff'
         },
         kawaii: {
-          color: userLiked ? '#ff69b4' : '#ff1493',
-          hoverColor: userLiked ? '#ff1493' : '#c71585'
+          color: userLiked ? '#ff69b4' : '#f06292',
+          hoverColor: userLiked ? '#f06292' : '#ff4081'
         }
       };
       
@@ -278,9 +278,9 @@ class NostalgicLike extends HTMLElement {
       } else if (theme === 'dark') {
         return userLiked ? '#ffffff' : '#666666';
       } else if (theme === 'kawaii') {
-        if (icon === 'heart') return userLiked ? '#ff69b4' : '#ffb6c1';
-        if (icon === 'star') return userLiked ? '#ff1493' : '#ffb6c1';
-        if (icon === 'thumb') return userLiked ? '#ff69b4' : '#ffb6c1';
+        if (icon === 'heart') return userLiked ? '#ff69b4' : '#f06292';
+        if (icon === 'star') return userLiked ? '#ff69b4' : '#f06292';
+        if (icon === 'thumb') return userLiked ? '#ff69b4' : '#f06292';
       }
       // デフォルト（dark）
       return userLiked ? '#ffffff' : '#666666';
@@ -295,21 +295,21 @@ class NostalgicLike extends HTMLElement {
         hoverBgColor: '#f5f5f5',
         textColor: '#000000',
         borderColor: '#cccccc',
-        shadowColor: 'rgba(0, 0, 0, 0.1)'
+        shadowColor: '#000000'
       },
       dark: {
         bgColor: '#2a2a2a',
         hoverBgColor: '#333333',
         textColor: '#ffffff',
         borderColor: '#444444',
-        shadowColor: 'rgba(0, 0, 0, 0.4)'
+        shadowColor: '#ffffff'
       },
       kawaii: {
-        bgColor: '#ffe4e1',
-        hoverBgColor: '#ffc0cb',
+        bgColor: '#e0f7fa',
+        hoverBgColor: '#b2ebf2',
         textColor: '#ff69b4',
-        borderColor: '#ffb6c1',
-        shadowColor: 'rgba(255, 182, 193, 0.3)'
+        borderColor: '#9c27b0',
+        shadowColor: '#9c27b0'
       }
     };
     
