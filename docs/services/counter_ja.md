@@ -57,9 +57,9 @@ GET /api/visit?action=display&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
   - `week`: 直近7日間
   - `month`: 直近30日間
 - `theme` (オプション): 表示スタイル
-  - `classic` (デフォルト): 黒背景に緑文字（90年代端末スタイル）
-  - `modern`: グレー背景に白文字（2000年代クリーンスタイル）
-  - `retro`: 紫背景に黄文字（80年代ネオンスタイル）
+  - `light`: 黒背景に緑文字（90年代端末スタイル）
+  - `dark` (デフォルト): グレー背景に白文字（2000年代クリーンスタイル）
+  - `kawaii`: 紫背景に黄文字（80年代ネオンスタイル）
 - `format` (オプション): レスポンス形式
   - `image` (デフォルト): SVG画像
   - `text`: プレーンテキスト数値（スタイルなし）
@@ -86,7 +86,7 @@ declare module 'react' {
       'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         type?: 'total' | 'today' | 'yesterday' | 'week' | 'month';
-        theme?: 'classic' | 'modern' | 'retro';
+        theme?: 'light' | 'dark' | 'kawaii';
         digits?: string;
         scale?: string;
       };
@@ -106,7 +106,7 @@ declare module 'react' {
 <nostalgic-counter 
   id="yoursite-a7b9c3d4" 
   type="total" 
-  theme="classic"
+  theme="light"
   digits="6">
 </nostalgic-counter>
 
@@ -129,7 +129,7 @@ declare module 'react' {
 **属性:**
 - `id`: 公開カウンターID
 - `type`: 表示タイプ（total, today, yesterday, week, month）
-- `theme`: 表示スタイル（classic, modern, retro）- 画像形式のみ
+- `theme`: 表示スタイル（light, dark, kawaii）- 画像形式のみ
 - `format`: 出力形式（image, text）- デフォルト: image
 - `digits`: ゼロ埋め桁数（指定時のみ）
 - `api-base`: カスタムAPI ベースURL（オプション）
@@ -146,16 +146,16 @@ console.log('カウンターID:', data.id)
 // 2. HTMLに埋め込み
 document.body.innerHTML += `
   <script src="/components/display.js"></script>
-  <nostalgic-counter id="${data.id}" type="total" theme="classic"></nostalgic-counter>
+  <nostalgic-counter id="${data.id}" type="total" theme="light"></nostalgic-counter>
 `
 ```
 
 ### 複数期間表示
 ```html
 <!-- 異なる期間、同じカウンター -->
-<nostalgic-counter id="blog-a7b9c3d4" type="total" theme="classic"></nostalgic-counter>
-<nostalgic-counter id="blog-a7b9c3d4" type="today" theme="modern"></nostalgic-counter>
-<nostalgic-counter id="blog-a7b9c3d4" type="week" theme="retro"></nostalgic-counter>
+<nostalgic-counter id="blog-a7b9c3d4" type="total" theme="light"></nostalgic-counter>
+<nostalgic-counter id="blog-a7b9c3d4" type="today" theme="dark"></nostalgic-counter>
+<nostalgic-counter id="blog-a7b9c3d4" type="week" theme="kawaii"></nostalgic-counter>
 ```
 
 ### テキスト形式の活用
@@ -176,6 +176,6 @@ document.body.innerHTML += `
 
 - **複数期間統計**: 累計・今日・昨日・週間・月間
 - **重複防止**: IP+UserAgentによる1日1回重複防止（0時リセット）
-- **3つのスタイル**: クラシック・モダン・レトロ
+- **3つのスタイル**: ライト・ダーク・カワイイ
 - **SVG画像生成**: 美しいベクター画像
 - **Web Components**: 簡単埋め込み

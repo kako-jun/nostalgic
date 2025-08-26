@@ -65,9 +65,9 @@ GET /api/visit?action=display&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
   - `week`: Last 7 days
   - `month`: Last 30 days
 - `theme` (optional): Visual style (for image format)
-  - `classic` (default): Green on black (90s terminal style)
-  - `modern`: White on gray (2000s clean style)
-  - `retro`: Yellow on purple (80s neon style)
+  - `light`: Green on black (90s terminal style)
+  - `dark` (default): White on gray (2000s clean style)
+  - `kawaii`: Yellow on purple (80s neon style)
 - `format` (optional): Response format
   - `image` (default): SVG image
   - `text`: Plain text number (no styling)
@@ -111,7 +111,7 @@ GET /api/visit?action=set&url={URL}&token={TOKEN}&total={VALUE}
 <nostalgic-counter 
   id="yoursite-a7b9c3d4" 
   type="total" 
-  theme="classic"
+  theme="light"
   digits="6">
 </nostalgic-counter>
 
@@ -134,7 +134,7 @@ GET /api/visit?action=set&url={URL}&token={TOKEN}&total={VALUE}
 **Attributes:**
 - `id`: Counter public ID
 - `type`: Display type (total, today, yesterday, week, month)
-- `theme`: Visual style (classic, modern, retro) - only for image format
+- `theme`: Visual style (light, dark, kawaii) - only for image format
 - `format`: Output format (image, text) - default: image
 - `digits`: Zero-padding digits (only when specified)
 - `api-base`: Custom API base URL (optional)
@@ -153,7 +153,7 @@ declare module 'react' {
       'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         type?: 'total' | 'today' | 'yesterday' | 'week' | 'month';
-        theme?: 'classic' | 'modern' | 'retro';
+        theme?: 'light' | 'dark' | 'kawaii';
         digits?: string;
         scale?: string;
       };
@@ -176,16 +176,16 @@ console.log('Counter ID:', data.id)
 // 2. Embed in HTML
 document.body.innerHTML += `
   <script src="/components/display.js"></script>
-  <nostalgic-counter id="${data.id}" type="total" theme="classic"></nostalgic-counter>
+  <nostalgic-counter id="${data.id}" type="total" theme="light"></nostalgic-counter>
 `
 ```
 
 ### Multiple Period Display
 ```html
 <!-- Different time periods, same counter -->
-<nostalgic-counter id="blog-a7b9c3d4" type="total" theme="classic"></nostalgic-counter>
-<nostalgic-counter id="blog-a7b9c3d4" type="today" theme="modern"></nostalgic-counter>
-<nostalgic-counter id="blog-a7b9c3d4" type="week" theme="retro"></nostalgic-counter>
+<nostalgic-counter id="blog-a7b9c3d4" type="total" theme="light"></nostalgic-counter>
+<nostalgic-counter id="blog-a7b9c3d4" type="today" theme="dark"></nostalgic-counter>
+<nostalgic-counter id="blog-a7b9c3d4" type="week" theme="kawaii"></nostalgic-counter>
 ```
 
 ### Text Format Integration
@@ -210,7 +210,7 @@ const data = await count.json()
 
 // Display as image
 document.querySelector('#counter').src = 
-  `/api/visit?action=display&id=blog-a7b9c3d4&type=total&theme=classic`
+  `/api/visit?action=display&id=blog-a7b9c3d4&type=total&theme=light`
 ```
 
 ## Security Notes

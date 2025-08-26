@@ -62,7 +62,7 @@ Message board with customizable options and author-based editing.
 curl "https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&token=your-secret"
 
 # Display counter
-curl "https://nostalgic.llll-ll.com/api/visit?action=display&id=yoursite-a7b9c3d4&type=total&theme=classic"
+curl "https://nostalgic.llll-ll.com/api/visit?action=display&id=yoursite-a7b9c3d4&type=total&theme=dark"
 ```
 
 ### Like

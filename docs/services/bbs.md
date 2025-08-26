@@ -268,15 +268,15 @@ Messages are stored as JSON in Redis Lists:
 <script src="https://nostalgic.llll-ll.com/components/bbs.js"></script>
 
 <!-- Interactive BBS display -->
-<nostalgic-bbs id="yoursite-a7b9c3d4" theme="classic" page="1"></nostalgic-bbs>
+<nostalgic-bbs id="yoursite-a7b9c3d4" theme="light" page="1"></nostalgic-bbs>
 
 <!-- Text format BBS -->
-<nostalgic-bbs id="yoursite-a7b9c3d4" format="text" theme="modern" page="1"></nostalgic-bbs>
+<nostalgic-bbs id="yoursite-a7b9c3d4" format="text" theme="dark" page="1"></nostalgic-bbs>
 ```
 
 **Attributes:**
 - `id`: BBS public ID
-- `theme`: Visual style (classic, modern, retro)
+- `theme`: Visual style (light, dark, kawaii)
 - `page`: Page number to display (default: last page for latest messages)
 - `format`: Display format (interactive, text) - default: interactive
 - `api-base`: Custom API base URL (optional)
@@ -299,7 +299,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'classic' | 'modern' | 'retro';
+        theme?: 'light' | 'dark' | 'kawaii';
         page?: string;
       };
     }

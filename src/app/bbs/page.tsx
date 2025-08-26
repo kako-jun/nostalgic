@@ -391,17 +391,17 @@ declare module 'react' {
                       
                       <div style={{ display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap" }}>
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Classic</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Light</p>
                           <nostalgic-bbs id={publicId} theme="light" />
                         </div>
                         
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Modern</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Dark</p>
                           <nostalgic-bbs id={publicId} theme="dark" />
                         </div>
                         
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Retro</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Kawaii</p>
                           <nostalgic-bbs id={publicId} theme="kawaii" />
                         </div>
                       </div>

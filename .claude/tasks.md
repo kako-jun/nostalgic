@@ -113,7 +113,7 @@
 ### テーマシステム大幅改修 🎨
 - [ ] **新テーマ分類への移行**
   - [ ] 現在のテーマ（classic/modern/retro）を廃止
-  - [ ] 新テーマ実装: ライト、ダーク、kawaii
+  - [ ] 新テーマ実装: light、dark、kawaii
   - [ ] 全サービス（Counter/Like/Ranking/BBS）への適用
   - [ ] Web Componentsテーマ対応
 - [ ] **ホームページテーマサンプル展示**

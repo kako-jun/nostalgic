@@ -3,7 +3,7 @@
  * 
  * 使用方法:
  * <script src="/components/bbs.js"></script>
- * <nostalgic-bbs id="your-bbs-id" page="1" theme="classic"></nostalgic-bbs>
+ * <nostalgic-bbs id="your-bbs-id" page="1" theme="dark"></nostalgic-bbs>
  */
 
 // バリデーション定数は不要になりました（API側でデフォルト値処理）
@@ -129,7 +129,7 @@ class NostalgicBBS extends HTMLElement {
   }
 
   render() {
-    const theme = this.getAttribute('theme') || 'classic';
+    const theme = this.getAttribute('theme') || 'dark';
 
     if (!this.bbsData) {
       this.shadowRoot.innerHTML = `
@@ -159,33 +159,33 @@ class NostalgicBBS extends HTMLElement {
 
     // テーマ別のスタイル
     const themeStyles = {
-      classic: {
-        bgColor: '#f0f0f0',
-        borderColor: '#333',
-        headerBg: '#ccc',
-        headerColor: '#000',
-        messageBg: '#fff',
-        textColor: '#333'
+      light: {
+        bgColor: '#ffffff',
+        borderColor: '#cccccc',
+        headerBg: '#f5f5f5',
+        headerColor: '#000000',
+        messageBg: '#ffffff',
+        textColor: '#000000'
       },
-      modern: {
-        bgColor: '#fff',
-        borderColor: '#ddd',
-        headerBg: '#3742fa',
-        headerColor: '#fff',
-        messageBg: '#f8f9fa',
-        textColor: '#2f3542'
+      dark: {
+        bgColor: '#2a2a2a',
+        borderColor: '#444444',
+        headerBg: '#333333',
+        headerColor: '#ffffff',
+        messageBg: '#1a1a1a',
+        textColor: '#ffffff'
       },
-      retro: {
-        bgColor: '#ffe066',
-        borderColor: '#2d3436',
-        headerBg: '#ff6b6b',
-        headerColor: '#2d3436',
-        messageBg: '#fff',
-        textColor: '#2d3436'
+      kawaii: {
+        bgColor: '#ffe4e1',
+        borderColor: '#ffb6c1',
+        headerBg: '#ffc0cb',
+        headerColor: '#ff69b4',
+        messageBg: '#fff0f5',
+        textColor: '#ff69b4'
       }
     };
 
-    const style = themeStyles[theme] || themeStyles.classic;
+    const style = themeStyles[theme] || themeStyles.dark;
     // サーバーから取得したメッセージをそのまま表示（新しいものが下に表示される）
     const messages = (this.bbsData.messages || []);
     const pagination = this.bbsData.pagination || {};

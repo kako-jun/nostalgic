@@ -3,7 +3,7 @@
  * 
  * 使用方法:
  * <script src="/components/ranking.js"></script>
- * <nostalgic-ranking id="your-ranking-id" limit="10" theme="classic" format="interactive"></nostalgic-ranking>
+ * <nostalgic-ranking id="your-ranking-id" limit="10" theme="dark" format="interactive"></nostalgic-ranking>
  */
 
 // バリデーション定数は不要になりました（API側でデフォルト値処理）
@@ -154,30 +154,30 @@ class NostalgicRanking extends HTMLElement {
 
     // テーマ別のスタイル
     const themeStyles = {
-      classic: {
-        bgColor: '#f0f0f0',
-        borderColor: '#333',
-        headerBg: '#ccc',
-        headerColor: '#000',
-        textColor: '#333'
+      light: {
+        bgColor: '#ffffff',
+        borderColor: '#cccccc',
+        headerBg: '#f5f5f5',
+        headerColor: '#000000',
+        textColor: '#000000'
       },
-      modern: {
-        bgColor: '#fff',
-        borderColor: '#ddd',
-        headerBg: '#3742fa',
-        headerColor: '#fff',
-        textColor: '#2f3542'
+      dark: {
+        bgColor: '#2a2a2a',
+        borderColor: '#444444',
+        headerBg: '#333333',
+        headerColor: '#ffffff',
+        textColor: '#ffffff'
       },
-      retro: {
-        bgColor: '#ffe066',
-        borderColor: '#2d3436',
-        headerBg: '#ff6b6b',
-        headerColor: '#2d3436',
-        textColor: '#2d3436'
+      kawaii: {
+        bgColor: '#ffe4e1',
+        borderColor: '#ffb6c1',
+        headerBg: '#ffc0cb',
+        headerColor: '#ff69b4',
+        textColor: '#ff69b4'
       }
     };
 
-    const style = themeStyles[theme] || themeStyles.classic;
+    const style = themeStyles[theme] || themeStyles.dark;
     const entries = this.rankingData.entries || [];
 
     this.shadowRoot.innerHTML = `

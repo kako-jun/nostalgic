@@ -9,7 +9,7 @@
 ### 📊 カウンターサービス
 - 複数期間統計: 累計・今日・昨日・週間・月間の表示
 - 1日1回重複防止（0時リセット）
-- 3つの懐かしい表示スタイル: クラシック・モダン・レトロ
+- 3つの懐かしい表示スタイル: ライト・ダーク・カワイイ
 - Web Components による簡単埋め込み
 
 ### 💖 いいねサービス
@@ -51,7 +51,7 @@ https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&t
 2. **サイトに埋め込み**:
 ```html
 <script src="https://nostalgic.llll-ll.com/components/visit.js"></script>
-<nostalgic-counter id="yoursite-a7b9c3d4" type="total" theme="classic"></nostalgic-counter>
+<nostalgic-counter id="yoursite-a7b9c3d4" type="total" theme="dark"></nostalgic-counter>
 ```
 
 ### いいねサービス

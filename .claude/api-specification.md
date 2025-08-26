@@ -58,7 +58,7 @@ https://nostalgic.llll-ll.com/api
 | パラメータ | デフォルト値 | 対象サービス |
 |-----------|------------|-------------|
 | `type` | `total` | Counter |
-| `theme` | `classic` | Counter, Like, Ranking, BBS |
+| `theme` | `dark` | Counter, Like, Ranking, BBS |
 | `format` | `image` | Counter |
 | `format` | `interactive` | Like |
 | `page` | `1` | BBS |
@@ -148,14 +148,14 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=increment&id=example-a7b9c3
 | `id` | string | Yes | - | カウンターID |
 | `type` | string | No | `"total"` | 表示タイプ: `total`, `today`, `yesterday`, `week`, `month` |
 | `format` | string | No | `"image"` | 出力形式: `image`, `json`, `text` |
-| `theme` | string | No | `"classic"` | テーマ: `classic`, `modern`, `retro` (image形式のみ) |
+| `theme` | string | No | `"dark"` | テーマ: `light`, `dark`, `kawaii` (image形式のみ) |
 | `digits` | number | No | `6` | 表示桁数: 1-10 (image形式のみ) |
 
 **Example Requests**:
 
 SVG画像取得:
 ```bash
-curl "https://nostalgic.llll-ll.com/api/visit?action=display&id=example-a7b9c3d4&format=image&theme=retro"
+curl "https://nostalgic.llll-ll.com/api/visit?action=display&id=example-a7b9c3d4&format=image&theme=kawaii"
 ```
 
 JSON取得:
@@ -573,7 +573,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 ```html
 <!-- カウンター表示 -->
 <script src="https://nostalgic.llll-ll.com/components/visit.js"></script>
-<nostalgic-counter id="blog-a7b9c3d4" type="total" theme="retro"></nostalgic-counter>
+<nostalgic-counter id="blog-a7b9c3d4" type="total" theme="kawaii"></nostalgic-counter>
 ```
 
 ### JavaScriptでの利用
