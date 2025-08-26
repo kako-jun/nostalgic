@@ -23,10 +23,11 @@ import {
 const createHandler = ApiHandler.create({
   paramsSchema: RankingSchemas.create,
   resultSchema: UnifiedAPISchemas.createSuccess,
-  handler: async ({ url, token, max, sortOrder }, request) => {
+  handler: async ({ url, token, max, sortOrder, webhookUrl }, request) => {
     const createResult = await rankingService.create(url, token, {
       maxEntries: max,
-      sortOrder
+      sortOrder,
+      webhookUrl
     })
     
     if (!createResult.success) {
@@ -62,8 +63,8 @@ const submitHandler = ApiHandler.create({
 const updateHandler = ApiHandler.create({
   paramsSchema: RankingSchemas.update,
   resultSchema: RankingSchemas.data,
-  handler: async ({ url, token, name, score }) => {
-    return await rankingService.updateScore(url, token, { name, score })
+  handler: async ({ url, token, name, score, webhookUrl }) => {
+    return await rankingService.updateScore(url, token, { name, score }, webhookUrl)
   }
 })
 

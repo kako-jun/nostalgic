@@ -57,7 +57,8 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       totalEntries: 0,
       maxEntries: params.maxEntries || RANKING.LIMIT.DEFAULT,
       sortOrder: params.sortOrder || RANKING.SORT_ORDER.DEFAULT,
-      title: params.title
+      title: params.title,
+      webhookUrl: params.webhookUrl
     }
 
     const validationResult = ValidationFramework.output(RankingEntitySchema, entity)
@@ -345,7 +346,8 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
   async updateScore(
     url: string,
     token: string,
-    params: RankingUpdateParams
+    params: RankingUpdateParams,
+    webhookUrl?: string
   ): Promise<Result<RankingData, ValidationError | NotFoundError>> {
     // オーナーシップ検証
     const ownershipResult = await this.verifyOwnership(url, token)
@@ -367,6 +369,9 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
 
     // エンティティ更新
     entity.lastSubmit = new Date()
+    if (webhookUrl !== undefined) {
+      entity.webhookUrl = webhookUrl
+    }
     const saveResult = await this.entityRepository.save(entity.id, entity)
     if (!saveResult.success) {
       return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
@@ -623,6 +628,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       .digest('hex')
       .substring(0, 16)
   }
+
 
 }
 

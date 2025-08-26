@@ -21,7 +21,7 @@ export const CounterSchemas = {
     action: z.literal('create'),
     url: CommonSchemas.url,
     token: CommonSchemas.token,
-    webhookUrl: z.string().url().optional()
+    webhookUrl: CommonSchemas.url.optional()
   }),
 
   // カウントアップ用パラメータ
@@ -45,7 +45,8 @@ export const CounterSchemas = {
     action: z.literal('set'),
     url: CommonSchemas.url,
     token: CommonSchemas.token,
-    total: CommonSchemas.nonNegativeInt
+    total: CommonSchemas.nonNegativeInt,
+    webhookUrl: CommonSchemas.url.optional()
   }),
 
   // 削除用パラメータ
@@ -74,7 +75,8 @@ export const LikeSchemas = {
   create: z.object({
     action: z.literal('create'),
     url: CommonSchemas.url,
-    token: CommonSchemas.token
+    token: CommonSchemas.token,
+    webhookUrl: CommonSchemas.url.optional()
   }),
 
   // いいねトグル用パラメータ
@@ -102,7 +104,8 @@ export const LikeSchemas = {
     action: z.literal('set'),
     url: CommonSchemas.url,
     token: CommonSchemas.token,
-    value: CommonSchemas.nonNegativeInt
+    value: CommonSchemas.nonNegativeInt,
+    webhookUrl: CommonSchemas.url.optional()
   }),
 
   // 削除用パラメータ
@@ -131,7 +134,8 @@ export const RankingSchemas = {
     token: CommonSchemas.token,
     title: CommonSchemas.shortText.optional(),
     max: RankingFieldSchemas.maxEntries.default(RANKING.LIMIT.DEFAULT),
-    sortOrder: RankingFieldSchemas.sortOrder.default(RANKING.SORT_ORDER.DEFAULT)
+    sortOrder: RankingFieldSchemas.sortOrder.default(RANKING.SORT_ORDER.DEFAULT),
+    webhookUrl: CommonSchemas.url.optional()
   }),
 
   // スコア送信用パラメータ
@@ -149,7 +153,8 @@ export const RankingSchemas = {
     url: CommonSchemas.url,
     token: CommonSchemas.token,
     name: RankingFieldSchemas.playerName,
-    score: RankingFieldSchemas.score
+    score: RankingFieldSchemas.score,
+    webhookUrl: CommonSchemas.url.optional()
   }),
 
   // エントリー削除用パラメータ
@@ -225,7 +230,8 @@ export const BBSSchemas = {
     messagesPerPage: BBSFieldSchemas.messagesPerPage.default(10),
     max: BBSFieldSchemas.maxMessages.default(100),
     enableIcons: BBSFieldSchemas.enableFlags.default(true),
-    enableSelects: BBSFieldSchemas.enableFlags.default(false)
+    enableSelects: BBSFieldSchemas.enableFlags.default(false),
+    webhookUrl: CommonSchemas.url.optional()
   }),
 
   // 投稿用パラメータ
@@ -324,7 +330,8 @@ export const BBSSchemas = {
     token: CommonSchemas.token,
     title: BBSFieldSchemas.bbsTitle.optional(),
     messagesPerPage: BBSFieldSchemas.updateMessagesPerPage.optional(),
-    maxMessages: BBSFieldSchemas.updateMaxMessages.optional()
+    maxMessages: BBSFieldSchemas.updateMaxMessages.optional(),
+    webhookUrl: CommonSchemas.url.optional()
   }),
 
   // 表示用パラメータ

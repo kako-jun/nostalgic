@@ -210,7 +210,8 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
   async setCounterValue(
     url: string,
     token: string,
-    value: number
+    value: number,
+    webhookUrl?: string
   ): Promise<Result<CounterData, ValidationError | NotFoundError>> {
     // オーナーシップ検証
     const ownershipResult = await this.verifyOwnership(url, token)
@@ -232,6 +233,9 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
 
     // エンティティ更新
     entity.totalCount = value
+    if (webhookUrl !== undefined) {
+      entity.webhookUrl = webhookUrl
+    }
     const saveResult = await this.entityRepository.save(entity.id, entity)
     if (!saveResult.success) {
       return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
@@ -407,36 +411,6 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
     return await this.transformEntityToData(entityResult.data)
   }
 
-  /**
-   * Webhook URLを設定
-   */
-  async setWebhookUrl(
-    url: string,
-    token: string,
-    webhookUrl?: string
-  ): Promise<Result<CounterData, ValidationError | NotFoundError>> {
-    // オーナーシップ検証
-    const ownershipResult = await this.verifyOwnership(url, token)
-    if (!ownershipResult.success) {
-      return Err(new ValidationError('Ownership verification failed', { error: ownershipResult.error }))
-    }
-
-    if (!ownershipResult.data.isOwner || !ownershipResult.data.entity) {
-      return Err(new ValidationError('Invalid token or entity not found'))
-    }
-
-    const entity = ownershipResult.data.entity as CounterEntity
-
-    // Webhook URLを更新
-    entity.webhookUrl = webhookUrl
-
-    const saveResult = await this.entityRepository.save(entity.id, entity)
-    if (!saveResult.success) {
-      return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
-    }
-
-    return await this.transformEntityToData(entity)
-  }
 }
 
 // シングルトンインスタンス

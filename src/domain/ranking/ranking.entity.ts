@@ -112,7 +112,7 @@ export const RankingEntitySchema = z.object({
   maxEntries: CommonSchemas.nonNegativeInt,
   sortOrder: RankingFieldSchemas.sortOrder,
   title: CommonSchemas.title.optional(),
-  webhookUrl: z.string().url().optional()
+  webhookUrl: CommonSchemas.url.optional()
 })
 
 export const RankingEntrySchema = z.object({
@@ -137,7 +137,7 @@ export const RankingCreateParamsSchema = z.object({
   maxEntries: RankingFieldSchemas.maxEntries.default(RANKING.LIMIT.DEFAULT),
   sortOrder: RankingFieldSchemas.sortOrder.default(RANKING.SORT_ORDER.DEFAULT),
   title: CommonSchemas.title.default('RANKING'),
-  webhookUrl: z.string().url().optional()
+  webhookUrl: CommonSchemas.url.optional()
 })
 
 export const RankingSubmitParamsSchema = z.object({
