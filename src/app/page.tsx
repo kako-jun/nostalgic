@@ -352,9 +352,13 @@ export default function HomePage() {
                 </span>
               </p>
               <div style={{ margin: "20px 0", display: "flex", justifyContent: "center" }}>
-                <div>
-                  <p style={{ marginBottom: "10px", textAlign: "center" }}>訪問の記念に、足あとを残していってください！</p>
-                  <nostalgic-bbs id="nostalgic-b89803bb" theme="dark" />
+                <div style={{ maxWidth: "100%", overflow: "hidden" }}>
+                  <p style={{ marginBottom: "10px", textAlign: "center", wordWrap: "break-word", padding: "0 10px" }}>
+                    訪問の記念に、足あとを残していってください！
+                  </p>
+                  <div style={{ maxWidth: "100%", overflow: "auto" }}>
+                    <nostalgic-bbs id="nostalgic-b89803bb" theme="dark" />
+                  </div>
                 </div>
               </div>
             </div>
