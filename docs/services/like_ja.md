@@ -76,18 +76,18 @@ GET /api/like?action=get&id={ID}
 <script src="https://nostalgic.llll-ll.com/components/like.js"></script>
 
 <!-- インタラクティブボタン（デフォルト） -->
-<nostalgic-like id="yoursite-a7b9c3d4" theme="classic" icon="heart"></nostalgic-like>
+<nostalgic-like id="yoursite-a7b9c3d4" theme="light" icon="heart"></nostalgic-like>
 
 <!-- テキスト形式 -->
-<nostalgic-like id="yoursite-a7b9c3d4" format="text" theme="modern"></nostalgic-like>
+<nostalgic-like id="yoursite-a7b9c3d4" format="text" theme="dark"></nostalgic-like>
 
 <!-- SVG画像形式 -->
-<nostalgic-like id="yoursite-a7b9c3d4" format="image" theme="retro"></nostalgic-like>
+<nostalgic-like id="yoursite-a7b9c3d4" format="image" theme="kawaii"></nostalgic-like>
 ```
 
 **属性:**
 - `id`: 公開いいねボタンID
-- `theme`: 表示スタイル（classic, modern, retro）
+- `theme`: 表示スタイル（light, dark, kawaii）
 - `icon`: アイコン種類（heart, star, thumb）- インタラクティブ形式のみ
 - `format`: 表示形式（interactive, text, image）- デフォルト: interactive
 - `api-base`: カスタムAPIベースURL（オプション）
@@ -112,7 +112,7 @@ document.body.innerHTML += `
 ```html
 <!-- モダンなレイアウト用インラインテキスト -->
 <div class="post-stats">
-  <span>いいね: <nostalgic-like id="post-123" format="text" theme="modern"></nostalgic-like></span>
+  <span>いいね: <nostalgic-like id="post-123" format="text" theme="dark"></nostalgic-like></span>
   <span>閲覧: 1,234</span>
 </div>
 
@@ -162,7 +162,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-like': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'classic' | 'modern' | 'retro';
+        theme?: 'light' | 'dark' | 'kawaii';
         icon?: 'heart' | 'star' | 'thumb';
       };
     }

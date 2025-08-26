@@ -147,15 +147,15 @@ await fetch('/api/bbs?action=clear&url=https://mysite.com&token=my-secret')
 <script src="https://nostalgic.llll-ll.com/components/bbs.js"></script>
 
 <!-- インタラクティブBBS表示 -->
-<nostalgic-bbs id="yoursite-a7b9c3d4" theme="classic" page="1"></nostalgic-bbs>
+<nostalgic-bbs id="yoursite-a7b9c3d4" theme="light" page="1"></nostalgic-bbs>
 
 <!-- テキスト形式BBS -->
-<nostalgic-bbs id="yoursite-a7b9c3d4" format="text" theme="modern" page="1"></nostalgic-bbs>
+<nostalgic-bbs id="yoursite-a7b9c3d4" format="text" theme="dark" page="1"></nostalgic-bbs>
 ```
 
 **属性:**
 - `id`: 公開BBS ID
-- `theme`: 表示スタイル（classic, modern, retro）
+- `theme`: 表示スタイル（light, dark, kawaii）
 - `page`: 表示ページ番号（デフォルト: 最終ページで最新メッセージ表示）
 - `format`: 表示形式（interactive, text）- デフォルト: interactive
 - `api-base`: カスタムAPIベースURL（オプション）
@@ -178,7 +178,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'classic' | 'modern' | 'retro';
+        theme?: 'light' | 'dark' | 'kawaii';
         page?: string;
       };
     }

@@ -241,15 +241,15 @@ Rankings use Redis Sorted Sets for efficient sorting:
 <script src="https://nostalgic.llll-ll.com/components/ranking.js"></script>
 
 <!-- Interactive ranking display -->
-<nostalgic-ranking id="yoursite-a7b9c3d4" theme="classic" limit="10"></nostalgic-ranking>
+<nostalgic-ranking id="yoursite-a7b9c3d4" theme="light" limit="10"></nostalgic-ranking>
 
 <!-- Text format ranking -->
-<nostalgic-ranking id="yoursite-a7b9c3d4" format="text" theme="modern" limit="5"></nostalgic-ranking>
+<nostalgic-ranking id="yoursite-a7b9c3d4" format="text" theme="dark" limit="5"></nostalgic-ranking>
 ```
 
 **Attributes:**
 - `id`: Ranking public ID
-- `theme`: Visual style (classic, modern, retro)
+- `theme`: Visual style (light, dark, kawaii)
 - `limit`: Number of entries to display (1-100, default: 10)
 - `format`: Display format (interactive, text) - default: interactive
 - `api-base`: Custom API base URL (optional)
@@ -267,7 +267,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-ranking': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'classic' | 'modern' | 'retro';
+        theme?: 'light' | 'dark' | 'kawaii';
         limit?: string;
       };
     }

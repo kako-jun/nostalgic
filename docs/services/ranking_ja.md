@@ -153,15 +153,15 @@ await fetch('/api/ranking?action=clear&url=https://mygame.com&token=game-secret'
 <script src="https://nostalgic.llll-ll.com/components/ranking.js"></script>
 
 <!-- インタラクティブランキング表示 -->
-<nostalgic-ranking id="yoursite-a7b9c3d4" theme="classic" limit="10"></nostalgic-ranking>
+<nostalgic-ranking id="yoursite-a7b9c3d4" theme="light" limit="10"></nostalgic-ranking>
 
 <!-- テキスト形式ランキング -->
-<nostalgic-ranking id="yoursite-a7b9c3d4" format="text" theme="modern" limit="5"></nostalgic-ranking>
+<nostalgic-ranking id="yoursite-a7b9c3d4" format="text" theme="dark" limit="5"></nostalgic-ranking>
 ```
 
 **属性:**
 - `id`: 公開ランキングID
-- `theme`: 表示スタイル（classic, modern, retro）
+- `theme`: 表示スタイル（light, dark, kawaii）
 - `limit`: 表示エントリー数（1-100、デフォルト: 10）
 - `format`: 表示形式（interactive, text）- デフォルト: interactive
 - `api-base`: カスタムAPIベースURL（オプション）
@@ -184,7 +184,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-ranking': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'classic' | 'modern' | 'retro';
+        theme?: 'light' | 'dark' | 'kawaii';
         limit?: string;
       };
     }

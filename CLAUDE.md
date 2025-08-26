@@ -19,7 +19,7 @@
 ### 📊 Counter Service
 - ✅ 複数期間統計（累計・今日・昨日・週間・月間）
 - ✅ 1日1回重複防止（0時リセット）
-- ✅ SVG画像生成（3スタイル：classic/modern/retro）
+- ✅ SVG画像生成（3スタイル：light/dark/kawaii）
 - ✅ Web Components による埋め込み
 
 ### 💖 Like Service  
@@ -162,7 +162,7 @@ https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://example.com&token=
 ### 3. 埋め込み（Counter例）
 ```html
 <script src="/components/visit.js"></script>
-<nostalgic-counter id="your-id" type="total" theme="classic"></nostalgic-counter>
+<nostalgic-counter id="your-id" type="total" theme="dark"></nostalgic-counter>
 ```
 
 ## セキュリティ

@@ -8,21 +8,21 @@ const generateCounterSVG = (options) => {
   const paddedValue = value.toString().padStart(digits, '0');
   
   const styles = {
-    classic: {
+    light: {
       backgroundColor: '#000000',
       textColor: '#00ff00',
       fontFamily: 'monospace',
       fontSize: '16',
       border: '#333333'
     },
-    modern: {
+    dark: {
       backgroundColor: '#1a1a1a',
       textColor: '#ffffff',
       fontFamily: 'Arial, sans-serif',
       fontSize: '14',
       border: '#666666'
     },
-    retro: {
+    kawaii: {
       backgroundColor: '#800080',
       textColor: '#ffff00',
       fontFamily: 'Courier New, Liberation Mono, DejaVu Sans Mono, monospace',
@@ -31,7 +31,7 @@ const generateCounterSVG = (options) => {
     }
   };
   
-  const currentStyle = styles[style] || styles.classic;
+  const currentStyle = styles[style] || styles.dark;
   const width = digits * 12 + 20;
   const height = 30;
   
@@ -46,12 +46,12 @@ const generateCounterSVG = (options) => {
 
 // Generate sample images
 const samples = [
-  { value: 42, style: 'classic', file: 'classic-total.svg' },
-  { value: 1234, style: 'modern', file: 'modern-today.svg' },
-  { value: 789, style: 'retro', file: 'retro-week.svg' },
-  { value: 123456, style: 'classic', file: 'classic-large.svg' },
-  { value: 7, style: 'modern', file: 'modern-small.svg' },
-  { value: 999, style: 'retro', file: 'retro-medium.svg' },
+  { value: 42, style: 'light', file: 'light-total.svg' },
+  { value: 1234, style: 'dark', file: 'dark-today.svg' },
+  { value: 789, style: 'kawaii', file: 'kawaii-week.svg' },
+  { value: 123456, style: 'light', file: 'light-large.svg' },
+  { value: 7, style: 'dark', file: 'dark-small.svg' },
+  { value: 999, style: 'kawaii', file: 'kawaii-medium.svg' },
 ];
 
 samples.forEach(sample => {

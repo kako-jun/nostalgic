@@ -9,7 +9,7 @@ A comprehensive nostalgic web tools platform that brings back the 90s internet c
 ### 📊 Counter Service
 - Multiple time periods: Total, today, yesterday, weekly, monthly statistics
 - Daily duplicate prevention (resets at midnight)
-- 3 nostalgic display styles: Classic, Modern, Retro
+- 3 nostalgic display styles: Light, Dark, Kawaii
 - Web Components for easy embedding
 
 ### 💖 Like Service
@@ -51,7 +51,7 @@ https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&t
 2. **Embed in your site**:
 ```html
 <script src="https://nostalgic.llll-ll.com/components/visit.js"></script>
-<nostalgic-counter id="yoursite-a7b9c3d4" type="total" theme="classic"></nostalgic-counter>
+<nostalgic-counter id="yoursite-a7b9c3d4" type="total" theme="dark"></nostalgic-counter>
 ```
 
 ### Like Service

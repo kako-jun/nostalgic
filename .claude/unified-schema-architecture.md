@@ -208,7 +208,7 @@ src/
 export const CounterDisplaySchema = z.object({
   id: CommonSchemas.publicId,
   type: CounterFieldSchemas.counterType.default('total'),
-  theme: CommonSchemas.theme.default('classic'),
+  theme: CommonSchemas.theme.default('dark'),
   format: CounterFieldSchemas.counterFormat.default('image')
 })
 

@@ -76,18 +76,18 @@ GET /api/like?action=get&id={ID}
 <script src="https://nostalgic.llll-ll.com/components/like.js"></script>
 
 <!-- Interactive button (default) -->
-<nostalgic-like id="yoursite-a7b9c3d4" theme="classic" icon="heart"></nostalgic-like>
+<nostalgic-like id="yoursite-a7b9c3d4" theme="dark" icon="heart"></nostalgic-like>
 
 <!-- Text format -->
-<nostalgic-like id="yoursite-a7b9c3d4" format="text" theme="modern"></nostalgic-like>
+<nostalgic-like id="yoursite-a7b9c3d4" format="text" theme="dark"></nostalgic-like>
 
 <!-- SVG image format -->
-<nostalgic-like id="yoursite-a7b9c3d4" format="image" theme="retro"></nostalgic-like>
+<nostalgic-like id="yoursite-a7b9c3d4" format="image" theme="kawaii"></nostalgic-like>
 ```
 
 **Attributes:**
 - `id`: Like button public ID
-- `theme`: Visual style (classic, modern, retro)
+- `theme`: Visual style (light, dark, kawaii)
 - `icon`: Icon type (heart, star, thumb) - interactive format only
 - `format`: Display format (interactive, text, image) - default: interactive
 - `api-base`: Custom API base URL (optional)
@@ -105,7 +105,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-like': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'classic' | 'modern' | 'retro';
+        theme?: 'light' | 'dark' | 'kawaii';
         icon?: 'heart' | 'star' | 'thumb';
       };
     }
@@ -135,7 +135,7 @@ document.body.innerHTML += `
 ```html
 <!-- Inline text likes for modern layouts -->
 <div class="post-stats">
-  <span>Likes: <nostalgic-like id="post-123" format="text" theme="modern"></nostalgic-like></span>
+  <span>Likes: <nostalgic-like id="post-123" format="text" theme="dark"></nostalgic-like></span>
   <span>Views: 1,234</span>
 </div>
 
