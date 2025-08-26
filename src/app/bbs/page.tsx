@@ -21,6 +21,7 @@ export default function BBSPage() {
   const perPageRef = useRef<HTMLInputElement>(null);
   const iconsRef = useRef<HTMLInputElement>(null);
   const editTokenRef = useRef<HTMLInputElement>(null);
+  const webhookUrlRef = useRef<HTMLInputElement>(null);
   
   useEffect(() => {
     const hash = window.location.hash.slice(1);
@@ -55,6 +56,7 @@ export default function BBSPage() {
     const perPage = perPageRef.current?.value;
     const icons = iconsRef.current?.value;
     const editToken = editTokenRef.current?.value;
+    const webhookUrl = webhookUrlRef.current?.value;
 
     if (!url || !token) return;
 

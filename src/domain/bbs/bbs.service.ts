@@ -814,6 +814,32 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
       return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
     }
 
+    // Webhook 通知を送信（webhookUrlが設定されている場合のみ）
+    if (entity.webhookUrl) {
+      const webhookPayload = {
+        event: 'bbs.edit',
+        timestamp: new Date().toISOString(),
+        serviceId: entity.id,
+        url: entity.url,
+        data: {
+          messageId,
+          author: params.author,
+          message: params.message,
+          icon: params.icon,
+          selects: params.selects
+        }
+      }
+
+      // シンプルなWebhook送信（失敗してもメイン処理は継続）
+      fetch(entity.webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(webhookPayload)
+      }).catch(error => {
+        console.warn('Webhook delivery failed for BBS edit:', error)
+      })
+    }
+
     return await this.transformEntityToData(entity)
   }
 
@@ -868,6 +894,30 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     const saveResult = await this.entityRepository.save(entity.id, entity)
     if (!saveResult.success) {
       return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
+    }
+
+    // Webhook 通知を送信（webhookUrlが設定されている場合のみ）
+    if (entity.webhookUrl) {
+      const webhookPayload = {
+        event: 'bbs.delete',
+        timestamp: new Date().toISOString(),
+        serviceId: entity.id,
+        url: entity.url,
+        data: {
+          messageId,
+          author: targetMessage.author,
+          message: targetMessage.message
+        }
+      }
+
+      // シンプルなWebhook送信（失敗してもメイン処理は継続）
+      fetch(entity.webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(webhookPayload)
+      }).catch(error => {
+        console.warn('Webhook delivery failed for BBS delete:', error)
+      })
     }
 
     return await this.transformEntityToData(entity)

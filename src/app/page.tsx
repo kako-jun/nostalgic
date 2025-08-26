@@ -419,7 +419,7 @@ export default function HomePage() {
                 {`" type="`}
                 <span style={{ color: "#008000" }}>total</span>
                 {`" style="`}
-                <span style={{ color: "#008000" }}>classic</span>
+                <span style={{ color: "#008000" }}>dark</span>
                 {`"></nostalgic-counter>`}
               </pre>
             </div>
@@ -442,13 +442,13 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆style デザインスタイル◆</b>
+                  <b>◆theme デザインテーマ◆</b>
                 </span>
               </p>
               <p>
-                • <span style={{ color: "#008000" }}>classic</span> - クラシック（緑の7セグ）
-                <br />• <span style={{ color: "#008000" }}>modern</span> - モダン（青のデジタル）
-                <br />• <span style={{ color: "#008000" }}>retro</span> - レトロ（赤のドット）
+                • <span style={{ color: "#008000" }}>light</span> - ライトテーマ（明るい背景）
+                <br />• <span style={{ color: "#008000" }}>dark</span> - ダークテーマ（暗い背景）
+                <br />• <span style={{ color: "#008000" }}>kawaii</span> - かわいいテーマ（ピンク系）
               </p>
             </div>
           </>

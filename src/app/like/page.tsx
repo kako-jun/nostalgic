@@ -15,6 +15,7 @@ export default function LikePage() {
   const urlRef = useRef<HTMLInputElement>(null);
   const tokenRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
+  const webhookUrlRef = useRef<HTMLInputElement>(null);
   const selectRef = useRef<HTMLSelectElement>(null);
   
   useEffect(() => {
@@ -44,6 +45,7 @@ export default function LikePage() {
     const url = urlRef.current?.value;
     const token = tokenRef.current?.value;
     const value = valueRef.current?.value;
+    const webhookUrl = webhookUrlRef.current?.value;
 
     let apiUrl = '';
 
@@ -66,6 +68,10 @@ export default function LikePage() {
       
       if (mode === "set" && value) {
         apiUrl += `&value=${encodeURIComponent(value)}`;
+      }
+      
+      if (webhookUrl && (mode === "create" || mode === "set")) {
+        apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
       }
     }
 
@@ -175,6 +181,26 @@ export default function LikePage() {
                     }}
                     required
                   />
+                </p>
+
+                <p>
+                  <b>Webhook URL：</b>
+                  <input
+                    ref={webhookUrlRef}
+                    type="url"
+                    placeholder="https://hooks.slack.com/... (任意)"
+                    style={{
+                      marginLeft: "10px",
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
                   <button
                     type="submit"
                     style={{
@@ -540,6 +566,26 @@ declare module 'react' {
                     }}
                     required
                   />
+                </p>
+
+                <p>
+                  <b>Webhook URL：</b>
+                  <input
+                    ref={webhookUrlRef}
+                    type="url"
+                    placeholder="https://hooks.slack.com/... (任意)"
+                    style={{
+                      marginLeft: "10px",
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
                   <button
                     type="submit"
                     style={{
