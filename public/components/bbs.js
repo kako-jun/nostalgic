@@ -211,6 +211,8 @@ class NostalgicBBS extends HTMLElement {
           --bbs-message-padding: 8px;
           --bbs-message-margin: 5px;
           --bbs-max-height: 400px;
+          display: block;
+          max-width: 100%;
         }
         .bbs-container {
           font-family: var(--bbs-font-family, 'Courier New', monospace);
@@ -218,8 +220,9 @@ class NostalgicBBS extends HTMLElement {
           border: 2px solid var(--bbs-border-color);
           border-radius: var(--bbs-border-radius);
           box-shadow: 3px 3px 0px var(--bbs-border-color);
-          width: var(--bbs-max-width);
-          min-width: var(--bbs-min-width);
+          width: 100%;
+          max-width: var(--bbs-max-width);
+          min-width: 0;
           box-sizing: border-box;
         }
         .bbs-header {
@@ -361,6 +364,17 @@ class NostalgicBBS extends HTMLElement {
           display: flex;
           gap: 6px;
           align-items: flex-start;
+          flex-wrap: wrap;
+        }
+        @media (max-width: 480px) {
+          .form-row {
+            flex-direction: column;
+          }
+          .form-row input[type="text"],
+          .form-row select {
+            flex: 1 1 100%;
+            width: 100%;
+          }
         }
         .form-row input, .form-row select, .form-row textarea {
           font-family: inherit;
@@ -376,9 +390,11 @@ class NostalgicBBS extends HTMLElement {
         .form-row input[type="text"] {
           flex: 2;
           font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
+          min-width: 0;
         }
         .form-row select {
           flex: 1;
+          min-width: 0;
         }
         .form-row textarea {
           flex: 1;
