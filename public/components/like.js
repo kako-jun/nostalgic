@@ -3,7 +3,7 @@
  * 
  * 使用方法:
  * <script src="/components/like.js"></script>
- * <nostalgic-like id="your-like-id" theme="classic" icon="heart" format="interactive"></nostalgic-like>
+ * <nostalgic-like id="your-like-id" theme="dark" icon="heart" format="interactive"></nostalgic-like>
  */
 
 // バリデーション定数は不要になりました（API側でデフォルト値処理）
