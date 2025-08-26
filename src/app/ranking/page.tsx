@@ -52,10 +52,15 @@ export default function RankingPage() {
 
     let apiUrl = '';
 
-    if (mode === "submit") {
-      // submitモードでは公開IDを使用
-      if (!publicId || !name || !score) return;
-      apiUrl = `/api/ranking?action=submit&id=${encodeURIComponent(publicId)}&name=${encodeURIComponent(name)}&score=${score}`;
+    if (mode === "submit" || mode === "get") {
+      // submitモードとgetモードでは公開IDを使用
+      if (mode === "submit") {
+        if (!publicId || !name || !score) return;
+        apiUrl = `/api/ranking?action=submit&id=${encodeURIComponent(publicId)}&name=${encodeURIComponent(name)}&score=${score}`;
+      } else if (mode === "get") {
+        if (!publicId) return;
+        apiUrl = `/api/ranking?action=get&id=${encodeURIComponent(publicId)}`;
+      }
     } else {
       // その他のモードでは従来通りurl+tokenを使用
       if (!url || !token) return;
@@ -340,7 +345,7 @@ export default function RankingPage() {
 <nostalgic-ranking id="`}
                 <span style={{ color: "#008000" }}>公開ID</span>
                 {`" theme="`}
-                <span style={{ color: "#008000" }}>classic</span>
+                <span style={{ color: "#008000" }}>light</span>
                 {`"></nostalgic-ranking>`}
               </pre>
               
@@ -351,9 +356,9 @@ export default function RankingPage() {
                   </span>
                 </p>
                 <p>
-                  • <span style={{ color: "#008000" }}>classic</span> - クラシック（シンプル）
-                  <br />• <span style={{ color: "#008000" }}>modern</span> - モダン（青系）
-                  <br />• <span style={{ color: "#008000" }}>retro</span> - レトロ（黄系）
+                  • <span style={{ color: "#008000" }}>light</span> - ライト（シンプル）
+                  <br />• <span style={{ color: "#008000" }}>dark</span> - ダーク（青系）
+                  <br />• <span style={{ color: "#008000" }}>kawaii</span> - カワイイ（黄系）
                 </p>
               </div>
 
@@ -1094,6 +1099,81 @@ declare module 'react' {
                 </div>
               )}
             </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆ランキングデータを取得したいときは？◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/ranking?action=get&id=<span style={{ color: "#008000" }}>公開ID</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームでランキングデータを取得できます。</p>
+              
+              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+                <p>
+                  <b>公開ID：</b>
+                  <span style={{ marginLeft: "10px", fontFamily: "monospace", fontSize: "16px", fontWeight: "bold", color: publicId ? "#008000" : "#999" }}>
+                    {publicId || "STEP 1で作成後に表示されます"}
+                  </span>
+                  <button
+                    type="button"
+                    style={{
+                      marginLeft: "10px",
+                      padding: "4px 12px",
+                      backgroundColor: "#4CAF50",
+                      color: "white",
+                      border: "2px outset #4CAF50",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={(e) => {
+                      setMode("get");
+                      handleSubmit(e);
+                    }}
+                  >
+                    ランキング取得
+                  </button>
+                </p>
+              </form>
+
+              {response && (
+                <div className="nostalgic-section">
+                  <p>
+                    <span className="nostalgic-section-title">
+                      <b>◆APIレスポンス◆</b>
+                    </span>
+                  </p>
+                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
+                    {response}
+                  </pre>
+                </div>
+              )}
+            </div>
+
+            <hr />
+
+            <p style={{ textAlign: "center" }}>
+              これ以上の詳しい説明は{" "}
+              <a href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md" className="nostalgic-old-link">
+                【GitHub】
+              </a>{" "}
+              へ
+            </p>
           </>
         );
 
@@ -1165,123 +1245,6 @@ declare module 'react' {
           </>
         );
 
-      case "api":
-        return (
-          <>
-            <div className="nostalgic-title-bar">
-              ★ Nostalgic Ranking ★
-              <br />
-              API仕様
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆ランキング作成◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/ranking?action=create&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
-                <span style={{ color: "#008000" }}>オーナートークン</span>&max=
-                <span style={{ color: "#008000" }}>最大エントリー数</span>&sortOrder=
-                <span style={{ color: "#008000" }}>ソート順(desc|asc)</span>
-              </p>
-              <p style={{ lineHeight: "1.2" }}>
-                ランキングを作成します。maxパラメータで最大エントリー数、sortOrderパラメータでソート順を設定可能。
-                <br />
-                レスポンス:{" "}
-                <span
-                  style={{ backgroundColor: "#000000", color: "#ffffff", padding: "2px 4px", fontFamily: "monospace" }}
-                >{`{ "id": "公開ID", "url": "サイトURL", "max": 10, "sortOrder": "desc" }`}</span>
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆スコア送信（公開アクセス）◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/ranking?action=submit&id=<span style={{ color: "#008000" }}>公開ID</span>&name=
-                <span style={{ color: "#008000" }}>プレイヤー名</span>&score=
-                <span style={{ color: "#008000" }}>スコア</span>
-              </p>
-              <p>
-                公開IDを使用してスコアを送信します。トークン不要で誰でもスコア登録可能。
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆ランキング取得◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/ranking?action=get&id=<span style={{ color: "#008000" }}>公開ID</span>
-              </p>
-              <p>
-                現在のランキングデータを取得します。
-                <br />
-                レスポンス:{" "}
-                <span
-                  style={{ backgroundColor: "#000000", color: "#ffffff", padding: "2px 4px", fontFamily: "monospace" }}
-                >{`{ "ranking": [{"name": "Player1", "score": 1000}, ...], "sortOrder": "desc" }`}</span>
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆スコア削除◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/ranking?action=remove&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
-                <span style={{ color: "#008000" }}>オーナートークン</span>&name=
-                <span style={{ color: "#008000" }}>プレイヤー名</span>
-              </p>
-              <p>指定したプレイヤーをランキングから削除します。</p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆エントリークリア◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/ranking?action=clear&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
-                <span style={{ color: "#008000" }}>オーナートークン</span>
-              </p>
-              <p>すべてのエントリーをクリアします。</p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆ランキング削除◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/ranking?action=delete&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
-                <span style={{ color: "#008000" }}>オーナートークン</span>
-              </p>
-              <p>ランキングを完全に削除します。</p>
-            </div>
-
-            <hr />
-
-            <p style={{ textAlign: "center" }}>
-              これ以上の詳しい説明は{" "}
-              <a href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md" className="nostalgic-old-link">
-                【GitHub】
-              </a>{" "}
-              へ
-            </p>
-          </>
-        );
 
       default:
         return null;

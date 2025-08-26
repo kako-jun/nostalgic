@@ -18,6 +18,7 @@ export default function BBSPage() {
   const maxRef = useRef<HTMLInputElement>(null);
   const perPageRef = useRef<HTMLInputElement>(null);
   const iconsRef = useRef<HTMLInputElement>(null);
+  const editTokenRef = useRef<HTMLInputElement>(null);
   
   useEffect(() => {
     const hash = window.location.hash.slice(1);
@@ -51,6 +52,7 @@ export default function BBSPage() {
     const max = maxRef.current?.value;
     const perPage = perPageRef.current?.value;
     const icons = iconsRef.current?.value;
+    const editToken = editTokenRef.current?.value;
 
     if (!url || !token) return;
 
@@ -70,6 +72,12 @@ export default function BBSPage() {
       }
       if (mode === "remove" && messageId && author) {
         apiUrl += `&messageId=${messageId}&author=${encodeURIComponent(author)}`;
+      }
+      if (mode === "editMessageById" && messageId && author && message && editToken) {
+        apiUrl += `&messageId=${messageId}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}&editToken=${encodeURIComponent(editToken)}`;
+      }
+      if (mode === "deleteMessageById" && messageId && author && editToken) {
+        apiUrl += `&messageId=${messageId}&author=${encodeURIComponent(author)}&editToken=${encodeURIComponent(editToken)}`;
       }
     }
     if (mode === "create") {
@@ -257,7 +265,7 @@ export default function BBSPage() {
 <nostalgic-bbs id="`}
                 <span style={{ color: "#008000" }}>公開ID</span>
                 {`" theme="`}
-                <span style={{ color: "#008000" }}>classic</span>
+                <span style={{ color: "#008000" }}>dark</span>
                 {`"></nostalgic-bbs>`}
               </pre>
               
@@ -268,9 +276,9 @@ export default function BBSPage() {
                   </span>
                 </p>
                 <p>
-                  • <span style={{ color: "#008000" }}>classic</span> - クラシック（グレー系）
-                  <br />• <span style={{ color: "#008000" }}>modern</span> - モダン（青系）
-                  <br />• <span style={{ color: "#008000" }}>retro</span> - レトロ（黄系）
+                  • <span style={{ color: "#008000" }}>light</span> - ライト（白系モノクロ）
+                  <br />• <span style={{ color: "#008000" }}>dark</span> - ダーク（黒系モノクロ）
+                  <br />• <span style={{ color: "#008000" }}>kawaii</span> - かわいい（パステル系）
                 </p>
               </div>
 
@@ -1172,6 +1180,333 @@ declare module 'react' {
                 </div>
               )}
             </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆投稿者が自分のメッセージを編集したいときは？◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=editMessageById&url=<span style={{ color: "#008000" }}>サイトURL</span>
+                &token=<span style={{ color: "#008000" }}>オーナートークン</span>&messageId=<span style={{ color: "#008000" }}>メッセージID</span>&author=<span style={{ color: "#008000" }}>投稿者名</span>&message=<span style={{ color: "#008000" }}>新メッセージ</span>&editToken=<span style={{ color: "#008000" }}>編集トークン</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで編集できます。</p>
+              
+              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    ref={urlRef}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      marginLeft: "10px",
+                      width: "50%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    ref={tokenRef}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      marginLeft: "10px",
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>メッセージID：</b>
+                  <input
+                    ref={messageIdRef}
+                    type="text"
+                    placeholder="1"
+                    style={{
+                      marginLeft: "10px",
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>投稿者名：</b>
+                  <input
+                    ref={authorRef}
+                    type="text"
+                    placeholder="名無し"
+                    style={{
+                      marginLeft: "10px",
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>新メッセージ：</b>
+                  <br />
+                  <textarea
+                    ref={messageRef}
+                    placeholder="新しいメッセージを入力してください"
+                    style={{
+                      width: "80%",
+                      height: "100px",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginTop: "5px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>編集トークン：</b>
+                  <input
+                    ref={editTokenRef}
+                    type="text"
+                    placeholder="編集時に設定したトークン"
+                    style={{
+                      marginLeft: "10px",
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      marginLeft: "10px",
+                      padding: "4px 12px",
+                      backgroundColor: "#2196F3",
+                      color: "white",
+                      border: "2px outset #2196F3",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={(e) => {
+                      setMode("editMessageById");
+                      handleSubmit(e);
+                    }}
+                  >
+                    編集
+                  </button>
+                </p>
+              </form>
+
+              {response && (
+                <div className="nostalgic-section">
+                  <p>
+                    <span className="nostalgic-section-title">
+                      <b>◆APIレスポンス◆</b>
+                    </span>
+                  </p>
+                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
+                    {response}
+                  </pre>
+                </div>
+              )}
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆投稿者が自分のメッセージを削除したいときは？◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&url=<span style={{ color: "#008000" }}>サイトURL</span>
+                &token=<span style={{ color: "#008000" }}>オーナートークン</span>&messageId=<span style={{ color: "#008000" }}>メッセージID</span>&author=<span style={{ color: "#008000" }}>投稿者名</span>&editToken=<span style={{ color: "#008000" }}>編集トークン</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで削除できます。</p>
+              
+              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    ref={urlRef}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      marginLeft: "10px",
+                      width: "50%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    ref={tokenRef}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      marginLeft: "10px",
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>メッセージID：</b>
+                  <input
+                    ref={messageIdRef}
+                    type="text"
+                    placeholder="1"
+                    style={{
+                      marginLeft: "10px",
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>投稿者名：</b>
+                  <input
+                    ref={authorRef}
+                    type="text"
+                    placeholder="名無し"
+                    style={{
+                      marginLeft: "10px",
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>編集トークン：</b>
+                  <input
+                    ref={editTokenRef}
+                    type="text"
+                    placeholder="編集時に設定したトークン"
+                    style={{
+                      marginLeft: "10px",
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      marginLeft: "10px",
+                      padding: "4px 12px",
+                      backgroundColor: "#F44336",
+                      color: "white",
+                      border: "2px outset #F44336",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={(e) => {
+                      setMode("deleteMessageById");
+                      handleSubmit(e);
+                    }}
+                  >
+                    削除
+                  </button>
+                </p>
+              </form>
+
+              {response && (
+                <div className="nostalgic-section">
+                  <p>
+                    <span className="nostalgic-section-title">
+                      <b>◆APIレスポンス◆</b>
+                    </span>
+                  </p>
+                  <pre style={{ backgroundColor: "#000000", color: "#00ff00", padding: "10px", overflow: "auto", fontSize: "14px" }}>
+                    {response}
+                  </pre>
+                </div>
+              )}
+            </div>
+
+            <hr />
+
+            <p style={{ textAlign: "center" }}>
+              これ以上の詳しい説明は{" "}
+              <a href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md" className="nostalgic-old-link">
+                【GitHub】
+              </a>{" "}
+              へ
+            </p>
           </>
         );
 
@@ -1243,139 +1578,6 @@ declare module 'react' {
           </>
         );
 
-      case "api":
-        return (
-          <>
-            <div className="nostalgic-title-bar">
-              ★ Nostalgic BBS ★
-              <br />
-              API仕様
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆BBS作成◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/bbs?action=create&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
-                <span style={{ color: "#008000" }}>オーナートークン</span>
-              </p>
-              <p style={{ lineHeight: "1.2" }}>
-                BBSを作成します。
-                <br />
-                レスポンス:{" "}
-                <span
-                  style={{ backgroundColor: "#000000", color: "#ffffff", padding: "2px 4px", fontFamily: "monospace" }}
-                >{`{ "id": "公開ID", "url": "サイトURL" }`}</span>
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆メッセージ投稿◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/bbs?action=post&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
-                <span style={{ color: "#008000" }}>オーナートークン</span>&author=
-                <span style={{ color: "#008000" }}>投稿者名</span>&message=
-                <span style={{ color: "#008000" }}>メッセージ</span>
-              </p>
-              <p>
-                新しいメッセージを投稿します。（純粋なGET、1990年代スタイル）
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆メッセージ取得◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/bbs?action=get&id=<span style={{ color: "#008000" }}>公開ID</span>
-              </p>
-              <p>
-                メッセージ一覧を取得します。
-                <br />
-                レスポンス:{" "}
-                <span
-                  style={{ backgroundColor: "#000000", color: "#ffffff", padding: "2px 4px", fontFamily: "monospace" }}
-                >{`{ "messages": [{"id": "1", "author": "名前", "message": "内容", ...}] }`}</span>
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆メッセージ編集◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/bbs?action=update&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
-                <span style={{ color: "#008000" }}>オーナートークン</span>&messageId=
-                <span style={{ color: "#008000" }}>メッセージID</span>&author=
-                <span style={{ color: "#008000" }}>投稿者名</span>&message=
-                <span style={{ color: "#008000" }}>新メッセージ</span>
-              </p>
-              <p>投稿者確認によりメッセージを編集します。</p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆メッセージ削除◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/bbs?action=remove&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
-                <span style={{ color: "#008000" }}>オーナートークン</span>&messageId=
-                <span style={{ color: "#008000" }}>メッセージID</span>&author=
-                <span style={{ color: "#008000" }}>投稿者名</span>
-              </p>
-              <p>投稿者確認によりメッセージを削除します。</p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆メッセージ全削除◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/bbs?action=clear&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
-                <span style={{ color: "#008000" }}>オーナートークン</span>
-              </p>
-              <p>すべてのメッセージをクリアします。</p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆BBS削除◆</b>
-                </span>
-              </p>
-              <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px" }}>
-                GET /api/bbs?action=delete&url=<span style={{ color: "#008000" }}>サイトURL</span>&token=
-                <span style={{ color: "#008000" }}>オーナートークン</span>
-              </p>
-              <p>BBSを完全に削除します。</p>
-            </div>
-
-            <hr />
-
-            <p style={{ textAlign: "center" }}>
-              これ以上の詳しい説明は{" "}
-              <a href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md" className="nostalgic-old-link">
-                【GitHub】
-              </a>{" "}
-              へ
-            </p>
-          </>
-        );
 
       default:
         return null;
