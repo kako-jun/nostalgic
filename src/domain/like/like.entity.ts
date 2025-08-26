@@ -24,6 +24,7 @@ export interface LikeEntity {
   created: Date
   totalLikes: number
   lastLike?: Date
+  webhookUrl?: string
 }
 
 /**
@@ -41,7 +42,7 @@ export interface LikeData {
  * Like作成時のパラメータ
  */
 export interface LikeCreateParams {
-  // 特別な設定は現在なし
+  webhookUrl?: string
 }
 
 /**
@@ -75,7 +76,8 @@ export const LikeEntitySchema = z.object({
   url: CommonSchemas.url,
   created: CommonSchemas.date,
   totalLikes: CommonSchemas.nonNegativeInt,
-  lastLike: CommonSchemas.date.optional()
+  lastLike: CommonSchemas.date.optional(),
+  webhookUrl: z.string().url().optional()
 })
 
 export const LikeDataSchema = z.object({
@@ -87,7 +89,7 @@ export const LikeDataSchema = z.object({
 })
 
 export const LikeCreateParamsSchema = z.object({
-  // 空のオブジェクト
+  webhookUrl: z.string().url().optional()
 })
 
 export const LikeToggleParamsSchema = z.object({

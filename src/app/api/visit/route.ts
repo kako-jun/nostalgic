@@ -32,8 +32,8 @@ const ApiParamsSchema = CounterActionParams
 const createHandler = ApiHandler.create({
   paramsSchema: CounterSchemas.create,
   resultSchema: UnifiedAPISchemas.createSuccess,
-  handler: async ({ url, token }, request) => {
-    const createResult = await counterService.create(url, token, { enableDailyStats: true })
+  handler: async ({ url, token, webhookUrl }, request) => {
+    const createResult = await counterService.create(url, token, { enableDailyStats: true, webhookUrl })
     
     if (!createResult.success) {
       return createResult
@@ -179,6 +179,35 @@ const deleteHandler = ApiHandler.create({
 })
 
 /**
+ * SET WEBHOOK URL アクション
+ */
+const setWebhookUrlHandler = ApiHandler.create({
+  paramsSchema: z.object({
+    url: CommonSchemas.url,
+    token: CommonSchemas.token,
+    webhookUrl: z.string().url().optional()
+  }),
+  resultSchema: z.object({
+    success: z.literal(true),
+    message: z.string(),
+    data: z.any()
+  }),
+  handler: async ({ url, token, webhookUrl }) => {
+    const result = await counterService.setWebhookUrl(url, token, webhookUrl)
+    
+    if (!result.success) {
+      return result
+    }
+
+    return map(result, data => ({
+      success: true as const,
+      message: webhookUrl ? 'Webhook URL set successfully' : 'Webhook URL removed successfully',
+      data
+    }))
+  }
+})
+
+/**
  * ルーティング関数
  */
 async function routeRequest(request: NextRequest) {
@@ -214,6 +243,9 @@ async function routeRequest(request: NextRequest) {
       
       case 'delete':
         return await deleteHandler(request)
+      
+      case 'setWebhookUrl':
+        return await setWebhookUrlHandler(request)
       
       default:
         return ApiHandler.create({

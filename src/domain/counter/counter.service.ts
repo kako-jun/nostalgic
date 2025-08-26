@@ -46,7 +46,8 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
       id,
       url,
       created: new Date(),
-      totalCount: 0
+      totalCount: 0,
+      webhookUrl: params.webhookUrl
     }
 
     const validationResult = ValidationFramework.output(CounterEntitySchema, entity)
@@ -162,6 +163,7 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
     }
     
     // 最終訪問時刻の更新
+    const previousCount = entity.totalCount
     entity.totalCount = incrementResult.data
     entity.lastVisit = new Date()
 
@@ -173,6 +175,30 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
       await this.dailyRepository.increment(`${id}:${today}`, -incrementBy)
       await this.removeVisitMark(id, userHash)
       return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
+    }
+
+    // Webhook 通知を送信（webhookUrlが設定されている場合のみ）
+    if (entity.webhookUrl) {
+      const webhookPayload = {
+        event: 'counter.increment',
+        timestamp: new Date().toISOString(),
+        serviceId: id,
+        url: entity.url,
+        data: {
+          previousCount,
+          newCount: entity.totalCount,
+          incrementBy
+        }
+      }
+
+      // シンプルなWebhook送信（失敗してもメイン処理は継続）
+      fetch(entity.webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(webhookPayload)
+      }).catch(error => {
+        console.warn('Webhook delivery failed for counter increment:', error)
+      })
     }
 
     return await this.transformEntityToData(entity)
@@ -379,6 +405,37 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
     }
 
     return await this.transformEntityToData(entityResult.data)
+  }
+
+  /**
+   * Webhook URLを設定
+   */
+  async setWebhookUrl(
+    url: string,
+    token: string,
+    webhookUrl?: string
+  ): Promise<Result<CounterData, ValidationError | NotFoundError>> {
+    // オーナーシップ検証
+    const ownershipResult = await this.verifyOwnership(url, token)
+    if (!ownershipResult.success) {
+      return Err(new ValidationError('Ownership verification failed', { error: ownershipResult.error }))
+    }
+
+    if (!ownershipResult.data.isOwner || !ownershipResult.data.entity) {
+      return Err(new ValidationError('Invalid token or entity not found'))
+    }
+
+    const entity = ownershipResult.data.entity as CounterEntity
+
+    // Webhook URLを更新
+    entity.webhookUrl = webhookUrl
+
+    const saveResult = await this.entityRepository.save(entity.id, entity)
+    if (!saveResult.success) {
+      return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
+    }
+
+    return await this.transformEntityToData(entity)
   }
 }
 

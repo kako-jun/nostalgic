@@ -20,7 +20,8 @@ export const CounterSchemas = {
   create: z.object({
     action: z.literal('create'),
     url: CommonSchemas.url,
-    token: CommonSchemas.token
+    token: CommonSchemas.token,
+    webhookUrl: z.string().url().optional()
   }),
 
   // カウントアップ用パラメータ

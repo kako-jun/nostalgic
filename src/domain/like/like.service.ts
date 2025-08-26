@@ -44,7 +44,8 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
       id,
       url,
       created: new Date(),
-      totalLikes: 0
+      totalLikes: 0,
+      webhookUrl: params.webhookUrl
     }
 
     const validationResult = ValidationFramework.output(LikeEntitySchema, entity)
@@ -163,6 +164,8 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
       entity.lastLike = new Date()
     }
 
+    const previousLikes = currentlyLiked ? entity.totalLikes + 1 : entity.totalLikes - 1
+
     // エンティティ保存
     const saveResult = await this.entityRepository.save(id, entity)
     if (!saveResult.success) {
@@ -177,6 +180,30 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
         await this.removeUserLikeStatus(id, userHash)
       }
       return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
+    }
+
+    // Webhook 通知を送信（webhookUrlが設定されている場合のみ）
+    if (entity.webhookUrl) {
+      const webhookPayload = {
+        event: 'like.toggle',
+        timestamp: new Date().toISOString(),
+        serviceId: id,
+        url: entity.url,
+        data: {
+          previousLikes,
+          newLikes: entity.totalLikes,
+          userAction: currentlyLiked ? 'unlike' : 'like'
+        }
+      }
+
+      // シンプルなWebhook送信（失敗してもメイン処理は継続）
+      fetch(entity.webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(webhookPayload)
+      }).catch(error => {
+        console.warn('Webhook delivery failed for like toggle:', error)
+      })
     }
 
     return await this.transformEntityToDataWithUser(entity, userHash)

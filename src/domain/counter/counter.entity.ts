@@ -23,7 +23,8 @@ export const CounterEntitySchema = z.object({
   url: CommonSchemas.url,
   created: CommonSchemas.date,
   lastVisit: CommonSchemas.date.optional(),
-  totalCount: CommonSchemas.nonNegativeInt.default(0)
+  totalCount: CommonSchemas.nonNegativeInt.default(0),
+  webhookUrl: z.string().url().optional()
 })
 
 export const CounterDataSchema = z.object({
@@ -39,7 +40,8 @@ export const CounterDataSchema = z.object({
 
 export const CounterCreateParamsSchema = z.object({
   maxValue: CommonSchemas.positiveInt.optional(),
-  enableDailyStats: z.boolean().default(true)
+  enableDailyStats: z.boolean().default(true),
+  webhookUrl: z.string().url().optional()
 })
 
 export const CounterIncrementParamsSchema = z.object({
