@@ -174,12 +174,12 @@ async function showBBSData(redis, id) {
     console.log(`Total messages: ${messageCount}`);
     
     if (messageCount > 0) {
-      // 最新5件のメッセージを表示
-      const messages = await redis.lrange(`bbs_messages:${id}:messages`, -5, -1);
-      console.log('\nLatest 5 messages:');
+      // 全メッセージを表示
+      const messages = await redis.lrange(`bbs_messages:${id}:messages`, 0, -1);
+      console.log('\nAll messages:');
       messages.forEach((msg, index) => {
         const message = JSON.parse(msg);
-        console.log(`  ${messageCount - 4 + index}. [${message.timestamp}] ${message.author}: ${message.message.substring(0, 50)}${message.message.length > 50 ? '...' : ''}`);
+        console.log(`  ${index + 1}. [${message.timestamp}] ${message.author}: ${message.message.substring(0, 50)}${message.message.length > 50 ? '...' : ''}`);
       });
     }
   } else {
