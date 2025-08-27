@@ -234,12 +234,6 @@ class NostalgicBBS extends HTMLElement {
           min-width: var(--bbs-min-width);
           box-sizing: border-box;
         }
-        .bbs-container.kawaii {
-          background-image: radial-gradient(circle, rgba(255,255,255,0.4) 4px, transparent 4px),
-                           radial-gradient(circle, rgba(255,255,255,0.2) 2px, transparent 2px);
-          background-size: 24px 24px, 24px 24px;
-          background-position: 0 0, 12px 12px;
-        }
         .bbs-header {
           background: var(--bbs-header-bg);
           color: var(--bbs-header-color);
@@ -249,8 +243,8 @@ class NostalgicBBS extends HTMLElement {
           border-bottom: 2px solid var(--bbs-border-color);
         }
         .bbs-header.kawaii {
-          background-image: radial-gradient(circle, rgba(255,255,255,0.5) 3px, transparent 3px),
-                           radial-gradient(circle, rgba(255,255,255,0.3) 2px, transparent 2px);
+          background-image: radial-gradient(circle, rgba(255,255,255,0.15) 2.5px, transparent 2.5px),
+                           radial-gradient(circle, rgba(255,255,255,0.1) 1.5px, transparent 1.5px);
           background-size: 18px 18px, 18px 18px;
           background-position: 0 0, 9px 9px;
         }
@@ -394,6 +388,12 @@ class NostalgicBBS extends HTMLElement {
           margin-bottom: 8px;
           border-bottom: 1px solid var(--bbs-border-color);
         }
+        .form-header.kawaii {
+          background-image: radial-gradient(circle, rgba(255,255,255,0.15) 2.5px, transparent 2.5px),
+                           radial-gradient(circle, rgba(255,255,255,0.1) 1.5px, transparent 1.5px);
+          background-size: 18px 18px, 18px 18px;
+          background-position: 0 0, 9px 9px;
+        }
         .form-body {
           padding: 0 5px;
         }
@@ -460,6 +460,12 @@ class NostalgicBBS extends HTMLElement {
           opacity: 0.5;
           cursor: not-allowed;
         }
+        .form-row button.kawaii {
+          background-image: radial-gradient(circle, rgba(255,255,255,0.15) 2.5px, transparent 2.5px),
+                           radial-gradient(circle, rgba(255,255,255,0.1) 1.5px, transparent 1.5px);
+          background-size: 18px 18px, 18px 18px;
+          background-position: 0 0, 9px 9px;
+        }
         .message-area {
           margin: 8px 0;
           padding: 6px 8px;
@@ -521,7 +527,7 @@ class NostalgicBBS extends HTMLElement {
           </div>
         ` : ''}
         <div class="post-form">
-            <div class="form-header">コメントを投稿</div>
+            <div class="form-header ${theme === 'kawaii' ? 'kawaii' : ''}">コメントを投稿</div>
             <div class="form-body">
               <div class="form-row">
                 <input type="text" id="message-author" placeholder="名前（省略可、20文字まで）" maxlength="20">
@@ -540,7 +546,7 @@ class NostalgicBBS extends HTMLElement {
               </div>
               <div class="message-area" id="form-message"></div>
               <div class="form-row" style="justify-content: flex-end;">
-                <button id="post-button" onclick="this.getRootNode().host.postMessage()">投稿</button>
+                <button id="post-button" class="${theme === 'kawaii' ? 'kawaii' : ''}" onclick="this.getRootNode().host.postMessage()">投稿</button>
               </div>
             </div>
           </div>
