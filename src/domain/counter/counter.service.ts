@@ -280,7 +280,7 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
    * 重複訪問のチェック
    */
   private async checkDuplicateVisit(id: string, userHash: string): Promise<Result<boolean, ValidationError>> {
-    const visitKey = `visit:${id}:${userHash}`
+    const visitKey = `counter:${id}:visit:${userHash}`
     const visitRepo = RepositoryFactory.createEntity(z.string(), 'visit_check')
     
     const existsResult = await visitRepo.exists(visitKey)
@@ -295,7 +295,7 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
    * アトミックな訪問マーク（競合状態を解決、日付ベース制限）
    */
   private async atomicMarkVisit(id: string, userHash: string): Promise<Result<boolean, ValidationError>> {
-    const visitKey = `visit:${id}:${userHash}`
+    const visitKey = `counter:${id}:visit:${userHash}`
     const visitRepo = RepositoryFactory.createEntity(z.string(), 'visit_check')
     
     // 今日の終わりまでのTTLを計算
@@ -322,7 +322,7 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
    * 訪問マークを削除（ロールバック用）
    */
   private async removeVisitMark(id: string, userHash: string): Promise<Result<void, ValidationError>> {
-    const visitKey = `visit:${id}:${userHash}`
+    const visitKey = `counter:${id}:visit:${userHash}`
     const visitRepo = RepositoryFactory.createEntity(z.string(), 'visit_check')
 
     const deleteResult = await visitRepo.delete(visitKey)
@@ -337,7 +337,7 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
    * 訪問をマーク（日付ベース制限）
    */
   private async markVisit(id: string, userHash: string): Promise<Result<void, ValidationError>> {
-    const visitKey = `visit:${id}:${userHash}`
+    const visitKey = `counter:${id}:visit:${userHash}`
     const visitRepo = RepositoryFactory.createEntity(z.string(), 'visit_check')
     
     // 今日の終わりまでのTTLを計算

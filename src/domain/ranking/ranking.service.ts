@@ -590,7 +590,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
    * 連投防止チェック
    */
   private async checkSubmitCooldown(id: string, userHash: string): Promise<Result<boolean, ValidationError>> {
-    const submitKey = `submit:${id}:${userHash}`
+    const submitKey = `ranking:${id}:submit:${userHash}`
     const submitRepo = RepositoryFactory.createEntity(z.string(), 'ranking_submit')
     
     const existsResult = await submitRepo.exists(submitKey)
@@ -606,7 +606,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
    * 送信時刻をマーク
    */
   private async markSubmitTime(id: string, userHash: string): Promise<Result<void, ValidationError>> {
-    const submitKey = `submit:${id}:${userHash}`
+    const submitKey = `ranking:${id}:submit:${userHash}`
     const submitRepo = RepositoryFactory.createEntity(z.string(), 'ranking_submit')
     const limits = getRankingLimits() as { submitCooldown: number }
     const ttl = limits.submitCooldown // デフォルト60秒
@@ -623,7 +623,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
    * 送信マークを削除（ロールバック用）
    */
   private async removeSubmitMark(id: string, userHash: string): Promise<Result<void, ValidationError>> {
-    const submitKey = `submit:${id}:${userHash}`
+    const submitKey = `ranking:${id}:submit:${userHash}`
     const submitRepo = RepositoryFactory.createEntity(z.string(), 'ranking_submit')
 
     const deleteResult = await submitRepo.delete(submitKey)

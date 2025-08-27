@@ -53,15 +53,12 @@ counter:{id}:daily:{YYYY-MM-DD} → number
 counter:{id}:owner → hashed_token
 
 # 訪問記録（その日の23:59:59まで自動削除）
-visit:counter:{id}:{user_hash} → timestamp (expires at end of day)
+counter:{id}:visit:{user_hash} → timestamp (expires at end of day)
 ```
 
 ### 削除時の処理
 1. `url:counter:{encoded_url}` を削除
-2. `counter:{id}` を削除
-3. `counter:{id}:*` パターンの全キーを削除
-4. `visit:counter:{id}:*` パターンの全キーを削除
-5. `counters:index` から ID を削除
+2. `counter:{id}:*` パターンの全キーを削除（メタデータ、カウント、訪問記録すべて含む）
 
 ## Like Service
 
@@ -85,7 +82,7 @@ like:{id} → JSON {
 like:{id}:total → number
 
 # ユーザー状態（その日の23:59:59まで自動削除）
-like_users:{id}:user:{user_hash} → 'true' or 'false' (expires at end of day)
+like:{id}:users:{user_hash} → 'true' or 'false' (expires at end of day)
 
 # オーナートークン（ハッシュ化）
 like:{id}:owner → hashed_token
@@ -132,15 +129,14 @@ ranking:{id}:meta → JSON {
   title?: string,
   description?: string
 }
+
+# 送信クールダウン（60秒間自動削除）
+ranking:{id}:submit:{user_hash} → timestamp (expires after 60s)
 ```
 
 ### 削除時の処理
 1. `url:ranking:{encoded_url}` を削除
-2. `ranking:{id}` を削除
-3. `ranking:{id}:scores` を削除
-4. `ranking:{id}:owner` を削除
-5. `ranking:{id}:meta` を削除
-6. `rankings:index` から ID を削除
+2. `ranking:{id}:*` パターンの全キーを削除（メタデータ、スコア、送信クールダウンすべて含む）
 
 ## BBS Service
 
@@ -180,14 +176,14 @@ bbs:{id}:messages → List of JSON {
 
 # オーナートークン（ハッシュ化）
 bbs:{id}:owner → hashed_token
+
+# 投稿クールダウン（10秒間自動削除）
+bbs:{id}:post:{user_hash} → timestamp (expires after 10s)
 ```
 
 ### 削除時の処理
 1. `url:bbs:{encoded_url}` を削除
-2. `bbs:{id}` を削除
-3. `bbs:{id}:messages` を削除
-4. `bbs:{id}:owner` を削除
-5. `bbses:index` から ID を削除
+2. `bbs:{id}:*` パターンの全キーを削除（メタデータ、メッセージ、投稿クールダウンすべて含む）
 
 ## 削除スクリプトの使い方
 

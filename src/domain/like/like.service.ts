@@ -337,7 +337,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
    * ユーザーのいいね状態をチェック
    */
   private async checkUserLikeStatus(id: string, userHash: string): Promise<Result<boolean, ValidationError>> {
-    const userKey = `${id}:user:${userHash}`
+    const userKey = `like:${id}:users:${userHash}`
     const userRepo = RepositoryFactory.createEntity(z.string(), 'like_users')
     
     console.log(`[LIKE] Check: ${userKey}`)
@@ -356,7 +356,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
    * ユーザーのいいね状態を設定（日付ベース制限）
    */
   private async setUserLikeStatus(id: string, userHash: string): Promise<Result<void, ValidationError>> {
-    const userKey = `${id}:user:${userHash}`
+    const userKey = `like:${id}:users:${userHash}`
     const userRepo = RepositoryFactory.createEntity(z.string(), 'like_users')
     
     // 今日の終わりまでのTTLを計算
@@ -377,7 +377,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
    * ユーザーのいいね状態を更新（日付ベース制限）
    */
   private async updateUserLikeStatus(id: string, userHash: string, liked: boolean): Promise<Result<void, ValidationError>> {
-    const userKey = `${id}:user:${userHash}`
+    const userKey = `like:${id}:users:${userHash}`
     const userRepo = RepositoryFactory.createEntity(z.string(), 'like_users')
     
     // 今日の終わりまでのTTLを計算
@@ -400,7 +400,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
    * アトミックなユーザー状態設定（競合状態を解決）
    */
   private async atomicSetUserLikeStatus(id: string, userHash: string): Promise<Result<boolean, ValidationError>> {
-    const userKey = `${id}:user:${userHash}`
+    const userKey = `like:${id}:users:${userHash}`
     const userRepo = RepositoryFactory.createEntity(z.string(), 'like_users')
     
     // 今日の終わりまでのTTLを計算
@@ -443,7 +443,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
    * ユーザーのいいね状態を削除
    */
   private async removeUserLikeStatus(id: string, userHash: string): Promise<Result<void, ValidationError>> {
-    const userKey = `${id}:user:${userHash}`
+    const userKey = `like:${id}:users:${userHash}`
     const userRepo = RepositoryFactory.createEntity(z.string(), 'like_users')
 
     const deleteResult = await userRepo.delete(userKey)

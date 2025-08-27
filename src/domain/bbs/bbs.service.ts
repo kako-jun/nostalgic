@@ -693,7 +693,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
    * 連投防止チェック
    */
   private async checkPostCooldown(id: string, userHash: string): Promise<Result<boolean, ValidationError>> {
-    const postKey = `post:${id}:${userHash}`
+    const postKey = `bbs:${id}:post:${userHash}`
     const postRepo = RepositoryFactory.createEntity(z.string(), 'bbs_post')
     
     const existsResult = await postRepo.exists(postKey)
@@ -709,7 +709,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
    * 投稿時刻をマーク
    */
   private async markPostTime(id: string, userHash: string): Promise<Result<void, ValidationError>> {
-    const postKey = `post:${id}:${userHash}`
+    const postKey = `bbs:${id}:post:${userHash}`
     const postRepo = RepositoryFactory.createEntity(z.string(), 'bbs_post')
     const limits = getBBSLimits() as { postCooldown: number }
     const ttl = limits.postCooldown // デフォルト10秒
@@ -726,7 +726,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
    * 投稿マークを削除（ロールバック用）
    */
   private async removePostMark(id: string, userHash: string): Promise<Result<void, ValidationError>> {
-    const postKey = `post:${id}:${userHash}`
+    const postKey = `bbs:${id}:post:${userHash}`
     const postRepo = RepositoryFactory.createEntity(z.string(), 'bbs_post')
 
     const deleteResult = await postRepo.delete(postKey)
