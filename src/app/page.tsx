@@ -451,6 +451,83 @@ export default function HomePage() {
                 <p style={{ marginBottom: "20px" }}>
                   訪問の記念に、足あとを残していってください！
                 </p>
+                <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap", margin: "20px auto" }}>
+                  <div style={{ 
+                    position: "relative",
+                    width: "200px",
+                    height: "120px",
+                    backgroundColor: "#e0f7fa",
+                    backgroundImage: `
+                      radial-gradient(circle at 8% 15%, rgba(255,255,255,0.8) 8px, transparent 8px),
+                      radial-gradient(circle at 25% 8%, rgba(255,255,255,0.8) 5px, transparent 5px),
+                      radial-gradient(circle at 45% 22%, rgba(255,255,255,0.8) 11px, transparent 11px),
+                      radial-gradient(circle at 68% 5%, rgba(255,255,255,0.8) 7px, transparent 7px),
+                      radial-gradient(circle at 85% 18%, rgba(255,255,255,0.8) 9px, transparent 9px),
+                      radial-gradient(circle at 5% 45%, rgba(255,255,255,0.8) 6px, transparent 6px),
+                      radial-gradient(circle at 22% 38%, rgba(255,255,255,0.8) 10px, transparent 10px),
+                      radial-gradient(circle at 38% 55%, rgba(255,255,255,0.8) 8px, transparent 8px),
+                      radial-gradient(circle at 58% 42%, rgba(255,255,255,0.8) 5px, transparent 5px),
+                      radial-gradient(circle at 75% 35%, rgba(255,255,255,0.8) 12px, transparent 12px),
+                      radial-gradient(circle at 92% 48%, rgba(255,255,255,0.8) 7px, transparent 7px),
+                      radial-gradient(circle at 12% 75%, rgba(255,255,255,0.8) 9px, transparent 9px),
+                      radial-gradient(circle at 30% 68%, rgba(255,255,255,0.8) 6px, transparent 6px),
+                      radial-gradient(circle at 48% 82%, rgba(255,255,255,0.8) 8px, transparent 8px),
+                      radial-gradient(circle at 65% 72%, rgba(255,255,255,0.8) 10px, transparent 10px),
+                      radial-gradient(circle at 82% 85%, rgba(255,255,255,0.8) 5px, transparent 5px),
+                      radial-gradient(circle at 15% 92%, rgba(255,255,255,0.8) 11px, transparent 11px),
+                      radial-gradient(circle at 55% 95%, rgba(255,255,255,0.8) 7px, transparent 7px),
+                      radial-gradient(circle at 95% 78%, rgba(255,255,255,0.8) 9px, transparent 9px)
+                    `,
+                    border: "2px solid #9c27b0",
+                    borderRadius: "4px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    color: "#9c27b0"
+                  }}>
+                    薄い水色
+                  </div>
+                  <div style={{ 
+                    position: "relative",
+                    width: "200px",
+                    height: "120px",
+                    backgroundColor: "#b2ebf2",
+                    backgroundImage: `
+                      radial-gradient(circle at 12% 12%, rgba(255,255,255,0.4) 9px, transparent 9px),
+                      radial-gradient(circle at 28% 6%, rgba(255,255,255,0.4) 6px, transparent 6px),
+                      radial-gradient(circle at 52% 15%, rgba(255,255,255,0.4) 11px, transparent 11px),
+                      radial-gradient(circle at 72% 8%, rgba(255,255,255,0.4) 7px, transparent 7px),
+                      radial-gradient(circle at 88% 25%, rgba(255,255,255,0.4) 5px, transparent 5px),
+                      radial-gradient(circle at 6% 38%, rgba(255,255,255,0.4) 8px, transparent 8px),
+                      radial-gradient(circle at 25% 45%, rgba(255,255,255,0.4) 10px, transparent 10px),
+                      radial-gradient(circle at 45% 32%, rgba(255,255,255,0.4) 6px, transparent 6px),
+                      radial-gradient(circle at 62% 48%, rgba(255,255,255,0.4) 9px, transparent 9px),
+                      radial-gradient(circle at 78% 38%, rgba(255,255,255,0.4) 12px, transparent 12px),
+                      radial-gradient(circle at 95% 52%, rgba(255,255,255,0.4) 7px, transparent 7px),
+                      radial-gradient(circle at 8% 72%, rgba(255,255,255,0.4) 8px, transparent 8px),
+                      radial-gradient(circle at 32% 78%, rgba(255,255,255,0.4) 5px, transparent 5px),
+                      radial-gradient(circle at 52% 68%, rgba(255,255,255,0.4) 10px, transparent 10px),
+                      radial-gradient(circle at 68% 82%, rgba(255,255,255,0.4) 6px, transparent 6px),
+                      radial-gradient(circle at 85% 75%, rgba(255,255,255,0.4) 9px, transparent 9px),
+                      radial-gradient(circle at 18% 88%, rgba(255,255,255,0.4) 11px, transparent 11px),
+                      radial-gradient(circle at 42% 95%, rgba(255,255,255,0.4) 7px, transparent 7px),
+                      radial-gradient(circle at 75% 92%, rgba(255,255,255,0.4) 8px, transparent 8px),
+                      radial-gradient(circle at 92% 88%, rgba(255,255,255,0.4) 5px, transparent 5px)
+                    `,
+                    border: "2px solid #9c27b0",
+                    borderRadius: "4px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    color: "#9c27b0"
+                  }}>
+                    濃い水色
+                  </div>
+                </div>
                 <nostalgic-bbs id="nostalgic-b89803bb" theme="kawaii" />
               </div>
             </div>

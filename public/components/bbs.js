@@ -243,10 +243,27 @@ class NostalgicBBS extends HTMLElement {
           border-bottom: 2px solid var(--bbs-border-color);
         }
         .bbs-header.kawaii {
-          background-image: radial-gradient(circle, rgba(255,255,255,0.15) 2.5px, transparent 2.5px),
-                           radial-gradient(circle, rgba(255,255,255,0.1) 1.5px, transparent 1.5px);
-          background-size: 18px 18px, 18px 18px;
-          background-position: 0 0, 9px 9px;
+          background-image: 
+            radial-gradient(circle at 12% 12%, rgba(255,255,255,0.4) 9px, transparent 9px),
+            radial-gradient(circle at 28% 6%, rgba(255,255,255,0.4) 6px, transparent 6px),
+            radial-gradient(circle at 52% 15%, rgba(255,255,255,0.4) 11px, transparent 11px),
+            radial-gradient(circle at 72% 8%, rgba(255,255,255,0.4) 7px, transparent 7px),
+            radial-gradient(circle at 88% 25%, rgba(255,255,255,0.4) 5px, transparent 5px),
+            radial-gradient(circle at 6% 38%, rgba(255,255,255,0.4) 8px, transparent 8px),
+            radial-gradient(circle at 25% 45%, rgba(255,255,255,0.4) 10px, transparent 10px),
+            radial-gradient(circle at 45% 32%, rgba(255,255,255,0.4) 6px, transparent 6px),
+            radial-gradient(circle at 62% 48%, rgba(255,255,255,0.4) 9px, transparent 9px),
+            radial-gradient(circle at 78% 38%, rgba(255,255,255,0.4) 12px, transparent 12px),
+            radial-gradient(circle at 95% 52%, rgba(255,255,255,0.4) 7px, transparent 7px),
+            radial-gradient(circle at 8% 72%, rgba(255,255,255,0.4) 8px, transparent 8px),
+            radial-gradient(circle at 32% 78%, rgba(255,255,255,0.4) 5px, transparent 5px),
+            radial-gradient(circle at 52% 68%, rgba(255,255,255,0.4) 10px, transparent 10px),
+            radial-gradient(circle at 68% 82%, rgba(255,255,255,0.4) 6px, transparent 6px),
+            radial-gradient(circle at 85% 75%, rgba(255,255,255,0.4) 9px, transparent 9px),
+            radial-gradient(circle at 18% 88%, rgba(255,255,255,0.4) 11px, transparent 11px),
+            radial-gradient(circle at 42% 95%, rgba(255,255,255,0.4) 7px, transparent 7px),
+            radial-gradient(circle at 75% 92%, rgba(255,255,255,0.4) 8px, transparent 8px),
+            radial-gradient(circle at 92% 88%, rgba(255,255,255,0.4) 5px, transparent 5px);
         }
         .bbs-messages {
           height: 400px;
@@ -331,7 +348,7 @@ class NostalgicBBS extends HTMLElement {
           overflow-wrap: break-word;
           font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
           white-space: pre-wrap;
-          overflow-wrap: break-word;
+          text-align: left;
         }
         .message-meta {
           font-size: 10px;
@@ -389,10 +406,27 @@ class NostalgicBBS extends HTMLElement {
           border-bottom: 1px solid var(--bbs-border-color);
         }
         .form-header.kawaii {
-          background-image: radial-gradient(circle, rgba(255,255,255,0.15) 2.5px, transparent 2.5px),
-                           radial-gradient(circle, rgba(255,255,255,0.1) 1.5px, transparent 1.5px);
-          background-size: 18px 18px, 18px 18px;
-          background-position: 0 0, 9px 9px;
+          background-image: 
+            radial-gradient(circle at 12% 12%, rgba(255,255,255,0.4) 9px, transparent 9px),
+            radial-gradient(circle at 28% 6%, rgba(255,255,255,0.4) 6px, transparent 6px),
+            radial-gradient(circle at 52% 15%, rgba(255,255,255,0.4) 11px, transparent 11px),
+            radial-gradient(circle at 72% 8%, rgba(255,255,255,0.4) 7px, transparent 7px),
+            radial-gradient(circle at 88% 25%, rgba(255,255,255,0.4) 5px, transparent 5px),
+            radial-gradient(circle at 6% 38%, rgba(255,255,255,0.4) 8px, transparent 8px),
+            radial-gradient(circle at 25% 45%, rgba(255,255,255,0.4) 10px, transparent 10px),
+            radial-gradient(circle at 45% 32%, rgba(255,255,255,0.4) 6px, transparent 6px),
+            radial-gradient(circle at 62% 48%, rgba(255,255,255,0.4) 9px, transparent 9px),
+            radial-gradient(circle at 78% 38%, rgba(255,255,255,0.4) 12px, transparent 12px),
+            radial-gradient(circle at 95% 52%, rgba(255,255,255,0.4) 7px, transparent 7px),
+            radial-gradient(circle at 8% 72%, rgba(255,255,255,0.4) 8px, transparent 8px),
+            radial-gradient(circle at 32% 78%, rgba(255,255,255,0.4) 5px, transparent 5px),
+            radial-gradient(circle at 52% 68%, rgba(255,255,255,0.4) 10px, transparent 10px),
+            radial-gradient(circle at 68% 82%, rgba(255,255,255,0.4) 6px, transparent 6px),
+            radial-gradient(circle at 85% 75%, rgba(255,255,255,0.4) 9px, transparent 9px),
+            radial-gradient(circle at 18% 88%, rgba(255,255,255,0.4) 11px, transparent 11px),
+            radial-gradient(circle at 42% 95%, rgba(255,255,255,0.4) 7px, transparent 7px),
+            radial-gradient(circle at 75% 92%, rgba(255,255,255,0.4) 8px, transparent 8px),
+            radial-gradient(circle at 92% 88%, rgba(255,255,255,0.4) 5px, transparent 5px);
         }
         .form-body {
           padding: 0 5px;
@@ -461,10 +495,30 @@ class NostalgicBBS extends HTMLElement {
           cursor: not-allowed;
         }
         .form-row button.kawaii {
-          background-image: radial-gradient(circle, rgba(255,255,255,0.15) 2.5px, transparent 2.5px),
-                           radial-gradient(circle, rgba(255,255,255,0.1) 1.5px, transparent 1.5px);
-          background-size: 18px 18px, 18px 18px;
-          background-position: 0 0, 9px 9px;
+          background-image: 
+            radial-gradient(circle at 12% 12%, rgba(255,255,255,0.4) 9px, transparent 9px),
+            radial-gradient(circle at 28% 6%, rgba(255,255,255,0.4) 6px, transparent 6px),
+            radial-gradient(circle at 52% 15%, rgba(255,255,255,0.4) 11px, transparent 11px),
+            radial-gradient(circle at 72% 8%, rgba(255,255,255,0.4) 7px, transparent 7px),
+            radial-gradient(circle at 88% 25%, rgba(255,255,255,0.4) 5px, transparent 5px),
+            radial-gradient(circle at 6% 38%, rgba(255,255,255,0.4) 8px, transparent 8px),
+            radial-gradient(circle at 25% 45%, rgba(255,255,255,0.4) 10px, transparent 10px),
+            radial-gradient(circle at 45% 32%, rgba(255,255,255,0.4) 6px, transparent 6px),
+            radial-gradient(circle at 62% 48%, rgba(255,255,255,0.4) 9px, transparent 9px),
+            radial-gradient(circle at 78% 38%, rgba(255,255,255,0.4) 12px, transparent 12px),
+            radial-gradient(circle at 95% 52%, rgba(255,255,255,0.4) 7px, transparent 7px),
+            radial-gradient(circle at 8% 72%, rgba(255,255,255,0.4) 8px, transparent 8px),
+            radial-gradient(circle at 32% 78%, rgba(255,255,255,0.4) 5px, transparent 5px),
+            radial-gradient(circle at 52% 68%, rgba(255,255,255,0.4) 10px, transparent 10px),
+            radial-gradient(circle at 68% 82%, rgba(255,255,255,0.4) 6px, transparent 6px),
+            radial-gradient(circle at 85% 75%, rgba(255,255,255,0.4) 9px, transparent 9px),
+            radial-gradient(circle at 18% 88%, rgba(255,255,255,0.4) 11px, transparent 11px),
+            radial-gradient(circle at 42% 95%, rgba(255,255,255,0.4) 7px, transparent 7px),
+            radial-gradient(circle at 75% 92%, rgba(255,255,255,0.4) 8px, transparent 8px),
+            radial-gradient(circle at 92% 88%, rgba(255,255,255,0.4) 5px, transparent 5px);
+        }
+        .form-row.button-right {
+          justify-content: flex-end !important;
         }
         .message-area {
           margin: 8px 0;
@@ -493,7 +547,7 @@ class NostalgicBBS extends HTMLElement {
             messages.map((message, index) => `
               <div class="message-item">
                 <div class="message-header">
-                  <span class="message-author"><span style="display:inline-block;min-width:2.5em;text-align:right;">${startNumber + index + 1}.</span> ${this.escapeHtml(message.author || 'Anonymous')}${message.icon ? ` ${message.icon}` : ''}</span>
+                  <span class="message-author"><span style="display:inline-block;min-width:2em;text-align:right;">${startNumber + index + 1}.</span> ${this.escapeHtml(message.author || 'Anonymous')}${message.icon ? ` ${message.icon}` : ''}</span>
                   <div class="message-time-actions">
                     <span class="message-time">${this.formatDate(message.timestamp)}</span>
                     <div class="message-actions">
@@ -545,7 +599,7 @@ class NostalgicBBS extends HTMLElement {
                 <textarea id="message-content" placeholder="メッセージを入力（200文字まで）" maxlength="200" rows="5"></textarea>
               </div>
               <div class="message-area" id="form-message"></div>
-              <div class="form-row" style="justify-content: flex-end;">
+              <div class="form-row button-right">
                 <button id="post-button" class="${theme === 'kawaii' ? 'kawaii' : ''}" onclick="this.getRootNode().host.postMessage()">投稿</button>
               </div>
             </div>
