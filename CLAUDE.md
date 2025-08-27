@@ -136,14 +136,25 @@ npm run db:detail bbs      # BBSサービスの詳細のみ
 
 **💡 AIアシスタントへ**: データベースの状況確認が必要な時は、必ず `npm run db:summary` または `npm run db:detail` を実行して最新情報を取得してください。
 
-#### 🗑️ データ削除（API経由）
+#### 🗑️ データ削除
 ```bash
-# サービス完全削除（スクリプトより確実）
+# API経由削除（トークンが分かる場合）
 curl "https://nostalgic.llll-ll.com/api/visit?action=delete&url={URL}&token={TOKEN}"
 curl "https://nostalgic.llll-ll.com/api/like?action=delete&url={URL}&token={TOKEN}"  
 curl "https://nostalgic.llll-ll.com/api/ranking?action=delete&url={URL}&token={TOKEN}"
 curl "https://nostalgic.llll-ll.com/api/bbs?action=delete&url={URL}&token={TOKEN}"
+
+# スクリプト削除（トークン不明でも削除可能）
+npm run db:delete counter nostalgic-a1b2c3d4
+npm run db:delete ranking yoursite-b39b8813  
+npm run db:delete bbs test-396936bd
+npm run db:delete like debug-test-32c519f3
 ```
+
+**💡 削除方法の選択**:
+- トークンが分かる→API削除推奨
+- トークン不明（テスト用等）→スクリプト削除
+- どちらも同じ削除処理（URLマッピング、関連データ、オーナートークン等を完全削除）
 
 ## 使用方法
 ### 1. サービス作成
