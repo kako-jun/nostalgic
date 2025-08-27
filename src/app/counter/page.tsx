@@ -16,6 +16,7 @@ export default function CounterPage() {
   const tokenRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
   const webhookUrlRef = useRef<HTMLInputElement>(null);
+  const enableDailyStatsRef = useRef<HTMLInputElement>(null);
   const selectRef = useRef<HTMLSelectElement>(null);
   const formatRef = useRef<HTMLSelectElement>(null);
   
@@ -74,8 +75,12 @@ export default function CounterPage() {
       
       if (mode === "updateSettings") {
         const maxValue = valueRef.current?.value;
+        const enableDailyStats = enableDailyStatsRef.current?.checked;
         if (maxValue) {
           apiUrl += `&maxValue=${maxValue}`;
+        }
+        if (enableDailyStats !== undefined) {
+          apiUrl += `&enableDailyStats=${enableDailyStats}`;
         }
         if (webhookUrl) {
           apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
@@ -787,6 +792,22 @@ declare module 'react' {
                       fontSize: "16px"
                     }}
                   />
+                </p>
+
+                <p>
+                  <b>日別統計有効化：</b>
+                  <input
+                    ref={enableDailyStatsRef}
+                    type="checkbox"
+                    defaultChecked={true}
+                    style={{
+                      marginLeft: "10px",
+                      transform: "scale(1.2)"
+                    }}
+                  />
+                  <span style={{ marginLeft: "10px", fontSize: "14px", color: "#666" }}>
+                    日別統計を記録する
+                  </span>
                 </p>
 
                 <p>

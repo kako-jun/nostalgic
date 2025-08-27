@@ -20,6 +20,7 @@ export default function RankingPage() {
   const scoreRef = useRef<HTMLInputElement>(null);
   const maxRef = useRef<HTMLInputElement>(null);
   const sortOrderRef = useRef<HTMLSelectElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
   const webhookUrlRef = useRef<HTMLInputElement>(null);
   
   useEffect(() => {
@@ -83,6 +84,10 @@ export default function RankingPage() {
       }
       
       if (mode === "updateSettings") {
+        const title = titleRef.current?.value;
+        if (title) {
+          apiUrl += `&title=${encodeURIComponent(title)}`;
+        }
         if (max) {
           apiUrl += `&max=${max}`;
         }
@@ -1089,6 +1094,23 @@ declare module 'react' {
                       fontSize: "16px"
                     }}
                     required
+                  />
+                </p>
+
+                <p>
+                  <b>ランキングタイトル：</b>
+                  <input
+                    ref={titleRef}
+                    type="text"
+                    placeholder="RANKING"
+                    style={{
+                      marginLeft: "10px",
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
                   />
                 </p>
 
