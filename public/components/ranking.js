@@ -116,7 +116,7 @@ class NostalgicRanking extends HTMLElement {
       this.shadowRoot.innerHTML = `
         <style>
           .ranking-container {
-            font-family: 'Courier New', monospace;
+            font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
             background: #f0f0f0;
             border: 2px solid #333;
             padding: 10px;
@@ -168,8 +168,10 @@ class NostalgicRanking extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         :host {
-          display: inline-block;
-          width: min(480px, 100%);
+          display: block;
+          width: 480px;
+          max-width: 100%;
+          margin: 0 auto;
           /* CSS Variables for customization */
           --ranking-bg-color: ${style.bgColor};
           --ranking-border-color: ${style.borderColor};
@@ -213,7 +215,7 @@ class NostalgicRanking extends HTMLElement {
                               radial-gradient(circle at 185px 115px, rgba(255,255,255,0.4) 6px, transparent 6px);
         }
         .ranking-container {
-          font-family: var(--ranking-font-family, 'Courier New', monospace);
+          font-family: var(--ranking-font-family, 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace);
           background: var(--ranking-bg-color);
           border: 2px solid var(--ranking-border-color);
           border-radius: var(--ranking-border-radius);
@@ -233,7 +235,7 @@ class NostalgicRanking extends HTMLElement {
         .ranking-header.kawaii {
           background-color: var(--kawaii-dark-bg);
           background-image: var(--kawaii-dark-dots);
-          background-size: 200px 120px;
+          background-size: 220px 120px;
           background-repeat: repeat;
         }
         .ranking-list {
@@ -275,6 +277,7 @@ class NostalgicRanking extends HTMLElement {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          text-align: left;
         }
         .score {
           font-weight: bold;
@@ -311,7 +314,7 @@ class NostalgicRanking extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         .error-container {
-          font-family: 'Courier New', monospace;
+          font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
           background: #ffebee;
           border: 2px solid #f44336;
           padding: 10px;
