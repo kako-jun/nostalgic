@@ -348,6 +348,7 @@ class NostalgicLike extends HTMLElement {
         }
         
         .like-button.kawaii {
+          background-color: #e0f7fa;
           background-image: 
             radial-gradient(circle at 8% 15%, rgba(255,255,255,0.8) 8px, transparent 8px),
             radial-gradient(circle at 25% 8%, rgba(255,255,255,0.8) 5px, transparent 5px),
@@ -371,6 +372,7 @@ class NostalgicLike extends HTMLElement {
         }
         
         .like-button.kawaii:hover:not(.loading) {
+          background-color: #b2ebf2;
           background-image: 
             radial-gradient(circle at 8% 15%, rgba(255,255,255,0.9) 8px, transparent 8px),
             radial-gradient(circle at 25% 8%, rgba(255,255,255,0.9) 5px, transparent 5px),
