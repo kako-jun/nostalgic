@@ -96,14 +96,12 @@ GET /api/visit?action=set&url={URL}&token={TOKEN}&total={VALUE}
 カウンター設定を更新（オーナーのみ）。
 
 ```
-GET /api/visit?action=updateSettings&url={URL}&token={TOKEN}&maxValue={MAX}&enableDailyStats={BOOL}&webhookUrl={WEBHOOK_URL}
+GET /api/visit?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 ```
 
 **パラメータ:**
 - `url` (必須): 対象URL
 - `token` (必須): オーナートークン
-- `maxValue` (オプション): 最大カウント値
-- `enableDailyStats` (オプション): 日別統計有効化（true/false）
 - `webhookUrl` (オプション): 通知用WebhookURL
 
 **レスポンス:**

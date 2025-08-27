@@ -11,17 +11,13 @@ import { CommonSchemas } from '@/lib/core/validation'
 export const CounterFieldSchemas = {
   counterType: z.enum(['total', 'today', 'yesterday', 'week', 'month']),
   counterFormat: z.enum(['json', 'text', 'image']),
-  counterDigits: z.coerce.number().int().min(1).max(10).optional(),
-  maxValue: CommonSchemas.positiveInt.optional(),
-  enableDailyStats: z.boolean()
+  counterDigits: z.coerce.number().int().min(1).max(10).optional()
 } as const
 
 /**
  * カウンター設定の型
  */
 export interface CounterSettings {
-  maxValue?: number
-  enableDailyStats: boolean
   webhookUrl?: string
 }
 
@@ -75,8 +71,6 @@ export interface CounterDisplayParams {
  * Zodスキーマ定義
  */
 export const CounterSettingsSchema = z.object({
-  maxValue: CounterFieldSchemas.maxValue,
-  enableDailyStats: CounterFieldSchemas.enableDailyStats.default(true),
   webhookUrl: CommonSchemas.url.optional()
 })
 
@@ -101,8 +95,6 @@ export const CounterDataSchema = z.object({
 })
 
 export const CounterCreateParamsSchema = z.object({
-  maxValue: CounterFieldSchemas.maxValue,
-  enableDailyStats: CounterFieldSchemas.enableDailyStats.default(true),
   webhookUrl: CommonSchemas.url.optional()
 })
 
@@ -129,8 +121,6 @@ export const CounterDisplayParamsSchema = z.object({
  * Counter設定更新用パラメータ
  */
 export const CounterUpdateSettingsParamsSchema = z.object({
-  maxValue: CounterFieldSchemas.maxValue,
-  enableDailyStats: CounterFieldSchemas.enableDailyStats.optional(),
   webhookUrl: CommonSchemas.url.optional()
 })
 

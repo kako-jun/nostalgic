@@ -275,7 +275,9 @@ const CounterEntitySchema = z.object({
   id: z.string(),
   url: z.string().url(),
   created: z.date(),
-  enableDailyStats: z.boolean().default(true)
+  settings: z.object({
+    webhookUrl: z.string().url().optional()
+  })
 })
 
 const CounterDataSchema = z.object({
