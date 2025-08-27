@@ -38,7 +38,8 @@
     "typecheck": "tsc --noEmit",
     "db:summary": "node scripts/db-summary.js",
     "db:detail": "node scripts/db-detail.js",
-    "migrate:keys": "node scripts/migrate-redis-keys.js"
+    "migrate:keys": "node scripts/migrate-redis-keys.js",
+    "migrate:settings": "node scripts/migrate-to-unified-settings.js"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.8",
