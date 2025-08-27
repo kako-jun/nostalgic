@@ -58,20 +58,6 @@ class NostalgicLike extends HTMLElement {
       case 'format':
         return value;
         
-      case 'url':
-        if (!value || typeof value !== 'string') return null;
-        try {
-          new URL(value);
-          return value;
-        } catch {
-          return null;
-        }
-        
-      case 'token':
-        if (!value || typeof value !== 'string' || value.trim() === '') {
-          return null;
-        }
-        return value.trim();
         
       default:
         return value;
@@ -368,7 +354,7 @@ class NostalgicLike extends HTMLElement {
           align-items: center;
           gap: 6px;
           padding: 8px 12px;
-          background: var(--like-bg, ${style.bgColor});
+          background-color: var(--like-bg, ${style.bgColor});
           color: var(--like-text, ${style.textColor});
           border: 2px solid var(--like-border, ${style.borderColor});
           border-radius: var(--like-radius, 4px);
@@ -442,4 +428,5 @@ class NostalgicLike extends HTMLElement {
 if (!customElements.get('nostalgic-like')) {
   customElements.define('nostalgic-like', NostalgicLike);
 }
+
 
