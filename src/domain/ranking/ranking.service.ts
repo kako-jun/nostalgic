@@ -40,7 +40,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
     }
     
     super(config, RankingEntitySchema, RankingDataSchema)
-    this.sortedSetRepository = RepositoryFactory.createSortedSet('ranking_scores')
+    this.sortedSetRepository = RepositoryFactory.createSortedSet('ranking')
   }
 
   /**
