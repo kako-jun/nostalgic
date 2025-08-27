@@ -52,3 +52,6 @@ pids
 # Temporary folders
 tmp/
 temp/
+
+# Serena MCP Server files
+.serena/
