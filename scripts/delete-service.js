@@ -33,7 +33,6 @@ const redis = new Redis(process.env.REDIS_URL)
  */
 async function deleteCounter(id) {
   console.log(`🗑️  Deleting Counter: ${id}`)
-  let deleted = 0
   
   // メタデータ取得（URL取得のため）
   const metadata = await redis.get(`counter:${id}`)
@@ -47,54 +46,15 @@ async function deleteCounter(id) {
     }
   }
   
-  // 1. カウンター固有データ削除
-  // 直接キーを削除
-  const directKeys = [`counter:${id}:total`]
-  for (const key of directKeys) {
-    const result = await redis.del(key)
-    if (result > 0) {
-      console.log(`    ✅ Deleted: ${key}`)
-      deleted += result
-    }
+  // 統一キー構造により一括削除
+  const serviceKeys = await redis.keys(`counter:${id}*`)
+  let deleted = 0
+  if (serviceKeys.length > 0) {
+    deleted = await redis.del(...serviceKeys)
+    console.log(`    ✅ Deleted ${deleted} counter keys`)
   }
   
-  // 日別データを明示的に削除（過去30日分）
-  const today = new Date()
-  for (let i = 0; i < 30; i++) {
-    const date = new Date(today)
-    date.setDate(today.getDate() - i)
-    const dateStr = date.toISOString().split('T')[0]
-    const dailyKey = `counter:${id}:daily:${dateStr}`
-    const result = await redis.del(dailyKey)
-    if (result > 0) {
-      console.log(`    ✅ Deleted daily: ${dateStr}`)
-      deleted += result
-    }
-  }
-  
-  // visit キーの削除（統一されたキー形式）
-  const visitKeys = await redis.keys(`counter:${id}:visit:*`)
-  if (visitKeys.length > 0) {
-    const result = await redis.del(...visitKeys)
-    console.log(`    ✅ Deleted ${result} visit keys`)
-    deleted += result
-  }
-  
-  // 2. メタデータ削除
-  const metaDeleted = await redis.del(`counter:${id}`)
-  if (metaDeleted > 0) {
-    console.log(`    ✅ Deleted metadata`)
-    deleted += metaDeleted
-  }
-  
-  // 3. オーナートークン削除
-  const ownerDeleted = await redis.del(`counter:${id}:owner`)
-  if (ownerDeleted > 0) {
-    console.log(`    ✅ Deleted owner token`)
-    deleted += ownerDeleted
-  }
-  
-  // 4. URLマッピング削除
+  // URLマッピング削除
   if (url) {
     const encodedUrl = encodeURIComponent(url)
     const mappingDeleted = await redis.del(`url:counter:${encodedUrl}`)
@@ -112,7 +72,6 @@ async function deleteCounter(id) {
  */
 async function deleteLike(id) {
   console.log(`🗑️  Deleting Like: ${id}`)
-  let deleted = 0
   
   // メタデータ取得
   const metadata = await redis.get(`like:${id}`)
@@ -126,39 +85,15 @@ async function deleteLike(id) {
     }
   }
   
-  // 1. Like固有データ削除
-  const directKeys = [`like:${id}:total`]
-  for (const key of directKeys) {
-    const result = await redis.del(key)
-    if (result > 0) {
-      console.log(`    ✅ Deleted: ${key}`)
-      deleted += result
-    }
+  // 統一キー構造により一括削除
+  const serviceKeys = await redis.keys(`like:${id}*`)
+  let deleted = 0
+  if (serviceKeys.length > 0) {
+    deleted = await redis.del(...serviceKeys)
+    console.log(`    ✅ Deleted ${deleted} like keys`)
   }
   
-  // ユーザー状態削除（統一されたキー形式）
-  const userKeys = await redis.keys(`like:${id}:users:*`)
-  if (userKeys.length > 0) {
-    const result = await redis.del(...userKeys)
-    console.log(`    ✅ Deleted ${result} user state keys`)
-    deleted += result
-  }
-  
-  // 2. メタデータ削除
-  const metaDeleted = await redis.del(`like:${id}`)
-  if (metaDeleted > 0) {
-    console.log(`    ✅ Deleted metadata`)
-    deleted += metaDeleted
-  }
-  
-  // 3. オーナートークン削除
-  const ownerDeleted = await redis.del(`like:${id}:owner`)
-  if (ownerDeleted > 0) {
-    console.log(`    ✅ Deleted owner token`)
-    deleted += ownerDeleted
-  }
-  
-  // 4. URLマッピング削除
+  // URLマッピング削除
   if (url) {
     const encodedUrl = encodeURIComponent(url)
     const mappingDeleted = await redis.del(`url:like:${encodedUrl}`)
@@ -177,7 +112,6 @@ async function deleteLike(id) {
  */
 async function deleteRanking(id) {
   console.log(`🗑️  Deleting Ranking: ${id}`)
-  let deleted = 0
   
   // メタデータ取得
   const metadata = await redis.get(`ranking:${id}`)
@@ -191,43 +125,22 @@ async function deleteRanking(id) {
     }
   }
   
-  // 1. Ranking固有データ削除（performCleanup相当）
-  const scoresDeleted = await redis.del(`ranking:${id}:scores`)
-  if (scoresDeleted > 0) {
-    console.log(`    ✅ Deleted ranking scores`)
-    deleted += scoresDeleted
+  // 統一キー構造により一括削除
+  const serviceKeys = await redis.keys(`ranking:${id}*`)
+  let deleted = 0
+  if (serviceKeys.length > 0) {
+    deleted = await redis.del(...serviceKeys)
+    console.log(`    ✅ Deleted ${deleted} ranking keys`)
   }
   
-  // 表示用スコア削除（正しいキー形式）
+  // 古い形式のdisplay_scoresも削除（互換性のため）
   const displayScoresDeleted = await redis.del(`${id}:display_scores`)
   if (displayScoresDeleted > 0) {
-    console.log(`    ✅ Deleted display scores`)
+    console.log(`    ✅ Deleted legacy display scores`)
     deleted += displayScoresDeleted
   }
-
-  // 送信クールダウンキー削除（統一されたキー形式）
-  const submitKeys = await redis.keys(`ranking:${id}:submit:*`)
-  if (submitKeys.length > 0) {
-    const result = await redis.del(...submitKeys)
-    console.log(`    ✅ Deleted ${result} submit cooldown keys`)
-    deleted += result
-  }
   
-  // 2. メタデータ削除
-  const metaDeleted = await redis.del(`ranking:${id}`)
-  if (metaDeleted > 0) {
-    console.log(`    ✅ Deleted metadata`)
-    deleted += metaDeleted
-  }
-  
-  // 3. オーナートークン削除
-  const ownerDeleted = await redis.del(`ranking:${id}:owner`)
-  if (ownerDeleted > 0) {
-    console.log(`    ✅ Deleted owner token`)
-    deleted += ownerDeleted
-  }
-  
-  // 4. URLマッピング削除
+  // URLマッピング削除
   if (url) {
     const encodedUrl = encodeURIComponent(url)
     const mappingDeleted = await redis.del(`url:ranking:${encodedUrl}`)
@@ -245,7 +158,6 @@ async function deleteRanking(id) {
  */
 async function deleteBBS(id) {
   console.log(`🗑️  Deleting BBS: ${id}`)
-  let deleted = 0
   
   // メタデータ取得
   const metadata = await redis.get(`bbs:${id}`)
@@ -259,36 +171,15 @@ async function deleteBBS(id) {
     }
   }
   
-  // 1. BBS固有データ削除（performCleanup相当）
-  const messagesDeleted = await redis.del(`bbs:${id}:messages`)
-  if (messagesDeleted > 0) {
-    console.log(`    ✅ Deleted BBS messages`)
-    deleted += messagesDeleted
-  }
-
-  // 投稿クールダウンキー削除（統一されたキー形式）
-  const postKeys = await redis.keys(`bbs:${id}:post:*`)
-  if (postKeys.length > 0) {
-    const result = await redis.del(...postKeys)
-    console.log(`    ✅ Deleted ${result} post cooldown keys`)
-    deleted += result
+  // 統一キー構造により一括削除
+  const serviceKeys = await redis.keys(`bbs:${id}*`)
+  let deleted = 0
+  if (serviceKeys.length > 0) {
+    deleted = await redis.del(...serviceKeys)
+    console.log(`    ✅ Deleted ${deleted} bbs keys`)
   }
   
-  // 2. メタデータ削除
-  const metaDeleted = await redis.del(`bbs:${id}`)
-  if (metaDeleted > 0) {
-    console.log(`    ✅ Deleted metadata`)
-    deleted += metaDeleted
-  }
-  
-  // 3. オーナートークン削除
-  const ownerDeleted = await redis.del(`bbs:${id}:owner`)
-  if (ownerDeleted > 0) {
-    console.log(`    ✅ Deleted owner token`)
-    deleted += ownerDeleted
-  }
-  
-  // 4. URLマッピング削除
+  // URLマッピング削除
   if (url) {
     const encodedUrl = encodeURIComponent(url)
     const mappingDeleted = await redis.del(`url:bbs:${encodedUrl}`)

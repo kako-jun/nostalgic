@@ -8,6 +8,7 @@ import { BaseNumericService } from '@/lib/core/base-service'
 import { ValidationFramework } from '@/lib/core/validation'
 import { getServiceLimits } from '@/lib/core/config'
 import { RepositoryFactory } from '@/lib/core/repository'
+import { getRedis } from '@/lib/core/db'
 import { createHash } from 'crypto'
 import {
   CounterEntity,
@@ -22,7 +23,7 @@ import {
  * カウンターサービスクラス
  */
 export class CounterService extends BaseNumericService<CounterEntity, CounterData, CounterCreateParams> {
-  private readonly dailyRepository = RepositoryFactory.createNumber('counter_daily')
+  private readonly redis = getRedis()
 
   constructor() {
     const limits = getServiceLimits('counter') as { maxValue: number; maxDigits: number; dailyRetentionDays: number }
@@ -98,9 +99,10 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
       const date = new Date(today)
       date.setDate(date.getDate() - i)
       const dateStr = date.toISOString().split('T')[0]
+      const dailyKey = `counter:${id}:daily:${dateStr}`
       
       cleanupPromises.push(
-        this.dailyRepository.set(`${id}:${dateStr}`, 0) // 実際の削除は別途実装
+        this.redis.del(dailyKey)
       )
     }
 
@@ -156,12 +158,14 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
 
     // 日別カウント増加
     const today = new Date().toISOString().split('T')[0]
-    const dailyIncrementResult = await this.dailyRepository.increment(`${id}:${today}`, incrementBy)
-    if (!dailyIncrementResult.success) {
+    const dailyKey = `counter:${id}:daily:${today}`
+    try {
+      await this.redis.incrby(dailyKey, incrementBy)
+    } catch (error) {
       // ロールバック処理
       await this.incrementValue(`${id}:total`, -incrementBy)
       await this.removeVisitMark(id, userHash)
-      return Err(new ValidationError('Failed to increment daily count', { error: dailyIncrementResult.error }))
+      return Err(new ValidationError('Failed to increment daily count', { error }))
     }
     
     // 最終訪問時刻の更新
@@ -174,7 +178,7 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
     if (!saveResult.success) {
       // ロールバック処理
       await this.incrementValue(`${id}:total`, -incrementBy)
-      await this.dailyRepository.increment(`${id}:${today}`, -incrementBy)
+      await this.redis.decrby(dailyKey, incrementBy)
       await this.removeVisitMark(id, userHash)
       return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
     }
@@ -370,11 +374,13 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
    */
   private async getTodayCount(id: string): Promise<Result<number, ValidationError>> {
     const today = new Date().toISOString().split('T')[0]
-    const result = await this.dailyRepository.get(`${id}:${today}`)
-    if (!result.success) {
-      return Err(new ValidationError('Failed to get today count', { error: result.error }))
+    const dailyKey = `counter:${id}:daily:${today}`
+    try {
+      const value = await this.redis.get(dailyKey)
+      return Ok(value ? parseInt(value) : 0)
+    } catch (error) {
+      return Err(new ValidationError('Failed to get today count', { error }))
     }
-    return Ok(result.data)
   }
 
   /**
@@ -382,35 +388,38 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
    */
   private async getYesterdayCount(id: string): Promise<Result<number, ValidationError>> {
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-    const result = await this.dailyRepository.get(`${id}:${yesterday}`)
-    if (!result.success) {
-      return Err(new ValidationError('Failed to get yesterday count', { error: result.error }))
+    const dailyKey = `counter:${id}:daily:${yesterday}`
+    try {
+      const value = await this.redis.get(dailyKey)
+      return Ok(value ? parseInt(value) : 0)
+    } catch (error) {
+      return Err(new ValidationError('Failed to get yesterday count', { error }))
     }
-    return Ok(result.data)
   }
 
   /**
    * 指定期間のカウント取得
    */
   private async getPeriodCount(id: string, days: number): Promise<Result<number, ValidationError>> {
-    const promises: Promise<Result<number, ValidationError>>[] = []
+    const promises: Promise<number>[] = []
     
     for (let i = 0; i < days; i++) {
       const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000)
       const dateStr = date.toISOString().split('T')[0]
+      const dailyKey = `counter:${id}:daily:${dateStr}`
+      
       promises.push(
-        this.dailyRepository.get(`${id}:${dateStr}`).then(result => 
-          result.success ? Ok(result.data) : Ok(0)
-        )
+        this.redis.get(dailyKey).then(value => value ? parseInt(value) : 0)
       )
     }
 
-    const results = await Promise.all(promises)
-    const total = results.reduce((sum, result) => {
-      return sum + (result.success ? result.data : 0)
-    }, 0)
-
-    return Ok(total)
+    try {
+      const results = await Promise.all(promises)
+      const total = results.reduce((sum, count) => sum + count, 0)
+      return Ok(total)
+    } catch (error) {
+      return Err(new ValidationError('Failed to get period count', { error }))
+    }
   }
 
   /**
