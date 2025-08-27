@@ -198,7 +198,20 @@ export default function HomePage() {
               </p>
               <div style={{ textAlign: "center", margin: "20px 0" }}>
                 <p style={{ marginBottom: "10px" }}>このサイトが気に入ったら、いいねを押してください！</p>
-                <nostalgic-like id="nostalgic-b89803bb" theme="dark" />
+                <div style={{ display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap" }}>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Light</p>
+                    <nostalgic-like id="nostalgic-b89803bb" theme="light" />
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Dark</p>
+                    <nostalgic-like id="nostalgic-b89803bb" theme="dark" />
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Kawaii</p>
+                    <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -348,7 +361,25 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル◆</b>
+                  <b>◆ゲストブックのサンプル - Light テーマ◆</b>
+                </span>
+              </p>
+              <div style={{ margin: "20px 0", display: "flex", justifyContent: "center" }}>
+                <div style={{ maxWidth: "100%", overflow: "hidden" }}>
+                  <p style={{ marginBottom: "10px", textAlign: "center", wordWrap: "break-word", padding: "0 10px" }}>
+                    訪問の記念に、足あとを残していってください！
+                  </p>
+                  <div style={{ maxWidth: "100%", overflow: "auto" }}>
+                    <nostalgic-bbs id="nostalgic-b89803bb" theme="light" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆ゲストブックのサンプル - Dark テーマ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", display: "flex", justifyContent: "center" }}>
@@ -358,6 +389,24 @@ export default function HomePage() {
                   </p>
                   <div style={{ maxWidth: "100%", overflow: "auto" }}>
                     <nostalgic-bbs id="nostalgic-b89803bb" theme="dark" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆ゲストブックのサンプル - Kawaii テーマ◆</b>
+                </span>
+              </p>
+              <div style={{ margin: "20px 0", display: "flex", justifyContent: "center" }}>
+                <div style={{ maxWidth: "100%", overflow: "hidden" }}>
+                  <p style={{ marginBottom: "10px", textAlign: "center", wordWrap: "break-word", padding: "0 10px" }}>
+                    訪問の記念に、足あとを残していってください！
+                  </p>
+                  <div style={{ maxWidth: "100%", overflow: "auto" }}>
+                    <nostalgic-bbs id="nostalgic-b89803bb" theme="kawaii" />
                   </div>
                 </div>
               </div>

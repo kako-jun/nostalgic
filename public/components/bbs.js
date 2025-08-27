@@ -140,7 +140,7 @@ class NostalgicBBS extends HTMLElement {
             border: 2px solid #333;
             padding: 10px;
             border-radius: 4px;
-            box-shadow: 2px 2px 0px #333;
+            box-shadow: 3px 3px 0px #333;
             min-width: 300px;
             max-width: 600px;
           }
