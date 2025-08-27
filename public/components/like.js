@@ -378,7 +378,7 @@ class NostalgicLike extends HTMLElement {
           border-radius: var(--like-radius, 4px);
           box-shadow: 3px 3px 0px var(--like-shadow, ${style.shadowColor});
           cursor: pointer;
-          font-family: var(--like-font, 'Courier New', monospace);
+          font-family: var(--like-font, 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace);
           font-size: var(--like-font-size, 14px);
           font-weight: bold;
           user-select: none;
@@ -412,7 +412,7 @@ class NostalgicLike extends HTMLElement {
         }
         
         .like-count {
-          font-family: monospace;
+          font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
           min-width: 20px;
           text-align: center;
         }

@@ -218,8 +218,10 @@ class NostalgicBBS extends HTMLElement {
           --bbs-message-padding: 6px;
           --bbs-message-margin: 4px;
           --bbs-max-height: 400px;
-          display: inline-block;
-          width: min(480px, 100%);
+          display: block;
+          width: 480px;
+          max-width: 100%;
+          margin: 0 auto;
           /* 水玉パターン変数 */
           --kawaii-dark-bg: #b2ebf2;
           --kawaii-dark-dots: radial-gradient(circle at 15px 5px, rgba(255,255,255,0.4) 9px, transparent 9px),
@@ -273,7 +275,7 @@ class NostalgicBBS extends HTMLElement {
         .bbs-header.kawaii {
           background-color: var(--kawaii-dark-bg);
           background-image: var(--kawaii-dark-dots);
-          background-size: 200px 120px;
+          background-size: 220px 120px;
           background-repeat: repeat;
         }
         .bbs-messages {
@@ -282,17 +284,8 @@ class NostalgicBBS extends HTMLElement {
           max-height: 400px;
           overflow-y: auto;
         }
-        .bbs-messages::-webkit-scrollbar {
-          width: 12px;
-        }
-        .bbs-messages::-webkit-scrollbar-track {
-          background: var(--bbs-bg-color);
-          border-radius: 2px;
-        }
         .bbs-messages::-webkit-scrollbar-thumb {
           background: var(--bbs-scrollbar-thumb);
-          border-radius: 2px;
-          border: 1px solid var(--bbs-bg-color);
         }
         .bbs-messages::-webkit-scrollbar-thumb:hover {
           background: var(--bbs-scrollbar-hover);
@@ -419,7 +412,7 @@ class NostalgicBBS extends HTMLElement {
         .form-header.kawaii {
           background-color: var(--kawaii-dark-bg);
           background-image: var(--kawaii-dark-dots);
-          background-size: 200px 120px;
+          background-size: 220px 120px;
           background-repeat: repeat;
         }
         .form-body {
@@ -572,10 +565,10 @@ class NostalgicBBS extends HTMLElement {
               <div class="form-row">
                 <textarea id="message-content" placeholder="メッセージを入力（200文字まで）" maxlength="200" rows="5"></textarea>
               </div>
-              <div class="message-area" id="form-message"></div>
               <div class="form-row button-right">
                 <button id="post-button" class="${theme === 'kawaii' ? 'kawaii' : ''}" onclick="this.getRootNode().host.postMessage()">投稿</button>
               </div>
+              <div class="message-area" id="form-message"></div>
             </div>
           </div>
       </div>
@@ -656,7 +649,7 @@ class NostalgicBBS extends HTMLElement {
     }
 
     // 致命的エラー防止のみ（軽微なバリデーションはAPI側に任せる）
-    const author = typeof rawAuthor === 'string' ? rawAuthor || '名無しさん' : '名無しさん';
+    const author = typeof rawAuthor === 'string' ? rawAuthor || 'ああああ' : 'ああああ';
     const message = typeof rawMessage === 'string' ? rawMessage : '';
     const icon = typeof rawIcon === 'string' ? rawIcon : '';
 

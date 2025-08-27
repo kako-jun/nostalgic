@@ -273,7 +273,7 @@ export default function HomePage() {
                 </span>
               </p>
               
-              <div style={{ margin: "20px 0" }}>
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
                 <nostalgic-ranking id="nostalgic-9c044ad0" theme="light" />
               </div>
               
@@ -487,7 +487,7 @@ export default function HomePage() {
                       radial-gradient(circle at 130px 100px, rgba(255,255,255,0.8) 6px, transparent 6px),
                       radial-gradient(circle at 165px 115px, rgba(255,255,255,0.8) 9px, transparent 9px)
                     `,
-                    backgroundSize: "200px 120px",
+                    backgroundSize: "220px 120px",
                     backgroundRepeat: "repeat",
                     border: "2px solid #9c27b0",
                     borderRadius: "4px",
@@ -536,7 +536,7 @@ export default function HomePage() {
                       radial-gradient(circle at 140px 110px, rgba(255,255,255,0.4) 9px, transparent 9px),
                       radial-gradient(circle at 175px 115px, rgba(255,255,255,0.4) 6px, transparent 6px)
                     `,
-                    backgroundSize: "200px 120px",
+                    backgroundSize: "220px 120px",
                     backgroundRepeat: "repeat",
                     border: "2px solid #9c27b0",
                     borderRadius: "4px",
