@@ -260,25 +260,10 @@ async function showServiceDetails(serviceType) {
         console.log(formatYAML(details.stats, 3))
       }
       
-      // 設定表示（新アーキテクチャのsettingsまたは旧アーキテクチャの設定項目）
+      // 設定表示（統一設定アーキテクチャ）
       if (details.metadata.settings) {
         console.log('    settings:')
         console.log(formatYAML(details.metadata.settings, 3))
-      } else {
-        // 旧アーキテクチャの設定項目を抽出
-        const legacySettings = {}
-        if (details.metadata.maxEntries !== undefined) legacySettings.maxEntries = details.metadata.maxEntries
-        if (details.metadata.sortOrder !== undefined) legacySettings.sortOrder = details.metadata.sortOrder
-        if (details.metadata.maxMessages !== undefined) legacySettings.maxMessages = details.metadata.maxMessages
-        if (details.metadata.messagesPerPage !== undefined) legacySettings.messagesPerPage = details.metadata.messagesPerPage
-        if (details.metadata.title !== undefined) legacySettings.title = details.metadata.title
-        if (details.metadata.icons) legacySettings.icons = details.metadata.icons
-        if (details.metadata.selects) legacySettings.selects = details.metadata.selects
-        
-        if (Object.keys(legacySettings).length > 0) {
-          console.log('    settings: (legacy format)')
-          console.log(formatYAML(legacySettings, 3))
-        }
       }
       
       // webhookUrl の表示（settingsの外にある場合）
@@ -298,14 +283,6 @@ async function showServiceDetails(serviceType) {
       delete metadataToShow.lastSubmit
       delete metadataToShow.lastMessage
       delete metadataToShow.webhookUrl
-      // 旧アーキテクチャの設定項目も除外
-      delete metadataToShow.maxEntries
-      delete metadataToShow.sortOrder
-      delete metadataToShow.maxMessages
-      delete metadataToShow.messagesPerPage
-      delete metadataToShow.title
-      delete metadataToShow.icons
-      delete metadataToShow.selects
       
       if (Object.keys(metadataToShow).length > 0) {
         console.log('    metadata:')
