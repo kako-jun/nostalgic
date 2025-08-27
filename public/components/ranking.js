@@ -194,8 +194,8 @@ class NostalgicRanking extends HTMLElement {
           --ranking-text-color: ${style.textColor};
           --ranking-padding: 10px;
           --ranking-border-radius: 4px;
-          --ranking-min-width: 300px;
-          --ranking-max-width: 500px;
+          --ranking-min-width: 320px;
+          --ranking-max-width: 480px;
           --ranking-item-padding: 6px 10px;
         }
         .ranking-container {

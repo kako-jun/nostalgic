@@ -220,8 +220,8 @@ class NostalgicBBS extends HTMLElement {
           --bbs-message-margin: 4px;
           --bbs-max-height: 400px;
           display: inline-block;
-          max-width: min(480px, calc(100vw - 40px));
-          width: auto;
+          max-width: min(480px, 100%);
+          width: 100%;
         }
         .bbs-container {
           font-family: var(--bbs-font-family, 'Courier New', monospace);
@@ -229,8 +229,8 @@ class NostalgicBBS extends HTMLElement {
           border: 2px solid var(--bbs-border-color);
           border-radius: var(--bbs-border-radius);
           box-shadow: 3px 3px 0px var(--bbs-shadow-color);
-          width: var(--bbs-max-width);
-          max-width: calc(100vw - 40px);
+          width: 100%;
+          max-width: var(--bbs-max-width);
           min-width: var(--bbs-min-width);
           box-sizing: border-box;
         }
