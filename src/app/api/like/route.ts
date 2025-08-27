@@ -201,12 +201,12 @@ const svgHandler = ApiHandler.createSpecialResponse(
 const setHandler = ApiHandler.create({
   paramsSchema: LikeSchemas.set,
   resultSchema: LikeSchemas.data,
-  handler: async ({ url, token, value, webhookUrl }, request) => {
+  handler: async ({ url, token, value }, request) => {
     const ip = getClientIP(request)
     const userAgent = getUserAgent(request)
     const userHash = likeService.generateUserHash(ip, userAgent)
     
-    return await likeService.setLikeValue(url, token, value, userHash, webhookUrl)
+    return await likeService.setLikeValue(url, token, value, userHash)
   }
 })
 

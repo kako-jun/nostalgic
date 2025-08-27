@@ -77,8 +77,8 @@ const incrementHandler = ApiHandler.create({
 const setHandler = ApiHandler.create({
   paramsSchema: CounterSchemas.set,
   resultSchema: CounterSchemas.data,
-  handler: async ({ url, token, total, webhookUrl }) => {
-    return await counterService.setCounterValue(url, token, total, webhookUrl)
+  handler: async ({ url, token, total }) => {
+    return await counterService.setCounterValue(url, token, total)
   }
 })
 const updateSettingsHandler = ApiHandler.create({

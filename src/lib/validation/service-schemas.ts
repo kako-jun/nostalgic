@@ -45,8 +45,7 @@ export const CounterSchemas = {
     action: z.literal('set'),
     url: CommonSchemas.url,
     token: CommonSchemas.token,
-    total: CommonSchemas.nonNegativeInt,
-    webhookUrl: CommonSchemas.url.optional()
+    total: CommonSchemas.nonNegativeInt
   }),
 
   // 削除用パラメータ
@@ -113,8 +112,7 @@ export const LikeSchemas = {
     action: z.literal('set'),
     url: CommonSchemas.url,
     token: CommonSchemas.token,
-    value: CommonSchemas.nonNegativeInt,
-    webhookUrl: CommonSchemas.url.optional()
+    value: CommonSchemas.nonNegativeInt
   }),
 
   // 削除用パラメータ
@@ -169,8 +167,7 @@ export const RankingSchemas = {
     url: CommonSchemas.url,
     token: CommonSchemas.token,
     name: RankingFieldSchemas.playerName,
-    score: RankingFieldSchemas.score,
-    webhookUrl: CommonSchemas.url.optional()
+    score: RankingFieldSchemas.score
   }),
 
   // エントリー削除用パラメータ

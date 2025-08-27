@@ -349,8 +349,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
   async updateScore(
     url: string,
     token: string,
-    params: RankingUpdateParams,
-    webhookUrl?: string
+    params: RankingUpdateParams
   ): Promise<Result<RankingData, ValidationError | NotFoundError>> {
     // オーナーシップ検証
     const ownershipResult = await this.verifyOwnership(url, token)
@@ -372,9 +371,6 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
 
     // エンティティ更新
     entity.lastSubmit = new Date()
-    if (webhookUrl !== undefined) {
-      entity.settings.webhookUrl = webhookUrl
-    }
     const saveResult = await this.entityRepository.save(entity.id, entity)
     if (!saveResult.success) {
       return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
