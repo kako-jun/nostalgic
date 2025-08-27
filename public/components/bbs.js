@@ -196,7 +196,7 @@ class NostalgicBBS extends HTMLElement {
 
     const style = themeStyles[theme] || themeStyles.dark;
     // サーバーから取得したメッセージを逆順にして表示（新しいものが下に表示される）
-    const messages = (this.bbsData.messages || []).slice().reverse();
+    const messages = (this.bbsData.messages || []).slice();
     const pagination = this.bbsData.pagination || {};
     
     // 連番計算：現在のページの開始番号を計算

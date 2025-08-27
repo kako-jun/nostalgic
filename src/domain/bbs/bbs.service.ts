@@ -407,7 +407,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
       return Ok([]) // エラーの場合は空配列
     }
 
-    // 逆順ソート（新しいメッセージが下に来るよう）
+    // 逆順ソート（古いメッセージから新しいメッセージの順に）
     const sortedMessages = messagesResult.data.slice().reverse()
 
     // ページング処理
