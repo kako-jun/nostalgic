@@ -186,6 +186,8 @@ p {
   padding: 3px 6px !important;
   background-color: transparent !important;
   margin: 0 0 10px 0 !important;
+  font-size: clamp(16px, 2.5vw, 18px) !important;
+  white-space: nowrap !important;
 }
 
 /* 更新履歴ボックス */
