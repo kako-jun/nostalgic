@@ -192,6 +192,21 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
+              
+              <div style={{ textAlign: "center", marginTop: "25px" }}>
+                <p style={{ marginBottom: "15px", fontWeight: "bold" }}>【プレーンテキスト形式】</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span>総アクセス数:</span>
+                    <nostalgic-counter id="nostalgic-b89803bb" type="total" format="text" />
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span>今日:</span>
+                    <nostalgic-counter id="nostalgic-b89803bb" type="today" format="text" />
+                  </div>
+                </div>
+                <p style={{ marginTop: "10px", fontSize: "14px", color: "#666" }}>※プレーンテキストは背景に溶け込みやすい形式です</p>
+              </div>
             </div>
 
             <div className="nostalgic-section">
@@ -263,6 +278,22 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
+              </div>
+              
+              <div style={{ textAlign: "center", marginTop: "25px" }}>
+                <p style={{ marginBottom: "15px", fontWeight: "bold" }}>【プレーンテキスト形式】</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span>いいね数:</span>
+                    <nostalgic-like id="nostalgic-b89803bb" format="text" />
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span>状態:</span>
+                    <nostalgic-like id="nostalgic-b89803bb" format="text" icon="heart" />
+                    <span>（クリックでトグル）</span>
+                  </div>
+                </div>
+                <p style={{ marginTop: "10px", fontSize: "14px", color: "#666" }}>※プレーンテキストは背景に溶け込みやすい形式です</p>
               </div>
             </div>
 
