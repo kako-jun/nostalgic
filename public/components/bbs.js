@@ -39,7 +39,7 @@ class NostalgicBBS extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['id', 'page', 'theme', 'format', 'url', 'token'];
+    return ['id', 'page', 'theme', 'format'];
   }
 
   // 安全なアトリビュート処理
@@ -257,7 +257,7 @@ class NostalgicBBS extends HTMLElement {
           box-sizing: border-box;
         }
         .bbs-header {
-          background: var(--bbs-header-bg);
+          background-color: var(--bbs-header-bg);
           color: var(--bbs-header-color);
           padding: var(--bbs-header-padding, 8px);
           text-align: center;
@@ -399,7 +399,7 @@ class NostalgicBBS extends HTMLElement {
           border-top: 2px solid var(--bbs-border-color);
         }
         .form-header {
-          background: var(--bbs-header-bg);
+          background-color: var(--bbs-header-bg);
           color: var(--bbs-header-color);
           padding: 6px 8px;
           text-align: center;
