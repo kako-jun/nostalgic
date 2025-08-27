@@ -108,14 +108,12 @@ GET /api/visit?action=set&url={URL}&token={TOKEN}&total={VALUE}
 Update counter settings (owner only).
 
 ```
-GET /api/visit?action=updateSettings&url={URL}&token={TOKEN}&maxValue={MAX}&enableDailyStats={BOOL}&webhookUrl={WEBHOOK_URL}
+GET /api/visit?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
 - `url` (required): Target URL
 - `token` (required): Owner token
-- `maxValue` (optional): Maximum count value
-- `enableDailyStats` (optional): Enable daily statistics tracking (true/false)
 - `webhookUrl` (optional): Webhook URL for notifications
 
 **Response:**

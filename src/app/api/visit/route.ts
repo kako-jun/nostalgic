@@ -84,8 +84,8 @@ const setHandler = ApiHandler.create({
 const updateSettingsHandler = ApiHandler.create({
   paramsSchema: CounterSchemas.updateSettings,
   resultSchema: CounterSchemas.data,
-  handler: async ({ url, token, maxValue, enableDailyStats, webhookUrl }) => {
-    return await counterService.updateSettings(url, token, { maxValue, enableDailyStats, webhookUrl })
+  handler: async ({ url, token, webhookUrl }) => {
+    return await counterService.updateSettings(url, token, { webhookUrl })
   }
 })
 

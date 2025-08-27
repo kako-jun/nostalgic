@@ -48,8 +48,6 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
       created: new Date(),
       totalCount: 0,
       settings: {
-        maxValue: params.maxValue,
-        enableDailyStats: params.enableDailyStats ?? true,
         webhookUrl: params.webhookUrl
       }
     }
@@ -249,8 +247,6 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
     url: string,
     token: string,
     params: {
-      maxValue?: number
-      enableDailyStats?: boolean
       webhookUrl?: string
     }
   ): Promise<Result<CounterData, ValidationError | NotFoundError>> {
@@ -267,12 +263,6 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
     const entity = ownershipResult.data.entity as CounterEntity
 
     // 設定更新
-    if (params.maxValue !== undefined) {
-      entity.settings.maxValue = params.maxValue
-    }
-    if (params.enableDailyStats !== undefined) {
-      entity.settings.enableDailyStats = params.enableDailyStats
-    }
     if (params.webhookUrl !== undefined) {
       entity.settings.webhookUrl = params.webhookUrl
     }

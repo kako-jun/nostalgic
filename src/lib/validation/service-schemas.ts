@@ -59,8 +59,6 @@ export const CounterSchemas = {
     action: z.literal('updateSettings'),
     url: CommonSchemas.url,
     token: CommonSchemas.token,
-    maxValue: CounterFieldSchemas.maxValue.optional(),
-    enableDailyStats: CounterFieldSchemas.enableDailyStats.optional(),
     webhookUrl: CommonSchemas.url.optional()
   }),
 

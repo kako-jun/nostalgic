@@ -16,7 +16,6 @@ export default function CounterPage() {
   const tokenRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
   const webhookUrlRef = useRef<HTMLInputElement>(null);
-  const enableDailyStatsRef = useRef<HTMLInputElement>(null);
   const selectRef = useRef<HTMLSelectElement>(null);
   const formatRef = useRef<HTMLSelectElement>(null);
   
@@ -74,14 +73,6 @@ export default function CounterPage() {
       }
       
       if (mode === "updateSettings") {
-        const maxValue = valueRef.current?.value;
-        const enableDailyStats = enableDailyStatsRef.current?.checked;
-        if (maxValue) {
-          apiUrl += `&maxValue=${maxValue}`;
-        }
-        if (enableDailyStats !== undefined) {
-          apiUrl += `&enableDailyStats=${enableDailyStats}`;
-        }
         if (webhookUrl) {
           apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
         }
@@ -777,38 +768,6 @@ declare module 'react' {
                   />
                 </p>
 
-                <p>
-                  <b>最大カウント値：</b>
-                  <input
-                    ref={valueRef}
-                    type="number"
-                    placeholder="1000"
-                    style={{
-                      marginLeft: "10px",
-                      width: "20%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                  />
-                </p>
-
-                <p>
-                  <b>日別統計有効化：</b>
-                  <input
-                    ref={enableDailyStatsRef}
-                    type="checkbox"
-                    defaultChecked={true}
-                    style={{
-                      marginLeft: "10px",
-                      transform: "scale(1.2)"
-                    }}
-                  />
-                  <span style={{ marginLeft: "10px", fontSize: "14px", color: "#666" }}>
-                    日別統計を記録する
-                  </span>
-                </p>
 
                 <p>
                   <b>Webhook URL：</b>
