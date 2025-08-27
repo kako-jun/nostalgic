@@ -401,7 +401,7 @@ export default function HomePage() {
                   <b>◆名詞性別クイズ ハイスコア◆</b>
                 </span>
               </p>
-              <div style={{ margin: "20px 0" }}>
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
                 <nostalgic-ranking id="noun-gender-d0bb6d1f" theme="kawaii" />
               </div>
               <div style={{ textAlign: "center", marginTop: "15px" }}>
