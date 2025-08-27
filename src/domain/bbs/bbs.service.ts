@@ -401,15 +401,21 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
    * ページネーション付きでメッセージを取得
    */
   private async getMessages(id: string, page: number, limit: number): Promise<Result<BBSMessage[], ValidationError>> {
-    const start = (page - 1) * limit
-    const end = start + limit - 1
-
-    const messagesResult = await this.listRepository.range(`${id}:messages`, start, end)
+    // 全メッセージを取得
+    const messagesResult = await this.listRepository.range(`${id}:messages`, 0, -1)
     if (!messagesResult.success) {
       return Ok([]) // エラーの場合は空配列
     }
 
-    return Ok(messagesResult.data)
+    // 逆順ソート（新しいメッセージが下に来るよう）
+    const sortedMessages = messagesResult.data.slice().reverse()
+
+    // ページング処理
+    const start = (page - 1) * limit
+    const end = start + limit
+    const pagedMessages = sortedMessages.slice(start, end)
+
+    return Ok(pagedMessages)
   }
 
   /**
