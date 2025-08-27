@@ -78,6 +78,8 @@ GET /api/ranking?action=update&url={URL}&token={TOKEN}&name={PLAYER_NAME}&score=
 - `name` (required): Player name to update
 - `score` (required): New score value
 
+**Note:** For settings changes (webhookUrl, etc.), use the `updateSettings` action.
+
 **Response:**
 ```json
 {

@@ -89,6 +89,8 @@ GET /api/visit?action=set&url={URL}&token={TOKEN}&total={VALUE}
 - `token` (required): Owner token
 - `total` (required): New total value
 
+**Note:** For settings changes (webhookUrl, etc.), use the `updateSettings` action.
+
 **Response:**
 ```json
 {

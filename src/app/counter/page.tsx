@@ -80,7 +80,7 @@ export default function CounterPage() {
         if (webhookUrl) {
           apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
         }
-      } else if (webhookUrl && (mode === "create" || mode === "set")) {
+      } else if (webhookUrl && mode === "create") {
         apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
       }
     }

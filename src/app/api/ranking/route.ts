@@ -63,8 +63,8 @@ const submitHandler = ApiHandler.create({
 const updateHandler = ApiHandler.create({
   paramsSchema: RankingSchemas.update,
   resultSchema: RankingSchemas.data,
-  handler: async ({ url, token, name, score, webhookUrl }) => {
-    return await rankingService.updateScore(url, token, { name, score }, webhookUrl)
+  handler: async ({ url, token, name, score }) => {
+    return await rankingService.updateScore(url, token, { name, score })
   }
 })
 

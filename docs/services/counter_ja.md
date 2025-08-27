@@ -77,6 +77,8 @@ GET /api/visit?action=set&url={URL}&token={TOKEN}&total={VALUE}
 - `token` (必須): オーナートークン
 - `total` (必須): 新しい累計値
 
+**注意:** 設定変更（webhookUrl等）は`updateSettings`アクションを使用してください。
+
 **レスポンス:**
 ```json
 {

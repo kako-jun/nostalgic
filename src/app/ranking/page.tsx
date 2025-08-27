@@ -92,7 +92,7 @@ export default function RankingPage() {
         if (webhookUrl) {
           apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
         }
-      } else if (webhookUrl && (mode === "create" || mode === "update")) {
+      } else if (webhookUrl && mode === "create") {
         apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
       }
       if (mode === "remove" && name) {

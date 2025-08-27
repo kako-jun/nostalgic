@@ -257,8 +257,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
     url: string,
     token: string,
     value: number,
-    userHash: string,
-    webhookUrl?: string
+    userHash: string
   ): Promise<Result<LikeData, ValidationError | NotFoundError>> {
     // オーナーシップ検証
     const ownershipResult = await this.verifyOwnership(url, token)
@@ -291,9 +290,6 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
     // エンティティ更新
     entity.totalLikes = value
     entity.lastLike = new Date()
-    if (webhookUrl !== undefined) {
-      entity.settings.webhookUrl = webhookUrl
-    }
     
     const saveResult = await this.entityRepository.save(entity.id, entity)
     if (!saveResult.success) {

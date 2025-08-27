@@ -38,6 +38,14 @@ GET /api/ranking?action=submit&id={ID}&name={PLAYER_NAME}&score={SCORE}
 GET /api/ranking?action=update&url={URL}&token={TOKEN}&name={PLAYER_NAME}&score={NEW_SCORE}
 ```
 
+**パラメータ:**
+- `url` (必須): 対象URL
+- `token` (必須): オーナートークン
+- `name` (必須): プレイヤー名
+- `score` (必須): 新しいスコア
+
+**注意:** 設定変更（webhookUrl等）は`updateSettings`アクションを使用してください。
+
 ### remove
 特定のプレイヤーのスコアを削除。
 

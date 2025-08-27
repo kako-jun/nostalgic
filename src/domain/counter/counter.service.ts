@@ -214,8 +214,7 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
   async setCounterValue(
     url: string,
     token: string,
-    value: number,
-    webhookUrl?: string
+    value: number
   ): Promise<Result<CounterData, ValidationError | NotFoundError>> {
     // オーナーシップ検証
     const ownershipResult = await this.verifyOwnership(url, token)
@@ -237,9 +236,6 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
 
     // エンティティ更新
     entity.totalCount = value
-    if (webhookUrl !== undefined) {
-      entity.settings.webhookUrl = webhookUrl
-    }
     const saveResult = await this.entityRepository.save(entity.id, entity)
     if (!saveResult.success) {
       return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
