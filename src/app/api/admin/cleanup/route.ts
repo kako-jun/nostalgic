@@ -49,14 +49,12 @@ const cleanupHandler = ApiHandler.create({
       for (const id of idsToDelete) {
         console.log(`🧹 Cleaning up instance: ${id}`)
         
-        // パターンマッチで関連するすべてのキーを検索
+        // パターンマッチで関連するすべてのキーを検索（統一キー構造）
         const patterns = [
-          `*${id}*`,
           `counter:${id}:*`,
           `like:${id}:*`,
           `ranking:${id}:*`,
-          `bbs:${id}:*`,
-          `visit:*:${id}:*`
+          `bbs:${id}:*`
         ]
         
         // URLマッピングも検索・削除
@@ -173,7 +171,6 @@ const cleanupByUrlHandler = ApiHandler.create({
             `like:${instanceId}:*`,
             `ranking:${instanceId}:*`,
             `bbs:${instanceId}:*`,
-            `visit:*:${instanceId}:*`
           ]
           
           for (const pattern of patterns) {

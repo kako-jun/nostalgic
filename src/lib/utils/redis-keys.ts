@@ -1,5 +1,7 @@
 /**
  * Redis key builder utility for consistent key generation across services
+ * ALL keys follow the pattern: {service}:{id}:{type}[:{detail}]
+ * This ensures clean namespace separation and easy bulk operations
  */
 export class RedisKeyBuilder {
   constructor(protected service: string) {}
@@ -63,10 +65,10 @@ export class CounterRedisKeys extends RedisKeyBuilder {
   }
 
   /**
-   * Visit duplicate prevention key: visit:counter:{id}:{userHash}
+   * Visit duplicate prevention key: counter:{id}:visit:{userHash}
    */
   visitCheck(id: string, userHash: string): string {
-    return `visit:${this.service}:${id}:${userHash}`
+    return `${this.service}:${id}:visit:${userHash}`
   }
 }
 
@@ -114,6 +116,13 @@ export class RankingRedisKeys extends RedisKeyBuilder {
   meta(id: string): string {
     return this.data(id, 'meta')
   }
+
+  /**
+   * Submit cooldown key: ranking:{id}:submit:{userHash}
+   */
+  submitCooldown(id: string, userHash: string): string {
+    return `${this.service}:${id}:submit:${userHash}`
+  }
 }
 
 /**
@@ -129,6 +138,13 @@ export class BBSRedisKeys extends RedisKeyBuilder {
    */
   messages(id: string): string {
     return this.data(id, 'messages')
+  }
+
+  /**
+   * Post cooldown key: bbs:{id}:post:{userHash}
+   */
+  postCooldown(id: string, userHash: string): string {
+    return `${this.service}:${id}:post:${userHash}`
   }
 }
 

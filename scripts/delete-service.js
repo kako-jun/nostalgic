@@ -48,19 +48,36 @@ async function deleteCounter(id) {
   }
   
   // 1. カウンター固有データ削除
-  const patterns = [
-    `counter:${id}:total`,
-    `counter:${id}:daily:*`,
-    `visit:counter:${id}:*`
-  ]
-  
-  for (const pattern of patterns) {
-    const keys = await redis.keys(pattern)
-    if (keys.length > 0) {
-      const result = await redis.del(...keys)
-      console.log(`    ✅ Deleted ${result} keys: ${pattern}`)
+  // 直接キーを削除
+  const directKeys = [`counter:${id}:total`]
+  for (const key of directKeys) {
+    const result = await redis.del(key)
+    if (result > 0) {
+      console.log(`    ✅ Deleted: ${key}`)
       deleted += result
     }
+  }
+  
+  // 日別データを明示的に削除（過去30日分）
+  const today = new Date()
+  for (let i = 0; i < 30; i++) {
+    const date = new Date(today)
+    date.setDate(today.getDate() - i)
+    const dateStr = date.toISOString().split('T')[0]
+    const dailyKey = `counter:${id}:daily:${dateStr}`
+    const result = await redis.del(dailyKey)
+    if (result > 0) {
+      console.log(`    ✅ Deleted daily: ${dateStr}`)
+      deleted += result
+    }
+  }
+  
+  // visit キーの削除（統一されたキー形式）
+  const visitKeys = await redis.keys(`counter:${id}:visit:*`)
+  if (visitKeys.length > 0) {
+    const result = await redis.del(...visitKeys)
+    console.log(`    ✅ Deleted ${result} visit keys`)
+    deleted += result
   }
   
   // 2. メタデータ削除
@@ -119,8 +136,8 @@ async function deleteLike(id) {
     }
   }
   
-  // ユーザー状態削除
-  const userKeys = await redis.keys(`like_users:${id}:*`)
+  // ユーザー状態削除（統一されたキー形式）
+  const userKeys = await redis.keys(`like:${id}:users:*`)
   if (userKeys.length > 0) {
     const result = await redis.del(...userKeys)
     console.log(`    ✅ Deleted ${result} user state keys`)
@@ -181,11 +198,19 @@ async function deleteRanking(id) {
     deleted += scoresDeleted
   }
   
-  // 表示用スコア削除
+  // 表示用スコア削除（正しいキー形式）
   const displayScoresDeleted = await redis.del(`${id}:display_scores`)
   if (displayScoresDeleted > 0) {
     console.log(`    ✅ Deleted display scores`)
     deleted += displayScoresDeleted
+  }
+
+  // 送信クールダウンキー削除（統一されたキー形式）
+  const submitKeys = await redis.keys(`ranking:${id}:submit:*`)
+  if (submitKeys.length > 0) {
+    const result = await redis.del(...submitKeys)
+    console.log(`    ✅ Deleted ${result} submit cooldown keys`)
+    deleted += result
   }
   
   // 2. メタデータ削除
@@ -239,6 +264,14 @@ async function deleteBBS(id) {
   if (messagesDeleted > 0) {
     console.log(`    ✅ Deleted BBS messages`)
     deleted += messagesDeleted
+  }
+
+  // 投稿クールダウンキー削除（統一されたキー形式）
+  const postKeys = await redis.keys(`bbs:${id}:post:*`)
+  if (postKeys.length > 0) {
+    const result = await redis.del(...postKeys)
+    console.log(`    ✅ Deleted ${result} post cooldown keys`)
+    deleted += result
   }
   
   // 2. メタデータ削除
