@@ -197,6 +197,28 @@ class NostalgicRanking extends HTMLElement {
           --ranking-min-width: 320px;
           --ranking-max-width: 480px;
           --ranking-item-padding: 6px 10px;
+          /* 水玉パターン変数 */
+          --kawaii-dark-bg: #b2ebf2;
+          --kawaii-dark-dots: radial-gradient(circle at 12% 12%, rgba(255,255,255,0.4) 9px, transparent 9px),
+                              radial-gradient(circle at 28% 6%, rgba(255,255,255,0.4) 6px, transparent 6px),
+                              radial-gradient(circle at 52% 15%, rgba(255,255,255,0.4) 11px, transparent 11px),
+                              radial-gradient(circle at 72% 8%, rgba(255,255,255,0.4) 7px, transparent 7px),
+                              radial-gradient(circle at 88% 25%, rgba(255,255,255,0.4) 5px, transparent 5px),
+                              radial-gradient(circle at 6% 38%, rgba(255,255,255,0.4) 8px, transparent 8px),
+                              radial-gradient(circle at 25% 45%, rgba(255,255,255,0.4) 10px, transparent 10px),
+                              radial-gradient(circle at 45% 32%, rgba(255,255,255,0.4) 6px, transparent 6px),
+                              radial-gradient(circle at 62% 48%, rgba(255,255,255,0.4) 9px, transparent 9px),
+                              radial-gradient(circle at 78% 38%, rgba(255,255,255,0.4) 12px, transparent 12px),
+                              radial-gradient(circle at 95% 52%, rgba(255,255,255,0.4) 7px, transparent 7px),
+                              radial-gradient(circle at 8% 72%, rgba(255,255,255,0.4) 8px, transparent 8px),
+                              radial-gradient(circle at 32% 78%, rgba(255,255,255,0.4) 5px, transparent 5px),
+                              radial-gradient(circle at 52% 68%, rgba(255,255,255,0.4) 10px, transparent 10px),
+                              radial-gradient(circle at 68% 82%, rgba(255,255,255,0.4) 6px, transparent 6px),
+                              radial-gradient(circle at 85% 75%, rgba(255,255,255,0.4) 9px, transparent 9px),
+                              radial-gradient(circle at 18% 88%, rgba(255,255,255,0.4) 11px, transparent 11px),
+                              radial-gradient(circle at 42% 95%, rgba(255,255,255,0.4) 7px, transparent 7px),
+                              radial-gradient(circle at 75% 92%, rgba(255,255,255,0.4) 8px, transparent 8px),
+                              radial-gradient(circle at 92% 88%, rgba(255,255,255,0.4) 5px, transparent 5px);
         }
         .ranking-container {
           font-family: var(--ranking-font-family, 'Courier New', monospace);
@@ -287,28 +309,8 @@ class NostalgicRanking extends HTMLElement {
           margin-bottom: 8px;
         }
         .form-header.kawaii {
-          background-color: #b2ebf2;
-          background-image: 
-            radial-gradient(circle at 12% 12%, rgba(255,255,255,0.4) 9px, transparent 9px),
-            radial-gradient(circle at 28% 6%, rgba(255,255,255,0.4) 6px, transparent 6px),
-            radial-gradient(circle at 52% 15%, rgba(255,255,255,0.4) 11px, transparent 11px),
-            radial-gradient(circle at 72% 8%, rgba(255,255,255,0.4) 7px, transparent 7px),
-            radial-gradient(circle at 88% 25%, rgba(255,255,255,0.4) 5px, transparent 5px),
-            radial-gradient(circle at 6% 38%, rgba(255,255,255,0.4) 8px, transparent 8px),
-            radial-gradient(circle at 25% 45%, rgba(255,255,255,0.4) 10px, transparent 10px),
-            radial-gradient(circle at 45% 32%, rgba(255,255,255,0.4) 6px, transparent 6px),
-            radial-gradient(circle at 62% 48%, rgba(255,255,255,0.4) 9px, transparent 9px),
-            radial-gradient(circle at 78% 38%, rgba(255,255,255,0.4) 12px, transparent 12px),
-            radial-gradient(circle at 95% 52%, rgba(255,255,255,0.4) 7px, transparent 7px),
-            radial-gradient(circle at 8% 72%, rgba(255,255,255,0.4) 8px, transparent 8px),
-            radial-gradient(circle at 32% 78%, rgba(255,255,255,0.4) 5px, transparent 5px),
-            radial-gradient(circle at 52% 68%, rgba(255,255,255,0.4) 10px, transparent 10px),
-            radial-gradient(circle at 68% 82%, rgba(255,255,255,0.4) 6px, transparent 6px),
-            radial-gradient(circle at 85% 75%, rgba(255,255,255,0.4) 9px, transparent 9px),
-            radial-gradient(circle at 18% 88%, rgba(255,255,255,0.4) 11px, transparent 11px),
-            radial-gradient(circle at 42% 95%, rgba(255,255,255,0.4) 7px, transparent 7px),
-            radial-gradient(circle at 75% 92%, rgba(255,255,255,0.4) 8px, transparent 8px),
-            radial-gradient(circle at 92% 88%, rgba(255,255,255,0.4) 5px, transparent 5px);
+          background-color: var(--kawaii-dark-bg);
+          background-image: var(--kawaii-dark-dots);
         }
         .form-row {
           display: flex;
