@@ -4,6 +4,15 @@
 NostalgicプラットフォームのRedisデータベース構造の完全な仕様書。
 各サービス（Counter, Like, Ranking, BBS）のデータ構造とキーパターンを記載。
 
+## キー構造の統一原則
+**すべてのサービスキーは `{service}:{id}:*` パターンに従う**
+
+この統一により：
+- 削除時は `{service}:{id}*` の1パターンで完全削除可能
+- 名前空間の明確な分離
+- サービス間の衝突防止
+- 一括操作の簡素化
+
 ## 重要：データ削除時の注意事項
 **サービスを削除する際は、必ず以下の2つを削除すること：**
 1. **URLマッピング** (`url:{service}:{encoded_url}`)
@@ -189,24 +198,16 @@ bbs:{id}:post:{user_hash} → timestamp (expires after 10s)
 
 ### 個別サービス削除
 ```bash
-# カウンター削除
-npm run cleanup:service counter {counter_id}
+# サービス削除コマンド
+npm run db:delete {service} {id}
 
-# いいね削除
-npm run cleanup:service like {like_id}
-
-# ランキング削除
-npm run cleanup:service ranking {ranking_id}
-
-# BBS削除
-npm run cleanup:service bbs {bbs_id}
+# 例
+npm run db:delete counter nostalgic-abc123
+npm run db:delete like example-def456
+npm run db:delete ranking mysite-ghi789
+npm run db:delete bbs forum-jkl012
 ```
 
-### 不正なレコード削除
-```bash
-# 特定のIDを指定して削除
-npm run cleanup:invalid
-```
 
 ## トラブルシューティング
 
