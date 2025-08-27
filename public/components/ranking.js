@@ -287,6 +287,7 @@ class NostalgicRanking extends HTMLElement {
           margin-bottom: 8px;
         }
         .form-header.kawaii {
+          background-color: #b2ebf2;
           background-image: 
             radial-gradient(circle at 12% 12%, rgba(255,255,255,0.4) 9px, transparent 9px),
             radial-gradient(circle at 28% 6%, rgba(255,255,255,0.4) 6px, transparent 6px),
