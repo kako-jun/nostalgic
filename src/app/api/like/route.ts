@@ -211,6 +211,17 @@ const setHandler = ApiHandler.create({
 })
 
 /**
+ * UPDATE SETTINGS アクション
+ */
+const updateSettingsHandler = ApiHandler.create({
+  paramsSchema: LikeSchemas.updateSettings,
+  resultSchema: LikeSchemas.data,
+  handler: async ({ url, token, webhookUrl }) => {
+    return await likeService.updateSettings(url, token, { webhookUrl })
+  }
+})
+
+/**
  * DELETE アクション
  */
 const deleteHandler = ApiHandler.create({
@@ -262,6 +273,9 @@ async function routeRequest(request: NextRequest) {
       
       case 'set':
         return await setHandler(request)
+      
+      case 'updateSettings':
+        return await updateSettingsHandler(request)
       
       case 'delete':
         return await deleteHandler(request)

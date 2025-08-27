@@ -45,7 +45,9 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
       url,
       created: new Date(),
       totalLikes: 0,
-      webhookUrl: params.webhookUrl
+      settings: {
+        webhookUrl: params.webhookUrl
+      }
     }
 
     const validationResult = ValidationFramework.output(LikeEntitySchema, entity)
@@ -183,7 +185,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
     }
 
     // Webhook 通知を送信（webhookUrlが設定されている場合のみ）
-    if (entity.webhookUrl) {
+    if (entity.settings.webhookUrl) {
       const webhookPayload = {
         event: 'like.toggle',
         timestamp: new Date().toISOString(),
@@ -197,7 +199,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
       }
 
       // シンプルなWebhook送信（失敗してもメイン処理は継続）
-      fetch(entity.webhookUrl, {
+      fetch(entity.settings.webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload)
@@ -299,6 +301,40 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
     }
 
     return await this.transformEntityToDataWithUser(entity, userHash)
+  }
+
+  // 設定更新（管理者用）
+  async updateSettings(
+    url: string,
+    token: string,
+    params: {
+      webhookUrl?: string
+    }
+  ): Promise<Result<LikeData, ValidationError | NotFoundError>> {
+    // オーナーシップ検証
+    const ownershipResult = await this.verifyOwnership(url, token)
+    if (!ownershipResult.success) {
+      return Err(new ValidationError('Ownership verification failed', { error: ownershipResult.error }))
+    }
+
+    if (!ownershipResult.data.isOwner || !ownershipResult.data.entity) {
+      return Err(new ValidationError('Invalid token or entity not found'))
+    }
+
+    const entity = ownershipResult.data.entity as LikeEntity
+
+    // 設定更新
+    if (params.webhookUrl !== undefined) {
+      entity.settings.webhookUrl = params.webhookUrl
+    }
+
+    // エンティティ保存
+    const saveResult = await this.entityRepository.save(entity.id, entity)
+    if (!saveResult.success) {
+      return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
+    }
+
+    return await this.transformEntityToDataWithUser(entity, '')
   }
 
   /**

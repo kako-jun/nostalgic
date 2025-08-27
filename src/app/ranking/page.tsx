@@ -82,7 +82,17 @@ export default function RankingPage() {
         apiUrl += `&name=${encodeURIComponent(name)}&score=${score}`;
       }
       
-      if (webhookUrl && (mode === "create" || mode === "update")) {
+      if (mode === "updateSettings") {
+        if (max) {
+          apiUrl += `&max=${max}`;
+        }
+        if (sortOrder) {
+          apiUrl += `&sortOrder=${sortOrder}`;
+        }
+        if (webhookUrl) {
+          apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
+        }
+      } else if (webhookUrl && (mode === "create" || mode === "update")) {
         apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
       }
       if (mode === "remove" && name) {
@@ -1030,6 +1040,129 @@ declare module 'react' {
                     }}
                   >
                     全削除
+                  </button>
+                </p>
+              </form>
+
+              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆設定更新◆</b>
+                </span>
+              </p>
+              <p>ランキングの設定を更新します。</p>
+              
+              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    ref={urlRef}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      marginLeft: "10px",
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    ref={tokenRef}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      marginLeft: "10px",
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>最大エントリー数：</b>
+                  <input
+                    ref={maxRef}
+                    type="number"
+                    min="1"
+                    max="1000"
+                    placeholder="100"
+                    style={{
+                      marginLeft: "10px",
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>ソート順：</b>
+                  <select
+                    ref={sortOrderRef}
+                    style={{
+                      marginLeft: "10px",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  >
+                    <option value="">変更しない</option>
+                    <option value="desc">降順（高スコアが上）</option>
+                    <option value="asc">昇順（低スコアが上）</option>
+                  </select>
+                </p>
+
+                <p>
+                  <b>Webhook URL：</b>
+                  <input
+                    ref={webhookUrlRef}
+                    type="url"
+                    placeholder="https://example.com/webhook (optional)"
+                    style={{
+                      marginLeft: "10px",
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      marginLeft: "10px",
+                      padding: "4px 12px",
+                      backgroundColor: "#FF9800",
+                      color: "white",
+                      border: "2px outset #FF9800",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={(e) => {
+                      setMode("updateSettings");
+                      handleSubmit(e);
+                    }}
+                  >
+                    設定更新
                   </button>
                 </p>
               </form>

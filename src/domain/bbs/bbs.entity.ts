@@ -60,7 +60,6 @@ export interface BBSEntity {
   totalMessages: number
   lastMessage?: Date
   settings: BBSSettings
-  webhookUrl?: string
 }
 
 /**
@@ -72,6 +71,7 @@ export interface BBSSettings {
   messagesPerPage: number
   icons: string[]
   selects: BBSSelectOption[]
+  webhookUrl?: string
 }
 
 /**
@@ -175,22 +175,22 @@ export const BBSSelectOptionSchema = z.object({
   options: z.array(BBSFieldSchemas.selectOption).max(50)
 })
 
-export const BBSSettingsSchema = z.object({
-  title: BBSFieldSchemas.bbsTitle.default('💬 BBS'),
+export const export const BBSSettingsSchema = z.object({
+  title: BBSFieldSchemas.bbsTitle.default('📝 BBS'),
   maxMessages: BBSFieldSchemas.maxMessages,
   messagesPerPage: BBSFieldSchemas.messagesPerPage,
   icons: z.array(BBSFieldSchemas.iconForArray).max(20),
-  selects: z.array(BBSSelectOptionSchema).max(3)
+  selects: z.array(BBSSelectOptionSchema).max(3),
+  webhookUrl: CommonSchemas.url.optional()
 })
 
-export const BBSEntitySchema = z.object({
+export const export const BBSEntitySchema = z.object({
   id: CommonSchemas.publicId,
   url: CommonSchemas.url,
   created: CommonSchemas.date,
   totalMessages: CommonSchemas.nonNegativeInt,
   lastMessage: CommonSchemas.date.optional(),
-  settings: BBSSettingsSchema,
-  webhookUrl: CommonSchemas.url.optional()
+  settings: BBSSettingsSchema
 })
 
 export const BBSMessageSchema = z.object({
@@ -260,7 +260,7 @@ export const BBSDisplayParamsSchema = z.object({
 /**
  * BBS設定更新用パラメータ
  */
-export const BBSUpdateSettingsParamsSchema = z.object({
+export const export const BBSUpdateSettingsParamsSchema = z.object({
   title: BBSFieldSchemas.bbsTitle.optional(),
   messagesPerPage: BBSFieldSchemas.messagesPerPage.optional(),
   maxMessages: BBSFieldSchemas.maxMessages.optional(),

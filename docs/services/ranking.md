@@ -174,6 +174,40 @@ GET /api/ranking?action=get&id={ID}&limit={LIMIT}
 }
 ```
 
+### updateSettings
+Update ranking settings (owner only).
+
+```
+GET /api/ranking?action=updateSettings&url={URL}&token={TOKEN}&title={TITLE}&max={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
+```
+
+**Parameters:**
+- `url` (required): Target URL
+- `token` (required): Owner token
+- `title` (optional): Ranking title
+- `max` (optional): Maximum entries (1-1000)
+- `sortOrder` (optional): Sort order ("desc" for high scores, "asc" for low times)
+- `webhookUrl` (optional): Webhook URL for notifications
+
+**Response:**
+```json
+{
+  "id": "yoursite-a7b9c3d4",
+  "url": "https://yoursite.com",
+  "title": "High Score Leaderboard",
+  "entries": [
+    {
+      "name": "Player1",
+      "score": 1500,
+      "displayScore": "1,500",
+      "rank": 1
+    }
+  ],
+  "maxEntries": 50,
+  "sortOrder": "desc"
+}
+```
+
 ## Usage Examples
 
 ### Basic Ranking Setup

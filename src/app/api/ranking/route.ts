@@ -113,6 +113,17 @@ const displayHandler = ApiHandler.create({
 })
 
 /**
+ * UPDATE SETTINGS アクション
+ */
+const updateSettingsHandler = ApiHandler.create({
+  paramsSchema: RankingSchemas.updateSettings,
+  resultSchema: RankingSchemas.data,
+  handler: async ({ url, token, title, max, sortOrder, webhookUrl }) => {
+    return await rankingService.updateSettings(url, token, { title, maxEntries: max, sortOrder, webhookUrl })
+  }
+})
+
+/**
  * DELETE アクション
  */
 const deleteHandler = ApiHandler.create({
@@ -162,6 +173,9 @@ async function routeRequest(request: NextRequest) {
       
       case 'display':
         return await displayHandler(request)
+      
+      case 'updateSettings':
+        return await updateSettingsHandler(request)
       
       case 'delete':
         return await deleteHandler(request)

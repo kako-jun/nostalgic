@@ -70,6 +70,28 @@ GET /api/like?action=get&id={ID}
 }
 ```
 
+### updateSettings
+Update like button settings (owner only).
+
+```
+GET /api/like?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
+```
+
+**Parameters:**
+- `url` (required): Target URL
+- `token` (required): Owner token
+- `webhookUrl` (optional): Webhook URL for notifications
+
+**Response:**
+```json
+{
+  "id": "yoursite-a7b9c3d4",
+  "url": "https://yoursite.com",
+  "total": 5,
+  "userLiked": false
+}
+```
+
 ## Web Component Integration
 
 ```html

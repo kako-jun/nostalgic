@@ -55,10 +55,12 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       url,
       created: new Date(),
       totalEntries: 0,
-      maxEntries: params.maxEntries || RANKING.LIMIT.DEFAULT,
-      sortOrder: params.sortOrder || RANKING.SORT_ORDER.DEFAULT,
-      title: params.title,
-      webhookUrl: params.webhookUrl
+      settings: {
+        title: params.title,
+        maxEntries: params.maxEntries || RANKING.LIMIT.DEFAULT,
+        sortOrder: params.sortOrder || RANKING.SORT_ORDER.DEFAULT,
+        webhookUrl: params.webhookUrl
+      }
     }
 
     const validationResult = ValidationFramework.output(RankingEntitySchema, entity)
@@ -74,7 +76,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
    */
   public async transformEntityToData(entity: RankingEntity): Promise<Result<RankingData, ValidationError>> {
     // ランキングエントリを取得
-    const entriesResult = await this.getTopEntries(entity.id, RANKING.LIMIT.DEFAULT, entity.sortOrder)
+    const entriesResult = await this.getTopEntries(entity.id, RANKING.LIMIT.DEFAULT, entity.settings.sortOrder)
     const entries = entriesResult.success ? entriesResult.data : []
 
     const data: RankingData = {
@@ -82,9 +84,9 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       url: entity.url,
       entries,
       totalEntries: entity.totalEntries,
-      maxEntries: entity.maxEntries,
-      sortOrder: entity.sortOrder,
-      title: entity.title,
+      maxEntries: entity.settings.maxEntries,
+      sortOrder: entity.settings.sortOrder,
+      title: entity.settings.title,
     }
 
     return ValidationFramework.output(RankingDataSchema, data)
@@ -149,8 +151,8 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       }
     }
 
-    // スコア更新可否チェック（ユーザー用：より高いスコアのみ）
-    const shouldUpdateResult = await this.shouldUpdateScore(entity.id, params.name, params.score, true)
+    // スコア更新可否チェック（ユーザー用：より良いスコアのみ）
+    const shouldUpdateResult = await this.shouldUpdateScore(entity.id, params.name, params.score, entity.settings, true)
     if (!shouldUpdateResult.success) {
       // ロールバック: 連投防止マークを削除
       if (userHash) {
@@ -380,6 +382,48 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
     return await this.transformEntityToData(entity)
   }
 
+  // 設定更新（管理者用）
+  async updateSettings(
+    url: string,
+    token: string,
+    params: {
+      sortOrder?: 'desc' | 'asc'
+      title?: string
+      maxEntries?: number
+      webhookUrl?: string
+    }
+  ): Promise<Result<RankingData, ValidationError | NotFoundError>> {
+    // エンティティ取得と認証
+    const entityResult = await this.getByUrlAndToken(url, token)
+    if (!entityResult.success) {
+      return entityResult
+    }
+
+    const entity = entityResult.data
+
+    // 設定更新
+    if (params.sortOrder !== undefined) {
+      entity.sortOrder = params.sortOrder
+    }
+    if (params.title !== undefined) {
+      entity.title = params.title
+    }
+    if (params.maxEntries !== undefined) {
+      entity.maxEntries = params.maxEntries
+    }
+    if (params.webhookUrl !== undefined) {
+      entity.webhookUrl = params.webhookUrl
+    }
+
+    // エンティティ保存
+    const saveResult = await this.entityRepository.save(entity.id, entity)
+    if (!saveResult.success) {
+      return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
+    }
+
+    return await this.transformEntityToData(entity)
+  }
+
   /**
    * エントリを削除
    */
@@ -525,7 +569,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
     const entity = entityResult.data
     
     // 指定された数のエントリを取得
-    const entriesResult = await this.getTopEntries(entity.id, limit, entity.sortOrder)
+    const entriesResult = await this.getTopEntries(entity.id, limit, entity.settings.sortOrder)
     const entries = entriesResult.success ? entriesResult.data : []
 
     const data: RankingData = {
@@ -533,9 +577,9 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       url: entity.url,
       entries,
       totalEntries: entity.totalEntries,
-      maxEntries: entity.maxEntries,
-      sortOrder: entity.sortOrder,
-      title: entity.title,
+      maxEntries: entity.settings.maxEntries,
+      sortOrder: entity.settings.sortOrder,
+      title: entity.settings.title,
     }
 
     return ValidationFramework.output(RankingDataSchema, data)
@@ -596,6 +640,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
     entityId: string, 
     playerName: string, 
     newScore: number,
+    settings: RankingSettings,
     onlyHigherScore: boolean = false
   ): Promise<Result<boolean, ValidationError>> {
     if (!onlyHigherScore) {
@@ -614,8 +659,12 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       return Ok(true)
     }
 
-    // 新しいスコアが既存スコアより高い場合のみ更新可能
-    return Ok(newScore > existingScoreResult.data)
+    // sortOrderに応じてスコア比較を変更
+    const shouldUpdate = settings.sortOrder === 'asc' 
+      ? newScore < existingScoreResult.data  // 昇順：小さいスコアの方が良い
+      : newScore > existingScoreResult.data  // 降順：大きいスコアの方が良い
+
+    return Ok(shouldUpdate)
   }
 
   /**

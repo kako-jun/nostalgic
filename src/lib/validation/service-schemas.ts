@@ -55,6 +55,15 @@ export const CounterSchemas = {
     url: CommonSchemas.url,
     token: CommonSchemas.token
   }),
+  // 設定更新用パラメータ
+  updateSettings: z.object({
+    action: z.literal('updateSettings'),
+    url: CommonSchemas.url,
+    token: CommonSchemas.token,
+    maxValue: CounterFieldSchemas.maxValue,
+    enableDailyStats: CounterFieldSchemas.enableDailyStats.optional(),
+    webhookUrl: CommonSchemas.url.optional()
+  }),
 
   // データ形式
   data: z.object({
@@ -113,6 +122,13 @@ export const LikeSchemas = {
     action: z.literal('delete'),
     url: CommonSchemas.url,
     token: CommonSchemas.token
+  }),
+  // 設定更新用パラメータ
+  updateSettings: z.object({
+    action: z.literal('updateSettings'),
+    url: CommonSchemas.url,
+    token: CommonSchemas.token,
+    webhookUrl: CommonSchemas.url.optional()
   }),
 
   // データ形式
@@ -193,6 +209,16 @@ export const RankingSchemas = {
     action: z.literal('delete'),
     url: CommonSchemas.url,
     token: CommonSchemas.token
+  }),
+  // 設定更新用パラメータ
+  updateSettings: z.object({
+    action: z.literal('updateSettings'),
+    url: CommonSchemas.url,
+    token: CommonSchemas.token,
+    title: CommonSchemas.shortText.optional(),
+    max: RankingFieldSchemas.maxEntries.optional(),
+    sortOrder: RankingFieldSchemas.sortOrder.optional(),
+    webhookUrl: CommonSchemas.url.optional()
   }),
 
   // エントリー形式

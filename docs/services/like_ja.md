@@ -70,6 +70,28 @@ GET /api/like?action=get&id={ID}
 }
 ```
 
+### updateSettings
+いいねボタン設定を更新（オーナーのみ）。
+
+```
+GET /api/like?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
+```
+
+**パラメータ:**
+- `url` (必須): 対象URL
+- `token` (必須): オーナートークン
+- `webhookUrl` (オプション): 通知用WebhookURL
+
+**レスポンス:**
+```json
+{
+  "id": "yoursite-a7b9c3d4",
+  "url": "https://yoursite.com",
+  "total": 5,
+  "userLiked": false
+}
+```
+
 ## Web Component 統合
 
 ```html
