@@ -29,7 +29,7 @@ declare module 'react' {
         id?: string
         theme?: 'light' | 'dark' | 'kawaii'
         icon?: 'heart' | 'star' | 'thumb'
-        format?: 'interactive' | 'image'
+        format?: 'interactive' | 'image' | 'text'
         'api-base'?: string
       }, HTMLElement>
 
