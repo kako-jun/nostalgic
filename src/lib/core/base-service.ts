@@ -143,7 +143,12 @@ export abstract class BaseService<TEntity extends BaseEntity, TData, TCreatePara
       if (result.error.code === 'NOT_FOUND') {
         return result as Result<TEntity, NotFoundError>
       }
-      return Err(new ValidationError('Failed to get entity', { error: result.error }))
+      // 詳細なエラー情報を保持する
+      return Err(new ValidationError(`Failed to get entity '${id}': ${result.error.message}`, { 
+        entityId: id,
+        originalError: result.error,
+        errorCode: result.error.code 
+      }))
     }
     return result
   }
@@ -159,7 +164,11 @@ export abstract class BaseService<TEntity extends BaseEntity, TData, TCreatePara
 
     const idResult = await this.urlMappingRepository.get(url)
     if (!idResult.success) {
-      return Err(new ValidationError('Failed to get URL mapping', { error: idResult.error }))
+      return Err(new ValidationError(`Failed to get URL mapping for '${url}': ${idResult.error.message}`, { 
+        url,
+        originalError: idResult.error,
+        errorCode: idResult.error.code 
+      }))
     }
 
     if (idResult.data === null) {
@@ -171,7 +180,12 @@ export abstract class BaseService<TEntity extends BaseEntity, TData, TCreatePara
       if (result.error.code === 'NOT_FOUND') {
         return result as Result<TEntity, NotFoundError>
       }
-      return Err(new ValidationError('Failed to get entity', { error: result.error }))
+      return Err(new ValidationError(`Failed to get entity '${idResult.data}' for URL '${url}': ${result.error.message}`, { 
+        entityId: idResult.data,
+        url,
+        originalError: result.error,
+        errorCode: result.error.code 
+      }))
     }
     return result
   }
