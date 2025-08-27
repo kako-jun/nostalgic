@@ -89,20 +89,27 @@ async function getRankingDetails(id) {
   pipeline.get(`ranking:${id}`)
   pipeline.zrevrange(`ranking:${id}:scores`, 0, 4, 'WITHSCORES') // Top 5
   pipeline.zcard(`ranking:${id}:scores`)
+  pipeline.hgetall(`${id}:display_scores`) // 表示用スコア取得
   
   const results = await pipeline.exec()
   
   const metadata = results[0][1] ? JSON.parse(results[0][1]) : null
   const topScores = results[1][1] || []
   const totalEntries = results[2][1] || 0
+  const displayScores = results[3][1] || {}
   
   // スコアデータを整形
   const scores = []
   for (let i = 0; i < topScores.length; i += 2) {
+    const player = topScores[i]
+    const numericScore = parseFloat(topScores[i + 1])
+    const displayScore = displayScores[player] || numericScore.toString()
+    
     scores.push({
       rank: Math.floor(i / 2) + 1,
-      player: topScores[i],
-      score: parseFloat(topScores[i + 1])
+      player: player,
+      score: numericScore,
+      displayScore: displayScore
     })
   }
   
@@ -148,7 +155,7 @@ async function getBBSDetails(id) {
 }
 
 /**
- * YAML風フォーマットで出力
+ * YAML風フォーマットで出力（詳細版）
  */
 function formatYAML(obj, indent = 0) {
   const spaces = '  '.repeat(indent)
@@ -160,13 +167,31 @@ function formatYAML(obj, indent = 0) {
     } else if (typeof value === 'object' && !Array.isArray(value)) {
       output += `${spaces}${key}:\n${formatYAML(value, indent + 1)}`
     } else if (Array.isArray(value)) {
-      output += `${spaces}${key}:\n`
-      for (const item of value) {
-        if (typeof item === 'object') {
-          output += `${spaces}  - ${Object.entries(item).map(([k, v]) => `${k}: ${v}`).join(', ')}\n`
-        } else {
-          output += `${spaces}  - ${item}\n`
+      if (value.length === 0) {
+        output += `${spaces}${key}: []\n`
+      } else {
+        output += `${spaces}${key}:\n`
+        for (const item of value) {
+          if (typeof item === 'object' && item !== null) {
+            output += `${spaces}  -\n`
+            for (const [subKey, subValue] of Object.entries(item)) {
+              if (typeof subValue === 'object') {
+                output += `${spaces}    ${subKey}:\n${formatYAML(subValue, indent + 3)}`
+              } else {
+                output += `${spaces}    ${subKey}: ${subValue}\n`
+              }
+            }
+          } else {
+            output += `${spaces}  - ${item}\n`
+          }
         }
+      }
+    } else if (typeof value === 'string' && value.length > 100) {
+      // 長い文字列は改行して表示
+      output += `${spaces}${key}: |\n`
+      const lines = value.match(/.{1,80}/g) || []
+      for (const line of lines) {
+        output += `${spaces}  ${line}\n`
       }
     } else {
       output += `${spaces}${key}: ${value}\n`
@@ -235,9 +260,56 @@ async function showServiceDetails(serviceType) {
         console.log(formatYAML(details.stats, 3))
       }
       
+      // 設定表示（新アーキテクチャのsettingsまたは旧アーキテクチャの設定項目）
       if (details.metadata.settings) {
         console.log('    settings:')
         console.log(formatYAML(details.metadata.settings, 3))
+      } else {
+        // 旧アーキテクチャの設定項目を抽出
+        const legacySettings = {}
+        if (details.metadata.maxEntries !== undefined) legacySettings.maxEntries = details.metadata.maxEntries
+        if (details.metadata.sortOrder !== undefined) legacySettings.sortOrder = details.metadata.sortOrder
+        if (details.metadata.maxMessages !== undefined) legacySettings.maxMessages = details.metadata.maxMessages
+        if (details.metadata.messagesPerPage !== undefined) legacySettings.messagesPerPage = details.metadata.messagesPerPage
+        if (details.metadata.title !== undefined) legacySettings.title = details.metadata.title
+        if (details.metadata.icons) legacySettings.icons = details.metadata.icons
+        if (details.metadata.selects) legacySettings.selects = details.metadata.selects
+        
+        if (Object.keys(legacySettings).length > 0) {
+          console.log('    settings: (legacy format)')
+          console.log(formatYAML(legacySettings, 3))
+        }
+      }
+      
+      // webhookUrl の表示（settingsの外にある場合）
+      if (details.metadata.webhookUrl) {
+        console.log('    webhookUrl: ' + details.metadata.webhookUrl)
+      }
+      
+      // メタデータの他のプロパティも表示
+      const metadataToShow = { ...details.metadata }
+      delete metadataToShow.service
+      delete metadataToShow.id
+      delete metadataToShow.url
+      delete metadataToShow.created
+      delete metadataToShow.settings
+      delete metadataToShow.lastVisit
+      delete metadataToShow.lastLike
+      delete metadataToShow.lastSubmit
+      delete metadataToShow.lastMessage
+      delete metadataToShow.webhookUrl
+      // 旧アーキテクチャの設定項目も除外
+      delete metadataToShow.maxEntries
+      delete metadataToShow.sortOrder
+      delete metadataToShow.maxMessages
+      delete metadataToShow.messagesPerPage
+      delete metadataToShow.title
+      delete metadataToShow.icons
+      delete metadataToShow.selects
+      
+      if (Object.keys(metadataToShow).length > 0) {
+        console.log('    metadata:')
+        console.log(formatYAML(metadataToShow, 3))
       }
       
       // 最終アクティビティ
