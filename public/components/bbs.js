@@ -162,6 +162,7 @@ class NostalgicBBS extends HTMLElement {
       light: {
         bgColor: '#ffffff',
         borderColor: '#000000',
+        shadowColor: '#000000',
         headerBg: '#f5f5f5',
         headerColor: '#000000',
         messageBg: '#ffffff',
@@ -170,18 +171,22 @@ class NostalgicBBS extends HTMLElement {
       dark: {
         bgColor: '#2a2a2a',
         borderColor: '#ffffff',
-        headerBg: '#333333',
+        shadowColor: '#ffffff',
+        headerBg: '#000000',
         headerColor: '#ffffff',
-        messageBg: '#1a1a1a',
-        textColor: '#ffffff'
+        messageBg: '#2a2a2a',
+        textColor: '#cccccc'
       },
       kawaii: {
         bgColor: '#e0f7fa',
         borderColor: '#9c27b0',
+        shadowColor: '#9c27b0',
         headerBg: '#b2ebf2',
         headerColor: '#ff69b4',
         messageBg: '#e0f7fa',
-        textColor: '#f06292'
+        textColor: '#f06292',
+        scrollbarThumb: '#ff69b4',
+        scrollbarHover: '#e91e63'
       }
     };
 
@@ -201,13 +206,16 @@ class NostalgicBBS extends HTMLElement {
           /* CSS Variables for customization */
           --bbs-bg-color: ${style.bgColor};
           --bbs-border-color: ${style.borderColor};
+          --bbs-shadow-color: ${style.shadowColor};
           --bbs-header-bg: ${style.headerBg};
           --bbs-header-color: ${style.headerColor};
           --bbs-message-bg: ${style.messageBg};
           --bbs-text-color: ${style.textColor};
+          --bbs-scrollbar-thumb: ${style.scrollbarThumb || style.borderColor};
+          --bbs-scrollbar-hover: ${style.scrollbarHover || style.textColor};
           --bbs-border-radius: 4px;
-          --bbs-min-width: 280px;
-          --bbs-max-width: 100%;
+          --bbs-min-width: 320px;
+          --bbs-max-width: 480px;
           --bbs-message-padding: 6px;
           --bbs-message-margin: 4px;
           --bbs-max-height: 400px;
@@ -219,7 +227,7 @@ class NostalgicBBS extends HTMLElement {
           background: var(--bbs-bg-color);
           border: 2px solid var(--bbs-border-color);
           border-radius: var(--bbs-border-radius);
-          box-shadow: 3px 3px 0px var(--bbs-border-color);
+          box-shadow: 3px 3px 0px var(--bbs-shadow-color);
           width: 100%;
           max-width: var(--bbs-max-width);
           min-width: var(--bbs-min-width);
@@ -238,6 +246,21 @@ class NostalgicBBS extends HTMLElement {
           min-height: 400px;
           max-height: 400px;
           overflow-y: auto;
+        }
+        .bbs-messages::-webkit-scrollbar {
+          width: 12px;
+        }
+        .bbs-messages::-webkit-scrollbar-track {
+          background: var(--bbs-bg-color);
+          border-radius: 2px;
+        }
+        .bbs-messages::-webkit-scrollbar-thumb {
+          background: var(--bbs-scrollbar-thumb);
+          border-radius: 2px;
+          border: 1px solid var(--bbs-bg-color);
+        }
+        .bbs-messages::-webkit-scrollbar-thumb:hover {
+          background: var(--bbs-scrollbar-hover);
         }
         .message-item {
           background: var(--bbs-message-bg);
@@ -297,6 +320,8 @@ class NostalgicBBS extends HTMLElement {
           margin: 4px 0;
           line-height: 1.4;
           word-wrap: break-word;
+          word-break: break-word;
+          overflow-wrap: break-word;
           font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
           white-space: pre-wrap;
           overflow-wrap: break-word;
