@@ -298,6 +298,7 @@ class NostalgicBBS extends HTMLElement {
         .bbs-messages::-webkit-scrollbar-thumb {
           background: var(--bbs-scrollbar-thumb);
           border: 1px solid var(--bbs-bg-color);
+          border-radius: 6px;
         }
         .bbs-messages::-webkit-scrollbar-thumb:hover {
           background: var(--bbs-scrollbar-hover);
@@ -365,7 +366,7 @@ class NostalgicBBS extends HTMLElement {
           font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
           white-space: pre-wrap;
           text-align: left;
-          font-size: clamp(12px, 2vw, 18px);
+          font-size: clamp(12px, 2vw, 16px);
         }
         .message-meta {
           font-size: 10px;
