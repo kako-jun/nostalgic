@@ -108,9 +108,19 @@ export interface RankingDisplayParams {
 }
 
 /**
+ * Ranking設定スキーマ
+ */
+export const RankingSettingsSchema = z.object({
+  title: CommonSchemas.title.optional(),
+  maxEntries: RankingFieldSchemas.maxEntries,
+  sortOrder: RankingFieldSchemas.sortOrder,
+  webhookUrl: CommonSchemas.url.optional()
+})
+
+/**
  * Zodスキーマ定義
  */
-export const export const RankingEntitySchema = z.object({
+export const RankingEntitySchema = z.object({
   id: CommonSchemas.publicId,
   url: CommonSchemas.url,
   created: CommonSchemas.date,
@@ -127,7 +137,7 @@ export const RankingEntrySchema = z.object({
   timestamp: CommonSchemas.date
 })
 
-export const export const RankingDataSchema = z.object({
+export const RankingDataSchema = z.object({
   id: z.string(),
   url: CommonSchemas.url,
   entries: z.array(RankingEntrySchema),
@@ -137,7 +147,7 @@ export const export const RankingDataSchema = z.object({
   title: CommonSchemas.title.optional()
 })
 
-export const export const RankingCreateParamsSchema = z.object({
+export const RankingCreateParamsSchema = z.object({
   maxEntries: RankingFieldSchemas.maxEntries.default(RANKING.LIMIT.DEFAULT),
   sortOrder: RankingFieldSchemas.sortOrder.default(RANKING.SORT_ORDER.DEFAULT),
   title: CommonSchemas.title.default('RANKING'),
@@ -162,15 +172,6 @@ export const RankingRemoveParamsSchema = z.object({
 export const RankingDisplayParamsSchema = z.object({
   id: CommonSchemas.publicId,
   limit: RankingFieldSchemas.limit.default(RANKING.LIMIT.DEFAULT)
-})
-/**
- * Ranking設定スキーマ
- */
-export const RankingSettingsSchema = z.object({
-  title: CommonSchemas.title.optional(),
-  maxEntries: RankingFieldSchemas.maxEntries,
-  sortOrder: RankingFieldSchemas.sortOrder,
-  webhookUrl: CommonSchemas.url.optional()
 })
 
 /**

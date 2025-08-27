@@ -292,7 +292,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
     entity.totalLikes = value
     entity.lastLike = new Date()
     if (webhookUrl !== undefined) {
-      entity.webhookUrl = webhookUrl
+      entity.settings.webhookUrl = webhookUrl
     }
     
     const saveResult = await this.entityRepository.save(entity.id, entity)
