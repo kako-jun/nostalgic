@@ -87,16 +87,28 @@ async function getLikeDetails(id) {
 async function getRankingDetails(id) {
   const pipeline = redis.pipeline()
   pipeline.get(`ranking:${id}`)
-  pipeline.zrevrange(`ranking:${id}:scores`, 0, 4, 'WITHSCORES') // Top 5
-  pipeline.zcard(`ranking:${id}:scores`)
-  pipeline.hgetall(`${id}:display_scores`) // 表示用スコア取得
   
-  const results = await pipeline.exec()
+  const results1 = await pipeline.exec()
+  const metadata = results1[0][1] ? JSON.parse(results1[0][1]) : null
   
-  const metadata = results[0][1] ? JSON.parse(results[0][1]) : null
-  const topScores = results[1][1] || []
-  const totalEntries = results[2][1] || 0
-  const displayScores = results[3][1] || {}
+  // sortOrderを確認して適切なソートコマンドを使用
+  const sortOrder = metadata?.settings?.sortOrder || 'desc'
+  const pipeline2 = redis.pipeline()
+  
+  if (sortOrder === 'asc') {
+    pipeline2.zrange(`ranking:${id}:scores`, 0, 4, 'WITHSCORES') // 昇順（タイム系）
+  } else {
+    pipeline2.zrevrange(`ranking:${id}:scores`, 0, 4, 'WITHSCORES') // 降順（スコア系）
+  }
+  
+  pipeline2.zcard(`ranking:${id}:scores`)
+  pipeline2.hgetall(`${id}:display_scores`) // 表示用スコア取得
+  
+  const results2 = await pipeline2.exec()
+  
+  const topScores = results2[0][1] || []
+  const totalEntries = results2[1][1] || 0
+  const displayScores = results2[2][1] || {}
   
   // スコアデータを整形
   const scores = []
