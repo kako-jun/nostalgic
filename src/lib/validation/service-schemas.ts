@@ -59,7 +59,7 @@ export const CounterSchemas = {
     action: z.literal('updateSettings'),
     url: CommonSchemas.url,
     token: CommonSchemas.token,
-    maxValue: CounterFieldSchemas.maxValue,
+    maxValue: CounterFieldSchemas.maxValue.optional(),
     enableDailyStats: CounterFieldSchemas.enableDailyStats.optional(),
     webhookUrl: CommonSchemas.url.optional()
   }),
@@ -494,14 +494,16 @@ export const CounterActionParams = z.union([
   CounterSchemas.create,
   CounterSchemas.increment,
   CounterSchemas.display,
-  CounterSchemas.set
+  CounterSchemas.set,
+  CounterSchemas.updateSettings
 ])
 
 export const LikeActionParams = z.union([
   LikeSchemas.create,
   LikeSchemas.toggle,
   LikeSchemas.get,
-  LikeSchemas.display
+  LikeSchemas.display,
+  LikeSchemas.updateSettings
 ])
 
 export const RankingActionParams = z.union([
@@ -510,7 +512,8 @@ export const RankingActionParams = z.union([
   RankingSchemas.update,
   RankingSchemas.remove,
   RankingSchemas.clear,
-  RankingSchemas.display
+  RankingSchemas.display,
+  RankingSchemas.updateSettings
 ])
 
 export const BBSActionParams = z.union([
@@ -522,7 +525,8 @@ export const BBSActionParams = z.union([
   BBSSchemas.deleteMessage,
   BBSSchemas.deleteMessageById,
   BBSSchemas.clear,
-  BBSSchemas.display
+  BBSSchemas.display,
+  BBSSchemas.updateSettings
 ])
 
 // === 型エクスポート ===

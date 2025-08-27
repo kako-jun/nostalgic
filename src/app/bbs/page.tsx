@@ -21,6 +21,7 @@ export default function BBSPage() {
   const perPageRef = useRef<HTMLInputElement>(null);
   const iconsRef = useRef<HTMLInputElement>(null);
   const editTokenRef = useRef<HTMLInputElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
   const webhookUrlRef = useRef<HTMLInputElement>(null);
   
   useEffect(() => {
@@ -91,6 +92,8 @@ export default function BBSPage() {
     }
     
     if (mode === "updateSettings") {
+      const title = titleRef.current?.value;
+      if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
       if (max) apiUrl += `&maxMessages=${max}`;
       if (perPage) apiUrl += `&messagesPerPage=${perPage}`;
       if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
@@ -1377,6 +1380,23 @@ declare module 'react' {
                       fontSize: "16px"
                     }}
                     required
+                  />
+                </p>
+
+                <p>
+                  <b>BBSタイトル：</b>
+                  <input
+                    ref={titleRef}
+                    type="text"
+                    placeholder="BBS"
+                    style={{
+                      marginLeft: "10px",
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
                   />
                 </p>
 
