@@ -68,8 +68,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
       url,
       created: new Date(),
       totalMessages: 0,
-      settings,
-      webhookUrl: params.webhookUrl
+      settings
     }
 
     const validationResult = ValidationFramework.output(BBSEntitySchema, entity)

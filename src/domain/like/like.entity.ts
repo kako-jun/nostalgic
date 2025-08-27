@@ -76,9 +76,16 @@ export interface LikeDisplayParams {
 }
 
 /**
+ * Likeサービス設定スキーマ
+ */
+export const LikeSettingsSchema = z.object({
+  webhookUrl: CommonSchemas.url.optional()
+})
+
+/**
  * Zodスキーマ定義
  */
-export const export const LikeEntitySchema = z.object({
+export const LikeEntitySchema = z.object({
   id: CommonSchemas.publicId,
   url: CommonSchemas.url,
   created: CommonSchemas.date,
@@ -95,7 +102,7 @@ export const LikeDataSchema = z.object({
   lastLike: CommonSchemas.date.optional()
 })
 
-export const export const LikeCreateParamsSchema = z.object({
+export const LikeCreateParamsSchema = z.object({
   webhookUrl: CommonSchemas.url.optional()
 })
 
@@ -111,13 +118,6 @@ export const LikeIncrementParamsSchema = z.object({
 export const LikeDisplayParamsSchema = z.object({
   id: CommonSchemas.publicId,
   userHash: z.string().min(1).optional()
-})
-
-/**
- * Likeサービス設定スキーマ
- */
-export const LikeSettingsSchema = z.object({
-  webhookUrl: CommonSchemas.url.optional()
 })
 
 /**

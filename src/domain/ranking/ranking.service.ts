@@ -13,6 +13,7 @@ import { createHash } from 'crypto'
 import { RANKING } from '@/lib/validation/schema-constants'
 import {
   RankingEntity,
+  RankingSettings,
   RankingData,
   RankingEntry,
   RankingCreateParams,
@@ -268,7 +269,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
     }
 
     // スコア更新可否チェック（管理者用：常に更新可能）
-    const shouldUpdateResult = await this.shouldUpdateScore(entity.id, params.name, params.score, false)
+    const shouldUpdateResult = await this.shouldUpdateScore(entity.id, params.name, params.score, entity.settings, false)
     if (!shouldUpdateResult.success) {
       // ロールバック: 連投防止マークを削除
       if (userHash) {
@@ -316,7 +317,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
     }
 
     // Webhook 通知を送信（webhookUrlが設定されている場合のみ）
-    if (entity.webhookUrl) {
+    if (entity.settings.webhookUrl) {
       const webhookPayload = {
         event: 'ranking.submit',
         timestamp: new Date().toISOString(),
@@ -330,7 +331,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       }
 
       // シンプルなWebhook送信（失敗してもメイン処理は継続）
-      fetch(entity.webhookUrl, {
+      fetch(entity.settings.webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload)
@@ -372,7 +373,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
     // エンティティ更新
     entity.lastSubmit = new Date()
     if (webhookUrl !== undefined) {
-      entity.webhookUrl = webhookUrl
+      entity.settings.webhookUrl = webhookUrl
     }
     const saveResult = await this.entityRepository.save(entity.id, entity)
     if (!saveResult.success) {
@@ -387,32 +388,36 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
     url: string,
     token: string,
     params: {
-      sortOrder?: 'desc' | 'asc'
       title?: string
       maxEntries?: number
+      sortOrder?: 'desc' | 'asc'
       webhookUrl?: string
     }
   ): Promise<Result<RankingData, ValidationError | NotFoundError>> {
-    // エンティティ取得と認証
-    const entityResult = await this.getByUrlAndToken(url, token)
-    if (!entityResult.success) {
-      return entityResult
+    // オーナーシップ検証
+    const ownershipResult = await this.verifyOwnership(url, token)
+    if (!ownershipResult.success) {
+      return Err(new ValidationError('Ownership verification failed', { error: ownershipResult.error }))
     }
 
-    const entity = entityResult.data
+    if (!ownershipResult.data.isOwner || !ownershipResult.data.entity) {
+      return Err(new ValidationError('Invalid token or entity not found'))
+    }
+
+    const entity = ownershipResult.data.entity as RankingEntity
 
     // 設定更新
-    if (params.sortOrder !== undefined) {
-      entity.sortOrder = params.sortOrder
-    }
     if (params.title !== undefined) {
-      entity.title = params.title
+      entity.settings.title = params.title
     }
     if (params.maxEntries !== undefined) {
-      entity.maxEntries = params.maxEntries
+      entity.settings.maxEntries = params.maxEntries
+    }
+    if (params.sortOrder !== undefined) {
+      entity.settings.sortOrder = params.sortOrder
     }
     if (params.webhookUrl !== undefined) {
-      entity.webhookUrl = params.webhookUrl
+      entity.settings.webhookUrl = params.webhookUrl
     }
 
     // エンティティ保存

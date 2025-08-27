@@ -175,7 +175,7 @@ export const BBSSelectOptionSchema = z.object({
   options: z.array(BBSFieldSchemas.selectOption).max(50)
 })
 
-export const export const BBSSettingsSchema = z.object({
+export const BBSSettingsSchema = z.object({
   title: BBSFieldSchemas.bbsTitle.default('📝 BBS'),
   maxMessages: BBSFieldSchemas.maxMessages,
   messagesPerPage: BBSFieldSchemas.messagesPerPage,
@@ -184,7 +184,7 @@ export const export const BBSSettingsSchema = z.object({
   webhookUrl: CommonSchemas.url.optional()
 })
 
-export const export const BBSEntitySchema = z.object({
+export const BBSEntitySchema = z.object({
   id: CommonSchemas.publicId,
   url: CommonSchemas.url,
   created: CommonSchemas.date,
@@ -260,7 +260,7 @@ export const BBSDisplayParamsSchema = z.object({
 /**
  * BBS設定更新用パラメータ
  */
-export const export const BBSUpdateSettingsParamsSchema = z.object({
+export const BBSUpdateSettingsParamsSchema = z.object({
   title: BBSFieldSchemas.bbsTitle.optional(),
   messagesPerPage: BBSFieldSchemas.messagesPerPage.optional(),
   maxMessages: BBSFieldSchemas.maxMessages.optional(),
