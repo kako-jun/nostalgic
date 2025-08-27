@@ -49,6 +49,14 @@ Message board with customizable options and author-based editing.
 - Public ID system prevents unauthorized access
 - Author verification for post editing/removal
 
+### Webhook Features
+All services support webhook functionality for real-time event notifications:
+
+- **Real-time notifications**: Instant alerts for service events (counter increments, likes, ranking changes, BBS posts, etc.)
+- **Chat integration**: Easy integration with Slack/Discord/Teams and other webhook-compatible services
+- **Simple design**: Lightweight implementation without retries or digital signatures
+- **Optional configuration**: Set via webhookUrl parameter during service creation or updates
+
 ### Service Lifecycle
 1. **Create**: URL + token → returns public ID
 2. **Use**: Public ID for display/interaction 
@@ -58,8 +66,8 @@ Message board with customizable options and author-based editing.
 
 ### Counter
 ```bash
-# Create counter
-curl "https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&token=your-secret"
+# Create counter with webhook
+curl "https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # Display counter
 curl "https://nostalgic.llll-ll.com/api/visit?action=display&id=yoursite-a7b9c3d4&type=total&theme=dark"
@@ -67,8 +75,8 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=display&id=yoursite-a7b9c3d
 
 ### Like
 ```bash
-# Create like button
-curl "https://nostalgic.llll-ll.com/api/like?action=create&url=https://yoursite.com&token=your-secret"
+# Create like button with webhook
+curl "https://nostalgic.llll-ll.com/api/like?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # Toggle like
 curl "https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.com&token=your-secret"
@@ -76,8 +84,8 @@ curl "https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.
 
 ### Ranking
 ```bash
-# Create ranking (score-based game, high score wins)
-curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=desc"
+# Create ranking (score-based game, high score wins) with webhook
+curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=desc&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # Create ranking (time-based game, lower time wins)
 curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=asc"
@@ -88,8 +96,8 @@ curl "https://nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursi
 
 ### BBS
 ```bash
-# Create BBS
-curl "https://nostalgic.llll-ll.com/api/bbs?action=create&url=https://yoursite.com&token=your-secret&max=1000"
+# Create BBS with webhook
+curl "https://nostalgic.llll-ll.com/api/bbs?action=create&url=https://yoursite.com&token=your-secret&max=1000&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # Post message (pure GET, 1990s style)
 curl "https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com&token=your-secret&author=User&message=Hello!"

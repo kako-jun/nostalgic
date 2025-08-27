@@ -89,6 +89,10 @@ export default function BBSPage() {
       if (perPage) apiUrl += `&perPage=${perPage}`;
       if (icons) apiUrl += `&icons=${encodeURIComponent(icons)}`;
     }
+    
+    if (webhookUrl && (mode === "create" || mode === "updateSettings")) {
+      apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
+    }
 
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
@@ -186,6 +190,26 @@ export default function BBSPage() {
                     }}
                     required
                   />
+                </p>
+
+                <p>
+                  <b>Webhook URL：</b>
+                  <input
+                    ref={webhookUrlRef}
+                    type="url"
+                    placeholder="https://hooks.slack.com/... (任意)"
+                    style={{
+                      marginLeft: "10px",
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
                   <button
                     type="submit"
                     style={{
