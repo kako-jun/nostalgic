@@ -166,7 +166,9 @@ class NostalgicBBS extends HTMLElement {
         headerBg: '#f5f5f5',
         headerColor: '#000000',
         messageBg: '#ffffff',
-        textColor: '#000000'
+        textColor: '#000000',
+        scrollbarThumb: '#cccccc',
+        scrollbarHover: '#999999'
       },
       dark: {
         bgColor: '#2a2a2a',
@@ -175,7 +177,9 @@ class NostalgicBBS extends HTMLElement {
         headerBg: '#000000',
         headerColor: '#ffffff',
         messageBg: '#2a2a2a',
-        textColor: '#cccccc'
+        textColor: '#cccccc',
+        scrollbarThumb: '#555555',
+        scrollbarHover: '#777777'
       },
       kawaii: {
         bgColor: '#e0f7fa',
@@ -191,8 +195,8 @@ class NostalgicBBS extends HTMLElement {
     };
 
     const style = themeStyles[theme] || themeStyles.dark;
-    // サーバーから取得したメッセージをそのまま表示（新しいものが下に表示される）
-    const messages = (this.bbsData.messages || []);
+    // サーバーから取得したメッセージを逆順にして表示（新しいものが下に表示される）
+    const messages = (this.bbsData.messages || []).slice().reverse();
     const pagination = this.bbsData.pagination || {};
     
     // 連番計算：現在のページの開始番号を計算
@@ -284,8 +288,16 @@ class NostalgicBBS extends HTMLElement {
           max-height: 400px;
           overflow-y: auto;
         }
+        .bbs-messages::-webkit-scrollbar {
+          width: 12px;
+        }
+        .bbs-messages::-webkit-scrollbar-track {
+          background: var(--bbs-bg-color);
+          border-radius: 2px;
+        }
         .bbs-messages::-webkit-scrollbar-thumb {
           background: var(--bbs-scrollbar-thumb);
+          border: 1px solid var(--bbs-bg-color);
         }
         .bbs-messages::-webkit-scrollbar-thumb:hover {
           background: var(--bbs-scrollbar-hover);
@@ -353,6 +365,7 @@ class NostalgicBBS extends HTMLElement {
           font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
           white-space: pre-wrap;
           text-align: left;
+          font-size: clamp(12px, 2vw, 18px);
         }
         .message-meta {
           font-size: 10px;

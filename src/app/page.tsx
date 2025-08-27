@@ -384,7 +384,7 @@ export default function HomePage() {
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", display: "inline-block" }}>
+                <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", display: "inline-block", width: "fit-content", maxWidth: "100%" }}>
                   <nostalgic-ranking id="llll-ll-a235b610" theme="dark" />
                 </div>
               </div>
@@ -435,7 +435,7 @@ export default function HomePage() {
                 <p style={{ marginBottom: "20px" }}>
                   訪問の記念に、足あとを残していってください！
                 </p>
-                <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "15px", display: "inline-block" }}>
+                <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "15px", display: "inline-block", width: "fit-content", maxWidth: "100%" }}>
                   <nostalgic-bbs id="nostalgic-b89803bb" theme="dark" />
                 </div>
               </div>
