@@ -184,35 +184,35 @@ class NostalgicRanking extends HTMLElement {
           --ranking-item-padding: 6px 10px;
           /* 水玉パターン変数 */
           --kawaii-dark-bg: #b2ebf2;
-          --kawaii-dark-dots: radial-gradient(circle at 15px 15px, rgba(255,255,255,0.4) 9px, transparent 9px),
-                              radial-gradient(circle at 55px 8px, rgba(255,255,255,0.4) 6px, transparent 6px),
-                              radial-gradient(circle at 105px 18px, rgba(255,255,255,0.4) 11px, transparent 11px),
-                              radial-gradient(circle at 145px 10px, rgba(255,255,255,0.4) 7px, transparent 7px),
-                              radial-gradient(circle at 175px 30px, rgba(255,255,255,0.4) 5px, transparent 5px),
-                              radial-gradient(circle at 12px 45px, rgba(255,255,255,0.4) 8px, transparent 8px),
-                              radial-gradient(circle at 50px 55px, rgba(255,255,255,0.4) 10px, transparent 10px),
-                              radial-gradient(circle at 90px 38px, rgba(255,255,255,0.4) 6px, transparent 6px),
-                              radial-gradient(circle at 125px 58px, rgba(255,255,255,0.4) 9px, transparent 9px),
-                              radial-gradient(circle at 155px 45px, rgba(255,255,255,0.4) 12px, transparent 12px),
-                              radial-gradient(circle at 190px 62px, rgba(255,255,255,0.4) 7px, transparent 7px),
-                              radial-gradient(circle at 18px 85px, rgba(255,255,255,0.4) 8px, transparent 8px),
-                              radial-gradient(circle at 65px 95px, rgba(255,255,255,0.4) 5px, transparent 5px),
-                              radial-gradient(circle at 105px 82px, rgba(255,255,255,0.4) 10px, transparent 10px),
-                              radial-gradient(circle at 135px 98px, rgba(255,255,255,0.4) 6px, transparent 6px),
-                              radial-gradient(circle at 170px 90px, rgba(255,255,255,0.4) 9px, transparent 9px),
-                              radial-gradient(circle at 35px 110px, rgba(255,255,255,0.4) 11px, transparent 11px),
-                              radial-gradient(circle at 85px 115px, rgba(255,255,255,0.4) 7px, transparent 7px),
-                              radial-gradient(circle at 150px 105px, rgba(255,255,255,0.4) 8px, transparent 8px),
-                              radial-gradient(circle at 180px 110px, rgba(255,255,255,0.4) 5px, transparent 5px),
-                              radial-gradient(circle at 25px 130px, rgba(255,255,255,0.4) 9px, transparent 9px),
-                              radial-gradient(circle at 70px 135px, rgba(255,255,255,0.4) 6px, transparent 6px),
-                              radial-gradient(circle at 115px 125px, rgba(255,255,255,0.4) 8px, transparent 8px),
-                              radial-gradient(circle at 160px 140px, rgba(255,255,255,0.4) 10px, transparent 10px),
-                              radial-gradient(circle at 5px 155px, rgba(255,255,255,0.4) 7px, transparent 7px),
-                              radial-gradient(circle at 45px 150px, rgba(255,255,255,0.4) 11px, transparent 11px),
-                              radial-gradient(circle at 95px 160px, rgba(255,255,255,0.4) 5px, transparent 5px),
-                              radial-gradient(circle at 135px 165px, rgba(255,255,255,0.4) 9px, transparent 9px),
-                              radial-gradient(circle at 175px 155px, rgba(255,255,255,0.4) 8px, transparent 8px);
+          --kawaii-dark-dots: radial-gradient(circle at 0px 5px, rgba(255,255,255,0.4) 9px, transparent 9px),
+                              radial-gradient(circle at 35px 2px, rgba(255,255,255,0.4) 7px, transparent 7px),
+                              radial-gradient(circle at 70px 8px, rgba(255,255,255,0.4) 11px, transparent 11px),
+                              radial-gradient(circle at 105px 0px, rgba(255,255,255,0.4) 8px, transparent 8px),
+                              radial-gradient(circle at 140px 10px, rgba(255,255,255,0.4) 6px, transparent 6px),
+                              radial-gradient(circle at 175px 5px, rgba(255,255,255,0.4) 10px, transparent 10px),
+                              radial-gradient(circle at 10px 30px, rgba(255,255,255,0.4) 8px, transparent 8px),
+                              radial-gradient(circle at 45px 35px, rgba(255,255,255,0.4) 12px, transparent 12px),
+                              radial-gradient(circle at 80px 25px, rgba(255,255,255,0.4) 7px, transparent 7px),
+                              radial-gradient(circle at 115px 38px, rgba(255,255,255,0.4) 9px, transparent 9px),
+                              radial-gradient(circle at 150px 30px, rgba(255,255,255,0.4) 6px, transparent 6px),
+                              radial-gradient(circle at 185px 35px, rgba(255,255,255,0.4) 8px, transparent 8px),
+                              radial-gradient(circle at 5px 55px, rgba(255,255,255,0.4) 10px, transparent 10px),
+                              radial-gradient(circle at 40px 60px, rgba(255,255,255,0.4) 7px, transparent 7px),
+                              radial-gradient(circle at 75px 50px, rgba(255,255,255,0.4) 11px, transparent 11px),
+                              radial-gradient(circle at 110px 65px, rgba(255,255,255,0.4) 8px, transparent 8px),
+                              radial-gradient(circle at 145px 55px, rgba(255,255,255,0.4) 6px, transparent 6px),
+                              radial-gradient(circle at 180px 60px, rgba(255,255,255,0.4) 9px, transparent 9px),
+                              radial-gradient(circle at 15px 85px, rgba(255,255,255,0.4) 8px, transparent 8px),
+                              radial-gradient(circle at 50px 80px, rgba(255,255,255,0.4) 12px, transparent 12px),
+                              radial-gradient(circle at 85px 90px, rgba(255,255,255,0.4) 7px, transparent 7px),
+                              radial-gradient(circle at 120px 85px, rgba(255,255,255,0.4) 10px, transparent 10px),
+                              radial-gradient(circle at 155px 95px, rgba(255,255,255,0.4) 6px, transparent 6px),
+                              radial-gradient(circle at 0px 110px, rgba(255,255,255,0.4) 9px, transparent 9px),
+                              radial-gradient(circle at 35px 115px, rgba(255,255,255,0.4) 8px, transparent 8px),
+                              radial-gradient(circle at 70px 105px, rgba(255,255,255,0.4) 11px, transparent 11px),
+                              radial-gradient(circle at 105px 120px, rgba(255,255,255,0.4) 7px, transparent 7px),
+                              radial-gradient(circle at 140px 110px, rgba(255,255,255,0.4) 9px, transparent 9px),
+                              radial-gradient(circle at 175px 115px, rgba(255,255,255,0.4) 6px, transparent 6px);
         }
         .ranking-container {
           font-family: var(--ranking-font-family, 'Courier New', monospace);
@@ -236,6 +236,8 @@ class NostalgicRanking extends HTMLElement {
         .ranking-header.kawaii {
           background-color: var(--kawaii-dark-bg);
           background-image: var(--kawaii-dark-dots);
+          background-size: 200px 120px;
+          background-repeat: repeat;
         }
         .ranking-list {
           padding: 10px;
