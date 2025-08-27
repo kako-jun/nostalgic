@@ -178,8 +178,13 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'light' | 'dark' | 'kawaii';
         page?: string;
+        theme?: 'light' | 'dark' | 'kawaii';
+        format?: 'interactive' | 'text';
+        'show-header'?: string;
+        url?: string;
+        token?: string;
+        'api-base'?: string;
       };
     }
   }
