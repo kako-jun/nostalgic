@@ -320,6 +320,47 @@ class NostalgicLike extends HTMLElement {
       <style>
         :host {
           display: inline-block;
+          /* 水玉パターン変数 */
+          --kawaii-light-bg: #e0f7fa;
+          --kawaii-light-dots: radial-gradient(circle at 8% 15%, rgba(255,255,255,0.8) 8px, transparent 8px),
+                               radial-gradient(circle at 25% 8%, rgba(255,255,255,0.8) 5px, transparent 5px),
+                               radial-gradient(circle at 45% 22%, rgba(255,255,255,0.8) 11px, transparent 11px),
+                               radial-gradient(circle at 68% 5%, rgba(255,255,255,0.8) 7px, transparent 7px),
+                               radial-gradient(circle at 85% 18%, rgba(255,255,255,0.8) 9px, transparent 9px),
+                               radial-gradient(circle at 5% 45%, rgba(255,255,255,0.8) 6px, transparent 6px),
+                               radial-gradient(circle at 22% 38%, rgba(255,255,255,0.8) 10px, transparent 10px),
+                               radial-gradient(circle at 38% 55%, rgba(255,255,255,0.8) 8px, transparent 8px),
+                               radial-gradient(circle at 58% 42%, rgba(255,255,255,0.8) 5px, transparent 5px),
+                               radial-gradient(circle at 75% 35%, rgba(255,255,255,0.8) 12px, transparent 12px),
+                               radial-gradient(circle at 92% 48%, rgba(255,255,255,0.8) 7px, transparent 7px),
+                               radial-gradient(circle at 12% 75%, rgba(255,255,255,0.8) 9px, transparent 9px),
+                               radial-gradient(circle at 30% 68%, rgba(255,255,255,0.8) 6px, transparent 6px),
+                               radial-gradient(circle at 48% 82%, rgba(255,255,255,0.8) 8px, transparent 8px),
+                               radial-gradient(circle at 65% 72%, rgba(255,255,255,0.8) 10px, transparent 10px),
+                               radial-gradient(circle at 82% 85%, rgba(255,255,255,0.8) 5px, transparent 5px),
+                               radial-gradient(circle at 15% 92%, rgba(255,255,255,0.8) 11px, transparent 11px),
+                               radial-gradient(circle at 55% 95%, rgba(255,255,255,0.8) 7px, transparent 7px),
+                               radial-gradient(circle at 95% 78%, rgba(255,255,255,0.8) 9px, transparent 9px);
+          --kawaii-dark-bg: #b2ebf2;
+          --kawaii-light-dots-hover: radial-gradient(circle at 8% 15%, rgba(255,255,255,0.9) 8px, transparent 8px),
+                                     radial-gradient(circle at 25% 8%, rgba(255,255,255,0.9) 5px, transparent 5px),
+                                     radial-gradient(circle at 45% 22%, rgba(255,255,255,0.9) 11px, transparent 11px),
+                                     radial-gradient(circle at 68% 5%, rgba(255,255,255,0.9) 7px, transparent 7px),
+                                     radial-gradient(circle at 85% 18%, rgba(255,255,255,0.9) 9px, transparent 9px),
+                                     radial-gradient(circle at 5% 45%, rgba(255,255,255,0.9) 6px, transparent 6px),
+                                     radial-gradient(circle at 22% 38%, rgba(255,255,255,0.9) 10px, transparent 10px),
+                                     radial-gradient(circle at 38% 55%, rgba(255,255,255,0.9) 8px, transparent 8px),
+                                     radial-gradient(circle at 58% 42%, rgba(255,255,255,0.9) 5px, transparent 5px),
+                                     radial-gradient(circle at 75% 35%, rgba(255,255,255,0.9) 12px, transparent 12px),
+                                     radial-gradient(circle at 92% 48%, rgba(255,255,255,0.9) 7px, transparent 7px),
+                                     radial-gradient(circle at 12% 75%, rgba(255,255,255,0.9) 9px, transparent 9px),
+                                     radial-gradient(circle at 30% 68%, rgba(255,255,255,0.9) 6px, transparent 6px),
+                                     radial-gradient(circle at 48% 82%, rgba(255,255,255,0.9) 8px, transparent 8px),
+                                     radial-gradient(circle at 65% 72%, rgba(255,255,255,0.9) 10px, transparent 10px),
+                                     radial-gradient(circle at 82% 85%, rgba(255,255,255,0.9) 5px, transparent 5px),
+                                     radial-gradient(circle at 15% 92%, rgba(255,255,255,0.9) 11px, transparent 11px),
+                                     radial-gradient(circle at 55% 95%, rgba(255,255,255,0.9) 7px, transparent 7px),
+                                     radial-gradient(circle at 95% 78%, rgba(255,255,255,0.9) 9px, transparent 9px);
         }
         
         .like-button {
@@ -348,51 +389,13 @@ class NostalgicLike extends HTMLElement {
         }
         
         .like-button.kawaii {
-          background-color: #e0f7fa;
-          background-image: 
-            radial-gradient(circle at 8% 15%, rgba(255,255,255,0.8) 8px, transparent 8px),
-            radial-gradient(circle at 25% 8%, rgba(255,255,255,0.8) 5px, transparent 5px),
-            radial-gradient(circle at 45% 22%, rgba(255,255,255,0.8) 11px, transparent 11px),
-            radial-gradient(circle at 68% 5%, rgba(255,255,255,0.8) 7px, transparent 7px),
-            radial-gradient(circle at 85% 18%, rgba(255,255,255,0.8) 9px, transparent 9px),
-            radial-gradient(circle at 5% 45%, rgba(255,255,255,0.8) 6px, transparent 6px),
-            radial-gradient(circle at 22% 38%, rgba(255,255,255,0.8) 10px, transparent 10px),
-            radial-gradient(circle at 38% 55%, rgba(255,255,255,0.8) 8px, transparent 8px),
-            radial-gradient(circle at 58% 42%, rgba(255,255,255,0.8) 5px, transparent 5px),
-            radial-gradient(circle at 75% 35%, rgba(255,255,255,0.8) 12px, transparent 12px),
-            radial-gradient(circle at 92% 48%, rgba(255,255,255,0.8) 7px, transparent 7px),
-            radial-gradient(circle at 12% 75%, rgba(255,255,255,0.8) 9px, transparent 9px),
-            radial-gradient(circle at 30% 68%, rgba(255,255,255,0.8) 6px, transparent 6px),
-            radial-gradient(circle at 48% 82%, rgba(255,255,255,0.8) 8px, transparent 8px),
-            radial-gradient(circle at 65% 72%, rgba(255,255,255,0.8) 10px, transparent 10px),
-            radial-gradient(circle at 82% 85%, rgba(255,255,255,0.8) 5px, transparent 5px),
-            radial-gradient(circle at 15% 92%, rgba(255,255,255,0.8) 11px, transparent 11px),
-            radial-gradient(circle at 55% 95%, rgba(255,255,255,0.8) 7px, transparent 7px),
-            radial-gradient(circle at 95% 78%, rgba(255,255,255,0.8) 9px, transparent 9px);
+          background-color: var(--kawaii-light-bg);
+          background-image: var(--kawaii-light-dots);
         }
         
         .like-button.kawaii:hover:not(.loading) {
-          background-color: #b2ebf2;
-          background-image: 
-            radial-gradient(circle at 8% 15%, rgba(255,255,255,0.9) 8px, transparent 8px),
-            radial-gradient(circle at 25% 8%, rgba(255,255,255,0.9) 5px, transparent 5px),
-            radial-gradient(circle at 45% 22%, rgba(255,255,255,0.9) 11px, transparent 11px),
-            radial-gradient(circle at 68% 5%, rgba(255,255,255,0.9) 7px, transparent 7px),
-            radial-gradient(circle at 85% 18%, rgba(255,255,255,0.9) 9px, transparent 9px),
-            radial-gradient(circle at 5% 45%, rgba(255,255,255,0.9) 6px, transparent 6px),
-            radial-gradient(circle at 22% 38%, rgba(255,255,255,0.9) 10px, transparent 10px),
-            radial-gradient(circle at 38% 55%, rgba(255,255,255,0.9) 8px, transparent 8px),
-            radial-gradient(circle at 58% 42%, rgba(255,255,255,0.9) 5px, transparent 5px),
-            radial-gradient(circle at 75% 35%, rgba(255,255,255,0.9) 12px, transparent 12px),
-            radial-gradient(circle at 92% 48%, rgba(255,255,255,0.9) 7px, transparent 7px),
-            radial-gradient(circle at 12% 75%, rgba(255,255,255,0.9) 9px, transparent 9px),
-            radial-gradient(circle at 30% 68%, rgba(255,255,255,0.9) 6px, transparent 6px),
-            radial-gradient(circle at 48% 82%, rgba(255,255,255,0.9) 8px, transparent 8px),
-            radial-gradient(circle at 65% 72%, rgba(255,255,255,0.9) 10px, transparent 10px),
-            radial-gradient(circle at 82% 85%, rgba(255,255,255,0.9) 5px, transparent 5px),
-            radial-gradient(circle at 15% 92%, rgba(255,255,255,0.9) 11px, transparent 11px),
-            radial-gradient(circle at 55% 95%, rgba(255,255,255,0.9) 7px, transparent 7px),
-            radial-gradient(circle at 95% 78%, rgba(255,255,255,0.9) 9px, transparent 9px);
+          background-color: var(--kawaii-dark-bg);
+          background-image: var(--kawaii-light-dots-hover);
         }
         
         .heart-icon {
