@@ -207,12 +207,6 @@ class NostalgicRanking extends HTMLElement {
           min-width: var(--ranking-min-width);
           max-width: var(--ranking-max-width);
         }
-        .ranking-container.kawaii {
-          background-image: radial-gradient(circle, rgba(255,255,255,0.4) 4px, transparent 4px),
-                           radial-gradient(circle, rgba(255,255,255,0.2) 2px, transparent 2px);
-          background-size: 24px 24px, 24px 24px;
-          background-position: 0 0, 12px 12px;
-        }
         .ranking-header {
           background: var(--ranking-header-bg);
           color: var(--ranking-header-color);
@@ -222,8 +216,8 @@ class NostalgicRanking extends HTMLElement {
           border-bottom: 2px solid var(--ranking-border-color);
         }
         .ranking-header.kawaii {
-          background-image: radial-gradient(circle, rgba(255,255,255,0.5) 3px, transparent 3px),
-                           radial-gradient(circle, rgba(255,255,255,0.3) 2px, transparent 2px);
+          background-image: radial-gradient(circle, rgba(255,255,255,0.15) 2.5px, transparent 2.5px),
+                           radial-gradient(circle, rgba(255,255,255,0.1) 1.5px, transparent 1.5px);
           background-size: 18px 18px, 18px 18px;
           background-position: 0 0, 9px 9px;
         }
@@ -292,6 +286,12 @@ class NostalgicRanking extends HTMLElement {
           font-size: 12px;
           margin-bottom: 8px;
         }
+        .form-header.kawaii {
+          background-image: radial-gradient(circle, rgba(255,255,255,0.15) 2.5px, transparent 2.5px),
+                           radial-gradient(circle, rgba(255,255,255,0.1) 1.5px, transparent 1.5px);
+          background-size: 18px 18px, 18px 18px;
+          background-position: 0 0, 9px 9px;
+        }
         .form-row {
           display: flex;
           gap: 6px;
@@ -330,6 +330,12 @@ class NostalgicRanking extends HTMLElement {
           opacity: 0.5;
           cursor: not-allowed;
         }
+        .form-row button.kawaii {
+          background-image: radial-gradient(circle, rgba(255,255,255,0.15) 2.5px, transparent 2.5px),
+                           radial-gradient(circle, rgba(255,255,255,0.1) 1.5px, transparent 1.5px);
+          background-size: 18px 18px, 18px 18px;
+          background-position: 0 0, 9px 9px;
+        }
       </style>
       <div class="ranking-container ${theme === 'kawaii' ? 'kawaii' : ''}">
         <div class="ranking-header ${theme === 'kawaii' ? 'kawaii' : ''}">RANKING</div>
@@ -348,11 +354,11 @@ class NostalgicRanking extends HTMLElement {
         `}
         ${this.safeGetAttribute('url') && this.safeGetAttribute('token') ? `
           <div class="submit-form">
-            <div class="form-header">スコア送信</div>
+            <div class="form-header ${theme === 'kawaii' ? 'kawaii' : ''}">スコア送信</div>
             <div class="form-row">
               <input type="text" id="score-name" placeholder="お名前" maxlength="50">
               <input type="number" id="score-value" placeholder="スコア" min="0">
-              <button id="submit-button" onclick="this.getRootNode().host.submitScore()">送信</button>
+              <button id="submit-button" class="${theme === 'kawaii' ? 'kawaii' : ''}" onclick="this.getRootNode().host.submitScore()">送信</button>
             </div>
           </div>
         ` : ''}

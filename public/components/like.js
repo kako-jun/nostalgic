@@ -348,15 +348,15 @@ class NostalgicLike extends HTMLElement {
         }
         
         .like-button.kawaii {
-          background-image: radial-gradient(circle, rgba(255,255,255,0.5) 3px, transparent 3px),
-                           radial-gradient(circle, rgba(255,255,255,0.3) 2px, transparent 2px);
+          background-image: radial-gradient(circle, rgba(255,255,255,0.2) 2.5px, transparent 2.5px),
+                           radial-gradient(circle, rgba(255,255,255,0.15) 1.5px, transparent 1.5px);
           background-size: 20px 20px, 20px 20px;
           background-position: 0 0, 10px 10px;
         }
         
         .like-button.kawaii:hover:not(.loading) {
-          background-image: radial-gradient(circle, rgba(255,255,255,0.6) 3px, transparent 3px),
-                           radial-gradient(circle, rgba(255,255,255,0.4) 2px, transparent 2px);
+          background-image: radial-gradient(circle, rgba(255,255,255,0.25) 2.5px, transparent 2.5px),
+                           radial-gradient(circle, rgba(255,255,255,0.18) 1.5px, transparent 1.5px);
           background-size: 20px 20px, 20px 20px;
           background-position: 0 0, 10px 10px;
         }
