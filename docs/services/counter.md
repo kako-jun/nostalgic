@@ -102,6 +102,34 @@ GET /api/visit?action=set&url={URL}&token={TOKEN}&total={VALUE}
 }
 ```
 
+### updateSettings
+Update counter settings (owner only).
+
+```
+GET /api/visit?action=updateSettings&url={URL}&token={TOKEN}&maxValue={MAX}&enableDailyStats={BOOL}&webhookUrl={WEBHOOK_URL}
+```
+
+**Parameters:**
+- `url` (required): Target URL
+- `token` (required): Owner token
+- `maxValue` (optional): Maximum count value
+- `enableDailyStats` (optional): Enable daily statistics tracking (true/false)
+- `webhookUrl` (optional): Webhook URL for notifications
+
+**Response:**
+```json
+{
+  "id": "yoursite-a7b9c3d4",
+  "url": "https://yoursite.com",
+  "total": 100,
+  "today": 5,
+  "yesterday": 10,
+  "week": 42,
+  "month": 100,
+  "lastVisit": "2025-07-30T12:05:00Z"
+}
+```
+
 ## Web Component Integration
 
 ```html

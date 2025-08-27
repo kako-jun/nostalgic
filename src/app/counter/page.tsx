@@ -72,7 +72,15 @@ export default function CounterPage() {
         apiUrl += `&total=${value}`;
       }
       
-      if (webhookUrl && (mode === "create" || mode === "set")) {
+      if (mode === "updateSettings") {
+        const maxValue = valueRef.current?.value;
+        if (maxValue) {
+          apiUrl += `&maxValue=${maxValue}`;
+        }
+        if (webhookUrl) {
+          apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
+        }
+      } else if (webhookUrl && (mode === "create" || mode === "set")) {
         apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
       }
     }
@@ -713,6 +721,109 @@ declare module 'react' {
                       手動カウントアップ
                     </button>
                   )}
+                </p>
+              </form>
+
+              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆設定更新◆</b>
+                </span>
+              </p>
+              <p>カウンターの設定を更新します。</p>
+              
+              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    ref={urlRef}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      marginLeft: "10px",
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    ref={tokenRef}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      marginLeft: "10px",
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>最大カウント値：</b>
+                  <input
+                    ref={valueRef}
+                    type="number"
+                    placeholder="1000"
+                    style={{
+                      marginLeft: "10px",
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>Webhook URL：</b>
+                  <input
+                    ref={webhookUrlRef}
+                    type="url"
+                    placeholder="https://example.com/webhook (optional)"
+                    style={{
+                      marginLeft: "10px",
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      marginLeft: "10px",
+                      padding: "4px 12px",
+                      backgroundColor: "#FF9800",
+                      color: "white",
+                      border: "2px outset #FF9800",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={(e) => {
+                      setMode("updateSettings");
+                      handleSubmit(e);
+                    }}
+                  >
+                    設定更新
+                  </button>
                 </p>
               </form>
 

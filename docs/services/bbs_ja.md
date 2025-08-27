@@ -193,6 +193,41 @@ declare module 'react' {
 
 これにより、React/Next.jsプロジェクトでWeb Componentsを使用してもTypeScriptビルドエラーが発生しません。
 
+### updateSettings
+BBS設定を更新（オーナーのみ）。
+
+```
+GET /api/bbs?action=updateSettings&url={URL}&token={TOKEN}&title={TITLE}&messagesPerPage={PER_PAGE}&maxMessages={MAX}&webhookUrl={WEBHOOK_URL}
+```
+
+**パラメータ:**
+- `url` (必須): 対象URL
+- `token` (必須): オーナートークン
+- `title` (オプション): BBSタイトル
+- `messagesPerPage` (オプション): 1ページあたりのメッセージ数（1-100）
+- `maxMessages` (オプション): 最大総メッセージ数（1-10000）
+- `webhookUrl` (オプション): 通知用WebhookURL
+
+**レスポンス:**
+```json
+{
+  "id": "yoursite-a7b9c3d4",
+  "url": "https://yoursite.com",
+  "title": "更新されたBBSタイトル",
+  "messages": [...],
+  "totalMessages": 5,
+  "currentPage": 1,
+  "totalPages": 1,
+  "settings": {
+    "title": "更新されたBBSタイトル",
+    "maxMessages": 500,
+    "messagesPerPage": 20,
+    "icons": ["😀", "😎", "😍"],
+    "selects": [...]
+  }
+}
+```
+
 ## セキュリティ注意事項
 
 - IP+UserAgentハッシュによるメッセージ投稿者確認

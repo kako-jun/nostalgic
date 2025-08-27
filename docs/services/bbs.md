@@ -309,6 +309,41 @@ declare module 'react' {
 
 This prevents TypeScript build errors when using Web Components in React/Next.js projects.
 
+### updateSettings
+Update BBS settings (owner only).
+
+```
+GET /api/bbs?action=updateSettings&url={URL}&token={TOKEN}&title={TITLE}&messagesPerPage={PER_PAGE}&maxMessages={MAX}&webhookUrl={WEBHOOK_URL}
+```
+
+**Parameters:**
+- `url` (required): Target URL
+- `token` (required): Owner token
+- `title` (optional): BBS title
+- `messagesPerPage` (optional): Messages per page (1-100)
+- `maxMessages` (optional): Maximum total messages (1-10000)
+- `webhookUrl` (optional): Webhook URL for notifications
+
+**Response:**
+```json
+{
+  "id": "yoursite-a7b9c3d4",
+  "url": "https://yoursite.com",
+  "title": "Updated BBS Title",
+  "messages": [...],
+  "totalMessages": 5,
+  "currentPage": 1,
+  "totalPages": 1,
+  "settings": {
+    "title": "Updated BBS Title",
+    "maxMessages": 500,
+    "messagesPerPage": 20,
+    "icons": ["😀", "😎", "😍"],
+    "selects": [...]
+  }
+}
+```
+
 ## Security Notes
 
 - Message authorship verified by IP+UserAgent hash

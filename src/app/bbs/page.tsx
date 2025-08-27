@@ -90,7 +90,11 @@ export default function BBSPage() {
       if (icons) apiUrl += `&icons=${encodeURIComponent(icons)}`;
     }
     
-    if (webhookUrl && (mode === "create" || mode === "updateSettings")) {
+    if (mode === "updateSettings") {
+      if (max) apiUrl += `&maxMessages=${max}`;
+      if (perPage) apiUrl += `&messagesPerPage=${perPage}`;
+      if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
+    } else if (webhookUrl && mode === "create") {
       apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
     }
 
@@ -1324,6 +1328,130 @@ declare module 'react' {
                     }}
                   >
                     全削除
+                  </button>
+                </p>
+              </form>
+
+              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆設定更新◆</b>
+                </span>
+              </p>
+              <p>BBSの設定を更新します。</p>
+              
+              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    ref={urlRef}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      marginLeft: "10px",
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    ref={tokenRef}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      marginLeft: "10px",
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>最大メッセージ数：</b>
+                  <input
+                    ref={maxRef}
+                    type="number"
+                    min="1"
+                    max="10000"
+                    placeholder="1000"
+                    style={{
+                      marginLeft: "10px",
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>1ページあたりのメッセージ数：</b>
+                  <input
+                    ref={perPageRef}
+                    type="number"
+                    min="1"
+                    max="100"
+                    placeholder="10"
+                    style={{
+                      marginLeft: "10px",
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>Webhook URL：</b>
+                  <input
+                    ref={webhookUrlRef}
+                    type="url"
+                    placeholder="https://example.com/webhook (optional)"
+                    style={{
+                      marginLeft: "10px",
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      marginLeft: "10px",
+                      padding: "4px 12px",
+                      backgroundColor: "#FF9800",
+                      color: "white",
+                      border: "2px outset #FF9800",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={(e) => {
+                      setMode("updateSettings");
+                      handleSubmit(e);
+                    }}
+                  >
+                    設定更新
                   </button>
                 </p>
               </form>

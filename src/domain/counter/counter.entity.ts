@@ -3,7 +3,6 @@
  */
 
 import { z } from 'zod'
-import { BaseEntity } from '@/lib/core/base-service'
 import { CommonSchemas } from '@/lib/core/validation'
 
 /**
@@ -12,24 +11,87 @@ import { CommonSchemas } from '@/lib/core/validation'
 export const CounterFieldSchemas = {
   counterType: z.enum(['total', 'today', 'yesterday', 'week', 'month']),
   counterFormat: z.enum(['json', 'text', 'image']),
-  counterDigits: z.coerce.number().int().min(1).max(10).optional()
+  counterDigits: z.coerce.number().int().min(1).max(10).optional(),
+  maxValue: CommonSchemas.positiveInt.optional(),
+  enableDailyStats: z.boolean()
 } as const
 
 /**
- * カウンターエンティティのスキーマ
+ * カウンター設定の型
  */
+export interface CounterSettings {
+  maxValue?: number
+  enableDailyStats: boolean
+  webhookUrl?: string
+}
+
+/**
+ * カウンターエンティティの型
+ */
+export interface CounterEntity {
+  id: string
+  url: string
+  created: Date
+  lastVisit?: Date
+  totalCount: number
+  settings: CounterSettings
+}
+
+/**
+ * クライアントに返すCounterデータの型
+ */
+export interface CounterData {
+  id: string
+  url: string
+  total: number
+  today: number
+  yesterday: number
+  week: number
+  month: number
+  lastVisit?: Date
+}
+
+/**
+ * Counter作成時のパラメータ
+ */
+export interface CounterCreateParams {
+  maxValue?: number
+  enableDailyStats?: boolean
+  webhookUrl?: string
+}
+
+/**
+ * Counter表示時のパラメータ
+ */
+export interface CounterDisplayParams {
+  id: string
+  type?: 'total' | 'today' | 'yesterday' | 'week' | 'month'
+  theme?: string
+  digits?: number
+  format?: 'json' | 'text' | 'image'
+}
+
+/**
+ * Zodスキーマ定義
+ */
+export const CounterSettingsSchema = z.object({
+  maxValue: CounterFieldSchemas.maxValue,
+  enableDailyStats: CounterFieldSchemas.enableDailyStats.default(true),
+  webhookUrl: CommonSchemas.url.optional()
+})
+
 export const CounterEntitySchema = z.object({
   id: CommonSchemas.publicId,
   url: CommonSchemas.url,
   created: CommonSchemas.date,
   lastVisit: CommonSchemas.date.optional(),
   totalCount: CommonSchemas.nonNegativeInt.default(0),
-  webhookUrl: CommonSchemas.url.optional()
+  settings: CounterSettingsSchema
 })
 
 export const CounterDataSchema = z.object({
   id: z.string(),
-  url: z.string(),
+  url: CommonSchemas.url,
   total: CommonSchemas.nonNegativeInt,
   today: CommonSchemas.nonNegativeInt,
   yesterday: CommonSchemas.nonNegativeInt,
@@ -39,8 +101,8 @@ export const CounterDataSchema = z.object({
 })
 
 export const CounterCreateParamsSchema = z.object({
-  maxValue: CommonSchemas.positiveInt.optional(),
-  enableDailyStats: z.boolean().default(true),
+  maxValue: CounterFieldSchemas.maxValue,
+  enableDailyStats: CounterFieldSchemas.enableDailyStats.default(true),
   webhookUrl: CommonSchemas.url.optional()
 })
 
@@ -63,11 +125,19 @@ export const CounterDisplayParamsSchema = z.object({
   format: CounterFieldSchemas.counterFormat.default('image')
 })
 
-export type CounterEntity = z.infer<typeof CounterEntitySchema>
-export type CounterData = z.infer<typeof CounterDataSchema>
-export type CounterCreateParams = z.infer<typeof CounterCreateParamsSchema>
-export type CounterIncrementParams = z.infer<typeof CounterIncrementParamsSchema>
-export type CounterSetParams = z.infer<typeof CounterSetParamsSchema>
-export type CounterDisplayParams = z.infer<typeof CounterDisplayParamsSchema>
+/**
+ * Counter設定更新用パラメータ
+ */
+export const CounterUpdateSettingsParamsSchema = z.object({
+  maxValue: CounterFieldSchemas.maxValue,
+  enableDailyStats: CounterFieldSchemas.enableDailyStats.optional(),
+  webhookUrl: CommonSchemas.url.optional()
+})
+
+/**
+ * 型エクスポート
+ */
+export type CounterEntityType = z.infer<typeof CounterEntitySchema>
+
 // 型定義は schema-constants からインポート
 export type { CounterType } from '@/lib/validation/schema-constants'

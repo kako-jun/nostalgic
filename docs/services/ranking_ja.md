@@ -147,6 +147,40 @@ await fetch('/api/ranking?action=clear&url=https://mygame.com&token=game-secret'
 - 最大エントリー数を超えると下位スコアが削除
 - スコア操作はO(log N)性能
 
+### updateSettings
+ランキング設定を更新（オーナーのみ）。
+
+```
+GET /api/ranking?action=updateSettings&url={URL}&token={TOKEN}&title={TITLE}&max={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
+```
+
+**パラメータ:**
+- `url` (必須): 対象URL
+- `token` (必須): オーナートークン
+- `title` (オプション): ランキングタイトル
+- `max` (オプション): 最大エントリー数（1-1000）
+- `sortOrder` (オプション): ソート順（"desc"で高スコア優先、"asc"で低タイム優先）
+- `webhookUrl` (オプション): 通知用WebhookURL
+
+**レスポンス:**
+```json
+{
+  "id": "yoursite-a7b9c3d4",
+  "url": "https://yoursite.com",
+  "title": "ハイスコアリーダーボード",
+  "entries": [
+    {
+      "name": "Player1",
+      "score": 1500,
+      "displayScore": "1,500",
+      "rank": 1
+    }
+  ],
+  "maxEntries": 50,
+  "sortOrder": "desc"
+}
+```
+
 ## Web Component 統合
 
 ```html

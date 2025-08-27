@@ -47,7 +47,11 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
       url,
       created: new Date(),
       totalCount: 0,
-      webhookUrl: params.webhookUrl
+      settings: {
+        maxValue: params.maxValue,
+        enableDailyStats: params.enableDailyStats ?? true,
+        webhookUrl: params.webhookUrl
+      }
     }
 
     const validationResult = ValidationFramework.output(CounterEntitySchema, entity)
@@ -178,7 +182,7 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
     }
 
     // Webhook 通知を送信（webhookUrlが設定されている場合のみ）
-    if (entity.webhookUrl) {
+    if (entity.settings.webhookUrl) {
       const webhookPayload = {
         event: 'counter.increment',
         timestamp: new Date().toISOString(),
@@ -192,7 +196,7 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
       }
 
       // シンプルなWebhook送信（失敗してもメイン処理は継続）
-      fetch(entity.webhookUrl, {
+      fetch(entity.settings.webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload)
@@ -234,8 +238,50 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
     // エンティティ更新
     entity.totalCount = value
     if (webhookUrl !== undefined) {
-      entity.webhookUrl = webhookUrl
+      entity.settings.webhookUrl = webhookUrl
     }
+    const saveResult = await this.entityRepository.save(entity.id, entity)
+    if (!saveResult.success) {
+      return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
+    }
+
+    return await this.transformEntityToData(entity)
+  }
+
+  // 設定更新（管理者用）
+  async updateSettings(
+    url: string,
+    token: string,
+    params: {
+      maxValue?: number
+      enableDailyStats?: boolean
+      webhookUrl?: string
+    }
+  ): Promise<Result<CounterData, ValidationError | NotFoundError>> {
+    // オーナーシップ検証
+    const ownershipResult = await this.verifyOwnership(url, token)
+    if (!ownershipResult.success) {
+      return Err(new ValidationError('Ownership verification failed', { error: ownershipResult.error }))
+    }
+
+    if (!ownershipResult.data.isOwner || !ownershipResult.data.entity) {
+      return Err(new ValidationError('Invalid token or entity not found'))
+    }
+
+    const entity = ownershipResult.data.entity as CounterEntity
+
+    // 設定更新
+    if (params.maxValue !== undefined) {
+      entity.settings.maxValue = params.maxValue
+    }
+    if (params.enableDailyStats !== undefined) {
+      entity.settings.enableDailyStats = params.enableDailyStats
+    }
+    if (params.webhookUrl !== undefined) {
+      entity.settings.webhookUrl = params.webhookUrl
+    }
+
+    // エンティティ保存
     const saveResult = await this.entityRepository.save(entity.id, entity)
     if (!saveResult.success) {
       return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))

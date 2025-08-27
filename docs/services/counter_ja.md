@@ -72,6 +72,52 @@ GET /api/visit?action=display&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 GET /api/visit?action=set&url={URL}&token={TOKEN}&total={VALUE}
 ```
 
+**パラメータ:**
+- `url` (必須): 対象URL
+- `token` (必須): オーナートークン
+- `total` (必須): 新しい累計値
+
+**レスポンス:**
+```json
+{
+  "id": "yoursite-a7b9c3d4",
+  "url": "https://yoursite.com",
+  "total": 12345,
+  "today": 0,
+  "yesterday": 0,
+  "week": 0,
+  "month": 0
+}
+```
+
+### updateSettings
+カウンター設定を更新（オーナーのみ）。
+
+```
+GET /api/visit?action=updateSettings&url={URL}&token={TOKEN}&maxValue={MAX}&enableDailyStats={BOOL}&webhookUrl={WEBHOOK_URL}
+```
+
+**パラメータ:**
+- `url` (必須): 対象URL
+- `token` (必須): オーナートークン
+- `maxValue` (オプション): 最大カウント値
+- `enableDailyStats` (オプション): 日別統計有効化（true/false）
+- `webhookUrl` (オプション): 通知用WebhookURL
+
+**レスポンス:**
+```json
+{
+  "id": "yoursite-a7b9c3d4",
+  "url": "https://yoursite.com",
+  "total": 100,
+  "today": 5,
+  "yesterday": 10,
+  "week": 42,
+  "month": 100,
+  "lastVisit": "2025-07-30T12:05:00Z"
+}
+```
+
 ## TypeScript サポート
 
 TypeScript プロジェクトで Web Components を使用する場合、プロジェクトルートに `types.d.ts` ファイルを作成してください：

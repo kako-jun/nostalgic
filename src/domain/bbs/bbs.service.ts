@@ -216,7 +216,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     }
 
     // Webhook 通知を送信（webhookUrlが設定されている場合のみ）
-    if (entity.webhookUrl) {
+    if (entity.settings.webhookUrl) {
       const webhookPayload = {
         event: 'bbs.post',
         timestamp: new Date().toISOString(),
@@ -232,7 +232,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
       }
 
       // シンプルなWebhook送信（失敗してもメイン処理は継続）
-      fetch(entity.webhookUrl, {
+      fetch(entity.settings.webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload)
@@ -517,7 +517,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
       entity.settings.selects = params.selects
     }
     if (params.webhookUrl !== undefined) {
-      entity.webhookUrl = params.webhookUrl
+      entity.settings.webhookUrl = params.webhookUrl
     }
 
     // エンティティ保存
@@ -821,7 +821,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     }
 
     // Webhook 通知を送信（webhookUrlが設定されている場合のみ）
-    if (entity.webhookUrl) {
+    if (entity.settings.webhookUrl) {
       const webhookPayload = {
         event: 'bbs.edit',
         timestamp: new Date().toISOString(),
@@ -837,7 +837,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
       }
 
       // シンプルなWebhook送信（失敗してもメイン処理は継続）
-      fetch(entity.webhookUrl, {
+      fetch(entity.settings.webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload)
@@ -903,7 +903,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     }
 
     // Webhook 通知を送信（webhookUrlが設定されている場合のみ）
-    if (entity.webhookUrl) {
+    if (entity.settings.webhookUrl) {
       const webhookPayload = {
         event: 'bbs.delete',
         timestamp: new Date().toISOString(),
@@ -917,7 +917,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
       }
 
       // シンプルなWebhook送信（失敗してもメイン処理は継続）
-      fetch(entity.webhookUrl, {
+      fetch(entity.settings.webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload)

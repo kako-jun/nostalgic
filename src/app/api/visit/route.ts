@@ -81,6 +81,13 @@ const setHandler = ApiHandler.create({
     return await counterService.setCounterValue(url, token, total, webhookUrl)
   }
 })
+const updateSettingsHandler = ApiHandler.create({
+  paramsSchema: CounterSchemas.updateSettings,
+  resultSchema: CounterSchemas.data,
+  handler: async ({ url, token, maxValue, enableDailyStats, webhookUrl }) => {
+    return await counterService.updateSettings(url, token, { maxValue, enableDailyStats, webhookUrl })
+  }
+})
 
 /**
  * DISPLAY アクション（特殊レスポンス）
@@ -199,6 +206,9 @@ async function routeRequest(request: NextRequest) {
       
       case 'set':
         return await setHandler(request)
+      
+      case 'updateSettings':
+        return await updateSettingsHandler(request)
       
       case 'display':
         // スキーマでデフォルト値が適用されるため、事前判定を削除
