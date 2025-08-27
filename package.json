@@ -36,12 +36,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "redis:show": "node scripts/show-all-data.js",
-    "redis:info": "node scripts/redis-info.js",
-    "redis:service": "node scripts/show-service-data.js",
-    "redis:fix": "node scripts/fix-service.js",
-    "redis:migrate": "node scripts/migrate-legacy-services.js",
-    "cleanup:service": "node scripts/cleanup-service.js"
+    "db:summary": "node scripts/db-summary.js",
+    "db:detail": "node scripts/db-detail.js",
+    "migrate:keys": "node scripts/migrate-redis-keys.js"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.8",

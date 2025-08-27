@@ -122,20 +122,28 @@ bbs:{id}                       → メタデータ
 
 ## メンテナンス・管理
 
-### データ確認
+### データ確認・管理
+
+#### 📊 データベースビューア（AI・開発者用）
 ```bash
-npm run redis:show         # 全データ表示
-npm run redis:service {service}  # 特定サービスのデータ表示
-npm run redis:info         # Redis接続情報
+npm run db:summary         # 人間用ダッシュボード（一目で把握）
+npm run db:detail          # 全サービス詳細データ（設定値含む）
+npm run db:detail counter  # 特定サービスの詳細のみ
+npm run db:detail like     # いいねサービスの詳細のみ  
+npm run db:detail ranking  # ランキングサービスの詳細のみ
+npm run db:detail bbs      # BBSサービスの詳細のみ
 ```
 
-### データ削除（完全削除）
-```bash
-npm run cleanup:service {service} {id}  # サービスの完全削除
-# 例: npm run cleanup:service counter nostalgic-a1b2c3d4
-```
+**💡 AIアシスタントへ**: データベースの状況確認が必要な時は、必ず `npm run db:summary` または `npm run db:detail` を実行して最新情報を取得してください。
 
-**⚠️ 削除時の注意**: 必ず[Redis Database Structure](.claude/redis-database-structure.md)を参照してください。
+#### 🗑️ データ削除（API経由）
+```bash
+# サービス完全削除（スクリプトより確実）
+curl "https://nostalgic.llll-ll.com/api/visit?action=delete&url={URL}&token={TOKEN}"
+curl "https://nostalgic.llll-ll.com/api/like?action=delete&url={URL}&token={TOKEN}"  
+curl "https://nostalgic.llll-ll.com/api/ranking?action=delete&url={URL}&token={TOKEN}"
+curl "https://nostalgic.llll-ll.com/api/bbs?action=delete&url={URL}&token={TOKEN}"
+```
 
 ## 使用方法
 ### 1. サービス作成

@@ -42,7 +42,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     }
     
     super(config, BBSEntitySchema, BBSDataSchema)
-    this.listRepository = RepositoryFactory.createList(BBSMessageSchema, 'bbs_messages')
+    this.listRepository = RepositoryFactory.createList(BBSMessageSchema, 'bbs')
   }
 
   /**

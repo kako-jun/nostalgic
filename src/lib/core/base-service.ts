@@ -273,10 +273,10 @@ export abstract class BaseService<TEntity extends BaseEntity, TData, TCreatePara
    * オーナートークンの保存
    */
   protected async saveOwnerToken(id: string, token: string): Promise<Result<void, ValidationError>> {
-    const ownerRepo = RepositoryFactory.createEntity(z.string(), `${this.config.serviceName}_owner`)
+    const ownerRepo = RepositoryFactory.createEntity(z.string(), `${this.config.serviceName}`)
     const hashedToken = this.hashToken(token)
     
-    const saveResult = await ownerRepo.save(id, hashedToken)
+    const saveResult = await ownerRepo.save(`${id}:owner`, hashedToken)
     if (!saveResult.success) {
       return Err(new ValidationError('Failed to save owner token', { error: saveResult.error }))
     }
@@ -288,8 +288,8 @@ export abstract class BaseService<TEntity extends BaseEntity, TData, TCreatePara
    * オーナートークンハッシュの取得
    */
   protected async getOwnerTokenHash(id: string): Promise<Result<string, ValidationError | NotFoundError>> {
-    const ownerRepo = RepositoryFactory.createEntity(z.string(), `${this.config.serviceName}_owner`)
-    const result = await ownerRepo.get(id)
+    const ownerRepo = RepositoryFactory.createEntity(z.string(), `${this.config.serviceName}`)
+    const result = await ownerRepo.get(`${id}:owner`)
     
     if (!result.success) {
       if (result.error.code === 'NOT_FOUND') {
@@ -305,9 +305,9 @@ export abstract class BaseService<TEntity extends BaseEntity, TData, TCreatePara
    * オーナートークンの削除
    */
   protected async deleteOwnerToken(id: string): Promise<Result<void, ValidationError>> {
-    const ownerRepo = RepositoryFactory.createEntity(z.string(), `${this.config.serviceName}_owner`)
+    const ownerRepo = RepositoryFactory.createEntity(z.string(), `${this.config.serviceName}`)
     
-    const deleteResult = await ownerRepo.delete(id)
+    const deleteResult = await ownerRepo.delete(`${id}:owner`)
     if (!deleteResult.success) {
       return Err(new ValidationError('Failed to delete owner token', { error: deleteResult.error }))
     }
