@@ -164,9 +164,9 @@ class NostalgicRanking extends HTMLElement {
       dark: {
         bgColor: '#2a2a2a',
         borderColor: '#ffffff',
-        headerBg: '#333333',
+        headerBg: '#000000',
         headerColor: '#ffffff',
-        textColor: '#ffffff'
+        textColor: '#cccccc'
       },
       kawaii: {
         bgColor: '#e0f7fa',

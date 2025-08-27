@@ -198,18 +198,53 @@ export default function HomePage() {
               </p>
               <div style={{ textAlign: "center", margin: "20px 0" }}>
                 <p style={{ marginBottom: "10px" }}>このサイトが気に入ったら、いいねを押してください！</p>
-                <div style={{ display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px", justifyItems: "center", maxWidth: "600px", margin: "0 auto" }}>
+                  {/* Heart Icons */}
                   <div style={{ textAlign: "center" }}>
-                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Light</p>
-                    <nostalgic-like id="nostalgic-b89803bb" theme="light" />
+                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Heart × Light</p>
+                    <nostalgic-like id="nostalgic-b89803bb" theme="light" icon="heart" />
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Dark</p>
-                    <nostalgic-like id="nostalgic-b89803bb" theme="dark" />
+                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Heart × Dark</p>
+                    <div style={{ backgroundColor: "#666666", padding: "10px", borderRadius: "4px" }}>
+                      <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="heart" />
+                    </div>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Kawaii</p>
-                    <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" />
+                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Heart × Kawaii</p>
+                    <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" icon="heart" />
+                  </div>
+                  
+                  {/* Star Icons */}
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Star × Light</p>
+                    <nostalgic-like id="nostalgic-b89803bb" theme="light" icon="star" />
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Star × Dark</p>
+                    <div style={{ backgroundColor: "#666666", padding: "10px", borderRadius: "4px" }}>
+                      <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="star" />
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Star × Kawaii</p>
+                    <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" icon="star" />
+                  </div>
+                  
+                  {/* Thumb Icons */}
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Thumb × Light</p>
+                    <nostalgic-like id="nostalgic-b89803bb" theme="light" icon="thumb" />
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Thumb × Dark</p>
+                    <div style={{ backgroundColor: "#666666", padding: "10px", borderRadius: "4px" }}>
+                      <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="thumb" />
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Thumb × Kawaii</p>
+                    <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" icon="thumb" />
                   </div>
                 </div>
               </div>
@@ -218,7 +253,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆4サービス人気投票◆</b>
+                  <b>◆全サービス人気投票◆</b>
                 </span>
               </p>
               
@@ -388,7 +423,9 @@ export default function HomePage() {
                     訪問の記念に、足あとを残していってください！
                   </p>
                   <div style={{ maxWidth: "100%", overflow: "auto" }}>
-                    <nostalgic-bbs id="nostalgic-b89803bb" theme="dark" />
+                    <div style={{ backgroundColor: "#666666", padding: "10px", borderRadius: "4px", display: "inline-block" }}>
+                      <nostalgic-bbs id="nostalgic-b89803bb" theme="dark" />
+                    </div>
                   </div>
                 </div>
               </div>

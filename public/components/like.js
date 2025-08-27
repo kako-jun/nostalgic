@@ -294,14 +294,14 @@ class NostalgicLike extends HTMLElement {
         bgColor: '#ffffff',
         hoverBgColor: '#f5f5f5',
         textColor: '#000000',
-        borderColor: '#cccccc',
+        borderColor: '#000000',
         shadowColor: '#000000'
       },
       dark: {
         bgColor: '#2a2a2a',
         hoverBgColor: '#333333',
         textColor: '#ffffff',
-        borderColor: '#444444',
+        borderColor: '#ffffff',
         shadowColor: '#ffffff'
       },
       kawaii: {
