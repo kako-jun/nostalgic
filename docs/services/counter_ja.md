@@ -134,6 +134,32 @@ declare module 'react' {
 - `digits`: ゼロ埋め桁数（指定時のみ）
 - `api-base`: カスタムAPI ベースURL（オプション）
 
+## TypeScriptサポート
+
+TypeScriptプロジェクトでWeb Componentsを使用する場合は、プロジェクトルートに`types.d.ts`ファイルを作成してください：
+
+```typescript
+// types.d.ts
+import React from 'react'
+
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements {
+      'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
+        id?: string
+        type?: 'total' | 'today' | 'yesterday' | 'week' | 'month'
+        theme?: 'light' | 'dark' | 'kawaii'
+        digits?: string
+        format?: 'image' | 'text'
+        'api-base'?: string
+      }, HTMLElement>
+    }
+  }
+}
+```
+
+これにより、React/Next.jsプロジェクトでWeb Componentsを使用する際のTypeScriptビルドエラーを防げます。
+
 ## 使用例
 
 ### 基本的なカウンター設置

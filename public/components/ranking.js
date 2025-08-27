@@ -207,6 +207,12 @@ class NostalgicRanking extends HTMLElement {
           min-width: var(--ranking-min-width);
           max-width: var(--ranking-max-width);
         }
+        .ranking-container.kawaii {
+          background-image: radial-gradient(circle, rgba(255,255,255,0.4) 4px, transparent 4px),
+                           radial-gradient(circle, rgba(255,255,255,0.2) 2px, transparent 2px);
+          background-size: 24px 24px, 24px 24px;
+          background-position: 0 0, 12px 12px;
+        }
         .ranking-header {
           background: var(--ranking-header-bg);
           color: var(--ranking-header-color);
@@ -214,6 +220,12 @@ class NostalgicRanking extends HTMLElement {
           text-align: center;
           font-weight: bold;
           border-bottom: 2px solid var(--ranking-border-color);
+        }
+        .ranking-header.kawaii {
+          background-image: radial-gradient(circle, rgba(255,255,255,0.5) 3px, transparent 3px),
+                           radial-gradient(circle, rgba(255,255,255,0.3) 2px, transparent 2px);
+          background-size: 18px 18px, 18px 18px;
+          background-position: 0 0, 9px 9px;
         }
         .ranking-list {
           padding: 10px;
@@ -319,8 +331,8 @@ class NostalgicRanking extends HTMLElement {
           cursor: not-allowed;
         }
       </style>
-      <div class="ranking-container">
-        <div class="ranking-header">RANKING</div>
+      <div class="ranking-container ${theme === 'kawaii' ? 'kawaii' : ''}">
+        <div class="ranking-header ${theme === 'kawaii' ? 'kawaii' : ''}">RANKING</div>
         ${entries.length > 0 ? `
           <ul class="ranking-list">
             ${entries.map((entry, index) => `

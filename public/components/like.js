@@ -347,6 +347,20 @@ class NostalgicLike extends HTMLElement {
           box-shadow: 4px 4px 0px var(--like-shadow, ${style.shadowColor});
         }
         
+        .like-button.kawaii {
+          background-image: radial-gradient(circle, rgba(255,255,255,0.5) 3px, transparent 3px),
+                           radial-gradient(circle, rgba(255,255,255,0.3) 2px, transparent 2px);
+          background-size: 20px 20px, 20px 20px;
+          background-position: 0 0, 10px 10px;
+        }
+        
+        .like-button.kawaii:hover:not(.loading) {
+          background-image: radial-gradient(circle, rgba(255,255,255,0.6) 3px, transparent 3px),
+                           radial-gradient(circle, rgba(255,255,255,0.4) 2px, transparent 2px);
+          background-size: 20px 20px, 20px 20px;
+          background-position: 0 0, 10px 10px;
+        }
+        
         .heart-icon {
           font-size: var(--like-icon-size, 16px);
           line-height: 1;
@@ -372,7 +386,7 @@ class NostalgicLike extends HTMLElement {
         }
       </style>
       
-      <button class="like-button ${isLoading ? 'loading' : ''}" ${isLoading ? 'disabled' : ''}>
+      <button class="like-button ${isLoading ? 'loading' : ''} ${theme === 'kawaii' ? 'kawaii' : ''}" ${isLoading ? 'disabled' : ''}>
         <span class="heart-icon">${displayIcon}</span>
         <span class="like-count">${total}</span>
       </button>

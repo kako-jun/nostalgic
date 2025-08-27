@@ -184,8 +184,12 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-ranking': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'light' | 'dark' | 'kawaii';
         limit?: string;
+        theme?: 'light' | 'dark' | 'kawaii';
+        format?: 'interactive' | 'text';
+        url?: string;
+        token?: string;
+        'api-base'?: string;
       };
     }
   }

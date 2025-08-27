@@ -234,6 +234,12 @@ class NostalgicBBS extends HTMLElement {
           min-width: var(--bbs-min-width);
           box-sizing: border-box;
         }
+        .bbs-container.kawaii {
+          background-image: radial-gradient(circle, rgba(255,255,255,0.4) 4px, transparent 4px),
+                           radial-gradient(circle, rgba(255,255,255,0.2) 2px, transparent 2px);
+          background-size: 24px 24px, 24px 24px;
+          background-position: 0 0, 12px 12px;
+        }
         .bbs-header {
           background: var(--bbs-header-bg);
           color: var(--bbs-header-color);
@@ -241,6 +247,12 @@ class NostalgicBBS extends HTMLElement {
           text-align: center;
           font-weight: bold;
           border-bottom: 2px solid var(--bbs-border-color);
+        }
+        .bbs-header.kawaii {
+          background-image: radial-gradient(circle, rgba(255,255,255,0.5) 3px, transparent 3px),
+                           radial-gradient(circle, rgba(255,255,255,0.3) 2px, transparent 2px);
+          background-size: 18px 18px, 18px 18px;
+          background-position: 0 0, 9px 9px;
         }
         .bbs-messages {
           height: 400px;
@@ -466,9 +478,9 @@ class NostalgicBBS extends HTMLElement {
           color: #2e7d32;
         }
       </style>
-      <div class="bbs-container">
+      <div class="bbs-container ${theme === 'kawaii' ? 'kawaii' : ''}">
         ${this.bbsData.title ? `
-          <div class="bbs-header">${this.escapeHtml(this.bbsData.title)}</div>
+          <div class="bbs-header ${theme === 'kawaii' ? 'kawaii' : ''}">${this.escapeHtml(this.bbsData.title)}</div>
         ` : ''}
         <div class="bbs-messages">
           ${messages.length > 0 ? 

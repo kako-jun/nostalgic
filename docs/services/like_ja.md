@@ -164,6 +164,8 @@ declare module 'react' {
         id?: string;
         theme?: 'light' | 'dark' | 'kawaii';
         icon?: 'heart' | 'star' | 'thumb';
+        format?: 'interactive' | 'text' | 'image';
+        'api-base'?: string;
       };
     }
   }

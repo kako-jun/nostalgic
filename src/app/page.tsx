@@ -124,19 +124,23 @@ export default function HomePage() {
               
               <div style={{ textAlign: "center", margin: "20px 0" }}>
                 <p style={{ marginBottom: "10px", fontWeight: "bold" }}>【サービス一覧】</p>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "center" }}>
-                  <a href="/counter" className="nostalgic-old-link" style={{ padding: "5px 10px", border: "1px solid #666", backgroundColor: "#f0f0f0" }}>
-                    📊 Nostalgic Counter
-                  </a>
-                  <a href="/like" className="nostalgic-old-link" style={{ padding: "5px 10px", border: "1px solid #666", backgroundColor: "#f0f0f0" }}>
-                    💖 Nostalgic Like
-                  </a>
-                  <a href="/ranking" className="nostalgic-old-link" style={{ padding: "5px 10px", border: "1px solid #666", backgroundColor: "#f0f0f0" }}>
-                    🏆 Nostalgic Ranking
-                  </a>
-                  <a href="/bbs" className="nostalgic-old-link" style={{ padding: "5px 10px", border: "1px solid #666", backgroundColor: "#f0f0f0" }}>
-                    💬 Nostalgic BBS
-                  </a>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "center" }}>
+                  <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
+                    <a href="/counter" className="nostalgic-old-link" style={{ padding: "5px 10px", border: "1px solid #666", backgroundColor: "#f0f0f0" }}>
+                      📊 Nostalgic Counter
+                    </a>
+                    <a href="/like" className="nostalgic-old-link" style={{ padding: "5px 10px", border: "1px solid #666", backgroundColor: "#f0f0f0" }}>
+                      💖 Nostalgic Like
+                    </a>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
+                    <a href="/ranking" className="nostalgic-old-link" style={{ padding: "5px 10px", border: "1px solid #666", backgroundColor: "#f0f0f0" }}>
+                      🏆 Nostalgic Ranking
+                    </a>
+                    <a href="/bbs" className="nostalgic-old-link" style={{ padding: "5px 10px", border: "1px solid #666", backgroundColor: "#f0f0f0" }}>
+                      💬 Nostalgic BBS
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -208,7 +212,7 @@ export default function HomePage() {
                   </div>
                   <div style={{ textAlign: "center" }}>
                     <p style={{ fontSize: "14px", marginBottom: "10px" }}>Heart × Dark</p>
-                    <div style={{ backgroundColor: "#666666", padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="heart" />
                     </div>
                   </div>
@@ -228,7 +232,7 @@ export default function HomePage() {
                   </div>
                   <div style={{ textAlign: "center" }}>
                     <p style={{ fontSize: "14px", marginBottom: "10px" }}>Star × Dark</p>
-                    <div style={{ backgroundColor: "#666666", padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="star" />
                     </div>
                   </div>
@@ -248,7 +252,7 @@ export default function HomePage() {
                   </div>
                   <div style={{ textAlign: "center" }}>
                     <p style={{ fontSize: "14px", marginBottom: "10px" }}>Thumb × Dark</p>
-                    <div style={{ backgroundColor: "#666666", padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="thumb" />
                     </div>
                   </div>
@@ -380,7 +384,7 @@ export default function HomePage() {
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <div style={{ backgroundColor: "#666666", padding: "10px", borderRadius: "4px", display: "inline-block" }}>
+                <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", display: "inline-block" }}>
                   <nostalgic-ranking id="llll-ll-a235b610" theme="dark" />
                 </div>
               </div>
@@ -431,7 +435,7 @@ export default function HomePage() {
                 <p style={{ marginBottom: "20px" }}>
                   訪問の記念に、足あとを残していってください！
                 </p>
-                <div style={{ backgroundColor: "#666666", padding: "15px", borderRadius: "4px", display: "inline-block" }}>
+                <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "15px", display: "inline-block" }}>
                   <nostalgic-bbs id="nostalgic-b89803bb" theme="dark" />
                 </div>
               </div>

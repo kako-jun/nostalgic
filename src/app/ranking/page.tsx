@@ -1126,6 +1126,46 @@ declare module 'react' {
 
             <hr />
 
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆TypeScriptプロジェクトでの設定◆</b>
+                </span>
+              </p>
+              <p>React/Next.jsなどのTypeScriptプロジェクトでWeb Componentsを使用する場合は、プロジェクトルートに`types.d.ts`ファイルを作成してください：</p>
+              <pre
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "15px",
+                  fontFamily: "monospace",
+                  fontSize: "13px",
+                  overflowX: "auto",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px"
+                }}
+              >
+{`// types.d.ts
+import React from 'react'
+
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements {
+      'nostalgic-ranking': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
+        id?: string
+        limit?: string
+        theme?: 'light' | 'dark' | 'kawaii'
+        format?: 'html' | 'json'
+        url?: string
+        token?: string
+        'api-base'?: string
+      }, HTMLElement>
+    }
+  }
+}`}
+              </pre>
+              <p>これにより、TypeScriptビルドエラーを防ぐことができます。</p>
+            </div>
+
             <p style={{ textAlign: "center" }}>
               これ以上の詳しい説明は{" "}
               <a href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md" className="nostalgic-old-link">
