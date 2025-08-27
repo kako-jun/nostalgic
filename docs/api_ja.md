@@ -49,6 +49,14 @@ Nostalgicは90年代のインターネット文化から懐かしいWebツール
 - 公開IDシステムによる不正アクセス防止
 - 投稿者確認による編集権限管理
 
+### Webhook機能
+各サービスは、重要なイベント発生時に自動通知を送信するWebhook機能をサポートしています：
+
+- **リアルタイム通知**: サービスイベント（カウントアップ、いいね、ランキング変動、BBS投稿など）の即座通知
+- **Slack/Discord/Teams対応**: チーム用チャットツールとの簡単統合
+- **シンプル設計**: リトライやデジタル署名なしの軽量実装
+- **オプション設定**: サービス作成時またはアップデート時にwebhookUrlパラメータで設定
+
 ### サービスライフサイクル
 1. **作成**: URL + トークン → 公開ID返却
 2. **使用**: 公開IDで表示/操作
@@ -58,8 +66,8 @@ Nostalgicは90年代のインターネット文化から懐かしいWebツール
 
 ### カウンター
 ```bash
-# カウンター作成
-curl "https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&token=your-secret"
+# カウンター作成（Webhook付き）
+curl "https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # カウンター表示
 curl "https://nostalgic.llll-ll.com/api/visit?action=display&id=yoursite-a7b9c3d4&type=total&theme=light"
@@ -67,8 +75,8 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=display&id=yoursite-a7b9c3d
 
 ### いいね
 ```bash
-# いいねボタン作成
-curl "https://nostalgic.llll-ll.com/api/like?action=create&url=https://yoursite.com&token=your-secret"
+# いいねボタン作成（Webhook付き）
+curl "https://nostalgic.llll-ll.com/api/like?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # いいねトグル
 curl "https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.com&token=your-secret"
@@ -76,8 +84,8 @@ curl "https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.
 
 ### ランキング
 ```bash
-# スコア系ゲーム用ランキング作成（高スコア優先）
-curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=desc"
+# スコア系ゲーム用ランキング作成（高スコア優先、Webhook付き）
+curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=desc&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # タイム系ゲーム用ランキング作成（低タイム優先）
 curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=asc"
@@ -88,8 +96,8 @@ curl "https://nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursi
 
 ### BBS
 ```bash
-# BBS作成
-curl "https://nostalgic.llll-ll.com/api/bbs?action=create&url=https://yoursite.com&token=your-secret&max=1000"
+# BBS作成（Webhook付き）
+curl "https://nostalgic.llll-ll.com/api/bbs?action=create&url=https://yoursite.com&token=your-secret&max=1000&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # メッセージ投稿
 curl "https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com&token=your-secret&author=User&message=こんにちは！"
