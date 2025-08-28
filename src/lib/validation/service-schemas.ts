@@ -353,6 +353,10 @@ export const BBSSchemas = {
     title: BBSFieldSchemas.bbsTitle.optional(),
     messagesPerPage: BBSFieldSchemas.updateMessagesPerPage.optional(),
     maxMessages: BBSFieldSchemas.updateMaxMessages.optional(),
+    // 3種類のセレクト機能（オプション）
+    standardSelect: BBSFieldSchemas.selectConfig.optional(),
+    incrementalSelect: BBSFieldSchemas.selectConfig.optional(),
+    emoteSelect: BBSFieldSchemas.selectConfig.optional(),
     webhookUrl: CommonSchemas.url.optional()
   }),
 

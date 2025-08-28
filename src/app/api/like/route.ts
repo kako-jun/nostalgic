@@ -25,7 +25,7 @@ import { CounterFieldSchemas } from '@/domain/counter/counter.entity'
  */
 const createHandler = ApiHandler.create({
   paramsSchema: LikeSchemas.create,
-  resultSchema: UnifiedAPISchemas.createSuccess,
+  resultSchema: LikeSchemas.data,
   handler: async ({ url, token, webhookUrl }, request) => {
     const createResult = await likeService.create(url, token, { webhookUrl })
     
@@ -33,11 +33,8 @@ const createHandler = ApiHandler.create({
       return createResult
     }
 
-    return map(createResult, result => ({
-      success: true as const,
-      id: result.id,
-      url: result.data.url
-    }))
+    // 完全なLikeDataを返す（updateSettingsと同じ）
+    return Ok(createResult.data.data)
   }
 })
 

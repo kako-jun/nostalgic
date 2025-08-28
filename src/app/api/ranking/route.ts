@@ -22,9 +22,10 @@ import {
  */
 const createHandler = ApiHandler.create({
   paramsSchema: RankingSchemas.create,
-  resultSchema: UnifiedAPISchemas.createSuccess,
-  handler: async ({ url, token, max, sortOrder, webhookUrl }, request) => {
+  resultSchema: RankingSchemas.data,
+  handler: async ({ url, token, title, max, sortOrder, webhookUrl }, request) => {
     const createResult = await rankingService.create(url, token, {
+      title,
       maxEntries: max,
       sortOrder,
       webhookUrl
@@ -34,11 +35,8 @@ const createHandler = ApiHandler.create({
       return createResult
     }
 
-    return map(createResult, result => ({
-      success: true as const,
-      id: result.id,
-      url: result.data.url
-    }))
+    // 完全なRankingDataを返す（updateSettingsと同じ）
+    return Ok(createResult.data.data)
   }
 })
 

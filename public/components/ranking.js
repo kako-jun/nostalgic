@@ -292,7 +292,7 @@ class NostalgicRanking extends HTMLElement {
         }
       </style>
       <div class="ranking-container ${theme === 'kawaii' ? 'kawaii' : ''}">
-        <div class="ranking-header ${theme === 'kawaii' ? 'kawaii' : ''}">RANKING</div>
+        <div class="ranking-header ${theme === 'kawaii' ? 'kawaii' : ''}">${this.escapeHtml(this.rankingData.title || 'RANKING')}</div>
         ${entries.length > 0 ? `
           <ul class="ranking-list">
             ${entries.map((entry, index) => `

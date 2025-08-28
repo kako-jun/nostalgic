@@ -21,7 +21,7 @@ import {
  */
 const createHandler = ApiHandler.create({
   paramsSchema: BBSSchemas.create,
-  resultSchema: UnifiedAPISchemas.createSuccess,
+  resultSchema: BBSSchemas.data,
   handler: async ({ url, token, title, messagesPerPage, max, standardSelect, incrementalSelect, emoteSelect, webhookUrl }, request) => {
     const createResult = await bbsService.create(url, token, {
       title,
@@ -37,11 +37,8 @@ const createHandler = ApiHandler.create({
       return createResult
     }
 
-    return map(createResult, result => ({
-      success: true as const,
-      id: result.id,
-      url: result.data.url
-    }))
+    // 完全なBBSDataを返す（updateSettingsと同じ）
+    return Ok(createResult.data.data)
   }
 })
 

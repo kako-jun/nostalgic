@@ -31,7 +31,7 @@ const ApiParamsSchema = CounterActionParams
  */
 const createHandler = ApiHandler.create({
   paramsSchema: CounterSchemas.create,
-  resultSchema: UnifiedAPISchemas.createSuccess,
+  resultSchema: CounterSchemas.data,
   handler: async ({ url, token, webhookUrl }, request) => {
     const createResult = await counterService.create(url, token, { enableDailyStats: true, webhookUrl })
     
@@ -39,11 +39,8 @@ const createHandler = ApiHandler.create({
       return createResult
     }
 
-    return map(createResult, result => ({
-      success: true as const,
-      id: result.id,
-      url: result.data.url
-    }))
+    // 完全なCounterDataを返す（updateSettingsと同じ）
+    return Ok(createResult.data.data)
   }
 })
 
