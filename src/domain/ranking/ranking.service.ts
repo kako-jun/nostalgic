@@ -85,9 +85,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       url: entity.url,
       entries,
       totalEntries: entity.totalEntries,
-      maxEntries: entity.settings.maxEntries,
-      sortOrder: entity.settings.sortOrder,
-      title: entity.settings.title,
+      settings: entity.settings
     }
 
     return ValidationFramework.output(RankingDataSchema, data)
@@ -578,9 +576,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       url: entity.url,
       entries,
       totalEntries: entity.totalEntries,
-      maxEntries: entity.settings.maxEntries,
-      sortOrder: entity.settings.sortOrder,
-      title: entity.settings.title,
+      settings: entity.settings
     }
 
     return ValidationFramework.output(RankingDataSchema, data)

@@ -80,7 +80,8 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
       yesterday: yesterday.success ? yesterday.data : 0,
       week: week.success ? week.data : 0,
       month: month.success ? month.data : 0,
-      lastVisit: entity.lastVisit
+      lastVisit: entity.lastVisit,
+      settings: entity.settings
     }
 
     return ValidationFramework.output(CounterDataSchema, data)

@@ -67,7 +67,8 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
       url: entity.url,
       total: entity.totalLikes,
       userLiked: false, // デフォルトはfalse、実際の状態は別途チェック
-      lastLike: entity.lastLike
+      lastLike: entity.lastLike,
+      settings: entity.settings
     }
 
     return ValidationFramework.output(LikeDataSchema, data)
@@ -88,7 +89,8 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
       url: entity.url,
       total: entity.totalLikes,
       userLiked,
-      lastLike: entity.lastLike
+      lastLike: entity.lastLike,
+      settings: entity.settings
     }
 
     return ValidationFramework.output(LikeDataSchema, data)

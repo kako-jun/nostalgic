@@ -45,6 +45,7 @@ export interface CounterData {
   week: number
   month: number
   lastVisit?: Date
+  settings: CounterSettings
 }
 
 /**
@@ -91,7 +92,8 @@ export const CounterDataSchema = z.object({
   yesterday: CommonSchemas.nonNegativeInt,
   week: CommonSchemas.nonNegativeInt,
   month: CommonSchemas.nonNegativeInt,
-  lastVisit: CommonSchemas.date.optional()
+  lastVisit: CommonSchemas.date.optional(),
+  settings: CounterSettingsSchema
 })
 
 export const CounterCreateParamsSchema = z.object({

@@ -94,7 +94,6 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     const data: BBSData = {
       id: entity.id,
       url: entity.url,
-      title: entity.settings.title,
       messages,
       totalMessages: entity.totalMessages,
       currentPage: page,
@@ -681,7 +680,6 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     const data: BBSData = {
       id: entity.id,
       url: entity.url,
-      title: entity.settings.title,
       messages,
       totalMessages: entity.totalMessages,
       currentPage: page,

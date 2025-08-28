@@ -43,6 +43,7 @@ export interface LikeData {
   total: number
   userLiked: boolean
   lastLike?: Date
+  settings: LikeSettings
 }
 
 /**
@@ -99,7 +100,8 @@ export const LikeDataSchema = z.object({
   url: CommonSchemas.url,
   total: CommonSchemas.nonNegativeInt,
   userLiked: z.boolean(),
-  lastLike: CommonSchemas.date.optional()
+  lastLike: CommonSchemas.date.optional(),
+  settings: LikeSettingsSchema
 })
 
 export const LikeCreateParamsSchema = z.object({

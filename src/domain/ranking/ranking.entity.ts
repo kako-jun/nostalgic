@@ -60,9 +60,7 @@ export interface RankingData {
   url: string
   entries: RankingEntry[]
   totalEntries: number
-  maxEntries: number
-  sortOrder: 'desc' | 'asc'
-  title?: string
+  settings: RankingSettings
 }
 
 /**
@@ -142,9 +140,7 @@ export const RankingDataSchema = z.object({
   url: CommonSchemas.url,
   entries: z.array(RankingEntrySchema),
   totalEntries: CommonSchemas.nonNegativeInt,
-  maxEntries: RankingFieldSchemas.maxEntries,
-  sortOrder: RankingFieldSchemas.sortOrder,
-  title: CommonSchemas.title.optional()
+  settings: RankingSettingsSchema
 })
 
 export const RankingCreateParamsSchema = z.object({

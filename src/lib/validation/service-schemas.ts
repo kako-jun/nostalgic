@@ -71,7 +71,10 @@ export const CounterSchemas = {
     yesterday: CommonSchemas.nonNegativeInt,
     week: CommonSchemas.nonNegativeInt,
     month: CommonSchemas.nonNegativeInt,
-    lastVisit: CommonSchemas.date.optional()
+    lastVisit: CommonSchemas.date.optional(),
+    settings: z.object({
+      webhookUrl: CommonSchemas.url.optional()
+    })
   })
 } as const
 
@@ -133,7 +136,10 @@ export const LikeSchemas = {
     url: CommonSchemas.url,
     total: CommonSchemas.nonNegativeInt,
     userLiked: LikeFieldSchemas.userLiked,
-    action: LikeFieldSchemas.likeAction.optional()
+    lastLike: CommonSchemas.date.optional(),
+    settings: z.object({
+      webhookUrl: CommonSchemas.url.optional()
+    })
   })
 } as const
 
@@ -228,15 +234,19 @@ export const RankingSchemas = {
   data: z.object({
     id: CommonSchemas.publicId,
     url: CommonSchemas.url,
-    title: CommonSchemas.title.optional(),
     entries: z.array(z.object({
       rank: CommonSchemas.positiveInt,
       name: RankingFieldSchemas.playerName,
       score: RankingFieldSchemas.score,
       displayScore: RankingFieldSchemas.displayScore.optional()
     })),
-    maxEntries: RankingFieldSchemas.maxEntries,
-    sortOrder: RankingFieldSchemas.sortOrder
+    totalEntries: CommonSchemas.nonNegativeInt,
+    settings: z.object({
+      title: CommonSchemas.title.optional(),
+      maxEntries: RankingFieldSchemas.maxEntries,
+      sortOrder: RankingFieldSchemas.sortOrder,
+      webhookUrl: CommonSchemas.url.optional()
+    })
   })
 } as const
 
@@ -388,7 +398,6 @@ export const BBSSchemas = {
     data: z.object({
       id: z.string(),
       url: z.string(),
-      title: z.string(),
       messages: z.array(z.object({
         id: z.string(),
         author: z.string(),
@@ -414,7 +423,8 @@ export const BBSSchemas = {
         messagesPerPage: z.number().int().positive(),
         standardSelect: BBSFieldSchemas.selectConfig.optional(),
         incrementalSelect: BBSFieldSchemas.selectConfig.optional(),
-        emoteSelect: BBSFieldSchemas.selectConfig.optional()
+        emoteSelect: BBSFieldSchemas.selectConfig.optional(),
+        webhookUrl: CommonSchemas.url.optional()
       }),
       lastMessage: z.date().optional()
     }),
@@ -426,7 +436,6 @@ export const BBSSchemas = {
   data: z.object({
     id: z.string(),
     url: z.string(), 
-    title: z.string(),
     messages: z.array(z.object({
       id: z.string(),
       author: z.string(),
@@ -452,7 +461,8 @@ export const BBSSchemas = {
       messagesPerPage: z.number().int().positive(),
       standardSelect: BBSFieldSchemas.selectConfig.optional(),
       incrementalSelect: BBSFieldSchemas.selectConfig.optional(),
-      emoteSelect: BBSFieldSchemas.selectConfig.optional()
+      emoteSelect: BBSFieldSchemas.selectConfig.optional(),
+      webhookUrl: CommonSchemas.url.optional()
     }),
     lastMessage: z.date().optional()
   })
