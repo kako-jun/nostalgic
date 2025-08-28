@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import NostalgicLayout from "@/components/NostalgicLayout";
 import { ServiceStructuredData, BreadcrumbStructuredData } from "@/components/StructuredData";
 import ResponseDisplay from "@/components/ResponseDisplay";
+import ApiUrlDisplay, { GreenParam } from "@/components/ApiUrlDisplay";
 
 export default function RankingPage() {
   const [currentPage, setCurrentPage] = useState("features");
@@ -379,22 +380,14 @@ export default function RankingPage() {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/ranking?action=create&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
-                {title && `&title=${encodeURIComponent(title)}`}
-                {maxEntries && `&max=${maxEntries}`}
-                {sortOrder !== "desc" && `&sortOrder=${sortOrder}`}
-                {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${maxEntries ? `&max=${maxEntries}` : ""}${sortOrder !== "desc" ? `&sortOrder=${sortOrder}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}>
+                https://nostalgic.llll-ll.com/api/ranking?action=create&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+                {title && <>&title=<GreenParam>{title}</GreenParam></>}
+                {maxEntries && <>&max=<GreenParam>{maxEntries}</GreenParam></>}
+                {sortOrder !== "desc" && <>&sortOrder=<GreenParam>{sortOrder}</GreenParam></>}
+                {webhookUrl && <>&webhookUrl=<GreenParam>{webhookUrl}</GreenParam></>}
+              </ApiUrlDisplay>
               <p>
                 ※サイトURLには、ランキングを設置する予定のサイトを指定してください。「https://」から始まっている必要があります。
                 <br />
@@ -565,17 +558,9 @@ export default function RankingPage() {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/ranking?action=get&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=get&id=${encodeURIComponent(publicId || "公開ID")}`}>
+                https://nostalgic.llll-ll.com/api/ranking?action=get&id=<GreenParam>{publicId || "公開ID"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームでランキングデータを取得できます。</p>
@@ -738,21 +723,13 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/ranking?action=create&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
-                {maxEntries && `&max=${maxEntries}`}
-                {sortOrder !== "desc" && `&sortOrder=${sortOrder}`}
-                {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${maxEntries ? `&max=${maxEntries}` : ""}${sortOrder !== "desc" ? `&sortOrder=${sortOrder}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}>
+                https://nostalgic.llll-ll.com/api/ranking?action=create&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+                {maxEntries && <>&max=<GreenParam>{maxEntries}</GreenParam></>}
+                {sortOrder !== "desc" && <>&sortOrder=<GreenParam>{sortOrder}</GreenParam></>}
+                {webhookUrl && <>&webhookUrl=<GreenParam>{webhookUrl}</GreenParam></>}
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで確認できます。</p>
@@ -822,20 +799,15 @@ declare module 'react' {
                 </span>
               </p>
               <p>作成したランキングの公開IDを使用してスコアを送信できます。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/ranking?action=submit&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>
-                &name=<span style={{ color: "#008000" }}>{submitName || "プレイヤー名"}</span>&score=<span style={{ color: "#008000" }}>{submitScore || "スコア"}</span>&displayScore=<span style={{ color: "#008000" }}>{submitDisplayScore || "表示用スコア"}</span>
-              </p>
               
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=submit&id=${encodeURIComponent(publicId || "公開ID")}&name=${encodeURIComponent(submitName || "プレイヤー名")}&score=${submitScore || "スコア"}&displayScore=${encodeURIComponent(submitDisplayScore || "表示用スコア")}`}>
+                https://nostalgic.llll-ll.com/api/ranking?action=submit&id=<GreenParam>{publicId || "公開ID"}</GreenParam>
+                &name=<GreenParam>{submitName || "プレイヤー名"}</GreenParam>&score=<GreenParam>{submitScore || "スコア"}</GreenParam>&displayScore=<GreenParam>{submitDisplayScore || "表示用スコア"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで送信できます。</p>
               
               <form style={{ marginTop: "10px" }}>
                 <p>
@@ -939,18 +911,10 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/ranking?action=update&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&name=<span style={{ color: "#008000" }}>{updateName || "プレイヤー名"}</span>&score=<span style={{ color: "#008000" }}>{updateScore || "新スコア"}</span>&displayScore=<span style={{ color: "#008000" }}>{updateDisplayScore || "表示用スコア"}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&name=${encodeURIComponent(updateName || "プレイヤー名")}&score=${updateScore || "新スコア"}&displayScore=${encodeURIComponent(updateDisplayScore || "表示用スコア")}`}>
+                https://nostalgic.llll-ll.com/api/ranking?action=update&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&name=<GreenParam>{updateName || "プレイヤー名"}</GreenParam>&score=<GreenParam>{updateScore || "新スコア"}</GreenParam>&displayScore=<GreenParam>{updateDisplayScore || "表示用スコア"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで更新できます。</p>
@@ -1076,18 +1040,10 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/ranking?action=remove&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&name=<span style={{ color: "#008000" }}>{removeName || "プレイヤー名"}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=remove&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&name=${encodeURIComponent(removeName || "プレイヤー名")}`}>
+                https://nostalgic.llll-ll.com/api/ranking?action=remove&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&name=<GreenParam>{removeName || "プレイヤー名"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで削除できます。</p>
@@ -1177,18 +1133,10 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/ranking?action=clear&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=clear&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}>
+                https://nostalgic.llll-ll.com/api/ranking?action=clear&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームでクリアできます。</p>
@@ -1263,23 +1211,19 @@ declare module 'react' {
                 </span>
               </p>
               <p>ランキングの設定を更新します。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/ranking?action=updateSettings&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
-                {settingsTitle && `&title=${encodeURIComponent(settingsTitle)}`}
-                {settingsMax && `&max=${settingsMax}`}
-                {settingsSortOrder && `&sortOrder=${settingsSortOrder}`}
-                {settingsWebhookUrl && `&webhookUrl=${encodeURIComponent(settingsWebhookUrl)}`}
-              </p>
+              
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${settingsTitle ? `&title=${encodeURIComponent(settingsTitle)}` : ""}${settingsMax ? `&max=${settingsMax}` : ""}${settingsSortOrder ? `&sortOrder=${settingsSortOrder}` : ""}${settingsWebhookUrl ? `&webhookUrl=${encodeURIComponent(settingsWebhookUrl)}` : ""}`}>
+                https://nostalgic.llll-ll.com/api/ranking?action=updateSettings&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+                {settingsTitle && <>&title=<GreenParam>{settingsTitle}</GreenParam></>}
+                {settingsMax && <>&max=<GreenParam>{settingsMax}</GreenParam></>}
+                {settingsSortOrder && <>&sortOrder=<GreenParam>{settingsSortOrder}</GreenParam></>}
+                {settingsWebhookUrl && <>&webhookUrl=<GreenParam>{settingsWebhookUrl}</GreenParam></>}
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで更新できます。</p>
               
               <form style={{ marginTop: "10px" }}>
                 <p>
@@ -1419,18 +1363,10 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/ranking?action=delete&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=delete&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}>
+                https://nostalgic.llll-ll.com/api/ranking?action=delete&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで削除できます。</p>

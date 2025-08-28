@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import NostalgicLayout from "@/components/NostalgicLayout";
 import { ServiceStructuredData, BreadcrumbStructuredData } from "@/components/StructuredData";
 import ResponseDisplay from "@/components/ResponseDisplay";
+import ApiUrlDisplay, { GreenParam } from "@/components/ApiUrlDisplay";
 
 export default function BBSPage() {
   const [currentPage, setCurrentPage] = useState("features");
@@ -332,25 +333,17 @@ export default function BBSPage() {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=create&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
-                {title && `&title=${encodeURIComponent(title)}`}
-                {maxMessages && `&max=${maxMessages}`}
-                {messagesPerPage && `&perPage=${messagesPerPage}`}
-                {standardSelectLabel && standardSelectOptions && `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}`}
-                {incrementalSelectLabel && incrementalSelectOptions && `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}`}
-                {emoteSelectLabel && emoteSelectOptions && `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}`}
-                {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${maxMessages ? `&max=${maxMessages}` : ""}${messagesPerPage ? `&perPage=${messagesPerPage}` : ""}${standardSelectLabel && standardSelectOptions ? `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}` : ""}${incrementalSelectLabel && incrementalSelectOptions ? `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}` : ""}${emoteSelectLabel && emoteSelectOptions ? `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}>
+                https://nostalgic.llll-ll.com/api/bbs?action=create&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+                {title && <>&title=<GreenParam>{title}</GreenParam></>}
+                {maxMessages && <>&max=<GreenParam>{maxMessages}</GreenParam></>}
+                {messagesPerPage && <>&perPage=<GreenParam>{messagesPerPage}</GreenParam></>}
+                {standardSelectLabel && standardSelectOptions && <>&standardSelectLabel=<GreenParam>{standardSelectLabel}</GreenParam>&standardSelectOptions=<GreenParam>{standardSelectOptions}</GreenParam></>}
+                {incrementalSelectLabel && incrementalSelectOptions && <>&incrementalSelectLabel=<GreenParam>{incrementalSelectLabel}</GreenParam>&incrementalSelectOptions=<GreenParam>{incrementalSelectOptions}</GreenParam></>}
+                {emoteSelectLabel && emoteSelectOptions && <>&emoteSelectLabel=<GreenParam>{emoteSelectLabel}</GreenParam>&emoteSelectOptions=<GreenParam>{emoteSelectOptions}</GreenParam></>}
+                {webhookUrl && <>&webhookUrl=<GreenParam>{webhookUrl}</GreenParam></>}
+              </ApiUrlDisplay>
               <p>
                 ※サイトURLには、BBSを設置する予定のサイトを指定してください。「https://」から始まっている必要があります。
                 <br />
@@ -637,17 +630,9 @@ export default function BBSPage() {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=get&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=get&id=${encodeURIComponent(publicId || "公開ID")}`}>
+                https://nostalgic.llll-ll.com/api/bbs?action=get&id=<GreenParam>{publicId || "公開ID"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで取得できます。</p>
@@ -870,28 +855,20 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=create&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
-                {title && `&title=${encodeURIComponent(title)}`}
-                {messagesPerPage && `&messagesPerPage=${messagesPerPage}`}
-                {maxMessages && `&max=${maxMessages}`}
-                {standardSelectLabel && `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}`}
-                {standardSelectOptions && `&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}`}
-                {incrementalSelectLabel && `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}`}
-                {incrementalSelectOptions && `&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}`}
-                {emoteSelectLabel && `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}`}
-                {emoteSelectOptions && `&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}`}
-                {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${messagesPerPage ? `&messagesPerPage=${messagesPerPage}` : ""}${maxMessages ? `&max=${maxMessages}` : ""}${standardSelectLabel ? `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}` : ""}${standardSelectOptions ? `&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}` : ""}${incrementalSelectLabel ? `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}` : ""}${incrementalSelectOptions ? `&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}` : ""}${emoteSelectLabel ? `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}` : ""}${emoteSelectOptions ? `&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}>
+                https://nostalgic.llll-ll.com/api/bbs?action=create&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+                {title && <>&title=<GreenParam>{title}</GreenParam></>}
+                {messagesPerPage && <>&messagesPerPage=<GreenParam>{messagesPerPage}</GreenParam></>}
+                {maxMessages && <>&max=<GreenParam>{maxMessages}</GreenParam></>}
+                {standardSelectLabel && <>&standardSelectLabel=<GreenParam>{standardSelectLabel}</GreenParam></>}
+                {standardSelectOptions && <>&standardSelectOptions=<GreenParam>{standardSelectOptions}</GreenParam></>}
+                {incrementalSelectLabel && <>&incrementalSelectLabel=<GreenParam>{incrementalSelectLabel}</GreenParam></>}
+                {incrementalSelectOptions && <>&incrementalSelectOptions=<GreenParam>{incrementalSelectOptions}</GreenParam></>}
+                {emoteSelectLabel && <>&emoteSelectLabel=<GreenParam>{emoteSelectLabel}</GreenParam></>}
+                {emoteSelectOptions && <>&emoteSelectOptions=<GreenParam>{emoteSelectOptions}</GreenParam></>}
+                {webhookUrl && <>&webhookUrl=<GreenParam>{webhookUrl}</GreenParam></>}
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで確認できます。</p>
@@ -961,21 +938,13 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=post&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&author=<span style={{ color: "#008000" }}>{postAuthor || "投稿者名"}</span>&message=<span style={{ color: "#008000" }}>{postMessage || "メッセージ"}</span>
-                {standardValue && `&standardValue=${encodeURIComponent(standardValue)}`}
-                {incrementalValue && `&incrementalValue=${encodeURIComponent(incrementalValue)}`}
-                {emoteValue && `&emoteValue=${encodeURIComponent(emoteValue)}`}
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=post&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&author=${encodeURIComponent(postAuthor || "投稿者名")}&message=${encodeURIComponent(postMessage || "メッセージ")}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ""}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ""}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ""}`}>
+                https://nostalgic.llll-ll.com/api/bbs?action=post&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&author=<GreenParam>{postAuthor || "投稿者名"}</GreenParam>&message=<GreenParam>{postMessage || "メッセージ"}</GreenParam>
+                {standardValue && <>&standardValue=<GreenParam>{standardValue}</GreenParam></>}
+                {incrementalValue && <>&incrementalValue=<GreenParam>{incrementalValue}</GreenParam></>}
+                {emoteValue && <>&emoteValue=<GreenParam>{emoteValue}</GreenParam></>}
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで投稿できます。</p>
@@ -1139,20 +1108,12 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=editMessageById&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>&author=<span style={{ color: "#008000" }}>{editAuthor || "投稿者名"}</span>&message=<span style={{ color: "#008000" }}>{editMessage || "新メッセージ"}</span>&editToken=<span style={{ color: "#008000" }}>{editToken || "編集トークン"}</span>
-                {editStandardValue && `&standardValue=${encodeURIComponent(editStandardValue)}`}
-                {editIncrementalValue && `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`}
-                {editEmoteValue && `&emoteValue=${encodeURIComponent(editEmoteValue)}`}
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=editMessageById&id=${encodeURIComponent(publicId || "公開ID")}&messageId=${encodeURIComponent(messageId || "メッセージID")}&author=${encodeURIComponent(editAuthor || "投稿者名")}&message=${encodeURIComponent(editMessage || "新メッセージ")}&editToken=${encodeURIComponent(editToken || "編集トークン")}${editStandardValue ? `&standardValue=${encodeURIComponent(editStandardValue)}` : ""}${editIncrementalValue ? `&incrementalValue=${encodeURIComponent(editIncrementalValue)}` : ""}${editEmoteValue ? `&emoteValue=${encodeURIComponent(editEmoteValue)}` : ""}`}>
+                https://nostalgic.llll-ll.com/api/bbs?action=editMessageById&id=<GreenParam>{publicId || "公開ID"}</GreenParam>&messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>&author=<GreenParam>{editAuthor || "投稿者名"}</GreenParam>&message=<GreenParam>{editMessage || "新メッセージ"}</GreenParam>&editToken=<GreenParam>{editToken || "編集トークン"}</GreenParam>
+                {editStandardValue && <>&standardValue=<GreenParam>{editStandardValue}</GreenParam></>}
+                {editIncrementalValue && <>&incrementalValue=<GreenParam>{editIncrementalValue}</GreenParam></>}
+                {editEmoteValue && <>&emoteValue=<GreenParam>{editEmoteValue}</GreenParam></>}
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで編集できます。</p>
@@ -1352,17 +1313,9 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>&editToken=<span style={{ color: "#008000" }}>{editToken || "編集トークン"}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&id=${encodeURIComponent(publicId || "公開ID")}&messageId=${encodeURIComponent(messageId || "メッセージID")}&editToken=${encodeURIComponent(editToken || "編集トークン")}`}>
+                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&id=<GreenParam>{publicId || "公開ID"}</GreenParam>&messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>&editToken=<GreenParam>{editToken || "編集トークン"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで削除できます。</p>
@@ -1488,21 +1441,13 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=editMessage&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>&author=<span style={{ color: "#008000" }}>{editAuthor || "投稿者名"}</span>&message=<span style={{ color: "#008000" }}>{editMessage || "新メッセージ"}</span>
-                {editStandardValue && `&standardValue=${encodeURIComponent(editStandardValue)}`}
-                {editIncrementalValue && `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`}
-                {editEmoteValue && `&emoteValue=${encodeURIComponent(editEmoteValue)}`}
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=editMessage&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&messageId=${encodeURIComponent(messageId || "メッセージID")}&author=${encodeURIComponent(editAuthor || "投稿者名")}&message=${encodeURIComponent(editMessage || "新メッセージ")}${editStandardValue ? `&standardValue=${encodeURIComponent(editStandardValue)}` : ""}${editIncrementalValue ? `&incrementalValue=${encodeURIComponent(editIncrementalValue)}` : ""}${editEmoteValue ? `&emoteValue=${encodeURIComponent(editEmoteValue)}` : ""}`}>
+                https://nostalgic.llll-ll.com/api/bbs?action=editMessage&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>&author=<GreenParam>{editAuthor || "投稿者名"}</GreenParam>&message=<GreenParam>{editMessage || "新メッセージ"}</GreenParam>
+                {editStandardValue && <>&standardValue=<GreenParam>{editStandardValue}</GreenParam></>}
+                {editIncrementalValue && <>&incrementalValue=<GreenParam>{editIncrementalValue}</GreenParam></>}
+                {editEmoteValue && <>&emoteValue=<GreenParam>{editEmoteValue}</GreenParam></>}
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで編集できます。</p>
@@ -1684,18 +1629,10 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessage&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=deleteMessage&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&messageId=${encodeURIComponent(messageId || "メッセージID")}`}>
+                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessage&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで削除できます。</p>
@@ -1803,18 +1740,10 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=clear&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=clear&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}>
+                https://nostalgic.llll-ll.com/api/bbs?action=clear&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームでクリアできます。</p>
@@ -1889,25 +1818,17 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=updateSettings&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
-                {title && `&title=${encodeURIComponent(title)}`}
-                {maxMessages && `&maxMessages=${maxMessages}`}
-                {messagesPerPage && `&messagesPerPage=${messagesPerPage}`}
-                {standardSelectLabel && standardSelectOptions && `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}`}
-                {incrementalSelectLabel && incrementalSelectOptions && `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}`}
-                {emoteSelectLabel && emoteSelectOptions && `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}`}
-                {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${maxMessages ? `&maxMessages=${maxMessages}` : ""}${messagesPerPage ? `&messagesPerPage=${messagesPerPage}` : ""}${standardSelectLabel && standardSelectOptions ? `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}` : ""}${incrementalSelectLabel && incrementalSelectOptions ? `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}` : ""}${emoteSelectLabel && emoteSelectOptions ? `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}>
+                https://nostalgic.llll-ll.com/api/bbs?action=updateSettings&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+                {title && <>&title=<GreenParam>{title}</GreenParam></>}
+                {maxMessages && <>&maxMessages=<GreenParam>{maxMessages}</GreenParam></>}
+                {messagesPerPage && <>&messagesPerPage=<GreenParam>{messagesPerPage}</GreenParam></>}
+                {standardSelectLabel && standardSelectOptions && <>&standardSelectLabel=<GreenParam>{standardSelectLabel}</GreenParam>&standardSelectOptions=<GreenParam>{standardSelectOptions}</GreenParam></>}
+                {incrementalSelectLabel && incrementalSelectOptions && <>&incrementalSelectLabel=<GreenParam>{incrementalSelectLabel}</GreenParam>&incrementalSelectOptions=<GreenParam>{incrementalSelectOptions}</GreenParam></>}
+                {emoteSelectLabel && emoteSelectOptions && <>&emoteSelectLabel=<GreenParam>{emoteSelectLabel}</GreenParam>&emoteSelectOptions=<GreenParam>{emoteSelectOptions}</GreenParam></>}
+                {webhookUrl && <>&webhookUrl=<GreenParam>{webhookUrl}</GreenParam></>}
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで設定を更新できます。</p>
@@ -2165,18 +2086,10 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=delete&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=delete&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}>
+                https://nostalgic.llll-ll.com/api/bbs?action=delete&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで削除できます。</p>

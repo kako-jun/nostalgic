@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import NostalgicLayout from "@/components/NostalgicLayout";
 import { ServiceStructuredData, BreadcrumbStructuredData } from "@/components/StructuredData";
 import ResponseDisplay from "@/components/ResponseDisplay";
+import ApiUrlDisplay, { GreenParam } from "@/components/ApiUrlDisplay";
 
 export default function CounterPage() {
   const [currentPage, setCurrentPage] = useState("features");
@@ -233,19 +234,11 @@ export default function CounterPage() {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/visit?action=create&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
-                {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/visit?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}>
+                https://nostalgic.llll-ll.com/api/visit?action=create&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+                {webhookUrl && <>&webhookUrl=<GreenParam>{encodeURIComponent(webhookUrl)}</GreenParam></>}
+              </ApiUrlDisplay>
               <p>
                 ※サイトURLには、カウンターを設置する予定のサイトを指定してください。「https://」から始まっている必要があります。
                 <br />
@@ -346,18 +339,10 @@ export default function CounterPage() {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/visit?action=display&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>
-                &type=<span style={{ color: "#008000" }}>{selectedType}</span>&format=<span style={{ color: "#008000" }}>{selectedFormat}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/visit?action=display&id=${encodeURIComponent(publicId || "公開ID")}&type=${selectedType}&format=${selectedFormat}`}>
+                https://nostalgic.llll-ll.com/api/visit?action=display&id=<GreenParam>{publicId || "公開ID"}</GreenParam>
+                &type=<GreenParam>{selectedType}</GreenParam>&format=<GreenParam>{selectedFormat}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームでデータを取得できます。</p>
@@ -587,19 +572,11 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/visit?action=create&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
-                {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/visit?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}>
+                https://nostalgic.llll-ll.com/api/visit?action=create&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+                {webhookUrl && <>&webhookUrl=<GreenParam>{encodeURIComponent(webhookUrl)}</GreenParam></>}
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで確認できます。</p>
@@ -670,17 +647,9 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/visit?action=increment&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/visit?action=increment&id=${encodeURIComponent(publicId || "公開ID")}`}>
+                https://nostalgic.llll-ll.com/api/visit?action=increment&id=<GreenParam>{publicId || "公開ID"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームでカウントアップできます。</p>
@@ -737,18 +706,10 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/visit?action=set&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&total=<span style={{ color: "#008000" }}>{setValue || "数値"}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/visit?action=set&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&total=${setValue || "数値"}`}>
+                https://nostalgic.llll-ll.com/api/visit?action=set&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&total=<GreenParam>{setValue || "数値"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで設定できます。</p>
@@ -858,6 +819,16 @@ declare module 'react' {
               </p>
               <p>カウンターの設定を更新します。</p>
               
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/visit?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}>
+                https://nostalgic.llll-ll.com/api/visit?action=updateSettings&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+                {webhookUrl && <>&webhookUrl=<GreenParam>{webhookUrl}</GreenParam></>}
+              </ApiUrlDisplay>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで更新できます。</p>
+              
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -943,18 +914,10 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/visit?action=delete&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
-              </p>
+              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/visit?action=delete&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}>
+                https://nostalgic.llll-ll.com/api/visit?action=delete&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+              </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで削除できます。</p>
