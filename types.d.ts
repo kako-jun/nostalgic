@@ -18,7 +18,7 @@ declare module 'react' {
       'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
         id?: string
         type?: 'total' | 'today' | 'yesterday' | 'week' | 'month'
-        theme?: 'light' | 'dark' | 'kawaii'
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff'
         digits?: string
         format?: 'image' | 'text'
         'api-base'?: string
@@ -27,7 +27,7 @@ declare module 'react' {
       // Like Web Component
       'nostalgic-like': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
         id?: string
-        theme?: 'light' | 'dark' | 'kawaii'
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff'
         icon?: 'heart' | 'star' | 'thumb'
         format?: 'interactive' | 'image' | 'text'
         'api-base'?: string
@@ -37,7 +37,7 @@ declare module 'react' {
       'nostalgic-ranking': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
         id?: string
         limit?: string
-        theme?: 'light' | 'dark' | 'kawaii'
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff'
         format?: 'interactive'
         url?: string
         token?: string
@@ -49,7 +49,7 @@ declare module 'react' {
       'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
         id?: string
         page?: string
-        theme?: 'light' | 'dark' | 'kawaii'
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff'
         format?: 'interactive'
         'show-header'?: 'true' | 'false'
         url?: string

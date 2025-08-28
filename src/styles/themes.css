@@ -38,6 +38,57 @@
   --focus-outline: rgba(255, 255, 255, 0.5);
 }
 
+/* Retro Theme (Old Computer Terminal) */
+.theme-retro {
+  --bg-primary: #0d1117;        /* 少しダークより暗い黒 */
+  --bg-secondary: #161b22;      /* 濃いグレー */
+  --bg-tertiary: #1f2428;       /* やや明るいグレー */
+  --text-primary: #00ff41;      /* 緑色（古いターミナル風） */
+  --text-secondary: #00cc33;    /* やや暗い緑 */
+  --text-tertiary: #009926;     /* 暗い緑 */
+  --border-color: #00ff41;      /* 緑色の枠 */
+  --border-color-light: #00ff41;
+  --border-color-dark: #00ff41;
+  --shadow-sm: 0 1px 2px rgba(0, 255, 65, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 255, 65, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 255, 65, 0.5);
+  --hover-bg: rgba(0, 255, 65, 0.05);
+  --active-bg: rgba(0, 255, 65, 0.1);
+  --focus-outline: rgba(0, 255, 65, 0.5);
+  
+  /* Retro specific effects */
+  --scanline-opacity: 0.1;
+  --text-glow: 0 0 5px currentColor;
+  --screen-flicker: retro-flicker 0.15s infinite linear;
+  
+  /* Apply scanlines and text effects */
+  position: relative;
+  text-shadow: var(--text-glow);
+  
+  /* Scanline overlay */
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 65, 0.03) 2px,
+      rgba(0, 255, 65, 0.03) 4px
+    );
+}
+
+/* Scanline animation for retro theme */
+@keyframes retro-flicker {
+  0% { opacity: 1; }
+  98% { opacity: 1; }
+  99% { opacity: 0.98; }
+  100% { opacity: 1; }
+}
+
+/* Apply flicker to retro theme */
+.theme-retro * {
+  animation: var(--screen-flicker);
+}
+
 /* Kawaii Theme (Fancy) */
 .theme-kawaii {
   --bg-primary: #e0f7fa;        /* 淡い水色 */
@@ -63,6 +114,63 @@
   --border-radius-cute: 20px;
   --accent-lime: #9ccc65;       /* 黄緑（水玉用） */
   --accent-pink: #ff4081;       /* アクセントピンク */
+}
+
+/* Mother Theme (MOTHER2/EarthBound inspired) */
+.theme-mother {
+  --bg-primary: #f0f8e8;        /* 淡い黄緑 */
+  --bg-secondary: #e8f0d8;      /* やや濃い黄緑 */
+  --bg-tertiary: #d8e8c8;       /* 濃い黄緑 */
+  --text-primary: #2d4a2b;      /* 濃い緑 */
+  --text-secondary: #4a6b47;    /* 中間の緑 */
+  --text-tertiary: #6b8a68;     /* 明るい緑 */
+  --border-color: #ff8c00;      /* オレンジ（枠と影統一） */
+  --border-color-light: #ff8c00;
+  --border-color-dark: #ff8c00;
+  --shadow-sm: 0 1px 2px rgba(255, 140, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(255, 140, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(255, 140, 0, 0.5);
+  --hover-bg: rgba(255, 140, 0, 0.05);
+  --active-bg: rgba(255, 140, 0, 0.1);
+  --focus-outline: rgba(255, 140, 0, 0.5);
+  
+  /* Mother specific pattern - diagonal stripes */
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      #90ee90,
+      #90ee90 10px,
+      #98fb98 10px,
+      #98fb98 20px
+    );
+}
+
+/* FF Theme (Final Fantasy inspired) */
+.theme-ff {
+  --bg-primary: #1a237e;        /* 濃い青 */
+  --bg-secondary: #283593;      /* 中間の青 */
+  --bg-tertiary: #3949ab;       /* 明るい青 */
+  --text-primary: #e3f2fd;      /* 淡い青白 */
+  --text-secondary: #bbdefb;    /* 青白 */
+  --text-tertiary: #90caf9;     /* 明るい青白 */
+  --border-color: #64b5f6;      /* 明るい青（枠と影統一） */
+  --border-color-light: #64b5f6;
+  --border-color-dark: #64b5f6;
+  --shadow-sm: 0 1px 2px rgba(100, 181, 246, 0.3);
+  --shadow-md: 0 4px 6px rgba(100, 181, 246, 0.4);
+  --shadow-lg: 0 10px 15px rgba(100, 181, 246, 0.5);
+  --hover-bg: rgba(100, 181, 246, 0.05);
+  --active-bg: rgba(100, 181, 246, 0.1);
+  --focus-outline: rgba(100, 181, 246, 0.5);
+  
+  /* FF specific gradient background */
+  background-image: 
+    radial-gradient(
+      ellipse at center,
+      rgba(100, 181, 246, 0.1) 0%,
+      rgba(25, 118, 210, 0.05) 50%,
+      transparent 100%
+    );
 }
 
 /* Root default theme (dark) */

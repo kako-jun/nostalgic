@@ -159,11 +159,29 @@ const svgHandler = ApiHandler.createSpecialResponse(
           border: '#444444',
           icon: '#ff6b6b'
         },
+        retro: {
+          bg: '#0d1117',
+          text: '#00ff41',
+          border: '#00ff41',
+          icon: '#00cc33'
+        },
         kawaii: {
           bg: '#e0f7fa',
           text: '#ff69b4',
           border: '#9c27b0',
           icon: '#ff69b4'
+        },
+        mother: {
+          bg: '#f0f8e8',
+          text: '#2d4a2b',
+          border: '#ff8c00',
+          icon: '#ff8c00'
+        },
+        ff: {
+          bg: '#1a237e',
+          text: '#e3f2fd',
+          border: '#64b5f6',
+          icon: '#64b5f6'
         }
       }
       

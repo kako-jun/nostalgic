@@ -487,7 +487,7 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
    */
   async generateSVG(
     likeData: LikeData,
-    theme: 'light' | 'dark' | 'kawaii'
+    theme: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff'
   ): Promise<Result<string, ValidationError>> {
     try {
       const iconType = 'heart' // デフォルトはハート
@@ -509,11 +509,29 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
           border: '#444444',
           icon: '#ff6b6b'
         },
+        retro: {
+          bg: '#0d1117',
+          text: '#00ff41',
+          border: '#00ff41',
+          icon: '#00cc33'
+        },
         kawaii: {
           bg: '#ffe4e1',
           text: '#ff69b4',
           border: '#ffb6c1',
           icon: '#ff1493'
+        },
+        mother: {
+          bg: '#f0f8e8',
+          text: '#2d4a2b',
+          border: '#ff8c00',
+          icon: '#ff8c00'
+        },
+        ff: {
+          bg: '#1a237e',
+          text: '#e3f2fd',
+          border: '#64b5f6',
+          icon: '#64b5f6'
         }
       }
       
