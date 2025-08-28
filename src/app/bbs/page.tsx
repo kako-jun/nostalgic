@@ -1,16 +1,35 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import NostalgicLayout from "@/components/NostalgicLayout";
 import { ServiceStructuredData, BreadcrumbStructuredData } from "@/components/StructuredData";
 import ResponseDisplay from "@/components/ResponseDisplay";
 
 export default function BBSPage() {
   const [currentPage, setCurrentPage] = useState("features");
-  const [response, setResponse] = useState("");
-  const [responseType, setResponseType] = useState<'json' | 'text' | 'svg'>('json');
   const [publicId, setPublicId] = useState("");
-  const [mode, setMode] = useState("create");
+  const [responseType, setResponseType] = useState<'json' | 'text' | 'svg'>('json');
+  
+  // 全フォーム共通のstate
+  const [sharedUrl, setSharedUrl] = useState("");
+  const [sharedToken, setSharedToken] = useState("");
+
+  // BBS特有の設定値
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [title, setTitle] = useState("");
+  const [maxMessages, setMaxMessages] = useState("");
+  const [messagesPerPage, setMessagesPerPage] = useState("");
+  const [icons, setIcons] = useState("");
+  
+  // 投稿フォーム用
+  const [postAuthor, setPostAuthor] = useState("");
+  const [postMessage, setPostMessage] = useState("");
+  
+  // 編集・削除フォーム用
+  const [messageId, setMessageId] = useState("");
+  const [editAuthor, setEditAuthor] = useState("");
+  const [editMessage, setEditMessage] = useState("");
+  const [editToken, setEditToken] = useState("");
 
   // 各フォーム用の独立したレスポンスstate
   const [createResponse, setCreateResponse] = useState("");
@@ -19,26 +38,8 @@ export default function BBSPage() {
   const [updateResponse, setUpdateResponse] = useState("");
   const [removeResponse, setRemoveResponse] = useState("");
   const [clearResponse, setClearResponse] = useState("");
-  const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
   const [deleteResponse, setDeleteResponse] = useState("");
-
-  // controlled components用のstate
-  const [createUrl, setCreateUrl] = useState("");
-  const [createToken, setCreateToken] = useState("");
-  const [postAuthor, setPostAuthor] = useState("");
-  const [postMessage, setPostMessage] = useState("");
-
-  const urlRef = useRef<HTMLInputElement>(null);
-  const tokenRef = useRef<HTMLInputElement>(null);
-  const authorRef = useRef<HTMLInputElement>(null);
-  const messageRef = useRef<HTMLTextAreaElement>(null);
-  const messageIdRef = useRef<HTMLInputElement>(null);
-  const maxRef = useRef<HTMLInputElement>(null);
-  const perPageRef = useRef<HTMLInputElement>(null);
-  const iconsRef = useRef<HTMLInputElement>(null);
-  const editTokenRef = useRef<HTMLInputElement>(null);
-  const titleRef = useRef<HTMLInputElement>(null);
-  const webhookUrlRef = useRef<HTMLInputElement>(null);
+  const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
   
   useEffect(() => {
     const hash = window.location.hash.slice(1);
@@ -61,134 +62,204 @@ export default function BBSPage() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!sharedUrl || !sharedToken) return;
 
-    // controlled componentsの値を使用
-    const url = mode === "create" ? createUrl : urlRef.current?.value;
-    const token = mode === "create" ? createToken : tokenRef.current?.value;
-    const author = mode === "post" ? postAuthor : authorRef.current?.value;
-    const message = mode === "post" ? postMessage : messageRef.current?.value;
-    const messageId = messageIdRef.current?.value;
-    const max = maxRef.current?.value;
-    const perPage = perPageRef.current?.value;
-    const icons = iconsRef.current?.value;
-    const editToken = editTokenRef.current?.value;
-    const webhookUrl = webhookUrlRef.current?.value;
-
-    if (!url || !token) return;
-
-    let apiUrl = `/api/bbs?action=${mode}&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
-
-    if (mode === "get") {
-      // getモードでは公開IDを使用
-      if (!publicId) return;
-      apiUrl = `/api/bbs?action=get&id=${encodeURIComponent(publicId)}`;
-    } else {
-      // その他のモードでは従来通りurl+tokenを使用
-      if (mode === "post" && author && message) {
-        apiUrl += `&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}`;
-      }
-      if (mode === "update" && messageId && author && message) {
-        apiUrl += `&messageId=${messageId}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}`;
-      }
-      if (mode === "remove" && messageId && author) {
-        apiUrl += `&messageId=${messageId}&author=${encodeURIComponent(author)}`;
-      }
-      if (mode === "editMessageById" && messageId && author && message && editToken) {
-        apiUrl += `&messageId=${messageId}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}&editToken=${encodeURIComponent(editToken)}`;
-      }
-      if (mode === "deleteMessageById" && messageId && author && editToken) {
-        apiUrl += `&messageId=${messageId}&author=${encodeURIComponent(author)}&editToken=${encodeURIComponent(editToken)}`;
-      }
-    }
-    if (mode === "create") {
-      if (max) apiUrl += `&max=${max}`;
-      if (perPage) apiUrl += `&perPage=${perPage}`;
-      if (icons) apiUrl += `&icons=${encodeURIComponent(icons)}`;
-    }
-    
-    if (mode === "updateSettings") {
-      const title = titleRef.current?.value;
-      if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
-      if (max) apiUrl += `&maxMessages=${max}`;
-      if (perPage) apiUrl += `&messagesPerPage=${perPage}`;
-      if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
-    } else if (webhookUrl && mode === "create") {
-      apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
-    }
+    let apiUrl = `/api/bbs?action=create&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    if (maxMessages) apiUrl += `&max=${maxMessages}`;
+    if (messagesPerPage) apiUrl += `&perPage=${messagesPerPage}`;
+    if (icons) apiUrl += `&icons=${encodeURIComponent(icons)}`;
+    if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
       const data = await res.json();
       const responseText = JSON.stringify(data, null, 2);
 
-      // 全モード共通でpublicIdを更新（createで作成されたIDは他のモードでも使用）
       if (data.id) {
         setPublicId(data.id);
       }
 
-      // modeに応じて適切なレスポンスstateを更新
-      switch (mode) {
-        case "create":
-          setCreateResponse(responseText);
-          break;
-        case "post":
-          setPostResponse(responseText);
-          break;
-        case "get":
-          setGetResponse(responseText);
-          break;
-        case "update":
-          setUpdateResponse(responseText);
-          break;
-        case "remove":
-          setRemoveResponse(responseText);
-          break;
-        case "clear":
-          setClearResponse(responseText);
-          break;
-        case "updateSettings":
-          setUpdateSettingsResponse(responseText);
-          break;
-        case "delete":
-          setDeleteResponse(responseText);
-          break;
-        default:
-          setResponse(responseText);
-      }
-      setResponseType('json'); // Always JSON for BBS
+      setCreateResponse(responseText);
+      setResponseType('json');
     } catch (error) {
-      const errorText = `エラー: ${error}`;
-      // modeに応じて適切なレスポンスstateを更新
-      switch (mode) {
-        case "create":
-          setCreateResponse(errorText);
-          break;
-        case "post":
-          setPostResponse(errorText);
-          break;
-        case "get":
-          setGetResponse(errorText);
-          break;
-        case "update":
-          setUpdateResponse(errorText);
-          break;
-        case "remove":
-          setRemoveResponse(errorText);
-          break;
-        case "clear":
-          setClearResponse(errorText);
-          break;
-        case "updateSettings":
-          setUpdateSettingsResponse(errorText);
-          break;
-        case "delete":
-          setDeleteResponse(errorText);
-          break;
-        default:
-          setResponse(errorText);
-      }
+      setCreateResponse(`エラー: ${error}`);
+      setResponseType('json');
+    }
+  };
+
+  const handlePost = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sharedUrl || !sharedToken || !postAuthor || !postMessage) return;
+
+    const apiUrl = `/api/bbs?action=post&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&author=${encodeURIComponent(postAuthor)}&message=${encodeURIComponent(postMessage)}`;
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      const data = await res.json();
+      const responseText = JSON.stringify(data, null, 2);
+
+      setPostResponse(responseText);
+      setResponseType('json');
+    } catch (error) {
+      setPostResponse(`エラー: ${error}`);
+      setResponseType('json');
+    }
+  };
+
+  const handleGet = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!publicId) return;
+
+    const apiUrl = `/api/bbs?action=get&id=${encodeURIComponent(publicId)}`;
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      const data = await res.json();
+      const responseText = JSON.stringify(data, null, 2);
+
+      setGetResponse(responseText);
+      setResponseType('json');
+    } catch (error) {
+      setGetResponse(`エラー: ${error}`);
+      setResponseType('json');
+    }
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sharedUrl || !sharedToken || !messageId || !editAuthor || !editMessage) return;
+
+    const apiUrl = `/api/bbs?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}&message=${encodeURIComponent(editMessage)}`;
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      const data = await res.json();
+      const responseText = JSON.stringify(data, null, 2);
+
+      setUpdateResponse(responseText);
+      setResponseType('json');
+    } catch (error) {
+      setUpdateResponse(`エラー: ${error}`);
+      setResponseType('json');
+    }
+  };
+
+  const handleRemove = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sharedUrl || !sharedToken || !messageId || !editAuthor) return;
+
+    const apiUrl = `/api/bbs?action=remove&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}`;
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      const data = await res.json();
+      const responseText = JSON.stringify(data, null, 2);
+
+      setRemoveResponse(responseText);
+      setResponseType('json');
+    } catch (error) {
+      setRemoveResponse(`エラー: ${error}`);
+      setResponseType('json');
+    }
+  };
+
+  const handleClear = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sharedUrl || !sharedToken) return;
+
+    const apiUrl = `/api/bbs?action=clear&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      const data = await res.json();
+      const responseText = JSON.stringify(data, null, 2);
+
+      setClearResponse(responseText);
+      setResponseType('json');
+    } catch (error) {
+      setClearResponse(`エラー: ${error}`);
+      setResponseType('json');
+    }
+  };
+
+  const handleDelete = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sharedUrl || !sharedToken) return;
+
+    const apiUrl = `/api/bbs?action=delete&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      const data = await res.json();
+      const responseText = JSON.stringify(data, null, 2);
+
+      setDeleteResponse(responseText);
+      setResponseType('json');
+    } catch (error) {
+      setDeleteResponse(`エラー: ${error}`);
+      setResponseType('json');
+    }
+  };
+
+  const handleUpdateSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sharedUrl || !sharedToken) return;
+
+    let apiUrl = `/api/bbs?action=updateSettings&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
+    if (maxMessages) apiUrl += `&maxMessages=${maxMessages}`;
+    if (messagesPerPage) apiUrl += `&messagesPerPage=${messagesPerPage}`;
+    if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      const data = await res.json();
+      const responseText = JSON.stringify(data, null, 2);
+
+      setUpdateSettingsResponse(responseText);
+      setResponseType('json');
+    } catch (error) {
+      setUpdateSettingsResponse(`エラー: ${error}`);
+      setResponseType('json');
+    }
+  };
+
+  const handleEditMessageById = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sharedUrl || !sharedToken || !messageId || !editAuthor || !editMessage || !editToken) return;
+
+    const apiUrl = `/api/bbs?action=editMessageById&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}&message=${encodeURIComponent(editMessage)}&editToken=${encodeURIComponent(editToken)}`;
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      const data = await res.json();
+      const responseText = JSON.stringify(data, null, 2);
+
+      setUpdateResponse(responseText);
+      setResponseType('json');
+    } catch (error) {
+      setUpdateResponse(`エラー: ${error}`);
+      setResponseType('json');
+    }
+  };
+
+  const handleDeleteMessageById = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sharedUrl || !sharedToken || !messageId || !editAuthor || !editToken) return;
+
+    const apiUrl = `/api/bbs?action=deleteMessageById&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}&editToken=${encodeURIComponent(editToken)}`;
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      const data = await res.json();
+      const responseText = JSON.stringify(data, null, 2);
+
+      setRemoveResponse(responseText);
+      setResponseType('json');
+    } catch (error) {
+      setRemoveResponse(`エラー: ${error}`);
       setResponseType('json');
     }
   };
@@ -197,7 +268,7 @@ export default function BBSPage() {
     switch (currentPage) {
       case "usage":
         return (
-          <React.Fragment>
+          <>
             <div className="nostalgic-title-bar">
               ★ Nostalgic BBS ★
               <br />
@@ -220,8 +291,12 @@ export default function BBSPage() {
                   wordBreak: "break-all",
                 }}
               >
-                https://nostalgic.llll-ll.com/api/bbs?action=create&url=<span style={{ color: "#008000" }}>サイトURL</span>
-                &token=<span style={{ color: "#008000" }}>オーナートークン</span>
+                https://nostalgic.llll-ll.com/api/bbs?action=create&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
+                {maxMessages && `&max=${maxMessages}`}
+                {messagesPerPage && `&perPage=${messagesPerPage}`}
+                {icons && `&icons=${encodeURIComponent(icons)}`}
+                {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
               </p>
               <p>
                 ※サイトURLには、BBSを設置する予定のサイトを指定してください。「https://」から始まっている必要があります。
@@ -238,17 +313,15 @@ export default function BBSPage() {
                 または、以下のフォームで簡単に作成できます。
               </p>
               
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-                <input type="hidden" name="mode" value="create" />
+              <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
                   <input
-                    value={createUrl}
-                    onChange={(e) => setCreateUrl(e.target.value)}
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
                     type="url"
                     placeholder="https://example.com"
                     style={{
-                      marginLeft: "10px",
                       width: "60%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -262,12 +335,11 @@ export default function BBSPage() {
                 <p>
                   <b>オーナートークン：</b>
                   <input
-                    value={createToken}
-                    onChange={(e) => setCreateToken(e.target.value)}
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
                     type="text"
                     placeholder="8-16文字"
                     style={{
-                      marginLeft: "10px",
                       width: "30%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -279,13 +351,68 @@ export default function BBSPage() {
                 </p>
 
                 <p>
-                  <b>Webhook URL：</b>
+                  <b>最大メッセージ数（オプション）：</b>
                   <input
-                    ref={webhookUrlRef}
+                    value={maxMessages}
+                    onChange={(e) => setMaxMessages(e.target.value)}
+                    type="number"
+                    min="1"
+                    max="1000"
+                    placeholder="100"
+                    style={{
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>1ページあたりのメッセージ数（オプション）：</b>
+                  <input
+                    value={messagesPerPage}
+                    onChange={(e) => setMessagesPerPage(e.target.value)}
+                    type="number"
+                    min="1"
+                    max="100"
+                    placeholder="10"
+                    style={{
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>アイコン設定（オプション）：</b>
+                  <input
+                    value={icons}
+                    onChange={(e) => setIcons(e.target.value)}
+                    type="text"
+                    placeholder="😀,😂,😍,😢,😎 (カンマ区切り)"
+                    style={{
+                      width: "50%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>Webhook URL（オプション）：</b>
+                  <input
+                    value={webhookUrl}
+                    onChange={(e) => setWebhookUrl(e.target.value)}
                     type="url"
                     placeholder="https://hooks.slack.com/... (任意)"
                     style={{
-                      marginLeft: "10px",
                       width: "60%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -299,7 +426,6 @@ export default function BBSPage() {
                   <button
                     type="button"
                     style={{
-                      marginLeft: "10px",
                       padding: "4px 12px",
                       backgroundColor: "#2196F3",
                       color: "white",
@@ -309,10 +435,7 @@ export default function BBSPage() {
                       cursor: "pointer",
                       fontFamily: "inherit"
                     }}
-                    onClick={(e) => {
-                      setMode("create");
-                      handleSubmit(e);
-                    }}
+                    onClick={handleCreate}
                   >
                     作成
                   </button>
@@ -321,25 +444,6 @@ export default function BBSPage() {
 
               <ResponseDisplay response={createResponse} responseType={responseType} show={!!createResponse} />
 
-              <p>
-                <b>最大メッセージ数（オプション）：</b>
-                  <input
-                    ref={maxRef}
-                    type="number"
-                    min="1"
-                    max="1000"
-                    placeholder="100"
-                    style={{
-                      marginLeft: "10px",
-                      width: "20%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                  />
-                </p>
-              </form>
               {publicId && (
                 <div
                   style={{
@@ -375,44 +479,1055 @@ export default function BBSPage() {
                   wordBreak: "break-all",
                 }}
               >
-                https://nostalgic.llll-ll.com/api/bbs?action=get&id=<span style={{ color: "#008000" }}>公開ID</span>
+                https://nostalgic.llll-ll.com/api/bbs?action=get&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>
               </p>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで取得できます。</p>
               
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+              <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>公開ID：</b>
-                  <span style={{ marginLeft: "10px", fontFamily: "monospace", fontSize: "16px", fontWeight: "bold", color: publicId ? "#008000" : "#999" }}>
-                    {publicId || "STEP 1で作成後に表示されます"}
-                  </span>
-                  {publicId && (
-                    <button
-                      type="button"
-                      style={{
-                        marginLeft: "10px",
-                        padding: "4px 12px",
-                        backgroundColor: "#2196F3",
-                        color: "white",
-                        border: "2px outset #2196F3",
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        fontFamily: "inherit"
-                      }}
-                      onClick={(e) => {
-                        setMode("get");
-                        handleSubmit(e);
-                      }}
-                    >
-                      メッセージ取得
-                    </button>
-                  )}
+                  <input
+                    value={publicId}
+                    onChange={(e) => setPublicId(e.target.value)}
+                    type="text"
+                    placeholder="STEP 1で作成後に表示されます"
+                    style={{
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "monospace",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <button
+                    type="button"
+                    style={{
+                      padding: "4px 12px",
+                      backgroundColor: "#2196F3",
+                      color: "white",
+                      border: "2px outset #2196F3",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handleGet}
+                  >
+                    メッセージ取得
+                  </button>
                 </p>
               </form>
 
               <ResponseDisplay response={getResponse} responseType={responseType} show={!!getResponse} />
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆メッセージ投稿◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=post&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&author=<span style={{ color: "#008000" }}>{postAuthor || "投稿者名"}</span>&message=<span style={{ color: "#008000" }}>{postMessage || "メッセージ"}</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで投稿できます。</p>
+              
+              <form style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      width: "50%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>投稿者名：</b>
+                  <input
+                    value={postAuthor}
+                    onChange={(e) => setPostAuthor(e.target.value)}
+                    type="text"
+                    placeholder="名無し"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>メッセージ：</b>
+                </p>
+                <p>
+                  <textarea
+                    value={postMessage}
+                    onChange={(e) => setPostMessage(e.target.value)}
+                    placeholder="メッセージを入力してください"
+                    style={{
+                      width: "80%",
+                      height: "100px",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+                
+                <p>
+                  <button
+                    type="button"
+                    style={{
+                      padding: "4px 12px",
+                      backgroundColor: "#2196F3",
+                      color: "white",
+                      border: "2px outset #2196F3",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handlePost}
+                  >
+                    投稿
+                  </button>
+                </p>
+              </form>
+
+              <ResponseDisplay response={postResponse} responseType={responseType} show={!!postResponse} />
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆オーナーがメッセージを編集◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=update&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>&author=<span style={{ color: "#008000" }}>{editAuthor || "投稿者名"}</span>&message=<span style={{ color: "#008000" }}>{editMessage || "新メッセージ"}</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで編集できます。</p>
+              
+              <form style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      width: "50%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>メッセージID：</b>
+                  <input
+                    value={messageId}
+                    onChange={(e) => setMessageId(e.target.value)}
+                    type="text"
+                    placeholder="1"
+                    style={{
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>投稿者名：</b>
+                  <input
+                    value={editAuthor}
+                    onChange={(e) => setEditAuthor(e.target.value)}
+                    type="text"
+                    placeholder="名無し"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>新しいメッセージ：</b>
+                </p>
+                <p>
+                  <textarea
+                    value={editMessage}
+                    onChange={(e) => setEditMessage(e.target.value)}
+                    placeholder="新しいメッセージを入力してください"
+                    style={{
+                      width: "80%",
+                      height: "100px",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+                
+                <p>
+                  <button
+                    type="button"
+                    style={{
+                      padding: "4px 12px",
+                      backgroundColor: "#2196F3",
+                      color: "white",
+                      border: "2px outset #2196F3",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handleUpdate}
+                  >
+                    編集
+                  </button>
+                </p>
+              </form>
+
+              <ResponseDisplay response={updateResponse} responseType={responseType} show={!!updateResponse} />
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆オーナーがメッセージを削除◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=remove&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>&author=<span style={{ color: "#008000" }}>{editAuthor || "投稿者名"}</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで削除できます。</p>
+              
+              <form style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      width: "50%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>メッセージID：</b>
+                  <input
+                    value={messageId}
+                    onChange={(e) => setMessageId(e.target.value)}
+                    type="text"
+                    placeholder="1"
+                    style={{
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>投稿者名：</b>
+                  <input
+                    value={editAuthor}
+                    onChange={(e) => setEditAuthor(e.target.value)}
+                    type="text"
+                    placeholder="名無し"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+                
+                <p>
+                  <button
+                    type="button"
+                    style={{
+                      padding: "4px 12px",
+                      backgroundColor: "#F44336",
+                      color: "white",
+                      border: "2px outset #F44336",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handleRemove}
+                  >
+                    削除
+                  </button>
+                </p>
+              </form>
+
+              <ResponseDisplay response={removeResponse} responseType={responseType} show={!!removeResponse} />
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆投稿者が自分のメッセージを編集◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=editMessageById&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>&author=<span style={{ color: "#008000" }}>{editAuthor || "投稿者名"}</span>&message=<span style={{ color: "#008000" }}>{editMessage || "新メッセージ"}</span>&editToken=<span style={{ color: "#008000" }}>{editToken || "編集トークン"}</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで編集できます。</p>
+              
+              <form style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      width: "50%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>メッセージID：</b>
+                  <input
+                    value={messageId}
+                    onChange={(e) => setMessageId(e.target.value)}
+                    type="text"
+                    placeholder="1"
+                    style={{
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>投稿者名：</b>
+                  <input
+                    value={editAuthor}
+                    onChange={(e) => setEditAuthor(e.target.value)}
+                    type="text"
+                    placeholder="名無し"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>新メッセージ：</b>
+                </p>
+                <p>
+                  <textarea
+                    value={editMessage}
+                    onChange={(e) => setEditMessage(e.target.value)}
+                    placeholder="新しいメッセージを入力してください"
+                    style={{
+                      width: "80%",
+                      height: "100px",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>編集トークン：</b>
+                  <input
+                    value={editToken}
+                    onChange={(e) => setEditToken(e.target.value)}
+                    type="text"
+                    placeholder="編集時に設定したトークン"
+                    style={{
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+                
+                <p>
+                  <button
+                    type="button"
+                    style={{
+                      padding: "4px 12px",
+                      backgroundColor: "#2196F3",
+                      color: "white",
+                      border: "2px outset #2196F3",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handleEditMessageById}
+                  >
+                    編集
+                  </button>
+                </p>
+              </form>
+
+              <ResponseDisplay response={updateResponse} responseType={responseType} show={!!updateResponse} />
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆投稿者が自分のメッセージを削除◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>&author=<span style={{ color: "#008000" }}>{editAuthor || "投稿者名"}</span>&editToken=<span style={{ color: "#008000" }}>{editToken || "編集トークン"}</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで削除できます。</p>
+              
+              <form style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      width: "50%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>メッセージID：</b>
+                  <input
+                    value={messageId}
+                    onChange={(e) => setMessageId(e.target.value)}
+                    type="text"
+                    placeholder="1"
+                    style={{
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>投稿者名：</b>
+                  <input
+                    value={editAuthor}
+                    onChange={(e) => setEditAuthor(e.target.value)}
+                    type="text"
+                    placeholder="名無し"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>編集トークン：</b>
+                  <input
+                    value={editToken}
+                    onChange={(e) => setEditToken(e.target.value)}
+                    type="text"
+                    placeholder="編集時に設定したトークン"
+                    style={{
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+                
+                <p>
+                  <button
+                    type="button"
+                    style={{
+                      padding: "4px 12px",
+                      backgroundColor: "#F44336",
+                      color: "white",
+                      border: "2px outset #F44336",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handleDeleteMessageById}
+                  >
+                    削除
+                  </button>
+                </p>
+              </form>
+
+              <ResponseDisplay response={removeResponse} responseType={responseType} show={!!removeResponse} />
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆メッセージを全削除◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=clear&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームでクリアできます。</p>
+              <p style={{ color: "#ff0000", fontWeight: "bold" }}>
+                ※全メッセージが削除されます。十分にご注意ください。
+              </p>
+              
+              <form style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      width: "50%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+                
+                <p>
+                  <button
+                    type="button"
+                    style={{
+                      padding: "4px 12px",
+                      backgroundColor: "#F44336",
+                      color: "white",
+                      border: "2px outset #F44336",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handleClear}
+                  >
+                    全削除
+                  </button>
+                </p>
+              </form>
+
+              <ResponseDisplay response={clearResponse} responseType={responseType} show={!!clearResponse} />
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆設定更新◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=updateSettings&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
+                {title && `&title=${encodeURIComponent(title)}`}
+                {maxMessages && `&maxMessages=${maxMessages}`}
+                {messagesPerPage && `&messagesPerPage=${messagesPerPage}`}
+                {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで設定を更新できます。</p>
+              
+              <form style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>BBSタイトル：</b>
+                  <input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    type="text"
+                    placeholder="BBS"
+                    style={{
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>最大メッセージ数：</b>
+                  <input
+                    value={maxMessages}
+                    onChange={(e) => setMaxMessages(e.target.value)}
+                    type="number"
+                    min="1"
+                    max="10000"
+                    placeholder="1000"
+                    style={{
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>1ページあたりのメッセージ数：</b>
+                  <input
+                    value={messagesPerPage}
+                    onChange={(e) => setMessagesPerPage(e.target.value)}
+                    type="number"
+                    min="1"
+                    max="100"
+                    placeholder="10"
+                    style={{
+                      width: "20%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>Webhook URL：</b>
+                  <input
+                    value={webhookUrl}
+                    onChange={(e) => setWebhookUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://example.com/webhook (optional)"
+                    style={{
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+                
+                <p>
+                  <button
+                    type="button"
+                    style={{
+                      padding: "4px 12px",
+                      backgroundColor: "#FF9800",
+                      color: "white",
+                      border: "2px outset #FF9800",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handleUpdateSettings}
+                  >
+                    設定更新
+                  </button>
+                </p>
+              </form>
+
+              <ResponseDisplay response={updateSettingsResponse} responseType={responseType} show={!!updateSettingsResponse} />
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆BBSを削除◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=delete&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで削除できます。</p>
+              <p style={{ color: "#ff0000", fontWeight: "bold" }}>
+                ※BBSが完全に削除され復元できません。十分にご注意ください。
+              </p>
+              
+              <form style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      width: "50%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+                
+                <p>
+                  <button
+                    type="button"
+                    style={{
+                      padding: "4px 12px",
+                      backgroundColor: "#F44336",
+                      color: "white",
+                      border: "2px outset #F44336",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handleDelete}
+                  >
+                    完全削除
+                  </button>
+                </p>
+              </form>
+
+              <ResponseDisplay response={deleteResponse} responseType={responseType} show={!!deleteResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -425,7 +1540,7 @@ export default function BBSPage() {
               <pre style={{ backgroundColor: "#f0f0f0", padding: "10px", overflow: "auto", fontSize: "14px", margin: "10px 0" }}>
                 {`<script src="https://nostalgic.llll-ll.com/components/bbs.js"></script>
 <nostalgic-bbs id="`}
-                <span style={{ color: "#008000" }}>公開ID</span>
+                <span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>
                 {`" theme="`}
                 <span style={{ color: "#008000" }}>dark</span>
                 {`"></nostalgic-bbs>`}
@@ -585,1111 +1700,7 @@ declare module 'react' {
               )}
             </div>
 
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆公開IDを再確認したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=create&url=<span style={{ color: "#008000" }}>サイトURL</span>
-                &token=<span style={{ color: "#008000" }}>オーナートークン</span>
-              </p>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
-              <p>または、以下のフォームで確認できます。</p>
-              
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    ref={urlRef}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      marginLeft: "10px",
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    ref={tokenRef}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                  <button
-                    type="button"
-                    style={{
-                      marginLeft: "10px",
-                      padding: "4px 12px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "2px outset #2196F3",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit"
-                    }}
-                    onClick={(e) => {
-                      setMode("create");
-                      handleSubmit(e);
-                    }}
-                  >
-                    確認
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay response={createResponse} responseType={responseType} show={!!createResponse} />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆メッセージを投稿したいときは？◆</b>
-                </span>
-              </p>
-              <p>作成したBBSにテストメッセージを投稿できます。</p>
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-                <input type="hidden" name="mode" value="post" />
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    ref={urlRef}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      marginLeft: "10px",
-                      width: "50%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    ref={tokenRef}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>投稿者名：</b>
-                  <input
-                    value={postAuthor}
-                    onChange={(e) => setPostAuthor(e.target.value)}
-                    type="text"
-                    placeholder="名無し"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>メッセージ：</b>
-                  <br />
-                  <textarea
-                    value={postMessage}
-                    onChange={(e) => setPostMessage(e.target.value)}
-                    placeholder="メッセージを入力してください"
-                    style={{
-                      width: "80%",
-                      height: "100px",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                      marginTop: "5px"
-                    }}
-                    required
-                  />
-                  <br />
-                  <button
-                    type="button"
-                    style={{
-                      marginTop: "10px",
-                      padding: "4px 12px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "2px outset #2196F3",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit"
-                    }}
-                    onClick={(e) => {
-                      setMode("post");
-                      handleSubmit(e);
-                    }}
-                  >
-                    投稿
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay response={postResponse} responseType={responseType} show={!!postResponse} />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆投稿者が自分のメッセージを編集したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=editMessageById&url=<span style={{ color: "#008000" }}>サイトURL</span>
-                &token=<span style={{ color: "#008000" }}>オーナートークン</span>&messageId=<span style={{ color: "#008000" }}>メッセージID</span>&author=<span style={{ color: "#008000" }}>投稿者名</span>&message=<span style={{ color: "#008000" }}>新メッセージ</span>&editToken=<span style={{ color: "#008000" }}>編集トークン</span>
-              </p>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
-              <p>または、以下のフォームで編集できます。</p>
-              
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    ref={urlRef}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      marginLeft: "10px",
-                      width: "50%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    ref={tokenRef}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>メッセージID：</b>
-                  <input
-                    ref={messageIdRef}
-                    type="text"
-                    placeholder="1"
-                    style={{
-                      marginLeft: "10px",
-                      width: "20%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>投稿者名：</b>
-                  <input
-                    ref={authorRef}
-                    type="text"
-                    placeholder="名無し"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>新メッセージ：</b>
-                  <br />
-                  <textarea
-                    ref={messageRef}
-                    placeholder="新しいメッセージを入力してください"
-                    style={{
-                      width: "80%",
-                      height: "100px",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                      marginTop: "5px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>編集トークン：</b>
-                  <input
-                    ref={editTokenRef}
-                    type="text"
-                    placeholder="編集時に設定したトークン"
-                    style={{
-                      marginLeft: "10px",
-                      width: "40%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                  <button
-                    type="button"
-                    style={{
-                      marginLeft: "10px",
-                      padding: "4px 12px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "2px outset #2196F3",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit"
-                    }}
-                    onClick={(e) => {
-                      setMode("editMessageById");
-                      handleSubmit(e);
-                    }}
-                  >
-                    編集
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay response={updateResponse} responseType={responseType} show={!!updateResponse} />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆投稿者が自分のメッセージを削除したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&url=<span style={{ color: "#008000" }}>サイトURL</span>
-                &token=<span style={{ color: "#008000" }}>オーナートークン</span>&messageId=<span style={{ color: "#008000" }}>メッセージID</span>&author=<span style={{ color: "#008000" }}>投稿者名</span>&editToken=<span style={{ color: "#008000" }}>編集トークン</span>
-              </p>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
-              <p>または、以下のフォームで削除できます。</p>
-              
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    ref={urlRef}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      marginLeft: "10px",
-                      width: "50%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    ref={tokenRef}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>メッセージID：</b>
-                  <input
-                    ref={messageIdRef}
-                    type="text"
-                    placeholder="1"
-                    style={{
-                      marginLeft: "10px",
-                      width: "20%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>投稿者名：</b>
-                  <input
-                    ref={authorRef}
-                    type="text"
-                    placeholder="名無し"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>編集トークン：</b>
-                  <input
-                    ref={editTokenRef}
-                    type="text"
-                    placeholder="編集時に設定したトークン"
-                    style={{
-                      marginLeft: "10px",
-                      width: "40%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                  <button
-                    type="button"
-                    style={{
-                      marginLeft: "10px",
-                      padding: "4px 12px",
-                      backgroundColor: "#F44336",
-                      color: "white",
-                      border: "2px outset #F44336",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit"
-                    }}
-                    onClick={(e) => {
-                      setMode("deleteMessageById");
-                      handleSubmit(e);
-                    }}
-                  >
-                    削除
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay response={removeResponse} responseType={responseType} show={!!removeResponse} />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆オーナーがメッセージを編集したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=update&url=<span style={{ color: "#008000" }}>サイトURL</span>
-                &token=<span style={{ color: "#008000" }}>オーナートークン</span>&messageId=<span style={{ color: "#008000" }}>メッセージID</span>&author=<span style={{ color: "#008000" }}>投稿者名</span>&message=<span style={{ color: "#008000" }}>新メッセージ</span>
-              </p>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
-              <p>または、以下のフォームで編集できます。</p>
-              
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    ref={urlRef}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      marginLeft: "10px",
-                      width: "50%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    ref={tokenRef}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>メッセージID：</b>
-                  <input
-                    ref={messageIdRef}
-                    type="text"
-                    placeholder="1"
-                    style={{
-                      marginLeft: "10px",
-                      width: "20%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>投稿者名：</b>
-                  <input
-                    ref={authorRef}
-                    type="text"
-                    placeholder="名無し"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>新しいメッセージ：</b>
-                  <br />
-                  <textarea
-                    ref={messageRef}
-                    placeholder="新しいメッセージを入力してください"
-                    style={{
-                      width: "80%",
-                      height: "100px",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                      marginTop: "5px"
-                    }}
-                    required
-                  />
-                  <br />
-                  <button
-                    type="button"
-                    style={{
-                      marginTop: "10px",
-                      padding: "4px 12px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "2px outset #2196F3",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit"
-                    }}
-                    onClick={(e) => {
-                      setMode("update");
-                      handleSubmit(e);
-                    }}
-                  >
-                    編集
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay response={updateResponse} responseType={responseType} show={!!updateResponse} />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆オーナーがメッセージを削除したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=remove&url=<span style={{ color: "#008000" }}>サイトURL</span>
-                &token=<span style={{ color: "#008000" }}>オーナートークン</span>&messageId=<span style={{ color: "#008000" }}>メッセージID</span>&author=<span style={{ color: "#008000" }}>投稿者名</span>
-              </p>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
-              <p>または、以下のフォームで削除できます。</p>
-              
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    ref={urlRef}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      marginLeft: "10px",
-                      width: "50%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    ref={tokenRef}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>メッセージID：</b>
-                  <input
-                    ref={messageIdRef}
-                    type="text"
-                    placeholder="1"
-                    style={{
-                      marginLeft: "10px",
-                      width: "20%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>投稿者名：</b>
-                  <input
-                    ref={authorRef}
-                    type="text"
-                    placeholder="名無し"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                  <button
-                    type="button"
-                    style={{
-                      marginLeft: "10px",
-                      padding: "4px 12px",
-                      backgroundColor: "#F44336",
-                      color: "white",
-                      border: "2px outset #F44336",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit"
-                    }}
-                    onClick={(e) => {
-                      setMode("remove");
-                      handleSubmit(e);
-                    }}
-                  >
-                    削除
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay response={removeResponse} responseType={responseType} show={!!removeResponse} />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆メッセージを全削除したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=clear&url=<span style={{ color: "#008000" }}>サイトURL</span>
-                &token=<span style={{ color: "#008000" }}>オーナートークン</span>
-              </p>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
-              <p>または、以下のフォームでクリアできます。</p>
-              <p style={{ color: "#ff0000", fontWeight: "bold" }}>
-                ※全メッセージが削除されます。十分にご注意ください。
-              </p>
-              
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    ref={urlRef}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      marginLeft: "10px",
-                      width: "50%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    ref={tokenRef}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                  <button
-                    type="button"
-                    style={{
-                      marginLeft: "10px",
-                      padding: "4px 12px",
-                      backgroundColor: "#F44336",
-                      color: "white",
-                      border: "2px outset #F44336",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit"
-                    }}
-                    onClick={(e) => {
-                      setMode("clear");
-                      handleSubmit(e);
-                    }}
-                  >
-                    全削除
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay response={clearResponse} responseType={responseType} show={!!clearResponse} />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆設定更新◆</b>
-                </span>
-              </p>
-              <p>BBSの設定を更新します。</p>
-              
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    ref={urlRef}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      marginLeft: "10px",
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    ref={tokenRef}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>BBSタイトル：</b>
-                  <input
-                    ref={titleRef}
-                    type="text"
-                    placeholder="BBS"
-                    style={{
-                      marginLeft: "10px",
-                      width: "40%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                  />
-                </p>
-
-                <p>
-                  <b>最大メッセージ数：</b>
-                  <input
-                    ref={maxRef}
-                    type="number"
-                    min="1"
-                    max="10000"
-                    placeholder="1000"
-                    style={{
-                      marginLeft: "10px",
-                      width: "20%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                  />
-                </p>
-
-                <p>
-                  <b>1ページあたりのメッセージ数：</b>
-                  <input
-                    ref={perPageRef}
-                    type="number"
-                    min="1"
-                    max="100"
-                    placeholder="10"
-                    style={{
-                      marginLeft: "10px",
-                      width: "20%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                  />
-                </p>
-
-                <p>
-                  <b>Webhook URL：</b>
-                  <input
-                    ref={webhookUrlRef}
-                    type="url"
-                    placeholder="https://example.com/webhook (optional)"
-                    style={{
-                      marginLeft: "10px",
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                  />
-                  <button
-                    type="button"
-                    style={{
-                      marginLeft: "10px",
-                      padding: "4px 12px",
-                      backgroundColor: "#FF9800",
-                      color: "white",
-                      border: "2px outset #FF9800",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit"
-                    }}
-                    onClick={(e) => {
-                      setMode("updateSettings");
-                      handleSubmit(e);
-                    }}
-                  >
-                    設定更新
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay response={updateSettingsResponse} responseType={responseType} show={!!updateSettingsResponse} />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆BBSを削除したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/bbs?action=delete&url=<span style={{ color: "#008000" }}>サイトURL</span>
-                &token=<span style={{ color: "#008000" }}>オーナートークン</span>
-              </p>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
-              <p>または、以下のフォームで削除できます。</p>
-              <p style={{ color: "#ff0000", fontWeight: "bold" }}>
-                ※BBSが完全に削除され復元できません。十分にご注意ください。
-              </p>
-              
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    ref={urlRef}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      marginLeft: "10px",
-                      width: "50%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    ref={tokenRef}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      marginLeft: "10px",
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                  <button
-                    type="button"
-                    style={{
-                      marginLeft: "10px",
-                      padding: "4px 12px",
-                      backgroundColor: "#F44336",
-                      color: "white",
-                      border: "2px outset #F44336",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit"
-                    }}
-                    onClick={(e) => {
-                      setMode("delete");
-                      handleSubmit(e);
-                    }}
-                  >
-                    完全削除
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay response={deleteResponse} responseType={responseType} show={!!deleteResponse} />
-            </div>
-
             <hr />
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆TypeScriptプロジェクトでの設定◆</b>
-                </span>
-              </p>
-              <p>React/Next.jsなどのTypeScriptプロジェクトでWeb Componentsを使用する場合は、プロジェクトルートに`types.d.ts`ファイルを作成してください：</p>
-              <pre
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "15px",
-                  fontFamily: "monospace",
-                  fontSize: "13px",
-                  overflowX: "auto",
-                  border: "1px solid #ccc",
-                  borderRadius: "4px"
-                }}
-              >
-{`// types.d.ts
-import React from 'react'
-
-declare module 'react' {
-  namespace JSX {
-    interface IntrinsicElements {
-      'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
-        id?: string
-        page?: string
-        theme?: 'light' | 'dark' | 'kawaii'
-        format?: 'html' | 'json'
-        'show-header'?: string
-        url?: string
-        token?: string
-        'api-base'?: string
-      }, HTMLElement>
-    }
-  }
-}`}
-              </pre>
-              <p>これにより、TypeScriptビルドエラーを防ぐことができます。</p>
-            </div>
 
             <p style={{ textAlign: "center" }}>
               これ以上の詳しい説明は{" "}
@@ -1698,12 +1709,12 @@ declare module 'react' {
               </a>{" "}
               へ
             </p>
-          </React.Fragment>
+          </>
         );
 
       case "features":
         return (
-          <React.Fragment>
+          <>
             <div className="nostalgic-title-bar">
               ★ Nostalgic BBS ★
               <br />
@@ -1772,9 +1783,8 @@ declare module 'react' {
               </a>
             </p>
 
-          </React.Fragment>
+          </>
         );
-
 
       default:
         return null;
