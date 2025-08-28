@@ -24,10 +24,12 @@ export default function RankingPage() {
   // Submit form specific states  
   const [submitName, setSubmitName] = useState("");
   const [submitScore, setSubmitScore] = useState("");
+  const [submitDisplayScore, setSubmitDisplayScore] = useState("");
 
   // Update form specific states
   const [updateName, setUpdateName] = useState("");
   const [updateScore, setUpdateScore] = useState("");
+  const [updateDisplayScore, setUpdateDisplayScore] = useState("");
 
   // Remove form specific states
   const [removeName, setRemoveName] = useState("");
@@ -113,7 +115,10 @@ export default function RankingPage() {
     e.preventDefault();
     if (!publicId || !submitName || !submitScore) return;
 
-    const apiUrl = `/api/ranking?action=submit&id=${encodeURIComponent(publicId)}&name=${encodeURIComponent(submitName)}&score=${submitScore}`;
+    let apiUrl = `/api/ranking?action=submit&id=${encodeURIComponent(publicId)}&name=${encodeURIComponent(submitName)}&score=${submitScore}`;
+    if (submitDisplayScore) {
+      apiUrl += `&displayScore=${encodeURIComponent(submitDisplayScore)}`;
+    }
 
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
@@ -161,7 +166,10 @@ export default function RankingPage() {
     e.preventDefault();
     if (!sharedUrl || !sharedToken || !updateName || !updateScore) return;
 
-    const apiUrl = `/api/ranking?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&name=${encodeURIComponent(updateName)}&score=${updateScore}`;
+    let apiUrl = `/api/ranking?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&name=${encodeURIComponent(updateName)}&score=${updateScore}`;
+    if (updateDisplayScore) {
+      apiUrl += `&displayScore=${encodeURIComponent(updateDisplayScore)}`;
+    }
 
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
@@ -824,7 +832,7 @@ declare module 'react' {
                 }}
               >
                 https://nostalgic.llll-ll.com/api/ranking?action=submit&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>
-                &name=<span style={{ color: "#008000" }}>{submitName || "プレイヤー名"}</span>&score=<span style={{ color: "#008000" }}>{submitScore || "スコア"}</span>
+                &name=<span style={{ color: "#008000" }}>{submitName || "プレイヤー名"}</span>&score=<span style={{ color: "#008000" }}>{submitScore || "スコア"}</span>&displayScore=<span style={{ color: "#008000" }}>{submitDisplayScore || "表示用スコア"}</span>
               </p>
               
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
@@ -883,6 +891,23 @@ declare module 'react' {
                     required
                   />
                 </p>
+
+                <p>
+                  <b>表示用スコア（オプション）：</b>
+                  <input
+                    value={submitDisplayScore}
+                    onChange={(e) => setSubmitDisplayScore(e.target.value)}
+                    type="text"
+                    placeholder="1000点"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
                 
                 <p>
                   <button
@@ -924,7 +949,7 @@ declare module 'react' {
                 }}
               >
                 https://nostalgic.llll-ll.com/api/ranking?action=update&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&name=<span style={{ color: "#008000" }}>{updateName || "プレイヤー名"}</span>&score=<span style={{ color: "#008000" }}>{updateScore || "新スコア"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&name=<span style={{ color: "#008000" }}>{updateName || "プレイヤー名"}</span>&score=<span style={{ color: "#008000" }}>{updateScore || "新スコア"}</span>&displayScore=<span style={{ color: "#008000" }}>{updateDisplayScore || "表示用スコア"}</span>
               </p>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
@@ -1001,6 +1026,23 @@ declare module 'react' {
                       fontSize: "16px"
                     }}
                     required
+                  />
+                </p>
+
+                <p>
+                  <b>表示用スコア（オプション）：</b>
+                  <input
+                    value={updateDisplayScore}
+                    onChange={(e) => setUpdateDisplayScore(e.target.value)}
+                    type="text"
+                    placeholder="2000点"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
                   />
                 </p>
 

@@ -520,9 +520,7 @@ class NostalgicBBS extends HTMLElement {
         }
       </style>
       <div class="bbs-container ${theme === 'kawaii' ? 'kawaii' : ''}">
-        ${this.bbsData.title ? `
-          <div class="bbs-header ${theme === 'kawaii' ? 'kawaii' : ''}">${this.escapeHtml(this.bbsData.title)}</div>
-        ` : ''}
+        <div class="bbs-header ${theme === 'kawaii' ? 'kawaii' : ''}">${this.escapeHtml(this.bbsData.title || 'BBS')}</div>
         <div class="bbs-messages">
           ${messages.length > 0 ? 
             messages.map((message, index) => `
