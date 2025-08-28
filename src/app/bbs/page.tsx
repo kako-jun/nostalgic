@@ -247,6 +247,15 @@ export default function BBSPage() {
     if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
     if (maxMessages) apiUrl += `&maxMessages=${maxMessages}`;
     if (messagesPerPage) apiUrl += `&messagesPerPage=${messagesPerPage}`;
+    if (standardSelectLabel && standardSelectOptions) {
+      apiUrl += `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}`;
+    }
+    if (incrementalSelectLabel && incrementalSelectOptions) {
+      apiUrl += `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}`;
+    }
+    if (emoteSelectLabel && emoteSelectOptions) {
+      apiUrl += `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}`;
+    }
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     try {
@@ -453,7 +462,7 @@ export default function BBSPage() {
                   <b>純正セレクト設定（オプション）：</b>
                 </p>
                 <p style={{ marginLeft: "20px" }}>
-                  <b>ラベル：</b>
+                  <b>　ラベル：</b>
                   <input
                     value={standardSelectLabel}
                     onChange={(e) => setStandardSelectLabel(e.target.value)}
@@ -470,7 +479,7 @@ export default function BBSPage() {
                   />
                 </p>
                 <p style={{ marginLeft: "20px" }}>
-                  <b>選択肢：</b>
+                  <b>　選択肢：</b>
                   <input
                     value={standardSelectOptions}
                     onChange={(e) => setStandardSelectOptions(e.target.value)}
@@ -491,7 +500,7 @@ export default function BBSPage() {
                   <b>インクリメンタル検索セレクト設定（オプション）：</b>
                 </p>
                 <p style={{ marginLeft: "20px" }}>
-                  <b>ラベル：</b>
+                  <b>　ラベル：</b>
                   <input
                     value={incrementalSelectLabel}
                     onChange={(e) => setIncrementalSelectLabel(e.target.value)}
@@ -508,7 +517,7 @@ export default function BBSPage() {
                   />
                 </p>
                 <p style={{ marginLeft: "20px" }}>
-                  <b>選択肢：</b>
+                  <b>　選択肢：</b>
                   <input
                     value={incrementalSelectOptions}
                     onChange={(e) => setIncrementalSelectOptions(e.target.value)}
@@ -529,7 +538,7 @@ export default function BBSPage() {
                   <b>エモートセレクト設定（オプション）：</b>
                 </p>
                 <p style={{ marginLeft: "20px" }}>
-                  <b>ラベル：</b>
+                  <b>　ラベル：</b>
                   <input
                     value={emoteSelectLabel}
                     onChange={(e) => setEmoteSelectLabel(e.target.value)}
@@ -546,7 +555,7 @@ export default function BBSPage() {
                   />
                 </p>
                 <p style={{ marginLeft: "20px" }}>
-                  <b>選択肢：</b>
+                  <b>　選択肢：</b>
                   <input
                     value={emoteSelectOptions}
                     onChange={(e) => setEmoteSelectOptions(e.target.value)}
@@ -1894,6 +1903,9 @@ declare module 'react' {
                 {title && `&title=${encodeURIComponent(title)}`}
                 {maxMessages && `&maxMessages=${maxMessages}`}
                 {messagesPerPage && `&messagesPerPage=${messagesPerPage}`}
+                {standardSelectLabel && standardSelectOptions && `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}`}
+                {incrementalSelectLabel && incrementalSelectOptions && `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}`}
+                {emoteSelectLabel && emoteSelectOptions && `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}`}
                 {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
               </p>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
@@ -2005,6 +2017,120 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>純正セレクト設定（オプション）：</b>
+                </p>
+                <p style={{ marginLeft: "20px" }}>
+                  <b>　ラベル：</b>
+                  <input
+                    value={standardSelectLabel}
+                    onChange={(e) => setStandardSelectLabel(e.target.value)}
+                    type="text"
+                    placeholder="カテゴリ"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+                <p style={{ marginLeft: "20px" }}>
+                  <b>　選択肢：</b>
+                  <input
+                    value={standardSelectOptions}
+                    onChange={(e) => setStandardSelectOptions(e.target.value)}
+                    type="text"
+                    placeholder="一般,質問,雑談,報告 (カンマ区切り)"
+                    style={{
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>インクリメンタル検索セレクト設定（オプション）：</b>
+                </p>
+                <p style={{ marginLeft: "20px" }}>
+                  <b>　ラベル：</b>
+                  <input
+                    value={incrementalSelectLabel}
+                    onChange={(e) => setIncrementalSelectLabel(e.target.value)}
+                    type="text"
+                    placeholder="タグ"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+                <p style={{ marginLeft: "20px" }}>
+                  <b>　選択肢：</b>
+                  <input
+                    value={incrementalSelectOptions}
+                    onChange={(e) => setIncrementalSelectOptions(e.target.value)}
+                    type="text"
+                    placeholder="JavaScript,TypeScript,React,Vue.js,Angular (カンマ区切り)"
+                    style={{
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>エモートセレクト設定（オプション）：</b>
+                </p>
+                <p style={{ marginLeft: "20px" }}>
+                  <b>　ラベル：</b>
+                  <input
+                    value={emoteSelectLabel}
+                    onChange={(e) => setEmoteSelectLabel(e.target.value)}
+                    type="text"
+                    placeholder="感情"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+                <p style={{ marginLeft: "20px" }}>
+                  <b>　選択肢：</b>
+                  <input
+                    value={emoteSelectOptions}
+                    onChange={(e) => setEmoteSelectOptions(e.target.value)}
+                    type="text"
+                    placeholder="😀,😢,😡,😐,🤔,😴,😋,😱 (カンマ区切り)"
+                    style={{
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
                     }}
                   />
                 </p>

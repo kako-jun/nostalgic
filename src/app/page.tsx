@@ -452,7 +452,7 @@ export default function HomePage() {
                 <p style={{ marginBottom: "20px" }}>
                   訪問の記念に、足あとを残していってください！
                 </p>
-                <nostalgic-bbs id="nostalgic-b89803bb" theme="light" />
+                <nostalgic-bbs id="nostalgic-34fe836d" theme="light" />
               </div>
             </div>
 
@@ -467,7 +467,7 @@ export default function HomePage() {
                   訪問の記念に、足あとを残していってください！
                 </p>
                 <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "15px", display: "inline-block", width: "fit-content", maxWidth: "100%" }}>
-                  <nostalgic-bbs id="nostalgic-b89803bb" theme="dark" />
+                  <nostalgic-bbs id="nostalgic-0962d8eb" theme="dark" />
                 </div>
               </div>
             </div>
