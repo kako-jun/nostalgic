@@ -2005,23 +2005,6 @@ declare module 'react' {
                 </p>
 
                 <p>
-                  <b>Webhook URL（オプション）：</b>
-                  <input
-                    value={webhookUrl}
-                    onChange={(e) => setWebhookUrl(e.target.value)}
-                    type="url"
-                    placeholder="https://example.com/webhook"
-                    style={{
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                  />
-                </p>
-
-                <p>
                   <b>純正セレクト設定（オプション）：</b>
                 </p>
                 <p style={{ marginLeft: "20px" }}>
@@ -2131,6 +2114,23 @@ declare module 'react' {
                       fontFamily: "inherit",
                       fontSize: "16px",
                       marginLeft: "10px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>Webhook URL（オプション）：</b>
+                  <input
+                    value={webhookUrl}
+                    onChange={(e) => setWebhookUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://example.com/webhook"
+                    style={{
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
                     }}
                   />
                 </p>

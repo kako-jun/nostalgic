@@ -31,7 +31,7 @@ export const BBS_LIMITS = {
  * BBS固有のフィールドスキーマ
  */
 export const BBSFieldSchemas = {
-  bbsTitle: z.string().max(BBS_LIMITS.TITLE_MAX),
+  bbsTitle: z.string().max(BBS_LIMITS.TITLE_MAX).optional(),
   author: z.string().max(BBS_LIMITS.AUTHOR_MAX),
   messageText: z.string().min(BBS_LIMITS.MESSAGE_TEXT_MIN).max(BBS_LIMITS.MESSAGE_TEXT_MAX),
   messageId: z.string(),
