@@ -322,12 +322,12 @@ export default function LikePage() {
                 </p>
 
                 <p>
-                  <b>Webhook URL：</b>
+                  <b>Webhook URL（オプション）：</b>
                   <input
                     value={webhookUrl}
                     onChange={(e) => setWebhookUrl(e.target.value)}
                     type="url"
-                    placeholder="https://hooks.slack.com/... (任意)"
+                    placeholder="https://hooks.slack.com/services/..."
                     style={{
                       width: "60%",
                       padding: "4px",
@@ -611,124 +611,6 @@ declare module 'react' {
               </form>
             </div>
 
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆いいね数を設定したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/like?action=set&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&value=<span style={{ color: "#008000" }}>{setValue || "数値"}</span>
-              </p>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
-              <p>または、以下のフォームで設定できます。</p>
-              
-              <form style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    value={sharedUrl}
-                    onChange={(e) => setSharedUrl(e.target.value)}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    value={sharedToken}
-                    onChange={(e) => setSharedToken(e.target.value)}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>設定値：</b>
-                  <input
-                    value={setValue}
-                    onChange={(e) => setSetValue(e.target.value)}
-                    type="number"
-                    min="0"
-                    placeholder="0"
-                    style={{
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>Webhook URL：</b>
-                  <input
-                    value={webhookUrl}
-                    onChange={(e) => setWebhookUrl(e.target.value)}
-                    type="url"
-                    placeholder="https://hooks.slack.com/... (任意)"
-                    style={{
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px"
-                    }}
-                  />
-                </p>
-
-                <p>
-                  <button
-                    type="button"
-                    style={{
-                      padding: "4px 12px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "2px outset #2196F3",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit"
-                    }}
-                    onClick={handleSet}
-                  >
-                    いいね数設定
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay response={setValueResponse} responseType={responseType} show={!!setValueResponse} />
-            </div>
 
             <div className="nostalgic-section">
               <p>
@@ -877,6 +759,125 @@ declare module 'react' {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
+                  <b>◆いいね数を設定したいときは？◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/like?action=set&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&value=<span style={{ color: "#008000" }}>{setValue || "数値"}</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで設定できます。</p>
+              
+              <form style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>設定値：</b>
+                  <input
+                    value={setValue}
+                    onChange={(e) => setSetValue(e.target.value)}
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>Webhook URL（オプション）：</b>
+                  <input
+                    value={webhookUrl}
+                    onChange={(e) => setWebhookUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://hooks.slack.com/services/..."
+                    style={{
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <button
+                    type="button"
+                    style={{
+                      padding: "4px 12px",
+                      backgroundColor: "#2196F3",
+                      color: "white",
+                      border: "2px outset #2196F3",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handleSet}
+                  >
+                    いいね数設定
+                  </button>
+                </p>
+              </form>
+
+              <ResponseDisplay response={setValueResponse} responseType={responseType} show={!!setValueResponse} />
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
                   <b>◆設定更新◆</b>
                 </span>
               </p>
@@ -920,12 +921,12 @@ declare module 'react' {
                 </p>
 
                 <p>
-                  <b>Webhook URL：</b>
+                  <b>Webhook URL（オプション）：</b>
                   <input
                     value={webhookUrl}
                     onChange={(e) => setWebhookUrl(e.target.value)}
                     type="url"
-                    placeholder="https://example.com/webhook (optional)"
+                    placeholder="https://example.com/webhook"
                     style={{
                       width: "60%",
                       padding: "4px",

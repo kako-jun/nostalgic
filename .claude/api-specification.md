@@ -372,16 +372,20 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 | `action` | string | Yes | - | `"create"` |
 | `url` | string | Yes | - | サイトのURL |
 | `token` | string | Yes | - | オーナートークン |
-| `perPage` | number | No | `10` | 1ページの表示件数（1-50） |
-| `maxMessages` | number | No | `100` | 最大メッセージ数（1-1000） |
-| `enableIcons` | boolean | No | `true` | アイコン機能の有効化 |
-| `iconOptions` | string[] | No | デフォルトセット | 選択可能なアイコン |
-| `enableSelects` | boolean | No | `false` | カスタムドロップダウンの有効化 |
-| `selectOptions` | object | No | `{}` | ドロップダウンの選択肢 |
+| `title` | string | No | `"BBS"` | 掲示板タイトル |
+| `messagesPerPage` | number | No | `10` | 1ページの表示件数（1-50） |
+| `max` | number | No | `100` | 最大メッセージ数（1-1000） |
+| `standardSelectLabel` | string | No | - | 純正セレクトのラベル |
+| `standardSelectOptions` | string | No | - | 純正セレクトの選択肢（カンマ区切り） |
+| `incrementalSelectLabel` | string | No | - | インクリメンタル検索セレクトのラベル |
+| `incrementalSelectOptions` | string | No | - | インクリメンタル検索セレクトの選択肢（カンマ区切り） |
+| `emoteSelectLabel` | string | No | - | エモートセレクトのラベル |
+| `emoteSelectOptions` | string | No | - | エモートセレクトの選択肢（カンマ区切り） |
+| `webhookUrl` | string | No | - | Webhook URL |
 
 ### 2. メッセージ投稿
 
-掲示板にメッセージを投稿します。
+掲示板にメッセージを投稿します。IPアドレス制限により1分間に5投稿まで。
 
 **Endpoint**: `GET /api/bbs?action=post`
 
@@ -390,12 +394,11 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 |------|------|----------|-------------|
 | `action` | string | Yes | `"post"` |
 | `id` | string | Yes | 掲示板ID |
-| `author` | string | Yes | 投稿者名（1-50文字） |
-| `message` | string | Yes | メッセージ（1-1000文字） |
-| `icon` | string | No | アイコン |
-| `select1` | string | No | カスタム選択1 |
-| `select2` | string | No | カスタム選択2 |
-| `select3` | string | No | カスタム選択3 |
+| `author` | string | No | 投稿者名（最大20文字、未指定時は"匿名"） |
+| `message` | string | Yes | メッセージ（1-200文字） |
+| `standardValue` | string | No | 標準セレクト値 |
+| `incrementalValue` | string | No | インクリメンタル検索セレクト値 |
+| `emoteValue` | string | No | エモートセレクト値 |
 
 **Example Response**:
 ```json
@@ -405,11 +408,9 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
     "id": "msg_1234567890",
     "author": "田中太郎",
     "message": "こんにちは！",
-    "icon": "smile",
-    "selects": {
-      "select1": "東京",
-      "select2": "晴れ"
-    },
+    "standardValue": "東京",
+    "incrementalValue": "晴れ",
+    "emoteValue": "😊",
     "timestamp": "2025-08-18T15:30:00.000Z",
     "isOwner": false
   }
@@ -421,19 +422,18 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 メッセージを編集します（投稿者またはオーナー権限必要）。
 
 #### 投稿者による編集
-**Endpoint**: `GET /api/bbs?action=editMessageById`
+**Endpoint**: `GET /api/bbs?action=editMessage`
 
 **Parameters**:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `action` | string | Yes | `"editMessageById"` |
+| `action` | string | Yes | `"editMessage"` |
 | `id` | string | Yes | 掲示板ID |
 | `messageId` | string | Yes | メッセージID |
-| `message` | string | No | 新しいメッセージ |
-| `icon` | string | No | 新しいアイコン |
-| `select1` | string | No | 新しい選択1 |
-| `select2` | string | No | 新しい選択2 |
-| `select3` | string | No | 新しい選択3 |
+| `message` | string | No | 新しいメッセージ（1-200文字） |
+| `standardValue` | string | No | 新しい標準セレクト値 |
+| `incrementalValue` | string | No | 新しいインクリメンタル検索セレクト値 |
+| `emoteValue` | string | No | 新しいエモートセレクト値 |
 
 #### オーナーによる編集
 **Endpoint**: `GET /api/bbs?action=editMessage`
@@ -443,25 +443,24 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 |------|------|----------|-------------|
 | `action` | string | Yes | `"editMessage"` |
 | `url` | string | Yes | サイトのURL |
-| `token` | string | Yes | オーナートークン |
+| `token` | string | Yes | オーナートークン（8-16文字） |
 | `messageId` | string | Yes | メッセージID |
-| `message` | string | No | 新しいメッセージ |
-| `icon` | string | No | 新しいアイコン |
-| `select1` | string | No | 新しい選択1 |
-| `select2` | string | No | 新しい選択2 |
-| `select3` | string | No | 新しい選択3 |
+| `message` | string | No | 新しいメッセージ（1-200文字） |
+| `standardValue` | string | No | 新しい標準セレクト値 |
+| `incrementalValue` | string | No | 新しいインクリメンタル検索セレクト値 |
+| `emoteValue` | string | No | 新しいエモートセレクト値 |
 
 ### 4. メッセージ削除
 
 メッセージを削除します（投稿者またはオーナー権限必要）。
 
 #### 投稿者による削除
-**Endpoint**: `GET /api/bbs?action=deleteMessageById`
+**Endpoint**: `GET /api/bbs?action=deleteMessage`
 
 **Parameters**:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `action` | string | Yes | `"deleteMessageById"` |
+| `action` | string | Yes | `"deleteMessage"` |
 | `id` | string | Yes | 掲示板ID |
 | `messageId` | string | Yes | メッセージID |
 
@@ -501,7 +500,9 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
         "id": "msg_1234567890",
         "author": "田中太郎",
         "message": "こんにちは！",
-        "icon": "smile",
+        "standardValue": "東京",
+        "incrementalValue": "晴れ",
+        "emoteValue": "😊",
         "timestamp": "2025-08-18T15:30:00.000Z",
         "isOwner": false
       }
@@ -514,10 +515,21 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
       "hasPrev": false
     },
     "settings": {
-      "perPage": 10,
+      "title": "📝 BBS",
+      "messagesPerPage": 10,
       "maxMessages": 100,
-      "enableIcons": true,
-      "enableSelects": true
+      "standardSelect": {
+        "label": "地域",
+        "options": ["東京", "大阪", "名古屋"]
+      },
+      "incrementalSelect": {
+        "label": "天気",
+        "options": ["晴れ", "曇り", "雨"]
+      },
+      "emoteSelect": {
+        "label": "気分",
+        "options": ["😊", "😢", "😡", "😴"]
+      }
     }
   }
 }
@@ -607,6 +619,12 @@ curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://mygame
 
 # スコア送信
 curl "https://nostalgic.llll-ll.com/api/ranking?action=submit&id=mygame-c9d3e6f0&name=Player1&score=12345"
+
+# BBS作成（3つのセレクト機能付き）
+curl "https://nostalgic.llll-ll.com/api/bbs?action=create&url=https://myblog.com&token=mytoken123&title=私のBBS&standardSelectLabel=地域&standardSelectOptions=東京,大阪,名古屋&incrementalSelectLabel=天気&incrementalSelectOptions=晴れ,曇り,雨&emoteSelectLabel=気分&emoteSelectOptions=😊,😢,😡,😴"
+
+# BBSメッセージ投稿（セレクト値含む）
+curl "https://nostalgic.llll-ll.com/api/bbs?action=post&id=myblog-a1b2c3d4&author=太郎&message=今日はいい天気ですね！&standardValue=東京&incrementalValue=晴れ&emoteValue=😊"
 ```
 
 ---

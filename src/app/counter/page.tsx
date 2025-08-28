@@ -299,12 +299,12 @@ export default function CounterPage() {
                 </p>
 
                 <p>
-                  <b>Webhook URL：</b>
+                  <b>Webhook URL（オプション）：</b>
                   <input
                     value={webhookUrl}
                     onChange={(e) => setWebhookUrl(e.target.value)}
                     type="url"
-                    placeholder="https://hooks.slack.com/... (任意)"
+                    placeholder="https://hooks.slack.com/services/..."
                     style={{
                       width: "60%",
                       padding: "4px",
@@ -662,6 +662,74 @@ declare module 'react' {
               </form>
             </div>
 
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆カウンターを手動カウントアップしたいときは？◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/visit?action=increment&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームでカウントアップできます。</p>
+              <p style={{ color: "#666", fontSize: "14px" }}>
+                ※Web Componentsを使用している場合は自動でカウントされるため、通常は不要です。
+              </p>
+              
+              <form style={{ marginTop: "10px" }}>
+                <p>
+                  <b>公開ID：</b>
+                  <input
+                    value={publicId}
+                    onChange={(e) => setPublicId(e.target.value)}
+                    type="text"
+                    placeholder="STEP 1で作成後に表示されます"
+                    style={{
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "monospace",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+                
+                
+                <p>
+                  <button
+                    type="button"
+                    style={{
+                      padding: "4px 12px",
+                      backgroundColor: "#2196F3",
+                      color: "white",
+                      border: "2px outset #2196F3",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handleIncrement}
+                  >
+                    手動カウントアップ
+                  </button>
+                </p>
+              </form>
+
+              <ResponseDisplay response={incrementResponse} responseType={responseType} show={!!incrementResponse} />
+            </div>
+
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
@@ -742,12 +810,12 @@ declare module 'react' {
                 </p>
 
                 <p>
-                  <b>Webhook URL：</b>
+                  <b>Webhook URL（オプション）：</b>
                   <input
                     value={webhookUrl}
                     onChange={(e) => setWebhookUrl(e.target.value)}
                     type="url"
-                    placeholder="https://hooks.slack.com/... (任意)"
+                    placeholder="https://hooks.slack.com/services/..."
                     style={{
                       width: "60%",
                       padding: "4px",
@@ -780,73 +848,6 @@ declare module 'react' {
               </form>
 
               <ResponseDisplay response={setValueResponse} responseType={responseType} show={!!setValueResponse} />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆カウンターを手動カウントアップしたいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/visit?action=increment&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>
-              </p>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
-              <p>または、以下のフォームでカウントアップできます。</p>
-              <p style={{ color: "#666", fontSize: "14px" }}>
-                ※Web Componentsを使用している場合は自動でカウントされるため、通常は不要です。
-              </p>
-              
-              <form style={{ marginTop: "10px" }}>
-                <p>
-                  <b>公開ID：</b>
-                  <input
-                    value={publicId}
-                    onChange={(e) => setPublicId(e.target.value)}
-                    type="text"
-                    placeholder="STEP 1で作成後に表示されます"
-                    style={{
-                      width: "40%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "monospace",
-                      fontSize: "16px"
-                    }}
-                  />
-                </p>
-                
-                
-                <p>
-                  <button
-                    type="button"
-                    style={{
-                      padding: "4px 12px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "2px outset #2196F3",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit"
-                    }}
-                    onClick={handleIncrement}
-                  >
-                    手動カウントアップ
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay response={incrementResponse} responseType={responseType} show={!!incrementResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -896,12 +897,12 @@ declare module 'react' {
 
 
                 <p>
-                  <b>Webhook URL：</b>
+                  <b>Webhook URL（オプション）：</b>
                   <input
                     value={webhookUrl}
                     onChange={(e) => setWebhookUrl(e.target.value)}
                     type="url"
-                    placeholder="https://example.com/webhook (optional)"
+                    placeholder="https://example.com/webhook"
                     style={{
                       width: "60%",
                       padding: "4px",
