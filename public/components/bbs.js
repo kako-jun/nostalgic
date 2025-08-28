@@ -526,7 +526,7 @@ class NostalgicBBS extends HTMLElement {
             messages.map((message, index) => `
               <div class="message-item">
                 <div class="message-header">
-                  <span class="message-author"><span style="display:inline-block;min-width:2em;text-align:right;">${startNumber + index + 1}.</span> ${this.escapeHtml(message.author || 'Anonymous')}${message.icon ? ` ${message.icon}` : ''}</span>
+                  <span class="message-author"><span style="display:inline-block;min-width:2em;text-align:right;">${startNumber + index + 1}.</span> ${this.escapeHtml(message.author || 'Anonymous')}${this.formatSelectValues(message)}</span>
                   <div class="message-time-actions">
                     <span class="message-time">${this.formatDate(message.timestamp)}</span>
                     <div class="message-actions">
@@ -544,11 +544,6 @@ class NostalgicBBS extends HTMLElement {
                   </div>
                 </div>
                 <div class="message-content">${this.escapeHtml(message.message || '')}</div>
-                ${message.selects && Object.keys(message.selects).length > 0 ? `
-                  <div class="message-meta">
-                    ${Object.entries(message.selects).map(([key, value]) => `${key}: ${value}`).join(', ')}
-                  </div>
-                ` : ''}
               </div>
             `).join('') 
             : `<div class="empty-message">まだメッセージがありません</div>`
@@ -564,15 +559,7 @@ class NostalgicBBS extends HTMLElement {
             <div class="form-body">
               <div class="form-row">
                 <input type="text" id="message-author" placeholder="名前（省略可、20文字まで）" maxlength="20">
-                <select id="message-icon">
-                  <option value="">アイコンなし</option>
-                  <option value="😀">😀</option>
-                  <option value="😉">😉</option>
-                  <option value="😎">😎</option>
-                  <option value="😠">😠</option>
-                  <option value="😢">😢</option>
-                  <option value="😮">😮</option>
-                </select>
+                ${this.generateSelectDropdowns()}
               </div>
               <div class="form-row">
                 <textarea id="message-content" placeholder="メッセージを入力（200文字まで）" maxlength="200" rows="5"></textarea>
@@ -613,6 +600,61 @@ class NostalgicBBS extends HTMLElement {
     return div.innerHTML;
   }
 
+  generateSelectDropdowns() {
+    let dropdowns = '';
+    
+    // 設定されているセレクトオプションを生成
+    if (this.bbsData?.settings) {
+      const settings = this.bbsData.settings;
+      
+      // 標準セレクト
+      if (settings.standardSelect && settings.standardSelect.options && settings.standardSelect.options.length > 0) {
+        dropdowns += `
+          <select id="standard-select">
+            <option value="">${this.escapeHtml(settings.standardSelect.label || 'セレクト')}</option>
+            ${settings.standardSelect.options.map(option => 
+              `<option value="${this.escapeHtml(option)}">${this.escapeHtml(option)}</option>`
+            ).join('')}
+          </select>
+        `;
+      }
+      
+      // インクリメンタルセレクト
+      if (settings.incrementalSelect && settings.incrementalSelect.options && settings.incrementalSelect.options.length > 0) {
+        dropdowns += `
+          <select id="incremental-select">
+            <option value="">${this.escapeHtml(settings.incrementalSelect.label || 'セレクト')}</option>
+            ${settings.incrementalSelect.options.map(option => 
+              `<option value="${this.escapeHtml(option)}">${this.escapeHtml(option)}</option>`
+            ).join('')}
+          </select>
+        `;
+      }
+      
+      // エモートセレクト
+      if (settings.emoteSelect && settings.emoteSelect.options && settings.emoteSelect.options.length > 0) {
+        dropdowns += `
+          <select id="emote-select">
+            <option value="">${this.escapeHtml(settings.emoteSelect.label || 'セレクト')}</option>
+            ${settings.emoteSelect.options.map(option => 
+              `<option value="${this.escapeHtml(option)}">${this.escapeHtml(option)}</option>`
+            ).join('')}
+          </select>
+        `;
+      }
+    }
+    
+    return dropdowns;
+  }
+
+  formatSelectValues(message) {
+    const values = [];
+    if (message.standardValue) values.push(`${message.standardValue}`);
+    if (message.incrementalValue) values.push(`${message.incrementalValue}`);
+    if (message.emoteValue) values.push(`${message.emoteValue}`);
+    return values.length > 0 ? ` [${values.join(', ')}]` : '';
+  }
+
   showMessage(text, type = 'error') {
     const messageArea = this.shadowRoot.querySelector('#form-message');
     if (messageArea) {
@@ -637,7 +679,9 @@ class NostalgicBBS extends HTMLElement {
 
     const authorInput = this.shadowRoot.querySelector('#message-author');
     const messageInput = this.shadowRoot.querySelector('#message-content');
-    const iconSelect = this.shadowRoot.querySelector('#message-icon');
+    const standardSelect = this.shadowRoot.querySelector('#standard-select');
+    const incrementalSelect = this.shadowRoot.querySelector('#incremental-select');
+    const emoteSelect = this.shadowRoot.querySelector('#emote-select');
     
     // 安全な入力値検証
     if (!authorInput || !messageInput) {
@@ -647,14 +691,18 @@ class NostalgicBBS extends HTMLElement {
 
     let rawAuthor = '';
     let rawMessage = '';
-    let rawIcon = '';
+    let rawStandardValue = '';
+    let rawIncrementalValue = '';
+    let rawEmoteValue = '';
 
     // 存在チェックと型チェック
     try {
       rawAuthor = (typeof authorInput.value === 'string' ? authorInput.value : '').trim();
       // メッセージは前側のスペースを保持（アスキーアート調整のため）、後ろのみトリミング
       rawMessage = (typeof messageInput.value === 'string' ? messageInput.value : '').replace(/\s+$/, '');
-      rawIcon = iconSelect && typeof iconSelect.value === 'string' ? iconSelect.value : '';
+      rawStandardValue = standardSelect && typeof standardSelect.value === 'string' ? standardSelect.value : '';
+      rawIncrementalValue = incrementalSelect && typeof incrementalSelect.value === 'string' ? incrementalSelect.value : '';
+      rawEmoteValue = emoteSelect && typeof emoteSelect.value === 'string' ? emoteSelect.value : '';
     } catch (error) {
       this.showMessage('エラー: 入力値の取得に失敗しました');
       return;
@@ -663,7 +711,9 @@ class NostalgicBBS extends HTMLElement {
     // 致命的エラー防止のみ（軽微なバリデーションはAPI側に任せる）
     const author = typeof rawAuthor === 'string' ? rawAuthor || 'ああああ' : 'ああああ';
     const message = typeof rawMessage === 'string' ? rawMessage : '';
-    const icon = typeof rawIcon === 'string' ? rawIcon : '';
+    const standardValue = typeof rawStandardValue === 'string' ? rawStandardValue : '';
+    const incrementalValue = typeof rawIncrementalValue === 'string' ? rawIncrementalValue : '';
+    const emoteValue = typeof rawEmoteValue === 'string' ? rawEmoteValue : '';
 
     // 致命的な状態のみチェック
     if (typeof author !== 'string' || typeof message !== 'string') {
@@ -689,10 +739,10 @@ class NostalgicBBS extends HTMLElement {
           return;
         }
         
-        apiUrl = `${baseUrl}/api/bbs?action=editMessageById&id=${encodeURIComponent(id)}&messageId=${encodeURIComponent(this.editingMessageId)}&editToken=${encodeURIComponent(editToken)}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}${icon ? `&icon=${encodeURIComponent(icon)}` : ''}`;
+        apiUrl = `${baseUrl}/api/bbs?action=editMessageById&id=${encodeURIComponent(id)}&messageId=${encodeURIComponent(this.editingMessageId)}&editToken=${encodeURIComponent(editToken)}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ''}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ''}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ''}`;
       } else {
         // 新規投稿モード
-        apiUrl = `${baseUrl}/api/bbs?action=post&id=${encodeURIComponent(id)}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}${icon ? `&icon=${encodeURIComponent(icon)}` : ''}`;
+        apiUrl = `${baseUrl}/api/bbs?action=post&id=${encodeURIComponent(id)}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ''}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ''}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ''}`;
       }
       
       const response = await fetch(apiUrl);
@@ -710,7 +760,9 @@ class NostalgicBBS extends HTMLElement {
         // 成功: フォームをクリアして再読み込み
         authorInput.value = '';
         messageInput.value = '';
-        if (iconSelect) iconSelect.value = '';
+        if (standardSelect) standardSelect.value = '';
+        if (incrementalSelect) incrementalSelect.value = '';
+        if (emoteSelect) emoteSelect.value = '';
         
         // 編集モードをクリア
         this.clearEditMode();
@@ -831,12 +883,20 @@ class NostalgicBBS extends HTMLElement {
     // フォームに内容を読み込み
     const authorInput = this.shadowRoot.querySelector('#message-author');
     const messageInput = this.shadowRoot.querySelector('#message-content');
-    const iconSelect = this.shadowRoot.querySelector('#message-icon');
+    const standardSelect = this.shadowRoot.querySelector('#standard-select');
+    const incrementalSelect = this.shadowRoot.querySelector('#incremental-select');
+    const emoteSelect = this.shadowRoot.querySelector('#emote-select');
 
     authorInput.value = message.author || '';
     messageInput.value = message.message || '';
-    if (iconSelect && message.icon) {
-      iconSelect.value = message.icon;
+    if (standardSelect && message.standardValue) {
+      standardSelect.value = message.standardValue;
+    }
+    if (incrementalSelect && message.incrementalValue) {
+      incrementalSelect.value = message.incrementalValue;
+    }
+    if (emoteSelect && message.emoteValue) {
+      emoteSelect.value = message.emoteValue;
     }
 
     // 編集モードに変更
