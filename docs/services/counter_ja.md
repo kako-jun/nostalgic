@@ -59,7 +59,10 @@ GET /api/visit?action=display&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 - `theme` (オプション): 表示スタイル
   - `light`: 黒背景に緑文字（90年代端末スタイル）
   - `dark` (デフォルト): グレー背景に白文字（2000年代クリーンスタイル）
+  - `retro`: 古いコンピュータ端末風（黒背景、緑文字、スキャンライン、CRT効果）
   - `kawaii`: 紫背景に黄文字（80年代ネオンスタイル）
+  - `mother`: MOTHER2/EarthBoundスタイル（緑ストライプ、オレンジボーダー）
+  - `ff`: ファイナルファンタジースタイル（青系グラデーション）
 - `format` (オプション): レスポンス形式
   - `image` (デフォルト): SVG画像
   - `text`: プレーンテキスト数値（スタイルなし）
@@ -132,7 +135,7 @@ declare module 'react' {
       'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         type?: 'total' | 'today' | 'yesterday' | 'week' | 'month';
-        theme?: 'light' | 'dark' | 'kawaii';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
         digits?: string;
         scale?: string;
       };
@@ -175,7 +178,7 @@ declare module 'react' {
 **属性:**
 - `id`: 公開カウンターID
 - `type`: 表示タイプ（total, today, yesterday, week, month）
-- `theme`: 表示スタイル（light, dark, kawaii）- 画像形式のみ
+- `theme`: 表示スタイル（light, dark, retro, kawaii, mother, ff）- 画像形式のみ
 - `format`: 出力形式（image, text）- デフォルト: image
 - `digits`: ゼロ埋め桁数（指定時のみ）
 - `api-base`: カスタムAPI ベースURL（オプション）
@@ -194,7 +197,7 @@ declare module 'react' {
       'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
         id?: string
         type?: 'total' | 'today' | 'yesterday' | 'week' | 'month'
-        theme?: 'light' | 'dark' | 'kawaii'
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff'
         digits?: string
         format?: 'image' | 'text'
         'api-base'?: string
@@ -248,6 +251,6 @@ document.body.innerHTML += `
 
 - **複数期間統計**: 累計・今日・昨日・週間・月間
 - **重複防止**: IP+UserAgentによる1日1回重複防止（0時リセット）
-- **3つのスタイル**: ライト・ダーク・カワイイ
+- **6つのスタイル**: ライト・ダーク・レトロ・カワイイ・マザー・FF
 - **SVG画像生成**: 美しいベクター画像
 - **Web Components**: 簡単埋め込み

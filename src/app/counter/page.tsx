@@ -486,7 +486,10 @@ export default function CounterPage() {
                 <p>
                   • <span style={{ color: "#008000" }}>light</span> - ライトテーマ（明るい背景）
                   <br />• <span style={{ color: "#008000" }}>dark</span> - ダークテーマ（暗い背景）
+                  <br />• <span style={{ color: "#008000" }}>retro</span> - レトロテーマ（古いコンピュータ画面風）
                   <br />• <span style={{ color: "#008000" }}>kawaii</span> - かわいいテーマ（ピンク系）
+                  <br />• <span style={{ color: "#008000" }}>mother</span> - MOTHER2テーマ（緑ストライプ）
+                  <br />• <span style={{ color: "#008000" }}>ff</span> - ファイナルファンタジーテーマ（青系）
                 </p>
               </div>
 
@@ -507,7 +510,7 @@ declare module 'react' {
       'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         type?: 'total' | 'today' | 'yesterday' | 'week' | 'month';
-        theme?: 'light' | 'dark' | 'kawaii';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
         digits?: string;
         scale?: string;
       };
@@ -528,7 +531,7 @@ declare module 'react' {
                 </p>
                 {publicId ? (
                   <div style={{ textAlign: "center", margin: "20px 0" }}>
-                    <div style={{ display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "20px", justifyItems: "center", maxWidth: "800px", margin: "0 auto" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "14px", marginBottom: "10px" }}>Light</p>
                         <img 
@@ -546,10 +549,34 @@ declare module 'react' {
                         />
                       </div>
                       <div style={{ textAlign: "center" }}>
+                        <p style={{ fontSize: "14px", marginBottom: "10px" }}>Retro</p>
+                        <img 
+                          src={`/api/visit?action=display&id=${publicId}&type=total&theme=retro`}
+                          alt="Retro Counter"
+                          style={{ border: "1px solid #ccc" }}
+                        />
+                      </div>
+                      <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "14px", marginBottom: "10px" }}>Kawaii</p>
                         <img 
                           src={`/api/visit?action=display&id=${publicId}&type=total&theme=kawaii`}
                           alt="Kawaii Counter"
+                          style={{ border: "1px solid #ccc" }}
+                        />
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        <p style={{ fontSize: "14px", marginBottom: "10px" }}>Mother</p>
+                        <img 
+                          src={`/api/visit?action=display&id=${publicId}&type=total&theme=mother`}
+                          alt="Mother Counter"
+                          style={{ border: "1px solid #ccc" }}
+                        />
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        <p style={{ fontSize: "14px", marginBottom: "10px" }}>FF</p>
+                        <img 
+                          src={`/api/visit?action=display&id=${publicId}&type=total&theme=ff`}
+                          alt="FF Counter"
                           style={{ border: "1px solid #ccc" }}
                         />
                       </div>

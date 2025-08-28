@@ -468,7 +468,10 @@ export default function LikePage() {
                 <p>
                   • <span style={{ color: "#008000" }}>light</span> - ライト（白系モノクロ）
                   <br />• <span style={{ color: "#008000" }}>dark</span> - ダーク（黒系モノクロ）
+                  <br />• <span style={{ color: "#008000" }}>retro</span> - レトロ（古いコンピュータ画面風）
                   <br />• <span style={{ color: "#008000" }}>kawaii</span> - かわいい（パステル系）
+                  <br />• <span style={{ color: "#008000" }}>mother</span> - MOTHER2（緑ストライプ）
+                  <br />• <span style={{ color: "#008000" }}>ff</span> - ファイナルファンタジー（青系）
                 </p>
               </div>
 
@@ -501,7 +504,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-like': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'light' | 'dark' | 'kawaii';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
         icon?: 'heart' | 'star' | 'thumb';
       };
     }

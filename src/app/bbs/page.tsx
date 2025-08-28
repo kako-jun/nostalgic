@@ -703,7 +703,10 @@ export default function BBSPage() {
                 <p>
                   • <span style={{ color: "#008000" }}>light</span> - ライト（白系モノクロ）
                   <br />• <span style={{ color: "#008000" }}>dark</span> - ダーク（黒系モノクロ）
+                  <br />• <span style={{ color: "#008000" }}>retro</span> - レトロ（古いコンピュータ画面風）
                   <br />• <span style={{ color: "#008000" }}>kawaii</span> - かわいい（パステル系）
+                  <br />• <span style={{ color: "#008000" }}>mother</span> - MOTHER2（緑ストライプ）
+                  <br />• <span style={{ color: "#008000" }}>ff</span> - ファイナルファンタジー（青系）
                 </p>
               </div>
 
@@ -724,7 +727,7 @@ declare module 'react' {
       'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         max?: string;
-        theme?: 'light' | 'dark' | 'kawaii';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
         perPage?: string;
       };
     }
@@ -822,7 +825,7 @@ declare module 'react' {
                       <p style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "15px" }}>◆デモ用BBS◆</p>
                       <p style={{ marginBottom: "15px" }}>このデモページのBBS（実際に動作します）：</p>
                       
-                      <div style={{ display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px", justifyItems: "center" }}>
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Light</p>
                           <nostalgic-bbs id={publicId} theme="light" />
@@ -832,10 +835,25 @@ declare module 'react' {
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Dark</p>
                           <nostalgic-bbs id={publicId} theme="dark" />
                         </div>
+
+                        <div>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Retro</p>
+                          <nostalgic-bbs id={publicId} theme="retro" />
+                        </div>
                         
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Kawaii</p>
                           <nostalgic-bbs id={publicId} theme="kawaii" />
+                        </div>
+
+                        <div>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Mother</p>
+                          <nostalgic-bbs id={publicId} theme="mother" />
+                        </div>
+
+                        <div>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>FF</p>
+                          <nostalgic-bbs id={publicId} theme="ff" />
                         </div>
                       </div>
                       

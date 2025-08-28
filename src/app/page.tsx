@@ -173,7 +173,7 @@ export default function HomePage() {
                   <b>昨日</b>
                   <br />
                   <div style={{ marginTop: "10px" }}>
-                    <nostalgic-counter id="nostalgic-b89803bb" type="yesterday" theme="dark" digits="3" />
+                    <nostalgic-counter id="nostalgic-b89803bb" type="yesterday" theme="retro" digits="3" />
                   </div>
                 </div>
                 <div style={{ margin: "0 15px" }}></div>
@@ -188,7 +188,15 @@ export default function HomePage() {
                   <b>今月</b>
                   <br />
                   <div style={{ marginTop: "10px" }}>
-                    <nostalgic-counter id="nostalgic-b89803bb" type="month" theme="kawaii" digits="4" />
+                    <nostalgic-counter id="nostalgic-b89803bb" type="month" theme="mother" digits="4" />
+                  </div>
+                </div>
+                <div style={{ margin: "0 15px" }}></div>
+                <div className="nostalgic-counter-item">
+                  <b>総計</b>
+                  <br />
+                  <div style={{ marginTop: "10px" }}>
+                    <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="ff" digits="5" />
                   </div>
                 </div>
               </div>
@@ -217,64 +225,118 @@ export default function HomePage() {
               </p>
               <div style={{ textAlign: "center", margin: "20px 0" }}>
                 <p style={{ marginBottom: "10px" }}>このサイトが気に入ったら、いいねを押してください！</p>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px", justifyItems: "center", maxWidth: "600px", margin: "0 auto" }}>
-                  {/* Heart Icons */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "15px", justifyItems: "center", maxWidth: "900px", margin: "0 auto" }}>
+                  {/* Heart Icons - All 6 themes */}
                   <div style={{ textAlign: "center" }}>
-                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Heart × Light</p>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart × Light</p>
                     <div style={{ padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <nostalgic-like id="nostalgic-b89803bb" theme="light" icon="heart" />
                     </div>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Heart × Dark</p>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart × Dark</p>
                     <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="heart" />
                     </div>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Heart × Kawaii</p>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart × Retro</p>
+                    <div style={{ background: "linear-gradient(135deg, #0d1117 0%, #161b22 100%)", border: "1px solid #00ff41", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <nostalgic-like id="nostalgic-b89803bb" theme="retro" icon="heart" />
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart × Kawaii</p>
                     <div style={{ padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" icon="heart" />
                     </div>
                   </div>
-                  
-                  {/* Star Icons */}
                   <div style={{ textAlign: "center" }}>
-                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Star × Light</p>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart × Mother</p>
+                    <div style={{ background: "repeating-linear-gradient(45deg, #90ee90, #90ee90 5px, #98fb98 5px, #98fb98 10px)", border: "2px solid #ff8c00", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <nostalgic-like id="nostalgic-b89803bb" theme="mother" icon="heart" />
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart × FF</p>
+                    <div style={{ background: "radial-gradient(ellipse, rgba(100, 181, 246, 0.3) 0%, #1a237e 100%)", border: "1px solid #64b5f6", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <nostalgic-like id="nostalgic-b89803bb" theme="ff" icon="heart" />
+                    </div>
+                  </div>
+                  
+                  {/* Star Icons - All 6 themes */}
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Star × Light</p>
                     <div style={{ padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <nostalgic-like id="nostalgic-b89803bb" theme="light" icon="star" />
                     </div>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Star × Dark</p>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Star × Dark</p>
                     <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="star" />
                     </div>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Star × Kawaii</p>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Star × Retro</p>
+                    <div style={{ background: "linear-gradient(135deg, #0d1117 0%, #161b22 100%)", border: "1px solid #00ff41", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <nostalgic-like id="nostalgic-b89803bb" theme="retro" icon="star" />
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Star × Kawaii</p>
                     <div style={{ padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" icon="star" />
                     </div>
                   </div>
-                  
-                  {/* Thumb Icons */}
                   <div style={{ textAlign: "center" }}>
-                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Thumb × Light</p>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Star × Mother</p>
+                    <div style={{ background: "repeating-linear-gradient(45deg, #90ee90, #90ee90 5px, #98fb98 5px, #98fb98 10px)", border: "2px solid #ff8c00", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <nostalgic-like id="nostalgic-b89803bb" theme="mother" icon="star" />
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Star × FF</p>
+                    <div style={{ background: "radial-gradient(ellipse, rgba(100, 181, 246, 0.3) 0%, #1a237e 100%)", border: "1px solid #64b5f6", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <nostalgic-like id="nostalgic-b89803bb" theme="ff" icon="star" />
+                    </div>
+                  </div>
+                  
+                  {/* Thumb Icons - All 6 themes */}
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Thumb × Light</p>
                     <div style={{ padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <nostalgic-like id="nostalgic-b89803bb" theme="light" icon="thumb" />
                     </div>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Thumb × Dark</p>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Thumb × Dark</p>
                     <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="thumb" />
                     </div>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <p style={{ fontSize: "14px", marginBottom: "10px" }}>Thumb × Kawaii</p>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Thumb × Retro</p>
+                    <div style={{ background: "linear-gradient(135deg, #0d1117 0%, #161b22 100%)", border: "1px solid #00ff41", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <nostalgic-like id="nostalgic-b89803bb" theme="retro" icon="thumb" />
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Thumb × Kawaii</p>
                     <div style={{ padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" icon="thumb" />
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Thumb × Mother</p>
+                    <div style={{ background: "repeating-linear-gradient(45deg, #90ee90, #90ee90 5px, #98fb98 5px, #98fb98 10px)", border: "2px solid #ff8c00", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <nostalgic-like id="nostalgic-b89803bb" theme="mother" icon="thumb" />
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "12px", marginBottom: "10px" }}>Thumb × FF</p>
+                    <div style={{ background: "radial-gradient(ellipse, rgba(100, 181, 246, 0.3) 0%, #1a237e 100%)", border: "1px solid #64b5f6", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <nostalgic-like id="nostalgic-b89803bb" theme="ff" icon="thumb" />
                     </div>
                   </div>
                 </div>
@@ -411,6 +473,113 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
+                  <b>◆ランキングのサンプル◆</b>
+                </span>
+              </p>
+              <div style={{ textAlign: "center", margin: "20px 0" }}>
+                <p style={{ marginBottom: "20px" }}>様々なテーマで表示されるランキングシステムの例</p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "25px", maxWidth: "1200px", margin: "0 auto" }}>
+                  {/* Light Theme */}
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>Light テーマ</p>
+                    <div style={{ padding: "15px", borderRadius: "4px", minHeight: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <nostalgic-ranking id="nostalgic-b89803bb" theme="light" limit="5" />
+                    </div>
+                  </div>
+
+                  {/* Dark Theme */}
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>Dark テーマ</p>
+                    <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "15px", minHeight: "300px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "4px" }}>
+                      <nostalgic-ranking id="nostalgic-b89803bb" theme="dark" limit="5" />
+                    </div>
+                  </div>
+
+                  {/* Retro Theme */}
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>Retro テーマ</p>
+                    <div style={{ 
+                      background: "linear-gradient(135deg, #0d1117 0%, #161b22 100%)", 
+                      border: "2px solid #00ff41",
+                      padding: "15px",
+                      minHeight: "300px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "4px",
+                      position: "relative",
+                      overflow: "hidden"
+                    }}>
+                      <div style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 65, 0.03) 2px, rgba(0, 255, 65, 0.03) 4px)",
+                        pointerEvents: "none"
+                      }} />
+                      <nostalgic-ranking id="nostalgic-b89803bb" theme="retro" limit="5" />
+                    </div>
+                  </div>
+
+                  {/* Kawaii Theme */}
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>Kawaii テーマ</p>
+                    <div style={{ 
+                      background: "linear-gradient(45deg, #e0f7fa 0%, #b2ebf2 100%)",
+                      border: "2px solid #9c27b0",
+                      padding: "15px",
+                      minHeight: "300px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "8px"
+                    }}>
+                      <nostalgic-ranking id="nostalgic-b89803bb" theme="kawaii" limit="5" />
+                    </div>
+                  </div>
+
+                  {/* Mother Theme */}
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>Mother テーマ</p>
+                    <div style={{ 
+                      background: "repeating-linear-gradient(45deg, #90ee90, #90ee90 10px, #98fb98 10px, #98fb98 20px)",
+                      border: "3px solid #ff8c00",
+                      padding: "15px",
+                      minHeight: "300px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "8px"
+                    }}>
+                      <nostalgic-ranking id="nostalgic-b89803bb" theme="mother" limit="5" />
+                    </div>
+                  </div>
+
+                  {/* FF Theme */}
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>FF テーマ</p>
+                    <div style={{ 
+                      background: "radial-gradient(ellipse at center, rgba(100, 181, 246, 0.2) 0%, rgba(25, 118, 210, 0.1) 50%, #1a237e 100%)",
+                      border: "2px solid #64b5f6",
+                      padding: "15px",
+                      minHeight: "300px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "12px"
+                    }}>
+                      <nostalgic-ranking id="nostalgic-b89803bb" theme="ff" limit="5" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
                   <b>◆ナンバークリックゲーム ハイスコア◆</b>
                 </span>
               </p>
@@ -433,7 +602,7 @@ export default function HomePage() {
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <nostalgic-ranking id="noun-gender-d0bb6d1f" theme="kawaii" />
+                <nostalgic-ranking id="noun-gender-d0bb6d1f" theme="retro" />
               </div>
               <div style={{ textAlign: "center", marginTop: "15px" }}>
                 <a href="https://noun-gender.llll-ll.com/quiz" className="nostalgic-old-link" target="_blank" rel="noopener noreferrer">

@@ -276,7 +276,7 @@ Messages are stored as JSON in Redis Lists:
 
 **Attributes:**
 - `id`: BBS public ID
-- `theme`: Visual style (light, dark, kawaii)
+- `theme`: Visual style (light, dark, retro, kawaii, mother, ff)
 - `page`: Page number to display (default: last page for latest messages)
 - `format`: Display format (interactive, text) - default: interactive
 - `api-base`: Custom API base URL (optional)
@@ -299,7 +299,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'light' | 'dark' | 'kawaii';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
         page?: string;
       };
     }
