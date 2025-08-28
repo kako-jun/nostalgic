@@ -475,6 +475,43 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
+                  <b>◆ゲストブックのサンプル - Retro テーマ◆</b>
+                </span>
+              </p>
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
+                <p style={{ marginBottom: "20px" }}>
+                  訪問の記念に、足あとを残していってください！
+                </p>
+                <div style={{ 
+                  background: "linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1f2428 100%)", 
+                  padding: "20px", 
+                  display: "inline-block", 
+                  width: "fit-content", 
+                  maxWidth: "100%",
+                  border: "2px solid #00ff41",
+                  position: "relative",
+                  overflow: "hidden"
+                }}>
+                  <div style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 65, 0.03) 2px, rgba(0, 255, 65, 0.03) 4px)",
+                    pointerEvents: "none"
+                  }} />
+                  <p style={{ color: "#00ff41", fontFamily: "Courier New, monospace", fontSize: "14px", textShadow: "0 0 5px currentColor", marginBottom: "10px" }}>
+                    &gt; TERMINAL_MODE: NOSTALGIC_BBS
+                  </p>
+                  <nostalgic-bbs id="nostalgic-b89803bb" theme="retro" />
+                </div>
+              </div>
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
                   <b>◆ゲストブックのサンプル - Kawaii テーマ◆</b>
                 </span>
               </p>
@@ -581,7 +618,76 @@ export default function HomePage() {
                     濃い水色
                   </div>
                 </div>
-                <nostalgic-bbs id="nostalgic-b89803bb" theme="kawaii" />
+                <nostalgic-bbs id="nostalgic-0962d8eb" theme="kawaii" />
+              </div>
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆ゲストブックのサンプル - Mother テーマ◆</b>
+                </span>
+              </p>
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
+                <p style={{ marginBottom: "20px" }}>
+                  訪問の記念に、足あとを残していってください！
+                </p>
+                <div style={{ 
+                  background: "repeating-linear-gradient(45deg, #90ee90, #90ee90 10px, #98fb98 10px, #98fb98 20px)",
+                  padding: "20px", 
+                  display: "inline-block", 
+                  width: "fit-content", 
+                  maxWidth: "100%",
+                  border: "3px solid #ff8c00",
+                  borderRadius: "8px"
+                }}>
+                  <p style={{ 
+                    color: "#2d4a2b", 
+                    fontFamily: "Impact, Arial Black, sans-serif", 
+                    fontSize: "16px", 
+                    fontWeight: "bold",
+                    marginBottom: "10px",
+                    textShadow: "1px 1px 2px rgba(255, 140, 0, 0.3)"
+                  }}>
+                    ★ MOTHER2風ゲストブック ★
+                  </p>
+                  <nostalgic-bbs id="nostalgic-b89803bb" theme="mother" />
+                </div>
+              </div>
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆ゲストブックのサンプル - FF テーマ◆</b>
+                </span>
+              </p>
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
+                <p style={{ marginBottom: "20px" }}>
+                  訪問の記念に、足あとを残していってください！
+                </p>
+                <div style={{ 
+                  background: "radial-gradient(ellipse at center, rgba(100, 181, 246, 0.2) 0%, rgba(25, 118, 210, 0.1) 50%, #1a237e 100%)",
+                  padding: "25px", 
+                  display: "inline-block", 
+                  width: "fit-content", 
+                  maxWidth: "100%",
+                  border: "2px solid #64b5f6",
+                  borderRadius: "12px"
+                }}>
+                  <p style={{ 
+                    color: "#e3f2fd", 
+                    fontFamily: "Times New Roman, serif", 
+                    fontSize: "18px", 
+                    fontWeight: "bold",
+                    marginBottom: "15px",
+                    textAlign: "center",
+                    textShadow: "0 0 8px rgba(100, 181, 246, 0.5)"
+                  }}>
+                    ⚔ FINAL FANTASY風ゲストブック ⚔
+                  </p>
+                  <nostalgic-bbs id="nostalgic-b89803bb" theme="ff" />
+                </div>
               </div>
             </div>
 
