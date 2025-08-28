@@ -110,7 +110,6 @@ export interface BBSMessage {
 export interface BBSData {
   id: string
   url: string
-  title: string
   messages: BBSMessage[]
   totalMessages: number
   currentPage: number
