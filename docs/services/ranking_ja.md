@@ -203,7 +203,7 @@ GET /api/ranking?action=updateSettings&url={URL}&token={TOKEN}&title={TITLE}&max
 
 **属性:**
 - `id`: 公開ランキングID
-- `theme`: 表示スタイル（light, dark, kawaii）
+- `theme`: 表示スタイル（light, dark, retro, kawaii, mother, ff）
 - `limit`: 表示エントリー数（1-100、デフォルト: 10）
 - `format`: 表示形式（interactive, text）- デフォルト: interactive
 - `api-base`: カスタムAPIベースURL（オプション）
@@ -227,7 +227,7 @@ declare module 'react' {
       'nostalgic-ranking': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         limit?: string;
-        theme?: 'light' | 'dark' | 'kawaii';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
         format?: 'interactive' | 'text';
         url?: string;
         token?: string;

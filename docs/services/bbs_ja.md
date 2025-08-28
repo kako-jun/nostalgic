@@ -155,7 +155,7 @@ await fetch('/api/bbs?action=clear&url=https://mysite.com&token=my-secret')
 
 **属性:**
 - `id`: 公開BBS ID
-- `theme`: 表示スタイル（light, dark, kawaii）
+- `theme`: 表示スタイル（light, dark, retro, kawaii, mother, ff）
 - `page`: 表示ページ番号（デフォルト: 最終ページで最新メッセージ表示）
 - `format`: 表示形式（interactive, text）- デフォルト: interactive
 - `api-base`: カスタムAPIベースURL（オプション）
@@ -179,7 +179,7 @@ declare module 'react' {
       'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         page?: string;
-        theme?: 'light' | 'dark' | 'kawaii';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
         format?: 'interactive' | 'text';
         'show-header'?: string;
         url?: string;

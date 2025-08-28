@@ -109,7 +109,7 @@ GET /api/like?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_
 
 **Attributes:**
 - `id`: Like button public ID
-- `theme`: Visual style (light, dark, kawaii)
+- `theme`: Visual style (light, dark, retro, kawaii, mother, ff)
 - `icon`: Icon type (heart, star, thumb) - interactive format only
 - `format`: Display format (interactive, text, image) - default: interactive
 - `api-base`: Custom API base URL (optional)
@@ -127,7 +127,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-like': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'light' | 'dark' | 'kawaii';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
         icon?: 'heart' | 'star' | 'thumb';
       };
     }

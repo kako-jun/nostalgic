@@ -642,7 +642,10 @@ export default function RankingPage() {
                 <p>
                   • <span style={{ color: "#008000" }}>light</span> - ライト（シンプル）
                   <br />• <span style={{ color: "#008000" }}>dark</span> - ダーク（青系）
+                  <br />• <span style={{ color: "#008000" }}>retro</span> - レトロ（古いコンピュータ画面風）
                   <br />• <span style={{ color: "#008000" }}>kawaii</span> - カワイイ（黄系）
+                  <br />• <span style={{ color: "#008000" }}>mother</span> - MOTHER2（緑ストライプ）
+                  <br />• <span style={{ color: "#008000" }}>ff</span> - ファイナルファンタジー（青系）
                 </p>
               </div>
 
@@ -663,7 +666,7 @@ declare module 'react' {
       'nostalgic-ranking': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         limit?: string;
-        theme?: 'light' | 'dark' | 'kawaii';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
         format?: 'html' | 'json';
         url?: string;
         token?: string;
@@ -690,7 +693,7 @@ declare module 'react' {
                       <p style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "15px" }}>◆デモ用ランキング◆</p>
                       <p style={{ marginBottom: "15px" }}>このデモページのランキング（実際に動作します）：</p>
                       
-                      <div style={{ display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "20px", justifyItems: "center" }}>
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Light</p>
                           <nostalgic-ranking id={publicId} theme="light" limit="5" />
@@ -700,10 +703,25 @@ declare module 'react' {
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Dark</p>
                           <nostalgic-ranking id={publicId} theme="dark" limit="5" />
                         </div>
+
+                        <div>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Retro</p>
+                          <nostalgic-ranking id={publicId} theme="retro" limit="5" />
+                        </div>
                         
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Kawaii</p>
                           <nostalgic-ranking id={publicId} theme="kawaii" limit="5" />
+                        </div>
+
+                        <div>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Mother</p>
+                          <nostalgic-ranking id={publicId} theme="mother" limit="5" />
+                        </div>
+
+                        <div>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>FF</p>
+                          <nostalgic-ranking id={publicId} theme="ff" limit="5" />
                         </div>
                       </div>
                       

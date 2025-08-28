@@ -109,7 +109,7 @@ GET /api/like?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_
 
 **属性:**
 - `id`: 公開いいねボタンID
-- `theme`: 表示スタイル（light, dark, kawaii）
+- `theme`: 表示スタイル（light, dark, retro, kawaii, mother, ff）
 - `icon`: アイコン種類（heart, star, thumb）- インタラクティブ形式のみ
 - `format`: 表示形式（interactive, text, image）- デフォルト: interactive
 - `api-base`: カスタムAPIベースURL（オプション）
@@ -184,7 +184,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-like': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'light' | 'dark' | 'kawaii';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
         icon?: 'heart' | 'star' | 'thumb';
         format?: 'interactive' | 'text' | 'image';
         'api-base'?: string;

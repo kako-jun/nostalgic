@@ -285,7 +285,7 @@ Rankings use Redis Sorted Sets for efficient sorting:
 
 **Attributes:**
 - `id`: Ranking public ID
-- `theme`: Visual style (light, dark, kawaii)
+- `theme`: Visual style (light, dark, retro, kawaii, mother, ff)
 - `limit`: Number of entries to display (1-100, default: 10)
 - `format`: Display format (interactive, text) - default: interactive
 - `api-base`: Custom API base URL (optional)
@@ -303,7 +303,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-ranking': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'light' | 'dark' | 'kawaii';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
         limit?: string;
       };
     }
