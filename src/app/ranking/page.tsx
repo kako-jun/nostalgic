@@ -33,6 +33,7 @@ export default function RankingPage() {
   const [removeName, setRemoveName] = useState("");
 
   // Update settings form specific states
+  const [title, setTitle] = useState("");
   const [settingsTitle, setSettingsTitle] = useState("");
   const [settingsMax, setSettingsMax] = useState("");
   const [settingsSortOrder, setSettingsSortOrder] = useState("");
@@ -74,6 +75,9 @@ export default function RankingPage() {
     if (!sharedUrl || !sharedToken) return;
 
     let apiUrl = `/api/ranking?action=create&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    if (title) {
+      apiUrl += `&title=${encodeURIComponent(title)}`;
+    }
     if (maxEntries) {
       apiUrl += `&max=${maxEntries}`;
     }
@@ -378,6 +382,7 @@ export default function RankingPage() {
               >
                 https://nostalgic.llll-ll.com/api/ranking?action=create&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
                 &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
+                {title && `&title=${encodeURIComponent(title)}`}
                 {maxEntries && `&max=${maxEntries}`}
                 {sortOrder !== "desc" && `&sortOrder=${sortOrder}`}
                 {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
@@ -431,6 +436,23 @@ export default function RankingPage() {
                       fontSize: "16px"
                     }}
                     required
+                  />
+                </p>
+
+                <p>
+                  <b>ランキングタイトル（オプション）：</b>
+                  <input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    type="text"
+                    placeholder="マイランキング"
+                    style={{
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
                   />
                 </p>
 

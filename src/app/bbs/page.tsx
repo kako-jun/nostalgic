@@ -334,6 +334,7 @@ export default function BBSPage() {
               >
                 https://nostalgic.llll-ll.com/api/bbs?action=create&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
                 &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
+                {title && `&title=${encodeURIComponent(title)}`}
                 {maxMessages && `&max=${maxMessages}`}
                 {messagesPerPage && `&perPage=${messagesPerPage}`}
                 {standardSelectLabel && standardSelectOptions && `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}`}
@@ -390,6 +391,23 @@ export default function BBSPage() {
                       fontSize: "16px"
                     }}
                     required
+                  />
+                </p>
+
+                <p>
+                  <b>BBSタイトル（オプション）：</b>
+                  <input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    type="text"
+                    placeholder="マイBBS"
+                    style={{
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
                   />
                 </p>
 
