@@ -15,6 +15,7 @@ import {
   UnifiedAPISchemas,
   CommonResponseSchemas
 } from '@/lib/validation/service-schemas'
+import { BBSUpdateSettingsParamsType } from '@/domain/bbs/bbs.entity'
 
 /**
  * CREATE アクション
@@ -184,8 +185,32 @@ const displayHandler = ApiHandler.create({
 const updateSettingsHandler = ApiHandler.create({
   paramsSchema: BBSSchemas.updateSettings,
   resultSchema: BBSSchemas.data,
-  handler: async ({ url, token, ...params }) => {
-    return await bbsService.updateSettings(url, token, params)
+  handler: async ({ url, token, standardSelectLabel, standardSelectOptions, incrementalSelectLabel, incrementalSelectOptions, emoteSelectLabel, emoteSelectOptions, ...params }) => {
+    // 個別パラメータをオブジェクトに変換
+    const processedParams: Partial<BBSUpdateSettingsParamsType> = { ...params }
+    
+    if (standardSelectLabel || standardSelectOptions) {
+      processedParams.standardSelect = {
+        label: standardSelectLabel || '',
+        options: standardSelectOptions ? standardSelectOptions.split(',').map(s => s.trim()) : []
+      }
+    }
+    
+    if (incrementalSelectLabel || incrementalSelectOptions) {
+      processedParams.incrementalSelect = {
+        label: incrementalSelectLabel || '',
+        options: incrementalSelectOptions ? incrementalSelectOptions.split(',').map(s => s.trim()) : []
+      }
+    }
+    
+    if (emoteSelectLabel || emoteSelectOptions) {
+      processedParams.emoteSelect = {
+        label: emoteSelectLabel || '',
+        options: emoteSelectOptions ? emoteSelectOptions.split(',').map(s => s.trim()) : []
+      }
+    }
+    
+    return await bbsService.updateSettings(url, token, processedParams)
   }
 })
 
