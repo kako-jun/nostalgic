@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { Result, Ok, Err, ValidationError, NotFoundError } from '@/lib/core/result'
 import { BaseNumericService } from '@/lib/core/base-service'
 import { ValidationFramework } from '@/lib/core/validation'
-import { getLikeLimits } from '@/lib/core/config'
+import { LIKE } from '@/lib/validation/schema-constants'
 import { RepositoryFactory } from '@/lib/core/repository'
 import { createHash } from 'crypto'
 import {
@@ -23,10 +23,9 @@ import {
  */
 export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCreateParams> {
   constructor() {
-    const limits = getLikeLimits()
     const config = {
       serviceName: 'like' as const,
-      maxValue: limits.maxValue
+      maxValue: LIKE.COUNT.MAX
     }
     
     super(config, LikeEntitySchema, LikeDataSchema)
@@ -278,9 +277,8 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
       return Err(new ValidationError('Like count cannot be negative'))
     }
 
-    const limits = getLikeLimits()
-    if (value > limits.maxValue) {
-      return Err(new ValidationError(`Like count cannot exceed ${limits.maxValue}`))
+    if (value > LIKE.COUNT.MAX) {
+      return Err(new ValidationError(`Like count cannot exceed ${LIKE.COUNT.MAX}`))
     }
 
     // いいね数を設定

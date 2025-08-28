@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { Result, Ok, Err, ValidationError, NotFoundError } from '@/lib/core/result'
 import { BaseNumericService } from '@/lib/core/base-service'
 import { ValidationFramework } from '@/lib/core/validation'
-import { getServiceLimits } from '@/lib/core/config'
+import { COUNTER } from '@/lib/validation/schema-constants'
 import { RepositoryFactory } from '@/lib/core/repository'
 import { getRedis } from '@/lib/core/db'
 import { createHash } from 'crypto'
@@ -26,7 +26,7 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
   private readonly redis = getRedis()
 
   constructor() {
-    const limits = getServiceLimits('counter') as { maxValue: number; maxDigits: number; dailyRetentionDays: number }
+    const limits = { maxValue: 999999999, maxDigits: COUNTER.DIGITS.MAX, dailyRetentionDays: 365 }
     const config = {
       serviceName: 'counter' as const,
       maxValue: limits.maxValue

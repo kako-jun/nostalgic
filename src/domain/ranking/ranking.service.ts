@@ -6,7 +6,6 @@ import { z } from 'zod'
 import { Result, Ok, Err, ValidationError, NotFoundError } from '@/lib/core/result'
 import { BaseService } from '@/lib/core/base-service'
 import { ValidationFramework } from '@/lib/core/validation'
-import { getRankingLimits } from '@/lib/core/config'
 import { RepositoryFactory, SortedSetRepository } from '@/lib/core/repository'
 import { getRedis } from '@/lib/core/db'
 import { createHash } from 'crypto'
@@ -33,10 +32,9 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
   private readonly redis = getRedis()
 
   constructor() {
-    const limits = getRankingLimits()
     const config = {
       serviceName: 'ranking' as const,
-      maxValue: limits.maxScore
+      maxValue: RANKING.SCORE.MAX
     }
     
     super(config, RankingEntitySchema, RankingDataSchema)
@@ -133,13 +131,12 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
     }
 
     // スコア制限チェック
-    const limits = getRankingLimits()
-    if (params.score > limits.maxScore) {
-      return Err(new ValidationError(`Score exceeds maximum of ${limits.maxScore}`))
+    if (params.score > RANKING.SCORE.MAX) {
+      return Err(new ValidationError(`Score exceeds maximum of ${RANKING.SCORE.MAX}`))
     }
 
-    if (params.name.length > limits.maxNameLength) {
-      return Err(new ValidationError(`Name exceeds maximum length of ${limits.maxNameLength}`))
+    if (params.name.length > RANKING.NAME.MAX_LENGTH) {
+      return Err(new ValidationError(`Name exceeds maximum length of ${RANKING.NAME.MAX_LENGTH}`))
     }
 
     // 連投防止マーク（userHashが提供された場合）
@@ -194,7 +191,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
     }
 
     // エントリー数制限チェック
-    await this.enforceMaxEntries(entity.id, limits.maxEntries)
+    await this.enforceMaxEntries(entity.id, RANKING.MAX_ENTRIES.MAX)
 
     // エンティティ更新
     entity.lastSubmit = new Date()
@@ -249,13 +246,12 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
     }
 
     // スコア制限チェック
-    const limits = getRankingLimits()
-    if (params.score > limits.maxScore) {
-      return Err(new ValidationError(`Score exceeds maximum of ${limits.maxScore}`))
+    if (params.score > RANKING.SCORE.MAX) {
+      return Err(new ValidationError(`Score exceeds maximum of ${RANKING.SCORE.MAX}`))
     }
 
-    if (params.name.length > limits.maxNameLength) {
-      return Err(new ValidationError(`Name exceeds maximum length of ${limits.maxNameLength}`))
+    if (params.name.length > RANKING.NAME.MAX_LENGTH) {
+      return Err(new ValidationError(`Name exceeds maximum length of ${RANKING.NAME.MAX_LENGTH}`))
     }
 
     // 連投防止マーク（userHashが提供された場合）
@@ -296,7 +292,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
     }
 
     // エントリー数制限チェック
-    await this.enforceMaxEntries(entity.id, limits.maxEntries)
+    await this.enforceMaxEntries(entity.id, RANKING.MAX_ENTRIES.MAX)
 
     // エンティティ更新
     entity.lastSubmit = new Date()
@@ -604,8 +600,7 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
   private async markSubmitTime(id: string, userHash: string): Promise<Result<void, ValidationError>> {
     const submitKey = `ranking:${id}:submit:${userHash}`
     const submitRepo = RepositoryFactory.createEntity(z.string(), 'ranking_submit')
-    const limits = getRankingLimits() as { submitCooldown: number }
-    const ttl = limits.submitCooldown // デフォルト60秒
+    const ttl = RANKING.SUBMIT_COOLDOWN // デフォルト60秒
 
     const saveResult = await submitRepo.saveWithTTL(submitKey, new Date().toISOString(), ttl)
     if (!saveResult.success) {
