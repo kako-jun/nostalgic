@@ -36,8 +36,6 @@ export const BBSFieldSchemas = {
   messageText: z.string().min(BBS_LIMITS.MESSAGE_TEXT_MIN).max(BBS_LIMITS.MESSAGE_TEXT_MAX),
   messageId: z.string(),
   authorHash: z.string(),
-  icon: z.string().optional(),
-  iconForArray: z.string(),
   page: z.coerce.number().int().min(1),
   maxMessages: z.coerce.number().int().min(BBS_LIMITS.MAX_MESSAGES_MIN).max(BBS_LIMITS.MAX_MESSAGES_MAX),
   messagesPerPage: z.coerce.number().int().min(BBS_LIMITS.MESSAGES_PER_PAGE_MIN).max(BBS_LIMITS.MESSAGES_PER_PAGE_MAX),
@@ -47,7 +45,15 @@ export const BBSFieldSchemas = {
   enableFlags: z.coerce.boolean(),
   updateMessagesPerPage: z.coerce.number().int().min(BBS_LIMITS.UPDATE_MESSAGES_PER_PAGE_MIN).max(BBS_LIMITS.UPDATE_MESSAGES_PER_PAGE_MAX),
   updateMaxMessages: z.coerce.number().int().min(BBS_LIMITS.UPDATE_MAX_MESSAGES_MIN).max(BBS_LIMITS.UPDATE_MAX_MESSAGES_MAX),
-  editToken: z.string()
+  editToken: z.string(),
+  // 3種類のセレクト機能用
+  selectConfig: z.object({
+    label: z.string().default(''),
+    options: z.array(z.string()).default([])
+  }).default({ label: '', options: [] }),
+  standardValue: z.string().optional(),
+  incrementalValue: z.string().optional(),
+  emoteValue: z.string().optional()
 } as const
 
 /**
@@ -69,18 +75,20 @@ export interface BBSSettings {
   title: string
   maxMessages: number
   messagesPerPage: number
-  icons: string[]
-  selects: BBSSelectOption[]
+  standardSelect?: SelectConfig
+  incrementalSelect?: SelectConfig
+  emoteSelect?: SelectConfig
   webhookUrl?: string
 }
 
 /**
- * BBSセレクトオプションの型
+ * セレクト設定の型
  */
-export interface BBSSelectOption {
+export interface SelectConfig {
   label: string
   options: string[]
 }
+
 
 /**
  * BBSメッセージの型
@@ -90,8 +98,9 @@ export interface BBSMessage {
   author: string
   message: string
   timestamp: Date
-  icon?: string
-  selects?: string[]
+  standardValue?: string
+  incrementalValue?: string
+  emoteValue?: string
   authorHash: string
 }
 
@@ -123,8 +132,9 @@ export interface BBSCreateParams {
   title?: string
   maxMessages?: number
   messagesPerPage?: number
-  icons?: string[]
-  selects?: BBSSelectOption[]
+  standardSelect?: SelectConfig
+  incrementalSelect?: SelectConfig
+  emoteSelect?: SelectConfig
   webhookUrl?: string
 }
 
@@ -134,8 +144,9 @@ export interface BBSCreateParams {
 export interface BBSPostParams {
   author: string
   message: string
-  icon?: string
-  selects?: string[]
+  standardValue?: string
+  incrementalValue?: string
+  emoteValue?: string
   authorHash: string
 }
 
@@ -146,8 +157,9 @@ export interface BBSUpdateParams {
   messageId: string
   author: string
   message: string
-  icon?: string
-  selects?: string[]
+  standardValue?: string
+  incrementalValue?: string
+  emoteValue?: string
   authorHash: string
 }
 
@@ -170,17 +182,13 @@ export interface BBSDisplayParams {
 /**
  * Zodスキーマ定義
  */
-export const BBSSelectOptionSchema = z.object({
-  label: BBSFieldSchemas.selectLabel,
-  options: z.array(BBSFieldSchemas.selectOption).max(50)
-})
-
 export const BBSSettingsSchema = z.object({
   title: BBSFieldSchemas.bbsTitle.default('📝 BBS'),
   maxMessages: BBSFieldSchemas.maxMessages,
   messagesPerPage: BBSFieldSchemas.messagesPerPage,
-  icons: z.array(BBSFieldSchemas.iconForArray).max(20),
-  selects: z.array(BBSSelectOptionSchema).max(3),
+  standardSelect: BBSFieldSchemas.selectConfig.optional(),
+  incrementalSelect: BBSFieldSchemas.selectConfig.optional(),
+  emoteSelect: BBSFieldSchemas.selectConfig.optional(),
   webhookUrl: CommonSchemas.url.optional()
 })
 
@@ -198,8 +206,9 @@ export const BBSMessageSchema = z.object({
   author: BBSFieldSchemas.author,
   message: BBSFieldSchemas.messageText,
   timestamp: CommonSchemas.date,
-  icon: BBSFieldSchemas.icon.optional(),
-  selects: z.array(z.string()).max(3).optional(),
+  standardValue: BBSFieldSchemas.standardValue,
+  incrementalValue: BBSFieldSchemas.incrementalValue,
+  emoteValue: BBSFieldSchemas.emoteValue,
   authorHash: BBSFieldSchemas.authorHash
 })
 
@@ -225,16 +234,15 @@ export const BBSCreateParamsSchema = z.object({
   title: BBSFieldSchemas.bbsTitle.default('💬 BBS'),
   maxMessages: BBSFieldSchemas.maxMessages.default(1000),
   messagesPerPage: BBSFieldSchemas.messagesPerPage.default(10),
-  icons: z.array(BBSFieldSchemas.iconForArray).max(20).default([]),
-  selects: z.array(BBSSelectOptionSchema).max(3).default([]),
   webhookUrl: CommonSchemas.url.optional()
 })
 
 export const BBSPostParamsSchema = z.object({
   author: BBSFieldSchemas.author,
   message: BBSFieldSchemas.messageText,
-  icon: BBSFieldSchemas.icon.optional(),
-  selects: z.array(z.string()).max(3).optional(),
+  standardValue: BBSFieldSchemas.standardValue,
+  incrementalValue: BBSFieldSchemas.incrementalValue,
+  emoteValue: BBSFieldSchemas.emoteValue,
   authorHash: BBSFieldSchemas.authorHash
 })
 
@@ -242,8 +250,9 @@ export const BBSUpdateParamsSchema = z.object({
   messageId: BBSFieldSchemas.messageId,
   author: BBSFieldSchemas.author,
   message: BBSFieldSchemas.messageText,
-  icon: BBSFieldSchemas.icon.optional(),
-  selects: z.array(z.string()).max(3).optional(),
+  standardValue: BBSFieldSchemas.standardValue,
+  incrementalValue: BBSFieldSchemas.incrementalValue,
+  emoteValue: BBSFieldSchemas.emoteValue,
   authorHash: BBSFieldSchemas.authorHash
 })
 
@@ -264,8 +273,9 @@ export const BBSUpdateSettingsParamsSchema = z.object({
   title: BBSFieldSchemas.bbsTitle.optional(),
   messagesPerPage: BBSFieldSchemas.messagesPerPage.optional(),
   maxMessages: BBSFieldSchemas.maxMessages.optional(),
-  icons: z.array(BBSFieldSchemas.iconForArray).max(20).optional(),
-  selects: z.array(BBSSelectOptionSchema).max(3).optional(),
+  standardSelect: BBSFieldSchemas.selectConfig.optional(),
+  incrementalSelect: BBSFieldSchemas.selectConfig.optional(),
+  emoteSelect: BBSFieldSchemas.selectConfig.optional(),
   webhookUrl: CommonSchemas.url.optional()
 })
 
@@ -274,7 +284,6 @@ export const BBSUpdateSettingsParamsSchema = z.object({
  */
 export type BBSEntityType = z.infer<typeof BBSEntitySchema>
 export type BBSSettingsType = z.infer<typeof BBSSettingsSchema>
-export type BBSSelectOptionType = z.infer<typeof BBSSelectOptionSchema>
 export type BBSMessageType = z.infer<typeof BBSMessageSchema>
 export type BBSDataType = z.infer<typeof BBSDataSchema>
 export type BBSCreateParamsType = z.infer<typeof BBSCreateParamsSchema>

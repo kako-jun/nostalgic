@@ -250,8 +250,10 @@ export const BBSSchemas = {
     title: BBSFieldSchemas.bbsTitle.default('BBS'),
     messagesPerPage: BBSFieldSchemas.messagesPerPage.default(10),
     max: BBSFieldSchemas.maxMessages.default(100),
-    enableIcons: BBSFieldSchemas.enableFlags.default(true),
-    enableSelects: BBSFieldSchemas.enableFlags.default(false),
+    // 3種類のセレクト機能（デフォルトは空配列）
+    standardSelect: BBSFieldSchemas.selectConfig,
+    incrementalSelect: BBSFieldSchemas.selectConfig,
+    emoteSelect: BBSFieldSchemas.selectConfig,
     webhookUrl: CommonSchemas.url.optional()
   }),
 
@@ -261,10 +263,9 @@ export const BBSSchemas = {
     id: CommonSchemas.publicId,
     author: BBSFieldSchemas.author.default(BBS.AUTHOR.DEFAULT_VALUE),
     message: BBSFieldSchemas.messageText,
-    icon: BBSFieldSchemas.icon,
-    select1: BBSFieldSchemas.selectOption.optional(),
-    select2: BBSFieldSchemas.selectOption.optional(),
-    select3: BBSFieldSchemas.selectOption.optional()
+    standardValue: BBSFieldSchemas.standardValue,
+    incrementalValue: BBSFieldSchemas.incrementalValue,
+    emoteValue: BBSFieldSchemas.emoteValue
   }),
 
   // ID指定投稿用パラメータ
@@ -274,7 +275,9 @@ export const BBSSchemas = {
     token: CommonSchemas.token,
     author: BBSFieldSchemas.author.default(BBS.AUTHOR.DEFAULT_VALUE),
     message: BBSFieldSchemas.messageText,
-    icon: BBSFieldSchemas.icon
+    standardValue: BBSFieldSchemas.standardValue,
+    incrementalValue: BBSFieldSchemas.incrementalValue,
+    emoteValue: BBSFieldSchemas.emoteValue
   }),
 
   // メッセージ編集用パラメータ
@@ -286,10 +289,9 @@ export const BBSSchemas = {
     editToken: BBSFieldSchemas.editToken,
     author: BBSFieldSchemas.author,
     message: BBSFieldSchemas.messageText,
-    icon: BBSFieldSchemas.icon,
-    select1: BBSFieldSchemas.selectOption.optional(),
-    select2: BBSFieldSchemas.selectOption.optional(),
-    select3: BBSFieldSchemas.selectOption.optional()
+    standardValue: BBSFieldSchemas.standardValue,
+    incrementalValue: BBSFieldSchemas.incrementalValue,
+    emoteValue: BBSFieldSchemas.emoteValue
   }),
 
   // ID指定メッセージ編集用パラメータ
@@ -300,10 +302,9 @@ export const BBSSchemas = {
     editToken: BBSFieldSchemas.editToken,
     author: BBSFieldSchemas.author,
     message: BBSFieldSchemas.messageText,
-    icon: BBSFieldSchemas.icon,
-    select1: BBSFieldSchemas.selectOption.optional(),
-    select2: BBSFieldSchemas.selectOption.optional(),
-    select3: BBSFieldSchemas.selectOption.optional()
+    standardValue: BBSFieldSchemas.standardValue,
+    incrementalValue: BBSFieldSchemas.incrementalValue,
+    emoteValue: BBSFieldSchemas.emoteValue
   }),
 
   // メッセージ削除用パラメータ
@@ -370,10 +371,11 @@ export const BBSSchemas = {
     author: z.string(),
     message: z.string(),
     timestamp: z.date(),
-    icon: BBSFieldSchemas.selectOption.optional(),
-    selects: z.array(z.string()).optional(),
+    standardValue: BBSFieldSchemas.standardValue,
+    incrementalValue: BBSFieldSchemas.incrementalValue,
+    emoteValue: BBSFieldSchemas.emoteValue,
     authorHash: z.string(),
-    editToken: BBSFieldSchemas.selectOption.optional()
+    editToken: z.string().optional()
   }),
 
   // 投稿結果形式
@@ -388,8 +390,9 @@ export const BBSSchemas = {
         author: z.string(),
         message: z.string(),
         timestamp: z.date(),
-        icon: BBSFieldSchemas.selectOption.optional(),
-        selects: z.array(z.string()).optional(),
+        standardValue: BBSFieldSchemas.standardValue,
+        incrementalValue: BBSFieldSchemas.incrementalValue,
+        emoteValue: BBSFieldSchemas.emoteValue,
         authorHash: z.string()
       })),
       totalMessages: z.number().int().min(0),
@@ -405,11 +408,9 @@ export const BBSSchemas = {
         title: z.string(),
         maxMessages: z.number().int().positive(),
         messagesPerPage: z.number().int().positive(),
-        icons: z.array(z.string()),
-        selects: z.array(z.object({
-          label: z.string(),
-          options: z.array(z.string())
-        }))
+        standardSelect: BBSFieldSchemas.selectConfig.optional(),
+        incrementalSelect: BBSFieldSchemas.selectConfig.optional(),
+        emoteSelect: BBSFieldSchemas.selectConfig.optional()
       }),
       lastMessage: z.date().optional()
     }),
@@ -427,8 +428,9 @@ export const BBSSchemas = {
       author: z.string(),
       message: z.string(),
       timestamp: z.date(),
-      icon: BBSFieldSchemas.selectOption.optional(),
-      selects: z.array(z.string()).optional(),
+      standardValue: BBSFieldSchemas.standardValue,
+      incrementalValue: BBSFieldSchemas.incrementalValue,
+      emoteValue: BBSFieldSchemas.emoteValue,
       authorHash: z.string()
     })),
     totalMessages: z.number().int().min(0),
@@ -444,11 +446,9 @@ export const BBSSchemas = {
       title: z.string(),
       maxMessages: z.number().int().positive(),
       messagesPerPage: z.number().int().positive(),
-      icons: z.array(z.string()),
-      selects: z.array(z.object({
-        label: z.string(),
-        options: z.array(z.string())
-      }))
+      standardSelect: BBSFieldSchemas.selectConfig.optional(),
+      incrementalSelect: BBSFieldSchemas.selectConfig.optional(),
+      emoteSelect: BBSFieldSchemas.selectConfig.optional()
     }),
     lastMessage: z.date().optional()
   })
@@ -460,7 +460,7 @@ export const UnifiedAPISchemas = {
   error: z.object({
     success: z.literal(false),
     error: z.string(),
-    code: BBSFieldSchemas.selectOption.optional(),
+    code: z.string().optional(),
     details: z.record(z.string(), z.unknown()).optional()
   }),
 

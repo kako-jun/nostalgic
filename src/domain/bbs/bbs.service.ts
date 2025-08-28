@@ -59,8 +59,10 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
       title: params.title || 'BBS',
       maxMessages: params.maxMessages || limits.maxMessages,
       messagesPerPage: params.messagesPerPage || limits.messagesPerPage,
-      icons: params.icons || [],
-      selects: params.selects || []
+      standardSelect: params.standardSelect,
+      incrementalSelect: params.incrementalSelect,
+      emoteSelect: params.emoteSelect,
+      webhookUrl: params.webhookUrl
     }
 
     const entity: BBSEntity = {
@@ -183,8 +185,9 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
       author: params.author,
       message: params.message,
       timestamp: new Date(),
-      icon: params.icon,
-      selects: params.selects,
+      standardValue: params.standardValue,
+      incrementalValue: params.incrementalValue,
+      emoteValue: params.emoteValue,
       authorHash: params.authorHash
     }
 
@@ -225,8 +228,9 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
           messageId,
           author: message.author,
           message: message.message,
-          icon: message.icon,
-          selects: message.selects
+          standardValue: message.standardValue,
+          incrementalValue: message.incrementalValue,
+          emoteValue: message.emoteValue
         }
       }
 
@@ -286,8 +290,9 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
       ...messages[messageIndex],
       author: params.author,
       message: params.message,
-      icon: params.icon,
-      selects: params.selects
+      standardValue: params.standardValue,
+      incrementalValue: params.incrementalValue,
+      emoteValue: params.emoteValue
       // timestamp は更新しない（投稿順序を維持）
     }
 
@@ -509,11 +514,14 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     if (params.maxMessages !== undefined) {
       entity.settings.maxMessages = params.maxMessages
     }
-    if (params.icons !== undefined) {
-      entity.settings.icons = params.icons
+    if (params.standardSelect !== undefined) {
+      entity.settings.standardSelect = params.standardSelect
     }
-    if (params.selects !== undefined) {
-      entity.settings.selects = params.selects
+    if (params.incrementalSelect !== undefined) {
+      entity.settings.incrementalSelect = params.incrementalSelect
+    }
+    if (params.emoteSelect !== undefined) {
+      entity.settings.emoteSelect = params.emoteSelect
     }
     if (params.webhookUrl !== undefined) {
       entity.settings.webhookUrl = params.webhookUrl
@@ -546,8 +554,9 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     params: {
       author: string
       message: string
-      icon?: string
-      selects?: string[]
+      standardValue?: string
+      incrementalValue?: string
+      emoteValue?: string
       authorHash: string
     }
   ): Promise<Result<{ data: BBSData, messageId: string, editToken: string }, ValidationError | NotFoundError>> {
@@ -611,8 +620,9 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
       author: params.author,
       message: params.message,
       timestamp: new Date(),
-      icon: params.icon,
-      selects: params.selects,
+      standardValue: params.standardValue,
+      incrementalValue: params.incrementalValue,
+      emoteValue: params.emoteValue,
       authorHash: params.authorHash
     }
 
@@ -747,8 +757,9 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     params: {
       author: string
       message: string
-      icon?: string
-      selects?: string[]
+      standardValue?: string
+      incrementalValue?: string
+      emoteValue?: string
     }
   ): Promise<Result<BBSData, ValidationError | NotFoundError>> {
     // エンティティ取得
@@ -801,8 +812,9 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
       ...targetMessage,
       author: params.author,
       message: params.message,
-      icon: params.icon,
-      selects: params.selects,
+      standardValue: params.standardValue,
+      incrementalValue: params.incrementalValue,
+      emoteValue: params.emoteValue,
       timestamp: new Date(), // 編集時刻で更新
     }
 
@@ -830,8 +842,9 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
           messageId,
           author: params.author,
           message: params.message,
-          icon: params.icon,
-          selects: params.selects
+          standardValue: params.standardValue,
+          incrementalValue: params.incrementalValue,
+          emoteValue: params.emoteValue
         }
       }
 
