@@ -14,6 +14,12 @@ export default function RankingPage() {
   const [votingResults, setVotingResults] = useState<any[]>([]);
   const [votingMessage, setVotingMessage] = useState("");
 
+  // controlled components用のstate
+  const [createUrl, setCreateUrl] = useState("");
+  const [createToken, setCreateToken] = useState("");
+  const [submitName, setSubmitName] = useState("");
+  const [submitScore, setSubmitScore] = useState("");
+
   const urlRef = useRef<HTMLInputElement>(null);
   const tokenRef = useRef<HTMLInputElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
@@ -47,10 +53,11 @@ export default function RankingPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const url = urlRef.current?.value;
-    const token = tokenRef.current?.value;
-    const name = nameRef.current?.value;
-    const score = scoreRef.current?.value;
+    // controlled componentsの値を使用
+    const url = mode === "create" ? createUrl : urlRef.current?.value;
+    const token = mode === "create" ? createToken : tokenRef.current?.value;
+    const name = mode === "submit" ? submitName : nameRef.current?.value;
+    const score = mode === "submit" ? submitScore : scoreRef.current?.value;
     const max = maxRef.current?.value;
     const sortOrder = sortOrderRef.current?.value;
     const webhookUrl = webhookUrlRef.current?.value;
@@ -234,7 +241,8 @@ export default function RankingPage() {
                 <p>
                   <b>サイトURL：</b>
                   <input
-                    ref={urlRef}
+                    value={createUrl}
+                    onChange={(e) => setCreateUrl(e.target.value)}
                     type="url"
                     placeholder="https://example.com"
                     style={{
@@ -252,7 +260,8 @@ export default function RankingPage() {
                 <p>
                   <b>オーナートークン：</b>
                   <input
-                    ref={tokenRef}
+                    value={createToken}
+                    onChange={(e) => setCreateToken(e.target.value)}
                     type="text"
                     placeholder="8-16文字"
                     style={{
@@ -664,7 +673,8 @@ declare module 'react' {
                 <p>
                   <b>プレイヤー名：</b>
                   <input
-                    ref={nameRef}
+                    value={submitName}
+                    onChange={(e) => setSubmitName(e.target.value)}
                     type="text"
                     placeholder="Player1"
                     style={{
@@ -682,7 +692,8 @@ declare module 'react' {
                 <p>
                   <b>スコア：</b>
                   <input
-                    ref={scoreRef}
+                    value={submitScore}
+                    onChange={(e) => setSubmitScore(e.target.value)}
                     type="number"
                     min="0"
                     placeholder="1000"
@@ -1167,7 +1178,7 @@ declare module 'react' {
                     }}
                   />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -1395,6 +1406,12 @@ declare module 'react' {
                 <br />• 必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
               </p>
             </div>
+
+            <p style={{ textAlign: "center", marginTop: "30px" }}>
+              <a href="#usage" className="nostalgic-old-link">
+                【使い方】へ
+              </a>
+            </p>
 
           </>
         );

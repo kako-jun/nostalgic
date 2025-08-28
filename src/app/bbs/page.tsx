@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import NostalgicLayout from "@/components/NostalgicLayout";
 import { ServiceStructuredData, BreadcrumbStructuredData } from "@/components/StructuredData";
 import ResponseDisplay from "@/components/ResponseDisplay";
@@ -11,6 +11,22 @@ export default function BBSPage() {
   const [responseType, setResponseType] = useState<'json' | 'text' | 'svg'>('json');
   const [publicId, setPublicId] = useState("");
   const [mode, setMode] = useState("create");
+
+  // 各フォーム用の独立したレスポンスstate
+  const [createResponse, setCreateResponse] = useState("");
+  const [postResponse, setPostResponse] = useState("");
+  const [getResponse, setGetResponse] = useState("");
+  const [updateResponse, setUpdateResponse] = useState("");
+  const [removeResponse, setRemoveResponse] = useState("");
+  const [clearResponse, setClearResponse] = useState("");
+  const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
+  const [deleteResponse, setDeleteResponse] = useState("");
+
+  // controlled components用のstate
+  const [createUrl, setCreateUrl] = useState("");
+  const [createToken, setCreateToken] = useState("");
+  const [postAuthor, setPostAuthor] = useState("");
+  const [postMessage, setPostMessage] = useState("");
 
   const urlRef = useRef<HTMLInputElement>(null);
   const tokenRef = useRef<HTMLInputElement>(null);
@@ -48,10 +64,11 @@ export default function BBSPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const url = urlRef.current?.value;
-    const token = tokenRef.current?.value;
-    const author = authorRef.current?.value;
-    const message = messageRef.current?.value;
+    // controlled componentsの値を使用
+    const url = mode === "create" ? createUrl : urlRef.current?.value;
+    const token = mode === "create" ? createToken : tokenRef.current?.value;
+    const author = mode === "post" ? postAuthor : authorRef.current?.value;
+    const message = mode === "post" ? postMessage : messageRef.current?.value;
     const messageId = messageIdRef.current?.value;
     const max = maxRef.current?.value;
     const perPage = perPageRef.current?.value;
@@ -104,14 +121,74 @@ export default function BBSPage() {
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
       const data = await res.json();
-      setResponse(JSON.stringify(data, null, 2));
-      setResponseType('json'); // Always JSON for BBS
+      const responseText = JSON.stringify(data, null, 2);
 
+      // 全モード共通でpublicIdを更新（createで作成されたIDは他のモードでも使用）
       if (data.id) {
         setPublicId(data.id);
       }
+
+      // modeに応じて適切なレスポンスstateを更新
+      switch (mode) {
+        case "create":
+          setCreateResponse(responseText);
+          break;
+        case "post":
+          setPostResponse(responseText);
+          break;
+        case "get":
+          setGetResponse(responseText);
+          break;
+        case "update":
+          setUpdateResponse(responseText);
+          break;
+        case "remove":
+          setRemoveResponse(responseText);
+          break;
+        case "clear":
+          setClearResponse(responseText);
+          break;
+        case "updateSettings":
+          setUpdateSettingsResponse(responseText);
+          break;
+        case "delete":
+          setDeleteResponse(responseText);
+          break;
+        default:
+          setResponse(responseText);
+      }
+      setResponseType('json'); // Always JSON for BBS
     } catch (error) {
-      setResponse(`エラー: ${error}`);
+      const errorText = `エラー: ${error}`;
+      // modeに応じて適切なレスポンスstateを更新
+      switch (mode) {
+        case "create":
+          setCreateResponse(errorText);
+          break;
+        case "post":
+          setPostResponse(errorText);
+          break;
+        case "get":
+          setGetResponse(errorText);
+          break;
+        case "update":
+          setUpdateResponse(errorText);
+          break;
+        case "remove":
+          setRemoveResponse(errorText);
+          break;
+        case "clear":
+          setClearResponse(errorText);
+          break;
+        case "updateSettings":
+          setUpdateSettingsResponse(errorText);
+          break;
+        case "delete":
+          setDeleteResponse(errorText);
+          break;
+        default:
+          setResponse(errorText);
+      }
       setResponseType('json');
     }
   };
@@ -120,7 +197,7 @@ export default function BBSPage() {
     switch (currentPage) {
       case "usage":
         return (
-          <>
+          <React.Fragment>
             <div className="nostalgic-title-bar">
               ★ Nostalgic BBS ★
               <br />
@@ -166,7 +243,8 @@ export default function BBSPage() {
                 <p>
                   <b>サイトURL：</b>
                   <input
-                    ref={urlRef}
+                    value={createUrl}
+                    onChange={(e) => setCreateUrl(e.target.value)}
                     type="url"
                     placeholder="https://example.com"
                     style={{
@@ -184,7 +262,8 @@ export default function BBSPage() {
                 <p>
                   <b>オーナートークン：</b>
                   <input
-                    ref={tokenRef}
+                    value={createToken}
+                    onChange={(e) => setCreateToken(e.target.value)}
                     type="text"
                     placeholder="8-16文字"
                     style={{
@@ -218,7 +297,7 @@ export default function BBSPage() {
 
                 <p>
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -238,9 +317,12 @@ export default function BBSPage() {
                     作成
                   </button>
                 </p>
+              </form>
 
-                <p>
-                  <b>最大メッセージ数（オプション）：</b>
+              <ResponseDisplay response={createResponse} responseType={responseType} show={!!createResponse} />
+
+              <p>
+                <b>最大メッセージ数（オプション）：</b>
                   <input
                     ref={maxRef}
                     type="number"
@@ -258,8 +340,6 @@ export default function BBSPage() {
                   />
                 </p>
               </form>
-
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
               {publicId && (
                 <div
                   style={{
@@ -309,7 +389,7 @@ export default function BBSPage() {
                   </span>
                   {publicId && (
                     <button
-                      type="submit"
+                      type="button"
                       style={{
                         marginLeft: "10px",
                         padding: "4px 12px",
@@ -332,7 +412,7 @@ export default function BBSPage() {
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={getResponse} responseType={responseType} show={!!getResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -564,7 +644,7 @@ declare module 'react' {
                     required
                   />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -586,7 +666,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={createResponse} responseType={responseType} show={!!createResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -637,7 +717,8 @@ declare module 'react' {
                 <p>
                   <b>投稿者名：</b>
                   <input
-                    ref={authorRef}
+                    value={postAuthor}
+                    onChange={(e) => setPostAuthor(e.target.value)}
                     type="text"
                     placeholder="名無し"
                     style={{
@@ -656,7 +737,8 @@ declare module 'react' {
                   <b>メッセージ：</b>
                   <br />
                   <textarea
-                    ref={messageRef}
+                    value={postMessage}
+                    onChange={(e) => setPostMessage(e.target.value)}
                     placeholder="メッセージを入力してください"
                     style={{
                       width: "80%",
@@ -671,7 +753,7 @@ declare module 'react' {
                   />
                   <br />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginTop: "10px",
                       padding: "4px 12px",
@@ -693,7 +775,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={postResponse} responseType={responseType} show={!!postResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -828,7 +910,7 @@ declare module 'react' {
                     required
                   />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -850,7 +932,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={updateResponse} responseType={responseType} show={!!updateResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -966,7 +1048,7 @@ declare module 'react' {
                     required
                   />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -988,7 +1070,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={removeResponse} responseType={responseType} show={!!removeResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -1106,7 +1188,7 @@ declare module 'react' {
                   />
                   <br />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginTop: "10px",
                       padding: "4px 12px",
@@ -1128,7 +1210,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={updateResponse} responseType={responseType} show={!!updateResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -1226,7 +1308,7 @@ declare module 'react' {
                     required
                   />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -1248,7 +1330,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={removeResponse} responseType={responseType} show={!!removeResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -1313,7 +1395,7 @@ declare module 'react' {
                     required
                   />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -1335,7 +1417,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={clearResponse} responseType={responseType} show={!!clearResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -1454,7 +1536,7 @@ declare module 'react' {
                     }}
                   />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -1476,7 +1558,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={updateSettingsResponse} responseType={responseType} show={!!updateSettingsResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -1541,7 +1623,7 @@ declare module 'react' {
                     required
                   />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -1563,7 +1645,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={deleteResponse} responseType={responseType} show={!!deleteResponse} />
             </div>
 
             <hr />
@@ -1616,12 +1698,12 @@ declare module 'react' {
               </a>{" "}
               へ
             </p>
-          </>
+          </React.Fragment>
         );
 
       case "features":
         return (
-          <>
+          <React.Fragment>
             <div className="nostalgic-title-bar">
               ★ Nostalgic BBS ★
               <br />
@@ -1684,7 +1766,13 @@ declare module 'react' {
               </p>
             </div>
 
-          </>
+            <p style={{ textAlign: "center", marginTop: "30px" }}>
+              <a href="#usage" className="nostalgic-old-link">
+                【使い方】へ
+              </a>
+            </p>
+
+          </React.Fragment>
         );
 
 

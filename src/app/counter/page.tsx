@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import NostalgicLayout from "@/components/NostalgicLayout";
 import { ServiceStructuredData, BreadcrumbStructuredData } from "@/components/StructuredData";
 import ResponseDisplay from "@/components/ResponseDisplay";
@@ -9,15 +9,31 @@ export default function CounterPage() {
   const [currentPage, setCurrentPage] = useState("features");
   const [response, setResponse] = useState("");
   const [publicId, setPublicId] = useState("");
-  const [mode, setMode] = useState("create");
   const [responseType, setResponseType] = useState<'json' | 'text' | 'svg'>('json');
+  
+  // 全フォーム共通のstate
+  const [sharedUrl, setSharedUrl] = useState("");
+  const [sharedToken, setSharedToken] = useState("");
 
-  const urlRef = useRef<HTMLInputElement>(null);
-  const tokenRef = useRef<HTMLInputElement>(null);
-  const valueRef = useRef<HTMLInputElement>(null);
-  const webhookUrlRef = useRef<HTMLInputElement>(null);
-  const selectRef = useRef<HTMLSelectElement>(null);
-  const formatRef = useRef<HTMLSelectElement>(null);
+  // URLとTokenはcontrolled componentsで管理するのでref不要
+  
+  // Webhook URLの状態管理用
+  const [webhookUrl, setWebhookUrl] = useState("");
+  
+  // 表示フォームの選択値
+  const [selectedType, setSelectedType] = useState("total");
+  const [selectedFormat, setSelectedFormat] = useState("svg");
+  
+  // 設定値
+  const [setValue, setSetValue] = useState("");
+  
+  // 各フォーム用の独立したレスポンスstate
+  const [createResponse, setCreateResponse] = useState("");
+  const [displayResponse, setDisplayResponse] = useState("");
+  const [setValueResponse, setSetValueResponse] = useState("");
+  const [incrementResponse, setIncrementResponse] = useState("");
+  const [deleteResponse, setDeleteResponse] = useState("");
+  const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
   
   useEffect(() => {
     const hash = window.location.hash.slice(1);
@@ -40,64 +56,161 @@ export default function CounterPage() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!sharedUrl || !sharedToken) return;
 
-    const url = urlRef.current?.value;
-    const token = tokenRef.current?.value;
-    const value = valueRef.current?.value;
-    const webhookUrl = webhookUrlRef.current?.value;
-
-    let apiUrl = '';
-
-    if (mode === "increment") {
-      // incrementモードでは公開IDを使用
-      if (!publicId) return;
-      setResponseType('json');
-      apiUrl = `/api/visit?action=increment&id=${encodeURIComponent(publicId)}`;
-    } else if (mode === "display") {
-      // displayモードでは公開IDを使用
-      if (!publicId) return;
-      const type = selectRef.current?.value || "total";
-      const format = formatRef.current?.value || "svg";
-      setResponseType(format as 'json' | 'text' | 'svg');
-      apiUrl = `/api/visit?action=display&id=${encodeURIComponent(publicId)}&type=${type}&format=${format}`;
-    } else {
-      // その他のモードでは従来通りurl+tokenを使用
-      if (!url || !token) return;
-      setResponseType('json');
-      apiUrl = `/api/visit?action=${mode}&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
-      
-      if (mode === "set" && value) {
-        apiUrl += `&total=${value}`;
-      }
-      
-      if (mode === "updateSettings") {
-        if (webhookUrl) {
-          apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
-        }
-      } else if (webhookUrl && mode === "create") {
-        apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
-      }
+    let apiUrl = `/api/visit?action=create&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    if (webhookUrl) {
+      apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
     }
 
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
+      const contentType = res.headers.get('content-type');
+      let responseText = '';
       
-      if (mode === "display" && formatRef.current?.value === "svg") {
-        // SVGの場合はテキストとして取得
-        const svgText = await res.text();
-        setResponse(svgText);
+      if (contentType && contentType.includes('application/json')) {
+        const jsonResponse = await res.json();
+        responseText = JSON.stringify(jsonResponse, null, 2);
+        if (jsonResponse.data?.id) {
+          setPublicId(jsonResponse.data.id);
+        }
       } else {
-        const data = await res.json();
-        setResponse(JSON.stringify(data, null, 2));
+        responseText = await res.text();
+      }
+      
+      setCreateResponse(responseText);
+    } catch (error) {
+      setCreateResponse(`エラー: ${error}`);
+    }
+  };
 
-        if (data.id) {
-          setPublicId(data.id);
+  const handleDisplay = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!publicId) return;
+
+    const apiUrl = `/api/visit?action=display&id=${encodeURIComponent(publicId)}&type=${selectedType}&format=${selectedFormat}`;
+    setResponseType(selectedFormat as 'json' | 'text' | 'svg');
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      let responseText = '';
+      
+      if (selectedFormat === "svg") {
+        responseText = await res.text();
+      } else {
+        const contentType = res.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const jsonResponse = await res.json();
+          responseText = JSON.stringify(jsonResponse, null, 2);
+        } else {
+          responseText = await res.text();
         }
       }
+      
+      setDisplayResponse(responseText);
     } catch (error) {
-      setResponse(`エラー: ${error}`);
+      setDisplayResponse(`エラー: ${error}`);
+    }
+  };
+
+  const handleSet = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sharedUrl || !sharedToken || !setValue) return;
+
+    const apiUrl = `/api/visit?action=set&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&total=${setValue}`;
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      const contentType = res.headers.get('content-type');
+      let responseText = '';
+      
+      if (contentType && contentType.includes('application/json')) {
+        const jsonResponse = await res.json();
+        responseText = JSON.stringify(jsonResponse, null, 2);
+      } else {
+        responseText = await res.text();
+      }
+      
+      setSetValueResponse(responseText);
+    } catch (error) {
+      setSetValueResponse(`エラー: ${error}`);
+    }
+  };
+
+  const handleIncrement = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!publicId) return;
+
+    const apiUrl = `/api/visit?action=increment&id=${encodeURIComponent(publicId)}`;
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      const contentType = res.headers.get('content-type');
+      let responseText = '';
+      
+      if (contentType && contentType.includes('application/json')) {
+        const jsonResponse = await res.json();
+        responseText = JSON.stringify(jsonResponse, null, 2);
+      } else {
+        responseText = await res.text();
+      }
+      
+      setIncrementResponse(responseText);
+    } catch (error) {
+      setIncrementResponse(`エラー: ${error}`);
+    }
+  };
+
+  const handleDelete = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sharedUrl || !sharedToken) return;
+
+    const apiUrl = `/api/visit?action=delete&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      const contentType = res.headers.get('content-type');
+      let responseText = '';
+      
+      if (contentType && contentType.includes('application/json')) {
+        const jsonResponse = await res.json();
+        responseText = JSON.stringify(jsonResponse, null, 2);
+      } else {
+        responseText = await res.text();
+      }
+      
+      setDeleteResponse(responseText);
+    } catch (error) {
+      setDeleteResponse(`エラー: ${error}`);
+    }
+  };
+
+  const handleUpdateSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sharedUrl || !sharedToken) return;
+
+    let apiUrl = `/api/visit?action=updateSettings&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    if (webhookUrl) {
+      apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
+    }
+
+    try {
+      const res = await fetch(apiUrl, { method: 'GET' });
+      const contentType = res.headers.get('content-type');
+      let responseText = '';
+      
+      if (contentType && contentType.includes('application/json')) {
+        const jsonResponse = await res.json();
+        responseText = JSON.stringify(jsonResponse, null, 2);
+      } else {
+        responseText = await res.text();
+      }
+      
+      setUpdateSettingsResponse(responseText);
+    } catch (error) {
+      setUpdateSettingsResponse(`エラー: ${error}`);
     }
   };
 
@@ -129,8 +242,9 @@ export default function CounterPage() {
                   wordBreak: "break-all",
                 }}
               >
-                https://nostalgic.llll-ll.com/api/visit?action=create&url=<span style={{ color: "#008000" }}>サイトURL</span>
-                &token=<span style={{ color: "#008000" }}>オーナートークン</span>
+                https://nostalgic.llll-ll.com/api/visit?action=create&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
+                {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
               </p>
               <p>
                 ※サイトURLには、カウンターを設置する予定のサイトを指定してください。「https://」から始まっている必要があります。
@@ -147,16 +261,15 @@ export default function CounterPage() {
                 または、以下のフォームで簡単に作成できます。
               </p>
               
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-                <input type="hidden" name="mode" value="create" />
+              <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
                   <input
-                    ref={urlRef}
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
                     type="url"
                     placeholder="https://example.com"
                     style={{
-                      marginLeft: "10px",
                       width: "60%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -170,11 +283,11 @@ export default function CounterPage() {
                 <p>
                   <b>オーナートークン：</b>
                   <input
-                    ref={tokenRef}
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
                     type="text"
                     placeholder="8-16文字"
                     style={{
-                      marginLeft: "10px",
                       width: "30%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -188,11 +301,11 @@ export default function CounterPage() {
                 <p>
                   <b>Webhook URL：</b>
                   <input
-                    ref={webhookUrlRef}
+                    value={webhookUrl}
+                    onChange={(e) => setWebhookUrl(e.target.value)}
                     type="url"
                     placeholder="https://hooks.slack.com/... (任意)"
                     style={{
-                      marginLeft: "10px",
                       width: "60%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -202,11 +315,11 @@ export default function CounterPage() {
                   />
                 </p>
 
+                
                 <p>
                   <button
-                    type="submit"
+                    type="button"
                     style={{
-                      marginLeft: "10px",
                       padding: "4px 12px",
                       backgroundColor: "#2196F3",
                       color: "white",
@@ -216,40 +329,20 @@ export default function CounterPage() {
                       cursor: "pointer",
                       fontFamily: "inherit"
                     }}
-                    onClick={(e) => {
-                      setMode("create");
-                      handleSubmit(e);
-                    }}
+                    onClick={handleCreate}
                   >
                     作成
                   </button>
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
-              {publicId && (
-                <div
-                  style={{
-                    backgroundColor: "#ffffcc",
-                    border: "2px solid #ff0000",
-                    padding: "10px",
-                    marginTop: "10px",
-                    fontSize: "14px"
-                  }}
-                >
-                  <b style={{ color: "#ff0000" }}>✨ 作成成功！</b>
-                  <br />
-                  あなたの公開ID：<span style={{ color: "#008000", fontWeight: "bold", fontSize: "16px", fontFamily: "monospace" }}>{publicId}</span>
-                  <br />
-                  <small>※この公開IDをSTEP 2で使用してください</small>
-                </div>
-              )}
+              <ResponseDisplay response={createResponse} responseType={responseType} show={!!createResponse} />
             </div>
 
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆STEP 2: カウンター表示データ取得◆</b>
+                  <b>◆STEP 2: 表示プレビュー◆</b>
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
@@ -262,27 +355,37 @@ export default function CounterPage() {
                   wordBreak: "break-all",
                 }}
               >
-                https://nostalgic.llll-ll.com/api/visit?action=display&id=<span style={{ color: "#008000" }}>公開ID</span>
-                &type=<span style={{ color: "#008000" }}>期間タイプ</span>&theme=<span style={{ color: "#008000" }}>テーマ</span>&format=<span style={{ color: "#008000" }}>形式</span>
+                https://nostalgic.llll-ll.com/api/visit?action=display&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>
+                &type=<span style={{ color: "#008000" }}>{selectedType}</span>&format=<span style={{ color: "#008000" }}>{selectedFormat}</span>
               </p>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームでデータを取得できます。</p>
               
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+              <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>公開ID：</b>
-                  <span style={{ marginLeft: "10px", fontFamily: "monospace", fontSize: "16px", fontWeight: "bold", color: publicId ? "#008000" : "#999" }}>
-                    {publicId || "STEP 1で作成後に表示されます"}
-                  </span>
+                  <input
+                    value={publicId}
+                    onChange={(e) => setPublicId(e.target.value)}
+                    type="text"
+                    placeholder="STEP 1で作成後に表示されます"
+                    style={{
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "monospace",
+                      fontSize: "16px"
+                    }}
+                  />
                 </p>
 
                 <p>
                   <b>期間タイプ：</b>
                   <select
-                    ref={selectRef}
+                    value={selectedType}
+                    onChange={(e) => setSelectedType(e.target.value)}
                     style={{
-                      marginLeft: "10px",
                       width: "30%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -301,9 +404,9 @@ export default function CounterPage() {
                 <p>
                   <b>形式：</b>
                   <select
-                    ref={formatRef}
+                    value={selectedFormat}
+                    onChange={(e) => setSelectedFormat(e.target.value)}
                     style={{
-                      marginLeft: "10px",
                       width: "30%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -315,33 +418,28 @@ export default function CounterPage() {
                     <option value="text">テキスト</option>
                     <option value="json">JSON</option>
                   </select>
-                  
-                  {publicId && (
-                    <button
-                      type="submit"
-                      style={{
-                        marginLeft: "10px",
+                </p>
+                <p>
+                  <button
+                    type="button"
+                    style={{
                         padding: "4px 12px",
-                        backgroundColor: "#2196F3",
-                        color: "white",
-                        border: "2px outset #2196F3",
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        fontFamily: "inherit"
-                      }}
-                      onClick={(e) => {
-                        setMode("display");
-                        handleSubmit(e);
-                      }}
-                    >
-                      表示データ取得
-                    </button>
-                  )}
+                      backgroundColor: "#2196F3",
+                      color: "white",
+                      border: "2px outset #2196F3",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handleDisplay}
+                  >
+                    表示プレビュー
+                  </button>
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response && mode === "display"} />
+              <ResponseDisplay response={displayResponse} responseType={responseType} show={!!displayResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -351,16 +449,33 @@ export default function CounterPage() {
                 </span>
               </p>
               <p>あなたのサイトのHTMLに以下のコードを追加してください。</p>
-              <pre style={{ backgroundColor: "#f0f0f0", padding: "10px", overflow: "auto", fontSize: "14px", margin: "10px 0" }}>
-                {`<script src="https://nostalgic.llll-ll.com/components/visit.js"></script>
+              
+              {publicId ? (
+                <div>
+                  <p><b>埋め込みコード:</b></p>
+                  <pre style={{ backgroundColor: "#f0f0f0", padding: "10px", overflow: "auto", fontSize: "14px", margin: "10px 0" }}>
+{`<script src="https://nostalgic.llll-ll.com/components/visit.js"></script>
+<nostalgic-counter id="`}<span style={{ color: "#00AA00" }}>{publicId}</span>{`" type="total" theme="dark"></nostalgic-counter>`}
+                  </pre>
+                  
+                  <p><b>表示URL:</b></p>
+                  <pre style={{ backgroundColor: "#f0f0f0", padding: "10px", overflow: "auto", fontSize: "14px", margin: "10px 0" }}>
+{`https://nostalgic.llll-ll.com/api/visit?action=display&id=`}<span style={{ color: "#00AA00" }}>{publicId}</span>{`&type=total&theme=dark`}
+                  </pre>
+                  
+                </div>
+              ) : (
+                <pre style={{ backgroundColor: "#f0f0f0", padding: "10px", overflow: "auto", fontSize: "14px", margin: "10px 0" }}>
+                  {`<script src="https://nostalgic.llll-ll.com/components/visit.js"></script>
 <nostalgic-counter id="`}
-                <span style={{ color: "#008000" }}>公開ID</span>
-                {`" type="`}
-                <span style={{ color: "#008000" }}>total</span>
-                {`" theme="`}
-                <span style={{ color: "#008000" }}>dark</span>
-                {`"></nostalgic-counter>`}
-              </pre>
+                  <span style={{ color: "#008000" }}>公開ID</span>
+                  {`" type="`}
+                  <span style={{ color: "#008000" }}>total</span>
+                  {`" theme="`}
+                  <span style={{ color: "#008000" }}>dark</span>
+                  {`"></nostalgic-counter>`}
+                </pre>
+              )}
               
               <div className="nostalgic-section">
                 <p>
@@ -420,13 +535,13 @@ declare module 'react' {
                 </p>
               </div>
 
-              {publicId && (
-                <div className="nostalgic-section">
-                  <p>
-                    <span className="nostalgic-section-title">
-                      <b>◆このように表示されます◆</b>
-                    </span>
-                  </p>
+              <div className="nostalgic-section">
+                <p>
+                  <span className="nostalgic-section-title">
+                    <b>◆このように表示されます◆</b>
+                  </span>
+                </p>
+                {publicId ? (
                   <div style={{ textAlign: "center", margin: "20px 0" }}>
                     <div style={{ display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap" }}>
                       <div style={{ textAlign: "center" }}>
@@ -455,8 +570,14 @@ declare module 'react' {
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div style={{ textAlign: "center", margin: "20px 0", padding: "20px", backgroundColor: "#f5f5f5", border: "1px solid #ddd" }}>
+                    <p style={{ fontSize: "14px", color: "#666" }}>
+                      カウンターを作成すると、ここにプレビューが表示されます
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="nostalgic-section">
@@ -475,22 +596,23 @@ declare module 'react' {
                   wordBreak: "break-all",
                 }}
               >
-                https://nostalgic.llll-ll.com/api/visit?action=create&url=<span style={{ color: "#008000" }}>サイトURL</span>
-                &token=<span style={{ color: "#008000" }}>オーナートークン</span>
+                https://nostalgic.llll-ll.com/api/visit?action=create&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
+                {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
               </p>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで確認できます。</p>
               
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+              <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
                   <input
-                    ref={urlRef}
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
                     type="url"
                     placeholder="https://example.com"
                     style={{
-                      marginLeft: "10px",
                       width: "60%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -504,11 +626,11 @@ declare module 'react' {
                 <p>
                   <b>オーナートークン：</b>
                   <input
-                    ref={tokenRef}
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
                     type="text"
                     placeholder="8-16文字"
                     style={{
-                      marginLeft: "10px",
                       width: "30%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -517,10 +639,12 @@ declare module 'react' {
                     }}
                     required
                   />
+                </p>
+                
+                <p>
                   <button
-                    type="submit"
+                    type="button"
                     style={{
-                      marginLeft: "10px",
                       padding: "4px 12px",
                       backgroundColor: "#2196F3",
                       color: "white",
@@ -530,10 +654,7 @@ declare module 'react' {
                       cursor: "pointer",
                       fontFamily: "inherit"
                     }}
-                    onClick={(e) => {
-                      setMode("create");
-                      handleSubmit(e);
-                    }}
+                    onClick={handleCreate}
                   >
                     公開ID確認
                   </button>
@@ -557,22 +678,22 @@ declare module 'react' {
                   wordBreak: "break-all",
                 }}
               >
-                https://nostalgic.llll-ll.com/api/visit?action=set&url=<span style={{ color: "#008000" }}>サイトURL</span>
-                &token=<span style={{ color: "#008000" }}>オーナートークン</span>&total=<span style={{ color: "#008000" }}>数値</span>
+                https://nostalgic.llll-ll.com/api/visit?action=set&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&total=<span style={{ color: "#008000" }}>{setValue || "数値"}</span>
               </p>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
               <p>または、以下のフォームで設定できます。</p>
               
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+              <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
                   <input
-                    ref={urlRef}
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
                     type="url"
                     placeholder="https://example.com"
                     style={{
-                      marginLeft: "10px",
                       width: "60%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -586,11 +707,11 @@ declare module 'react' {
                 <p>
                   <b>オーナートークン：</b>
                   <input
-                    ref={tokenRef}
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
                     type="text"
                     placeholder="8-16文字"
                     style={{
-                      marginLeft: "10px",
                       width: "30%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -602,14 +723,14 @@ declare module 'react' {
                 </p>
 
                 <p>
-                  <b>設定値：</b>
+                  <b>数値：</b>
                   <input
-                    ref={valueRef}
+                    value={setValue}
+                    onChange={(e) => setSetValue(e.target.value)}
                     type="number"
                     min="0"
                     placeholder="0"
                     style={{
-                      marginLeft: "10px",
                       width: "30%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -623,11 +744,11 @@ declare module 'react' {
                 <p>
                   <b>Webhook URL：</b>
                   <input
-                    ref={webhookUrlRef}
+                    value={webhookUrl}
+                    onChange={(e) => setWebhookUrl(e.target.value)}
                     type="url"
                     placeholder="https://hooks.slack.com/... (任意)"
                     style={{
-                      marginLeft: "10px",
                       width: "60%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -637,11 +758,11 @@ declare module 'react' {
                   />
                 </p>
 
+                
                 <p>
                   <button
-                    type="submit"
+                    type="button"
                     style={{
-                      marginLeft: "10px",
                       padding: "4px 12px",
                       backgroundColor: "#2196F3",
                       color: "white",
@@ -651,17 +772,14 @@ declare module 'react' {
                       cursor: "pointer",
                       fontFamily: "inherit"
                     }}
-                    onClick={(e) => {
-                      setMode("set");
-                      handleSubmit(e);
-                    }}
+                    onClick={handleSet}
                   >
                     値設定
                   </button>
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={setValueResponse} responseType={responseType} show={!!setValueResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -680,7 +798,7 @@ declare module 'react' {
                   wordBreak: "break-all",
                 }}
               >
-                https://nostalgic.llll-ll.com/api/visit?action=increment&id=<span style={{ color: "#008000" }}>公開ID</span>
+                https://nostalgic.llll-ll.com/api/visit?action=increment&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>
               </p>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
@@ -689,38 +807,46 @@ declare module 'react' {
                 ※Web Componentsを使用している場合は自動でカウントされるため、通常は不要です。
               </p>
               
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+              <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>公開ID：</b>
-                  <span style={{ marginLeft: "10px", fontFamily: "monospace", fontSize: "16px", fontWeight: "bold", color: publicId ? "#008000" : "#999" }}>
-                    {publicId || "STEP 1で作成後に表示されます"}
-                  </span>
-                  {publicId && (
-                    <button
-                      type="submit"
-                      style={{
-                        marginLeft: "10px",
-                        padding: "4px 12px",
-                        backgroundColor: "#2196F3",
-                        color: "white",
-                        border: "2px outset #2196F3",
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        fontFamily: "inherit"
-                      }}
-                      onClick={(e) => {
-                        setMode("increment");
-                        handleSubmit(e);
-                      }}
-                    >
-                      手動カウントアップ
-                    </button>
-                  )}
+                  <input
+                    value={publicId}
+                    onChange={(e) => setPublicId(e.target.value)}
+                    type="text"
+                    placeholder="STEP 1で作成後に表示されます"
+                    style={{
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "monospace",
+                      fontSize: "16px"
+                    }}
+                  />
+                </p>
+                
+                
+                <p>
+                  <button
+                    type="button"
+                    style={{
+                      padding: "4px 12px",
+                      backgroundColor: "#2196F3",
+                      color: "white",
+                      border: "2px outset #2196F3",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handleIncrement}
+                  >
+                    手動カウントアップ
+                  </button>
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={incrementResponse} responseType={responseType} show={!!incrementResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -731,15 +857,15 @@ declare module 'react' {
               </p>
               <p>カウンターの設定を更新します。</p>
               
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+              <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
                   <input
-                    ref={urlRef}
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
                     type="url"
                     placeholder="https://example.com"
                     style={{
-                      marginLeft: "10px",
                       width: "60%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -753,11 +879,11 @@ declare module 'react' {
                 <p>
                   <b>オーナートークン：</b>
                   <input
-                    ref={tokenRef}
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
                     type="text"
                     placeholder="8-16文字"
                     style={{
-                      marginLeft: "10px",
                       width: "30%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -772,11 +898,11 @@ declare module 'react' {
                 <p>
                   <b>Webhook URL：</b>
                   <input
-                    ref={webhookUrlRef}
+                    value={webhookUrl}
+                    onChange={(e) => setWebhookUrl(e.target.value)}
                     type="url"
                     placeholder="https://example.com/webhook (optional)"
                     style={{
-                      marginLeft: "10px",
                       width: "60%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -784,30 +910,29 @@ declare module 'react' {
                       fontSize: "16px"
                     }}
                   />
+                </p>
+                
+                <p>
                   <button
-                    type="submit"
+                    type="button"
                     style={{
-                      marginLeft: "10px",
                       padding: "4px 12px",
-                      backgroundColor: "#FF9800",
+                      backgroundColor: "#2196F3",
                       color: "white",
-                      border: "2px outset #FF9800",
+                      border: "2px outset #2196F3",
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
                       fontFamily: "inherit"
                     }}
-                    onClick={(e) => {
-                      setMode("updateSettings");
-                      handleSubmit(e);
-                    }}
+                    onClick={handleUpdateSettings}
                   >
                     設定更新
                   </button>
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={updateSettingsResponse} responseType={responseType} show={!!updateSettingsResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -826,8 +951,8 @@ declare module 'react' {
                   wordBreak: "break-all",
                 }}
               >
-                https://nostalgic.llll-ll.com/api/visit?action=delete&url=<span style={{ color: "#008000" }}>サイトURL</span>
-                &token=<span style={{ color: "#008000" }}>オーナートークン</span>
+                https://nostalgic.llll-ll.com/api/visit?action=delete&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
               </p>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
@@ -836,15 +961,15 @@ declare module 'react' {
                 ※削除すると復元できません。十分にご注意ください。
               </p>
               
-              <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+              <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
                   <input
-                    ref={urlRef}
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
                     type="url"
                     placeholder="https://example.com"
                     style={{
-                      marginLeft: "10px",
                       width: "60%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -858,11 +983,11 @@ declare module 'react' {
                 <p>
                   <b>オーナートークン：</b>
                   <input
-                    ref={tokenRef}
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
                     type="text"
                     placeholder="8-16文字"
                     style={{
-                      marginLeft: "10px",
                       width: "30%",
                       padding: "4px",
                       border: "1px solid #666",
@@ -871,10 +996,12 @@ declare module 'react' {
                     }}
                     required
                   />
+                </p>
+                
+                <p>
                   <button
-                    type="submit"
+                    type="button"
                     style={{
-                      marginLeft: "10px",
                       padding: "4px 12px",
                       backgroundColor: "#F44336",
                       color: "white",
@@ -884,78 +1011,17 @@ declare module 'react' {
                       cursor: "pointer",
                       fontFamily: "inherit"
                     }}
-                    onClick={(e) => {
-                      setMode("delete");
-                      handleSubmit(e);
-                    }}
+                    onClick={handleDelete}
                   >
                     削除
                   </button>
                 </p>
               </form>
 
-              <ResponseDisplay response={response} responseType={responseType} show={!!response} />
+              <ResponseDisplay response={deleteResponse} responseType={responseType} show={!!deleteResponse} />
             </div>
-
-            {publicId && (
-              <div className="nostalgic-counter-section">
-                <p>
-                  <span style={{ color: "#ff8c00" }}>
-                    <b>◆カウンター設置方法◆</b>
-                  </span>
-                </p>
-                <p>公開ID: <span style={{ backgroundColor: "#ffff00", padding: "2px 4px", fontFamily: "monospace" }}>{publicId}</span></p>
-                <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px", wordBreak: "break-all" }}>
-{`<script src="https://nostalgic.llll-ll.com/components/visit.js"></script>
-<nostalgic-counter id="${publicId}" type="total" theme="dark"></nostalgic-counter>`}
-                </p>
-                <p>表示URL:</p>
-                <p style={{ backgroundColor: "#f0f0f0", padding: "10px", fontFamily: "monospace", fontSize: "14px", wordBreak: "break-all" }}>
-                  {`https://nostalgic.llll-ll.com/api/visit?action=display&id=${publicId}&type=total&theme=dark`}
-                </p>
-              </div>
-            )}
 
             <hr />
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆TypeScriptプロジェクトでの設定◆</b>
-                </span>
-              </p>
-              <p>React/Next.jsなどのTypeScriptプロジェクトでWeb Componentsを使用する場合は、プロジェクトルートに`types.d.ts`ファイルを作成してください：</p>
-              <pre
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "15px",
-                  fontFamily: "monospace",
-                  fontSize: "13px",
-                  overflowX: "auto",
-                  border: "1px solid #ccc",
-                  borderRadius: "4px"
-                }}
-              >
-{`// types.d.ts
-import React from 'react'
-
-declare module 'react' {
-  namespace JSX {
-    interface IntrinsicElements {
-      'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
-        id?: string
-        type?: 'total' | 'today' | 'yesterday' | 'week' | 'month'
-        theme?: 'light' | 'dark' | 'kawaii'
-        digits?: string
-        format?: 'image' | 'text'
-        'api-base'?: string
-      }, HTMLElement>
-    }
-  }
-}`}
-              </pre>
-              <p>これにより、TypeScriptビルドエラーを防ぐことができます。</p>
-            </div>
 
             <p style={{ textAlign: "center" }}>
               これ以上の詳しい説明は{" "}
@@ -1032,6 +1098,12 @@ declare module 'react' {
                 <br />• 必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
               </p>
             </div>
+
+            <p style={{ textAlign: "center", marginTop: "30px" }}>
+              <a href="#usage" className="nostalgic-old-link">
+                【使い方】へ
+              </a>
+            </p>
 
           </>
         );
