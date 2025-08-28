@@ -240,9 +240,9 @@ export const BBSCreateParamsSchema = z.object({
 export const BBSPostParamsSchema = z.object({
   author: BBSFieldSchemas.author,
   message: BBSFieldSchemas.messageText,
-  standardValue: BBSFieldSchemas.standardValue,
-  incrementalValue: BBSFieldSchemas.incrementalValue,
-  emoteValue: BBSFieldSchemas.emoteValue,
+  standardValue: BBSFieldSchemas.standardValue.optional(),
+  incrementalValue: BBSFieldSchemas.incrementalValue.optional(),
+  emoteValue: BBSFieldSchemas.emoteValue.optional(),
   authorHash: BBSFieldSchemas.authorHash
 })
 
@@ -250,9 +250,9 @@ export const BBSUpdateParamsSchema = z.object({
   messageId: BBSFieldSchemas.messageId,
   author: BBSFieldSchemas.author,
   message: BBSFieldSchemas.messageText,
-  standardValue: BBSFieldSchemas.standardValue,
-  incrementalValue: BBSFieldSchemas.incrementalValue,
-  emoteValue: BBSFieldSchemas.emoteValue,
+  standardValue: BBSFieldSchemas.standardValue.optional(),
+  incrementalValue: BBSFieldSchemas.incrementalValue.optional(),
+  emoteValue: BBSFieldSchemas.emoteValue.optional(),
   authorHash: BBSFieldSchemas.authorHash
 })
 

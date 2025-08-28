@@ -472,12 +472,12 @@ export default function RankingPage() {
                 </p>
 
                 <p>
-                  <b>Webhook URL：</b>
+                  <b>Webhook URL（オプション）：</b>
                   <input
                     value={webhookUrl}
                     onChange={(e) => setWebhookUrl(e.target.value)}
                     type="url"
-                    placeholder="https://hooks.slack.com/... (任意)"
+                    placeholder="https://hooks.slack.com/services/..."
                     style={{
                       width: "60%",
                       padding: "4px",
@@ -573,9 +573,9 @@ export default function RankingPage() {
                     type="button"
                     style={{
                       padding: "4px 12px",
-                      backgroundColor: "#4CAF50",
+                      backgroundColor: "#2196F3",
                       color: "white",
-                      border: "2px outset #4CAF50",
+                      border: "2px outset #2196F3",
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
@@ -699,6 +699,90 @@ declare module 'react' {
                   </div>
                 </div>
               )}
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆公開IDを再確認したいときは？◆</b>
+                </span>
+              </p>
+              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
+              <p
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://nostalgic.llll-ll.com/api/ranking?action=create&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
+                {maxEntries && `&max=${maxEntries}`}
+                {sortOrder !== "desc" && `&sortOrder=${sortOrder}`}
+                {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
+              </p>
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+              
+              <p>または、以下のフォームで確認できます。</p>
+              
+              <form style={{ marginTop: "10px" }}>
+                <p>
+                  <b>サイトURL：</b>
+                  <input
+                    value={sharedUrl}
+                    onChange={(e) => setSharedUrl(e.target.value)}
+                    type="url"
+                    placeholder="https://example.com"
+                    style={{
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+
+                <p>
+                  <b>オーナートークン：</b>
+                  <input
+                    value={sharedToken}
+                    onChange={(e) => setSharedToken(e.target.value)}
+                    type="text"
+                    placeholder="8-16文字"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px"
+                    }}
+                    required
+                  />
+                </p>
+                
+                <p>
+                  <button
+                    type="button"
+                    style={{
+                      padding: "4px 12px",
+                      backgroundColor: "#2196F3",
+                      color: "white",
+                      border: "2px outset #2196F3",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontFamily: "inherit"
+                    }}
+                    onClick={handleCreate}
+                  >
+                    公開ID確認
+                  </button>
+                </p>
+              </form>
             </div>
 
             <div className="nostalgic-section">
@@ -1171,7 +1255,7 @@ declare module 'react' {
                 </p>
 
                 <p>
-                  <b>ランキングタイトル：</b>
+                  <b>ランキングタイトル（オプション）：</b>
                   <input
                     value={settingsTitle}
                     onChange={(e) => setSettingsTitle(e.target.value)}
@@ -1188,7 +1272,7 @@ declare module 'react' {
                 </p>
 
                 <p>
-                  <b>最大エントリー数：</b>
+                  <b>最大エントリー数（オプション）：</b>
                   <input
                     value={settingsMax}
                     onChange={(e) => setSettingsMax(e.target.value)}
@@ -1207,7 +1291,7 @@ declare module 'react' {
                 </p>
 
                 <p>
-                  <b>ソート順：</b>
+                  <b>ソート順（オプション）：</b>
                   <select
                     value={settingsSortOrder}
                     onChange={(e) => setSettingsSortOrder(e.target.value)}
@@ -1225,12 +1309,12 @@ declare module 'react' {
                 </p>
 
                 <p>
-                  <b>Webhook URL：</b>
+                  <b>Webhook URL（オプション）：</b>
                   <input
                     value={settingsWebhookUrl}
                     onChange={(e) => setSettingsWebhookUrl(e.target.value)}
                     type="url"
-                    placeholder="https://example.com/webhook (optional)"
+                    placeholder="https://example.com/webhook"
                     style={{
                       width: "60%",
                       padding: "4px",
@@ -1246,9 +1330,9 @@ declare module 'react' {
                     type="button"
                     style={{
                       padding: "4px 12px",
-                      backgroundColor: "#FF9800",
+                      backgroundColor: "#2196F3",
                       color: "white",
-                      border: "2px outset #FF9800",
+                      border: "2px outset #2196F3",
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
