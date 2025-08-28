@@ -12,6 +12,12 @@ export default function LikePage() {
   const [mode, setMode] = useState("create");
   const [responseType, setResponseType] = useState<'json' | 'text' | 'svg'>('json');
 
+  // 全フォーム共通のstate
+  const [sharedUrl, setSharedUrl] = useState("");
+  const [sharedToken, setSharedToken] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [setValue, setSetValue] = useState("");
+
   const urlRef = useRef<HTMLInputElement>(null);
   const tokenRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
@@ -42,8 +48,9 @@ export default function LikePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const url = urlRef.current?.value;
-    const token = tokenRef.current?.value;
+    // createモードの場合はcontrolled componentsの値を使用
+    const url = mode === "create" ? createUrl : urlRef.current?.value;
+    const token = mode === "create" ? createToken : tokenRef.current?.value;
     const value = valueRef.current?.value;
     const webhookUrl = webhookUrlRef.current?.value;
 
@@ -154,7 +161,8 @@ export default function LikePage() {
                 <p>
                   <b>サイトURL：</b>
                   <input
-                    ref={urlRef}
+                    value={createUrl}
+                    onChange={(e) => setCreateUrl(e.target.value)}
                     type="url"
                     placeholder="https://example.com"
                     style={{
@@ -172,7 +180,8 @@ export default function LikePage() {
                 <p>
                   <b>オーナートークン：</b>
                   <input
-                    ref={tokenRef}
+                    value={createToken}
+                    onChange={(e) => setCreateToken(e.target.value)}
                     type="text"
                     placeholder="8-16文字"
                     style={{
@@ -206,7 +215,7 @@ export default function LikePage() {
 
                 <p>
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -299,7 +308,7 @@ export default function LikePage() {
                   
                   {publicId && (
                     <button
-                      type="submit"
+                      type="button"
                       style={{
                         marginLeft: "10px",
                         padding: "4px 12px",
@@ -470,7 +479,7 @@ declare module 'react' {
                     required
                   />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -591,7 +600,7 @@ declare module 'react' {
 
                 <p>
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -675,7 +684,7 @@ declare module 'react' {
                     required
                   />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -730,7 +739,7 @@ declare module 'react' {
                   </span>
                   {publicId && (
                     <button
-                      type="submit"
+                      type="button"
                       style={{
                         marginLeft: "10px",
                         padding: "4px 12px",
@@ -817,7 +826,7 @@ declare module 'react' {
                     }}
                   />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -904,7 +913,7 @@ declare module 'react' {
                     required
                   />
                   <button
-                    type="submit"
+                    type="button"
                     style={{
                       marginLeft: "10px",
                       padding: "4px 12px",
@@ -1061,6 +1070,12 @@ declare module 'react' {
                 <br />• 必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
               </p>
             </div>
+
+            <p style={{ textAlign: "center", marginTop: "30px" }}>
+              <a href="#usage" className="nostalgic-old-link">
+                【使い方】へ
+              </a>
+            </p>
 
           </>
         );
