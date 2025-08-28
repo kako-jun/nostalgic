@@ -19,17 +19,30 @@ export default function BBSPage() {
   const [title, setTitle] = useState("");
   const [maxMessages, setMaxMessages] = useState("");
   const [messagesPerPage, setMessagesPerPage] = useState("");
-  const [icons, setIcons] = useState("");
+  
+  // 3種類のセレクト設定
+  const [standardSelectLabel, setStandardSelectLabel] = useState("");
+  const [standardSelectOptions, setStandardSelectOptions] = useState("");
+  const [incrementalSelectLabel, setIncrementalSelectLabel] = useState("");
+  const [incrementalSelectOptions, setIncrementalSelectOptions] = useState("");
+  const [emoteSelectLabel, setEmoteSelectLabel] = useState("");
+  const [emoteSelectOptions, setEmoteSelectOptions] = useState("");
   
   // 投稿フォーム用
   const [postAuthor, setPostAuthor] = useState("");
   const [postMessage, setPostMessage] = useState("");
+  const [standardValue, setStandardValue] = useState("");
+  const [incrementalValue, setIncrementalValue] = useState("");
+  const [emoteValue, setEmoteValue] = useState("");
   
   // 編集・削除フォーム用
   const [messageId, setMessageId] = useState("");
   const [editAuthor, setEditAuthor] = useState("");
   const [editMessage, setEditMessage] = useState("");
   const [editToken, setEditToken] = useState("");
+  const [editStandardValue, setEditStandardValue] = useState("");
+  const [editIncrementalValue, setEditIncrementalValue] = useState("");
+  const [editEmoteValue, setEditEmoteValue] = useState("");
 
   // 各フォーム用の独立したレスポンスstate
   const [createResponse, setCreateResponse] = useState("");
@@ -69,8 +82,21 @@ export default function BBSPage() {
     let apiUrl = `/api/bbs?action=create&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
     if (maxMessages) apiUrl += `&max=${maxMessages}`;
     if (messagesPerPage) apiUrl += `&perPage=${messagesPerPage}`;
-    if (icons) apiUrl += `&icons=${encodeURIComponent(icons)}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
+    
+    // 3種類のセレクト設定を追加
+    if (standardSelectLabel && standardSelectOptions) {
+      apiUrl += `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}`;
+      apiUrl += `&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}`;
+    }
+    if (incrementalSelectLabel && incrementalSelectOptions) {
+      apiUrl += `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}`;
+      apiUrl += `&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}`;
+    }
+    if (emoteSelectLabel && emoteSelectOptions) {
+      apiUrl += `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}`;
+      apiUrl += `&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}`;
+    }
 
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
@@ -93,7 +119,12 @@ export default function BBSPage() {
     e.preventDefault();
     if (!sharedUrl || !sharedToken || !postAuthor || !postMessage) return;
 
-    const apiUrl = `/api/bbs?action=post&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&author=${encodeURIComponent(postAuthor)}&message=${encodeURIComponent(postMessage)}`;
+    let apiUrl = `/api/bbs?action=post&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&author=${encodeURIComponent(postAuthor)}&message=${encodeURIComponent(postMessage)}`;
+    
+    // セレクト値を追加
+    if (standardValue) apiUrl += `&standardValue=${encodeURIComponent(standardValue)}`;
+    if (incrementalValue) apiUrl += `&incrementalValue=${encodeURIComponent(incrementalValue)}`;
+    if (emoteValue) apiUrl += `&emoteValue=${encodeURIComponent(emoteValue)}`;;
 
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
@@ -131,7 +162,12 @@ export default function BBSPage() {
     e.preventDefault();
     if (!sharedUrl || !sharedToken || !messageId || !editAuthor || !editMessage) return;
 
-    const apiUrl = `/api/bbs?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}&message=${encodeURIComponent(editMessage)}`;
+    let apiUrl = `/api/bbs?action=editMessage&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}&message=${encodeURIComponent(editMessage)}`;
+    
+    // セレクト値を追加
+    if (editStandardValue) apiUrl += `&standardValue=${encodeURIComponent(editStandardValue)}`;
+    if (editIncrementalValue) apiUrl += `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`;
+    if (editEmoteValue) apiUrl += `&emoteValue=${encodeURIComponent(editEmoteValue)}`;;
 
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
@@ -150,7 +186,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!sharedUrl || !sharedToken || !messageId || !editAuthor) return;
 
-    const apiUrl = `/api/bbs?action=remove&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}`;
+    const apiUrl = `/api/bbs?action=deleteMessage&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}`;
 
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
@@ -230,7 +266,12 @@ export default function BBSPage() {
     e.preventDefault();
     if (!sharedUrl || !sharedToken || !messageId || !editAuthor || !editMessage || !editToken) return;
 
-    const apiUrl = `/api/bbs?action=editMessageById&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}&message=${encodeURIComponent(editMessage)}&editToken=${encodeURIComponent(editToken)}`;
+    let apiUrl = `/api/bbs?action=editMessageById&id=${encodeURIComponent(publicId)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}&message=${encodeURIComponent(editMessage)}&editToken=${encodeURIComponent(editToken)}`;
+    
+    // セレクト値を追加
+    if (editStandardValue) apiUrl += `&standardValue=${encodeURIComponent(editStandardValue)}`;
+    if (editIncrementalValue) apiUrl += `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`;
+    if (editEmoteValue) apiUrl += `&emoteValue=${encodeURIComponent(editEmoteValue)}`;;
 
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
@@ -249,7 +290,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!sharedUrl || !sharedToken || !messageId || !editAuthor || !editToken) return;
 
-    const apiUrl = `/api/bbs?action=deleteMessageById&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}&editToken=${encodeURIComponent(editToken)}`;
+    const apiUrl = `/api/bbs?action=deleteMessageById&id=${encodeURIComponent(publicId)}&messageId=${messageId}&editToken=${encodeURIComponent(editToken)}`;
 
     try {
       const res = await fetch(apiUrl, { method: 'GET' });
@@ -295,7 +336,9 @@ export default function BBSPage() {
                 &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>
                 {maxMessages && `&max=${maxMessages}`}
                 {messagesPerPage && `&perPage=${messagesPerPage}`}
-                {icons && `&icons=${encodeURIComponent(icons)}`}
+                {standardSelectLabel && standardSelectOptions && `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}`}
+                {incrementalSelectLabel && incrementalSelectOptions && `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}`}
+                {emoteSelectLabel && emoteSelectOptions && `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}`}
                 {webhookUrl && `&webhookUrl=${encodeURIComponent(webhookUrl)}`}
               </p>
               <p>
@@ -389,18 +432,115 @@ export default function BBSPage() {
                 </p>
 
                 <p>
-                  <b>アイコン設定（オプション）：</b>
+                  <b>純正セレクト設定（オプション）：</b>
+                </p>
+                <p style={{ marginLeft: "20px" }}>
+                  <b>ラベル：</b>
                   <input
-                    value={icons}
-                    onChange={(e) => setIcons(e.target.value)}
+                    value={standardSelectLabel}
+                    onChange={(e) => setStandardSelectLabel(e.target.value)}
                     type="text"
-                    placeholder="😀,😂,😍,😢,😎 (カンマ区切り)"
+                    placeholder="カテゴリ"
                     style={{
-                      width: "50%",
+                      width: "30%",
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+                <p style={{ marginLeft: "20px" }}>
+                  <b>選択肢：</b>
+                  <input
+                    value={standardSelectOptions}
+                    onChange={(e) => setStandardSelectOptions(e.target.value)}
+                    type="text"
+                    placeholder="一般,質問,雑談,報告 (カンマ区切り)"
+                    style={{
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>インクリメンタル検索セレクト設定（オプション）：</b>
+                </p>
+                <p style={{ marginLeft: "20px" }}>
+                  <b>ラベル：</b>
+                  <input
+                    value={incrementalSelectLabel}
+                    onChange={(e) => setIncrementalSelectLabel(e.target.value)}
+                    type="text"
+                    placeholder="タグ"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+                <p style={{ marginLeft: "20px" }}>
+                  <b>選択肢：</b>
+                  <input
+                    value={incrementalSelectOptions}
+                    onChange={(e) => setIncrementalSelectOptions(e.target.value)}
+                    type="text"
+                    placeholder="JavaScript,TypeScript,React,Vue.js,Angular (カンマ区切り)"
+                    style={{
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>エモートセレクト設定（オプション）：</b>
+                </p>
+                <p style={{ marginLeft: "20px" }}>
+                  <b>ラベル：</b>
+                  <input
+                    value={emoteSelectLabel}
+                    onChange={(e) => setEmoteSelectLabel(e.target.value)}
+                    type="text"
+                    placeholder="感情"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+                <p style={{ marginLeft: "20px" }}>
+                  <b>選択肢：</b>
+                  <input
+                    value={emoteSelectOptions}
+                    onChange={(e) => setEmoteSelectOptions(e.target.value)}
+                    type="text"
+                    placeholder="😀,😢,😡,😐,🤔,😴,😋,😱 (カンマ区切り)"
+                    style={{
+                      width: "60%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
                     }}
                   />
                 </p>
@@ -544,6 +684,9 @@ export default function BBSPage() {
               >
                 https://nostalgic.llll-ll.com/api/bbs?action=post&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
                 &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&author=<span style={{ color: "#008000" }}>{postAuthor || "投稿者名"}</span>&message=<span style={{ color: "#008000" }}>{postMessage || "メッセージ"}</span>
+                {standardValue && `&standardValue=${encodeURIComponent(standardValue)}`}
+                {incrementalValue && `&incrementalValue=${encodeURIComponent(incrementalValue)}`}
+                {emoteValue && `&emoteValue=${encodeURIComponent(emoteValue)}`}
               </p>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
@@ -623,6 +766,60 @@ export default function BBSPage() {
                     required
                   />
                 </p>
+
+                <p>
+                  <b>純正セレクト（オプション）：</b>
+                  <input
+                    value={standardValue}
+                    onChange={(e) => setStandardValue(e.target.value)}
+                    type="text"
+                    placeholder="カテゴリ値"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>インクリメンタル検索セレクト（オプション）：</b>
+                  <input
+                    value={incrementalValue}
+                    onChange={(e) => setIncrementalValue(e.target.value)}
+                    type="text"
+                    placeholder="タグ値"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>エモートセレクト（オプション）：</b>
+                  <input
+                    value={emoteValue}
+                    onChange={(e) => setEmoteValue(e.target.value)}
+                    type="text"
+                    placeholder="感情値（絵文字または画像URL）"
+                    style={{
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
                 
                 <p>
                   <button
@@ -663,8 +860,11 @@ export default function BBSPage() {
                   wordBreak: "break-all",
                 }}
               >
-                https://nostalgic.llll-ll.com/api/bbs?action=update&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                https://nostalgic.llll-ll.com/api/bbs?action=editMessage&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
                 &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>&author=<span style={{ color: "#008000" }}>{editAuthor || "投稿者名"}</span>&message=<span style={{ color: "#008000" }}>{editMessage || "新メッセージ"}</span>
+                {editStandardValue && `&standardValue=${encodeURIComponent(editStandardValue)}`}
+                {editIncrementalValue && `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`}
+                {editEmoteValue && `&emoteValue=${encodeURIComponent(editEmoteValue)}`}
               </p>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
@@ -762,6 +962,60 @@ export default function BBSPage() {
                     required
                   />
                 </p>
+
+                <p>
+                  <b>純正セレクト（オプション）：</b>
+                  <input
+                    value={editStandardValue}
+                    onChange={(e) => setEditStandardValue(e.target.value)}
+                    type="text"
+                    placeholder="カテゴリ値"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>インクリメンタル検索セレクト（オプション）：</b>
+                  <input
+                    value={editIncrementalValue}
+                    onChange={(e) => setEditIncrementalValue(e.target.value)}
+                    type="text"
+                    placeholder="タグ値"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>エモートセレクト（オプション）：</b>
+                  <input
+                    value={editEmoteValue}
+                    onChange={(e) => setEditEmoteValue(e.target.value)}
+                    type="text"
+                    placeholder="感情値（絵文字または画像URL）"
+                    style={{
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
                 
                 <p>
                   <button
@@ -802,8 +1056,8 @@ export default function BBSPage() {
                   wordBreak: "break-all",
                 }}
               >
-                https://nostalgic.llll-ll.com/api/bbs?action=remove&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>&author=<span style={{ color: "#008000" }}>{editAuthor || "投稿者名"}</span>
+                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessage&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
+                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>
               </p>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
@@ -921,8 +1175,10 @@ export default function BBSPage() {
                   wordBreak: "break-all",
                 }}
               >
-                https://nostalgic.llll-ll.com/api/bbs?action=editMessageById&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>&author=<span style={{ color: "#008000" }}>{editAuthor || "投稿者名"}</span>&message=<span style={{ color: "#008000" }}>{editMessage || "新メッセージ"}</span>&editToken=<span style={{ color: "#008000" }}>{editToken || "編集トークン"}</span>
+                https://nostalgic.llll-ll.com/api/bbs?action=editMessageById&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>&author=<span style={{ color: "#008000" }}>{editAuthor || "投稿者名"}</span>&message=<span style={{ color: "#008000" }}>{editMessage || "新メッセージ"}</span>&editToken=<span style={{ color: "#008000" }}>{editToken || "編集トークン"}</span>
+                {editStandardValue && `&standardValue=${encodeURIComponent(editStandardValue)}`}
+                {editIncrementalValue && `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`}
+                {editEmoteValue && `&emoteValue=${encodeURIComponent(editEmoteValue)}`}
               </p>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
@@ -1022,6 +1278,60 @@ export default function BBSPage() {
                 </p>
 
                 <p>
+                  <b>純正セレクト（オプション）：</b>
+                  <input
+                    value={editStandardValue}
+                    onChange={(e) => setEditStandardValue(e.target.value)}
+                    type="text"
+                    placeholder="カテゴリ値"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>インクリメンタル検索セレクト（オプション）：</b>
+                  <input
+                    value={editIncrementalValue}
+                    onChange={(e) => setEditIncrementalValue(e.target.value)}
+                    type="text"
+                    placeholder="タグ値"
+                    style={{
+                      width: "30%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+
+                <p>
+                  <b>エモートセレクト（オプション）：</b>
+                  <input
+                    value={editEmoteValue}
+                    onChange={(e) => setEditEmoteValue(e.target.value)}
+                    type="text"
+                    placeholder="感情値（絵文字または画像URL）"
+                    style={{
+                      width: "40%",
+                      padding: "4px",
+                      border: "1px solid #666",
+                      fontFamily: "inherit",
+                      fontSize: "16px",
+                      marginLeft: "10px"
+                    }}
+                  />
+                </p>
+
+                <p>
                   <b>編集トークン：</b>
                   <input
                     value={editToken}
@@ -1078,8 +1388,7 @@ export default function BBSPage() {
                   wordBreak: "break-all",
                 }}
               >
-                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&url=<span style={{ color: "#008000" }}>{sharedUrl || "サイトURL"}</span>
-                &token=<span style={{ color: "#008000" }}>{sharedToken || "オーナートークン"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>&author=<span style={{ color: "#008000" }}>{editAuthor || "投稿者名"}</span>&editToken=<span style={{ color: "#008000" }}>{editToken || "編集トークン"}</span>
+                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&id=<span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>&messageId=<span style={{ color: "#008000" }}>{messageId || "メッセージID"}</span>&editToken=<span style={{ color: "#008000" }}>{editToken || "編集トークン"}</span>
               </p>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
               
@@ -1723,7 +2032,7 @@ declare module 'react' {
 
             <div className="nostalgic-marquee-box">
               <div className="nostalgic-marquee-text">
-                💬 懐かしの掲示板！メッセージ投稿・アイコン選択・編集削除・ページネーション！昔の掲示板がここに復活！ 💬
+                💬 懐かしの掲示板！３種類のセレクト機能（純正・検索・エモート）・編集削除・ページネーション！昔の掲示板がここに復活！ 💬
               </div>
             </div>
 
@@ -1736,9 +2045,9 @@ declare module 'react' {
               <p>
                 <span>●</span> メッセージ投稿・取得
                 <br />
-                <span>●</span> カスタマイズ可能なドロップダウン（3つ）
+                <span>●</span> ３種類のセレクト機能（純正・検索・エモート）
                 <br />
-                <span>●</span> アイコン選択機能
+                <span>●</span> ユーザーカスタム設定対応
                 <br />
                 <span>●</span> Web Componentsで簡単設置
               </p>

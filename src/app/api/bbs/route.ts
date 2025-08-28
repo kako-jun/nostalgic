@@ -22,20 +22,14 @@ import {
 const createHandler = ApiHandler.create({
   paramsSchema: BBSSchemas.create,
   resultSchema: UnifiedAPISchemas.createSuccess,
-  handler: async ({ url, token, title, messagesPerPage, max, enableIcons, enableSelects, webhookUrl }, request) => {
-    const icons = enableIcons ? ['😀', '😉', '😎', '😠', '😢', '😮'] : []
-    const selects = enableSelects ? [
-      { label: '地域', options: ['東京', '大阪', '名古屋', '福岡', 'その他'] },
-      { label: '天気', options: ['晴れ', '曇り', '雨', '雪'] },
-      { label: '気分', options: ['楽しい', '普通', 'つまらない'] }
-    ] : []
-    
+  handler: async ({ url, token, title, messagesPerPage, max, standardSelect, incrementalSelect, emoteSelect, webhookUrl }, request) => {
     const createResult = await bbsService.create(url, token, {
       title,
       messagesPerPage,
       maxMessages: max,
-      icons,
-      selects,
+      standardSelect,
+      incrementalSelect,
+      emoteSelect,
       webhookUrl
     })
     
@@ -57,22 +51,17 @@ const createHandler = ApiHandler.create({
 const postHandler = ApiHandler.create({
   paramsSchema: BBSSchemas.post,
   resultSchema: BBSSchemas.postResult,
-  handler: async ({ id, author, message, icon, select1, select2, select3 }, request) => {
+  handler: async ({ id, author, message, standardValue, incrementalValue, emoteValue }, request) => {
     const clientIP = getClientIP(request)
     const userAgent = getUserAgent(request)
-
-    const selects: string[] = []
-    if (select1) selects.push(select1)
-    if (select2) selects.push(select2)
-    if (select3) selects.push(select3)
-
     const authorHash = bbsService.generateUserHash(clientIP, userAgent)
 
     const postResult = await bbsService.postMessageById(id, {
       author,
       message,
-      icon,
-      selects: selects.length > 0 ? selects : undefined,
+      standardValue,
+      incrementalValue,
+      emoteValue,
       authorHash
     })
     
@@ -96,22 +85,18 @@ const postHandler = ApiHandler.create({
 const editMessageHandler = ApiHandler.create({
   paramsSchema: BBSSchemas.editMessage,
   resultSchema: BBSSchemas.data,
-  handler: async ({ url, token, messageId, author, message, icon, select1, select2, select3 }, request) => {
+  handler: async ({ url, token, messageId, author, message, standardValue, incrementalValue, emoteValue }, request) => {
     const clientIP = getClientIP(request)
     const userAgent = getUserAgent(request)
     const authorHash = bbsService.generateUserHash(clientIP, userAgent)
-    
-    const selects: string[] = []
-    if (select1) selects.push(select1)
-    if (select2) selects.push(select2)
-    if (select3) selects.push(select3)
 
     return await bbsService.updateMessage(url, token, {
       messageId,
       author,
       message,
-      icon,
-      selects: selects.length > 0 ? selects : undefined,
+      standardValue,
+      incrementalValue,
+      emoteValue,
       authorHash
     })
   }
@@ -123,17 +108,13 @@ const editMessageHandler = ApiHandler.create({
 const editMessageByIdHandler = ApiHandler.create({
   paramsSchema: BBSSchemas.editMessageById,
   resultSchema: BBSSchemas.data,
-  handler: async ({ id, messageId, editToken, author, message, icon, select1, select2, select3 }, request) => {
-    const selects: string[] = []
-    if (select1) selects.push(select1)
-    if (select2) selects.push(select2)
-    if (select3) selects.push(select3)
-
+  handler: async ({ id, messageId, editToken, author, message, standardValue, incrementalValue, emoteValue }, request) => {
     return await bbsService.editMessageByIdWithToken(id, messageId, editToken, {
       author,
       message,
-      icon,
-      selects: selects.length > 0 ? selects : undefined
+      standardValue,
+      incrementalValue,
+      emoteValue
     })
   }
 })
