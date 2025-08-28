@@ -10,89 +10,6 @@ import { Result, Ok, Err, ValidationError } from '@/lib/core/result'
 /**
  * 設定スキーマの定義
  */
-const ServiceLimitsSchema = z.object({
-  counter: z.object({
-    maxValue: z.number().int().positive().default(999999999),
-    maxDigits: z.number().int().min(1).max(15).default(10),
-    dailyRetentionDays: z.number().int().positive().default(365),
-    visitTTL: z.number().int().positive().default(86400)
-  }).default({
-    maxValue: 999999999,
-    maxDigits: 10,
-    dailyRetentionDays: 365,
-    visitTTL: 86400
-  }),
-  like: z.object({
-    maxValue: z.number().int().positive().default(999999999),
-    maxDigits: z.number().int().min(1).max(15).default(10),
-    userStateTTL: z.number().int().positive().default(86400)
-  }).default({
-    maxValue: 999999999,
-    maxDigits: 10,
-    userStateTTL: 86400
-  }),
-  ranking: z.object({
-    maxEntries: z.number().int().min(1).max(10000).default(1000),
-    maxNameLength: z.number().int().min(1).max(100).default(50),
-    minScore: z.number().int().min(0).default(0),
-    maxScore: z.number().int().positive().default(999999999),
-    submitCooldown: z.number().int().positive().default(60)
-  }).default({
-    maxEntries: 1000,
-    maxNameLength: 50,
-    minScore: 0,
-    maxScore: 999999999,
-    submitCooldown: 60
-  }),
-  bbs: z.object({
-    maxMessages: z.number().int().min(1).max(10000).default(1000),
-    maxMessageLength: z.number().int().min(1).max(5000).default(200),
-    maxAuthorLength: z.number().int().min(1).max(100).default(20),
-    messagesPerPage: z.number().int().min(1).max(100).default(10),
-    maxIcons: z.number().int().min(0).max(50).default(20),
-    maxSelectOptions: z.number().int().min(0).max(100).default(50),
-    maxSelectLabelLength: z.number().int().min(1).max(100).default(50),
-    postCooldown: z.number().int().positive().default(10)
-  }).default({
-    maxMessages: 1000,
-    maxMessageLength: 200,
-    maxAuthorLength: 20,
-    messagesPerPage: 10,
-    maxIcons: 20,
-    maxSelectOptions: 50,
-    maxSelectLabelLength: 50,
-    postCooldown: 10
-  })
-}).default({
-  counter: {
-    maxValue: 999999999,
-    maxDigits: 10,
-    dailyRetentionDays: 365,
-    visitTTL: 86400
-  },
-  like: {
-    maxValue: 999999999,
-    maxDigits: 10,
-    userStateTTL: 86400
-  },
-  ranking: {
-    maxEntries: 1000,
-    maxNameLength: 50,
-    minScore: 0,
-    maxScore: 999999999,
-    submitCooldown: 60
-  },
-  bbs: {
-    maxMessages: 1000,
-    maxMessageLength: 1000,
-    maxAuthorLength: 50,
-    messagesPerPage: 10,
-    maxIcons: 20,
-    maxSelectOptions: 50,
-    maxSelectLabelLength: 50,
-    postCooldown: 10
-  }
-})
 
 const CacheSettingsSchema = z.object({
   displayMaxAge: z.number().int().positive().default(60),
@@ -189,42 +106,11 @@ const LoggingSettingsSchema = z.object({
  * メイン設定スキーマ
  */
 export const ConfigSchema = z.object({
-  serviceLimits: ServiceLimitsSchema,
   cache: CacheSettingsSchema,
   security: SecuritySettingsSchema,
   redis: RedisSettingsSchema,
   logging: LoggingSettingsSchema
 }).default(() => ({
-  serviceLimits: {
-    counter: {
-      maxValue: 999999999,
-      maxDigits: 10,
-      dailyRetentionDays: 365,
-      visitTTL: 86400
-    },
-    like: {
-      maxValue: 999999999,
-      maxDigits: 10,
-      userStateTTL: 86400
-    },
-    ranking: {
-      maxEntries: 1000,
-      maxNameLength: 50,
-      minScore: 0,
-      maxScore: 999999999,
-      submitCooldown: 60
-    },
-    bbs: {
-      maxMessages: 1000,
-      maxMessageLength: 1000,
-      maxAuthorLength: 50,
-      messagesPerPage: 10,
-      maxIcons: 20,
-      maxSelectOptions: 50,
-      maxSelectLabelLength: 50,
-      postCooldown: 10
-    }
-  },
   cache: {
     displayMaxAge: 60,
     metadataMaxAge: 300,
@@ -266,7 +152,6 @@ export const ConfigSchema = z.object({
 }))
 
 export type Config = z.infer<typeof ConfigSchema>
-export type ServiceLimits = z.infer<typeof ServiceLimitsSchema>
 export type CacheSettings = z.infer<typeof CacheSettingsSchema>
 export type SecuritySettings = z.infer<typeof SecuritySettingsSchema>
 export type RedisSettings = z.infer<typeof RedisSettingsSchema>
@@ -308,7 +193,6 @@ export class ConfigManager {
     this.initialized = true
 
     console.log('Configuration initialized:', {
-      serviceLimits: Object.keys(this.config.serviceLimits),
       cacheEnabled: this.config.cache.displayMaxAge > 0,
       loggingLevel: this.config.logging.level
     })
@@ -324,14 +208,6 @@ export class ConfigManager {
     return this.config[key]
   }
 
-  /**
-   * ネストした設定値の安全な取得
-   */
-  getServiceLimit<T extends keyof ServiceLimits>(
-    service: T
-  ): ServiceLimits[T] {
-    return this.get('serviceLimits')[service]
-  }
 
   getCacheSettings(): CacheSettings {
     return this.get('cache')
@@ -418,17 +294,6 @@ export class ConfigManager {
  */
 export const config = ConfigManager.getInstance()
 
-/**
- * 設定値への簡単なアクセス用ヘルパー
- */
-export const getServiceLimits = <T extends keyof ServiceLimits>(service: T): ServiceLimits[T] => 
-  config.getServiceLimit(service)
-
-// 型安全なサービス別アクセッサー
-export const getCounterLimits = () => getServiceLimits('counter')
-export const getLikeLimits = () => getServiceLimits('like')
-export const getRankingLimits = () => getServiceLimits('ranking')
-export const getBBSLimits = () => getServiceLimits('bbs')
 
 export const getCacheSettings = (): CacheSettings => config.getCacheSettings()
 
@@ -438,29 +303,4 @@ export const getRedisSettings = (): RedisSettings => config.getRedisSettings()
 
 export const getLoggingSettings = (): LoggingSettings => config.getLoggingSettings()
 
-/**
- * 設定値のバリデーション用ヘルパー（型安全版）
- */
-export const validateCounterParam = (param: keyof ServiceLimits['counter'], value: number): boolean => {
-  const limits = getCounterLimits()
-  const maxValue = limits[param]
-  return typeof value === 'number' && value >= 0 && value <= maxValue
-}
 
-export const validateLikeParam = (param: keyof ServiceLimits['like'], value: number): boolean => {
-  const limits = getLikeLimits()
-  const maxValue = limits[param]
-  return typeof value === 'number' && value >= 0 && value <= maxValue
-}
-
-export const validateRankingParam = (param: keyof ServiceLimits['ranking'], value: number): boolean => {
-  const limits = getRankingLimits()
-  const maxValue = limits[param]
-  return typeof value === 'number' && value >= 0 && value <= maxValue
-}
-
-export const validateBBSParam = (param: keyof ServiceLimits['bbs'], value: number): boolean => {
-  const limits = getBBSLimits()
-  const maxValue = limits[param]
-  return typeof value === 'number' && value >= 0 && value <= maxValue
-}

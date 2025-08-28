@@ -47,6 +47,11 @@ export const LIKE = {
   
   FORMATS: ['interactive', 'text', 'image'] as const,
   DEFAULT_FORMAT: 'interactive' as const,
+  
+  COUNT: {
+    MIN: 0,
+    MAX: 999999999, // 10億-1
+  },
 } as const;
 
 // === Ranking サービス ===
@@ -84,6 +89,8 @@ export const RANKING = {
     MIN: 1,
     MAX: 10000,
   },
+  
+  SUBMIT_COOLDOWN: 60, // 秒
 } as const;
 
 // === BBS サービス ===
@@ -108,6 +115,27 @@ export const BBS = {
   
   TITLE: {
     MAX_LENGTH: 100,
+  },
+  
+  SELECT: {
+    LABEL: {
+      MIN_LENGTH: 1,
+      MAX_LENGTH: 50,
+    },
+    OPTION: {
+      MIN_LENGTH: 1,
+      MAX_LENGTH: 50,
+    },
+  },
+  
+  MAX_MESSAGES: {
+    MIN: 1,
+    MAX: 1000,
+  },
+  
+  MESSAGES_PER_PAGE: {
+    MIN: 1,
+    MAX: 100,
   },
   
   ICONS: ['😀', '😉', '😎', '😠', '😢', '😮'] as const,

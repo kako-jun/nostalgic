@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { Result, Ok, Err, ValidationError, NotFoundError } from '@/lib/core/result'
 import { BaseService } from '@/lib/core/base-service'
 import { ValidationFramework } from '@/lib/core/validation'
-import { getBBSLimits } from '@/lib/core/config'
+import { BBS } from '@/lib/validation/schema-constants'
 import { RepositoryFactory, ListRepository } from '@/lib/core/repository'
 import { createHash } from 'crypto'
 import { ContentFilter } from '@/lib/filters/content-filter'
@@ -35,10 +35,9 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
   private readonly listRepository: ListRepository<BBSMessage>
 
   constructor() {
-    const limits = getBBSLimits()
     const config = {
       serviceName: 'bbs' as const,
-      maxValue: limits.maxMessages
+      maxValue: BBS.MAX_MESSAGES.MAX
     }
     
     super(config, BBSEntitySchema, BBSDataSchema)
@@ -53,12 +52,10 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     url: string, 
     params: BBSCreateParams
   ): Promise<Result<BBSEntity, ValidationError>> {
-    const limits = getBBSLimits()
-    
     const settings: BBSSettings = {
       title: params.title || 'BBS',
-      maxMessages: params.maxMessages || limits.maxMessages,
-      messagesPerPage: params.messagesPerPage || limits.messagesPerPage,
+      maxMessages: params.maxMessages || BBS.MAX_MESSAGES.MAX,
+      messagesPerPage: params.messagesPerPage || BBS.PAGINATION.MESSAGES_PER_PAGE,
       standardSelect: params.standardSelect,
       incrementalSelect: params.incrementalSelect,
       emoteSelect: params.emoteSelect,
@@ -158,13 +155,12 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     }
 
     // メッセージ長制限チェック
-    const limits = getBBSLimits()
-    if (params.message.length > limits.maxMessageLength) {
-      return Err(new ValidationError(`Message exceeds maximum length of ${limits.maxMessageLength}`))
+    if (params.message.length > BBS.MESSAGE.MAX_LENGTH) {
+      return Err(new ValidationError(`Message exceeds maximum length of ${BBS.MESSAGE.MAX_LENGTH}`))
     }
 
-    if (params.author.length > limits.maxAuthorLength) {
-      return Err(new ValidationError(`Author name exceeds maximum length of ${limits.maxAuthorLength}`))
+    if (params.author.length > BBS.AUTHOR.MAX_LENGTH) {
+      return Err(new ValidationError(`Author name exceeds maximum length of ${BBS.AUTHOR.MAX_LENGTH}`))
     }
 
     // 連投防止マーク（userHashが提供された場合）
@@ -578,13 +574,12 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
     }
 
     // メッセージ長制限チェック
-    const limits = getBBSLimits()
-    if (params.message.length > limits.maxMessageLength) {
-      return Err(new ValidationError(`Message exceeds maximum length of ${limits.maxMessageLength}`))
+    if (params.message.length > BBS.MESSAGE.MAX_LENGTH) {
+      return Err(new ValidationError(`Message exceeds maximum length of ${BBS.MESSAGE.MAX_LENGTH}`))
     }
 
-    if (params.author.length > limits.maxAuthorLength) {
-      return Err(new ValidationError(`Author name exceeds maximum length of ${limits.maxAuthorLength}`))
+    if (params.author.length > BBS.AUTHOR.MAX_LENGTH) {
+      return Err(new ValidationError(`Author name exceeds maximum length of ${BBS.AUTHOR.MAX_LENGTH}`))
     }
 
     // 不適切なコンテンツチェック
@@ -719,8 +714,7 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
   private async markPostTime(id: string, userHash: string): Promise<Result<void, ValidationError>> {
     const postKey = `bbs:${id}:post:${userHash}`
     const postRepo = RepositoryFactory.createEntity(z.string(), 'bbs_post')
-    const limits = getBBSLimits() as { postCooldown: number }
-    const ttl = limits.postCooldown // デフォルト10秒
+    const ttl = 10 // デフォルト10秒
 
     const saveResult = await postRepo.saveWithTTL(postKey, new Date().toISOString(), ttl)
     if (!saveResult.success) {
