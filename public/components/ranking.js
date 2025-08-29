@@ -168,7 +168,7 @@ class NostalgicRanking extends HTMLElement {
         textColor: '#f06292'
       },
       mom: {
-        bgColor: '#e8f8e8',
+        bgColor: '#c8e6c9',
         borderColor: '#ff8c00',
         headerBg: '#98fb98',
         headerColor: '#2d4a2b',
@@ -271,42 +271,42 @@ class NostalgicRanking extends HTMLElement {
         .ranking-container.final::before {
           content: '';
           position: absolute;
-          top: 0;
-          left: 0;
-          width: 60%;
-          height: 60%;
-          background: radial-gradient(circle at top left, #add8e6 5%, rgba(173, 216, 230, 0.4) 30%, rgba(173, 216, 230, 0.1) 60%, rgba(173, 216, 230, 0) 100%);
+          top: -50%;
+          left: -50%;
+          width: 150%;
+          height: 150%;
+          background: radial-gradient(circle at 20% 20%, #add8e6 5%, rgba(173, 216, 230, 0.4) 30%, rgba(173, 216, 230, 0.1) 60%, rgba(173, 216, 230, 0) 100%);
           pointer-events: none;
           z-index: 1;
         }
         .ranking-container.final::after {
           content: '';
           position: absolute;
-          top: 0;
-          right: 0;
-          width: 60%;
-          height: 60%;
-          background: radial-gradient(circle at top right, #87ceeb 5%, rgba(135, 206, 235, 0.4) 30%, rgba(135, 206, 235, 0.1) 60%, rgba(135, 206, 235, 0) 100%);
+          top: -50%;
+          right: -50%;
+          width: 150%;
+          height: 150%;
+          background: radial-gradient(circle at 80% 20%, #000080 5%, rgba(0, 0, 128, 0.4) 30%, rgba(0, 0, 128, 0.1) 60%, rgba(0, 0, 128, 0) 100%);
           pointer-events: none;
           z-index: 1;
         }
         .ranking-container.final .gradient-bottom-left {
           position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 60%;
-          height: 60%;
-          background: radial-gradient(circle at bottom left, #9c27b0 5%, rgba(156, 39, 176, 0.4) 30%, rgba(156, 39, 176, 0.1) 60%, rgba(156, 39, 176, 0) 100%);
+          bottom: -50%;
+          left: -50%;
+          width: 150%;
+          height: 150%;
+          background: radial-gradient(circle at 20% 80%, #9c27b0 5%, rgba(156, 39, 176, 0.4) 30%, rgba(156, 39, 176, 0.1) 60%, rgba(156, 39, 176, 0) 100%);
           pointer-events: none;
           z-index: 1;
         }
         .ranking-container.final .gradient-bottom-right {
           position: absolute;
-          bottom: 0;
-          right: 0;
-          width: 60%;
-          height: 60%;
-          background: radial-gradient(circle at bottom right, #000080 5%, rgba(0, 0, 128, 0.4) 30%, rgba(0, 0, 128, 0.1) 60%, rgba(0, 0, 128, 0) 100%);
+          bottom: -50%;
+          right: -50%;
+          width: 150%;
+          height: 150%;
+          background: radial-gradient(circle at 80% 80%, #000033 5%, rgba(0, 0, 51, 0.4) 30%, rgba(0, 0, 51, 0.1) 60%, rgba(0, 0, 51, 0) 100%);
           pointer-events: none;
           z-index: 1;
         }
@@ -333,8 +333,8 @@ class NostalgicRanking extends HTMLElement {
         }
         .ranking-header.mom {
           background-image: 
-            repeating-linear-gradient(45deg, rgba(255, 255, 0, 0.7), rgba(255, 255, 0, 0.7) 10px, transparent 10px, transparent 20px),
-            repeating-linear-gradient(-45deg, rgba(144, 238, 144, 0.5), rgba(144, 238, 144, 0.5) 10px, transparent 10px, transparent 20px);
+            repeating-linear-gradient(45deg, rgba(76, 175, 80, 0.7), rgba(76, 175, 80, 0.7) 10px, transparent 10px, transparent 20px),
+            repeating-linear-gradient(-45deg, rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5) 10px, transparent 10px, transparent 20px);
           text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
         }
         .ranking-container.mom .ranking-item,

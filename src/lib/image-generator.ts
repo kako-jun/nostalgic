@@ -45,7 +45,7 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       border: '#9c27b0'
     },
     mom: {
-      backgroundColor: '#f0f8e8',
+      backgroundColor: '#c8e6c9',
       textColor: '#2d4a2b',
       fontFamily: 'Impact, Arial Black, sans-serif',
       fontSize: '16',
@@ -86,7 +86,7 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       <!-- MOTHER2風ストライプパターン -->
       <defs>
         <pattern id="stripes" patternUnits="userSpaceOnUse" width="14" height="14" patternTransform="rotate(45)">
-          <rect width="7" height="14" fill="#ffff00"/>
+          <rect width="7" height="14" fill="#4caf50"/>
           <rect x="7" width="7" height="14" fill="#98fb98"/>
         </pattern>
       </defs>
@@ -102,9 +102,9 @@ export function generateCounterSVG(options: CounterImageOptions): string {
           <stop offset="100%" stop-color="rgba(173, 216, 230, 0)"/>
         </radialGradient>
         <radialGradient id="finalTopRight" cx="100%" cy="0%" r="80%">
-          <stop offset="5%" stop-color="rgba(135, 206, 235, 0.4)"/>
-          <stop offset="60%" stop-color="rgba(135, 206, 235, 0.1)"/>
-          <stop offset="100%" stop-color="rgba(135, 206, 235, 0)"/>
+          <stop offset="5%" stop-color="rgba(0, 0, 128, 0.4)"/>
+          <stop offset="60%" stop-color="rgba(0, 0, 128, 0.1)"/>
+          <stop offset="100%" stop-color="rgba(0, 0, 128, 0)"/>
         </radialGradient>
         <radialGradient id="finalBottomLeft" cx="0%" cy="100%" r="80%">
           <stop offset="5%" stop-color="rgba(156, 39, 176, 0.4)"/>
@@ -112,9 +112,9 @@ export function generateCounterSVG(options: CounterImageOptions): string {
           <stop offset="100%" stop-color="rgba(156, 39, 176, 0)"/>
         </radialGradient>
         <radialGradient id="finalBottomRight" cx="100%" cy="100%" r="80%">
-          <stop offset="5%" stop-color="rgba(0, 0, 128, 0.4)"/>
-          <stop offset="60%" stop-color="rgba(0, 0, 128, 0.1)"/>
-          <stop offset="100%" stop-color="rgba(0, 0, 128, 0)"/>
+          <stop offset="5%" stop-color="rgba(0, 0, 51, 0.4)"/>
+          <stop offset="60%" stop-color="rgba(0, 0, 51, 0.1)"/>
+          <stop offset="100%" stop-color="rgba(0, 0, 51, 0)"/>
         </radialGradient>
       </defs>
       <rect width="${width}" height="${height}" fill="url(#finalTopLeft)"/>

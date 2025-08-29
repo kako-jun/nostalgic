@@ -589,44 +589,29 @@ export default function HomePage() {
                   <b>◆ランキングのサンプル　その他◆</b>
                 </span>
               </p>
-              <div style={{ margin: "20px 0" }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: "20px", alignItems: "center" }}>
-                  {/* Kawaii Theme */}
-                  <div>
-                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Kawaii</p>
-                    <div style={{ width: "100%", maxWidth: "100%" }}>
-                      <div style={{ 
-                        padding: "15px"
-                      }}>
-                        <nostalgic-ranking id="nostalgic-b89803bb" theme="kawaii" limit="5" />
-                      </div>
-                    </div>
-                  </div>
+              {/* Kawaii Theme */}
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
+                <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>Kawaii</p>
+                <nostalgic-ranking id="nostalgic-b89803bb" theme="kawaii" limit="5" />
+              </div>
 
-                  {/* Mother Theme */}
-                  <div>
-                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Mother味</p>
-                    <div style={{ width: "100%", maxWidth: "100%" }}>
-                      <div style={{ 
-                        padding: "15px"
-                      }}>
-                        <nostalgic-ranking id="nostalgic-b89803bb" theme="mom" limit="5" />
-                      </div>
-                    </div>
-                  </div>
+              {/* Mother Theme */}
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
+                <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>Mother味</p>
+                <nostalgic-ranking id="nostalgic-b89803bb" theme="mom" limit="5" />
+              </div>
 
-                  {/* FF Theme */}
-                  <div>
-                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>FF味</p>
-                    <div style={{ width: "100%", maxWidth: "100%" }}>
-                      <div style={{ 
-                        background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
-                        padding: "10px"
-                      }}>
-                        <nostalgic-ranking id="nostalgic-b89803bb" theme="final" limit="5" />
-                      </div>
-                    </div>
-                  </div>
+              {/* FF Theme */}
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
+                <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>FF味</p>
+                <div style={{ 
+                  background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
+                  padding: "10px",
+                  display: "inline-block",
+                  width: "fit-content",
+                  maxWidth: "100%"
+                }}>
+                  <nostalgic-ranking id="nostalgic-b89803bb" theme="final" limit="5" />
                 </div>
               </div>
             </div>
