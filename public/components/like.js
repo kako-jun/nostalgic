@@ -198,9 +198,21 @@ class NostalgicLike extends HTMLElement {
           color: userLiked ? '#ffffff' : '#999999',
           hoverColor: userLiked ? '#cccccc' : '#ffffff'
         },
+        retro: {
+          color: userLiked ? '#00ff41' : '#00cc33',
+          hoverColor: userLiked ? '#00cc33' : '#00ff41'
+        },
         kawaii: {
           color: userLiked ? '#ff69b4' : '#f06292',
           hoverColor: userLiked ? '#f06292' : '#ff4081'
+        },
+        mom: {
+          color: userLiked ? '#000000' : '#666666',
+          hoverColor: userLiked ? '#333333' : '#000000'
+        },
+        final: {
+          color: userLiked ? '#e3f2fd' : '#bbdefb',
+          hoverColor: userLiked ? '#bbdefb' : '#e3f2fd'
         }
       };
       
@@ -263,10 +275,16 @@ class NostalgicLike extends HTMLElement {
         return userLiked ? '#000000' : '#999999';
       } else if (theme === 'dark') {
         return userLiked ? '#ffffff' : '#666666';
+      } else if (theme === 'retro') {
+        return userLiked ? '#00ff41' : '#00cc33';
       } else if (theme === 'kawaii') {
         if (icon === 'heart') return userLiked ? '#ff69b4' : '#f06292';
         if (icon === 'star') return userLiked ? '#ff69b4' : '#f06292';
         if (icon === 'thumb') return userLiked ? '#ff69b4' : '#f06292';
+      } else if (theme === 'mom') {
+        return userLiked ? '#000000' : '#999999';
+      } else if (theme === 'final') {
+        return userLiked ? '#e3f2fd' : '#bbdefb';
       }
       // デフォルト（dark）
       return userLiked ? '#ffffff' : '#666666';
@@ -290,12 +308,33 @@ class NostalgicLike extends HTMLElement {
         borderColor: '#ffffff',
         shadowColor: '#ffffff'
       },
+      retro: {
+        bgColor: '#0d1117',
+        hoverBgColor: '#161b22',
+        textColor: '#00ff41',
+        borderColor: '#00ff41',
+        shadowColor: '#00ff41'
+      },
       kawaii: {
         bgColor: '#e0f7fa',
         hoverBgColor: '#b2ebf2',
         textColor: '#ff69b4',
         borderColor: '#9c27b0',
         shadowColor: '#9c27b0'
+      },
+      mom: {
+        bgColor: '#ffffff',
+        hoverBgColor: '#f5f5f5',
+        textColor: '#000000',
+        borderColor: '#000000',
+        shadowColor: '#000000'
+      },
+      final: {
+        bgColor: '#1a237e',
+        hoverBgColor: '#0d47a1',
+        textColor: '#e3f2fd',
+        borderColor: '#3f51b5',
+        shadowColor: '#3f51b5'
       }
     };
     
@@ -384,6 +423,26 @@ class NostalgicLike extends HTMLElement {
           user-select: none;
           transition: all 0.2s ease;
           opacity: ${isLoading ? '0.6' : '1'};
+          position: relative;
+        }
+        
+        .like-button.retro::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-image: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 255, 65, 0.1) 2px,
+            rgba(0, 255, 65, 0.1) 4px
+          );
+          pointer-events: none;
+          z-index: 1;
+          border-radius: inherit;
         }
         
         .like-button:hover:not(.loading) {
@@ -427,7 +486,7 @@ class NostalgicLike extends HTMLElement {
         }
       </style>
       
-      <button class="like-button ${isLoading ? 'loading' : ''} ${theme === 'kawaii' ? 'kawaii' : ''}" ${isLoading ? 'disabled' : ''}>
+      <button class="like-button ${isLoading ? 'loading' : ''} ${theme || ''}" ${isLoading ? 'disabled' : ''}>
         <span class="heart-icon">${displayIcon}</span>
         <span class="like-count">${total}</span>
       </button>

@@ -300,6 +300,25 @@ class NostalgicBBS extends HTMLElement {
           width: 100%;
           width: min(var(--bbs-width), 100%);
           box-sizing: border-box;
+          position: relative;
+        }
+        .bbs-container.retro::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-image: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 255, 65, 0.1) 2px,
+            rgba(0, 255, 65, 0.1) 4px
+          );
+          pointer-events: none;
+          z-index: 10;
+          border-radius: inherit;
         }
         .bbs-header {
           background-color: var(--bbs-header-bg);
@@ -316,7 +335,10 @@ class NostalgicBBS extends HTMLElement {
           background-repeat: repeat;
         }
         .bbs-header.mom {
-          background-image: repeating-linear-gradient(45deg, #90ee90, #90ee90 10px, #98fb98 10px, #98fb98 20px);
+          background-image: 
+            repeating-linear-gradient(45deg, rgba(144, 238, 144, 0.7), rgba(144, 238, 144, 0.7) 10px, transparent 10px, transparent 20px),
+            repeating-linear-gradient(-45deg, rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5) 10px, transparent 10px, transparent 20px);
+          text-shadow: 1px 1px 0px white;
         }
         .bbs-header.retro {
           background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 65, 0.03) 2px, rgba(0, 255, 65, 0.03) 4px);
@@ -474,7 +496,10 @@ class NostalgicBBS extends HTMLElement {
           background-repeat: repeat;
         }
         .form-header.mom {
-          background-image: repeating-linear-gradient(45deg, #90ee90, #90ee90 10px, #98fb98 10px, #98fb98 20px);
+          background-image: 
+            repeating-linear-gradient(45deg, rgba(144, 238, 144, 0.7), rgba(144, 238, 144, 0.7) 10px, transparent 10px, transparent 20px),
+            repeating-linear-gradient(-45deg, rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5) 10px, transparent 10px, transparent 20px);
+          text-shadow: 1px 1px 0px white;
         }
         .form-header.retro {
           background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 65, 0.03) 2px, rgba(0, 255, 65, 0.03) 4px);

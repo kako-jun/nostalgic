@@ -243,7 +243,7 @@ export default function HomePage() {
                 <div style={{ display: "flex", flexDirection: "column", gap: "20px", alignItems: "center" }}>
                   {/* Light Theme - 3 icons in a row */}
                   <div>
-                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Light テーマ</p>
+                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Light </p>
                     <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart</p>
@@ -268,7 +268,7 @@ export default function HomePage() {
 
                   {/* Dark Theme - 3 icons in a row */}
                   <div>
-                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Dark テーマ</p>
+                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Dark </p>
                     <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart</p>
@@ -293,7 +293,7 @@ export default function HomePage() {
 
                   {/* Retro Theme - 3 icons in a row */}
                   <div>
-                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Retro テーマ</p>
+                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Retro </p>
                     <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart</p>
@@ -318,7 +318,7 @@ export default function HomePage() {
 
                   {/* Kawaii Theme - 3 icons in a row */}
                   <div>
-                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Kawaii テーマ</p>
+                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Kawaii </p>
                     <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart</p>
@@ -343,7 +343,7 @@ export default function HomePage() {
 
                   {/* Mother Theme - 3 icons in a row */}
                   <div>
-                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Mother味 テーマ</p>
+                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Mother味</p>
                     <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart</p>
@@ -368,7 +368,7 @@ export default function HomePage() {
 
                   {/* Final Theme - 3 icons in a row */}
                   <div>
-                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>FF味 テーマ</p>
+                    <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>FF味</p>
                     <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart</p>
@@ -600,7 +600,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - Light テーマ◆</b>
+                  <b>◆ゲストブックのサンプル - Light ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -614,7 +614,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - Dark テーマ◆</b>
+                  <b>◆ゲストブックのサンプル - Dark ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -627,7 +627,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - Retro テーマ◆</b>
+                  <b>◆ゲストブックのサンプル - Retro ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -646,109 +646,10 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - Kawaii テーマ◆</b>
+                  <b>◆ゲストブックのサンプル - Kawaii ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap", margin: "20px auto" }}>
-                  <div style={{ 
-                    position: "relative",
-                    width: "200px",
-                    height: "120px",
-                    backgroundColor: "#e0f7fa",
-                    backgroundImage: `
-                      radial-gradient(circle at 0px 0px, rgba(255,255,255,0.8) 8px, transparent 8px),
-                      radial-gradient(circle at 30px 5px, rgba(255,255,255,0.8) 10px, transparent 10px),
-                      radial-gradient(circle at 65px 0px, rgba(255,255,255,0.8) 7px, transparent 7px),
-                      radial-gradient(circle at 100px 8px, rgba(255,255,255,0.8) 9px, transparent 9px),
-                      radial-gradient(circle at 135px 2px, rgba(255,255,255,0.8) 6px, transparent 6px),
-                      radial-gradient(circle at 170px 10px, rgba(255,255,255,0.8) 11px, transparent 11px),
-                      radial-gradient(circle at 5px 25px, rgba(255,255,255,0.8) 7px, transparent 7px),
-                      radial-gradient(circle at 40px 30px, rgba(255,255,255,0.8) 8px, transparent 8px),
-                      radial-gradient(circle at 75px 20px, rgba(255,255,255,0.8) 12px, transparent 12px),
-                      radial-gradient(circle at 110px 35px, rgba(255,255,255,0.8) 6px, transparent 6px),
-                      radial-gradient(circle at 145px 25px, rgba(255,255,255,0.8) 9px, transparent 9px),
-                      radial-gradient(circle at 180px 30px, rgba(255,255,255,0.8) 7px, transparent 7px),
-                      radial-gradient(circle at 15px 50px, rgba(255,255,255,0.8) 10px, transparent 10px),
-                      radial-gradient(circle at 50px 55px, rgba(255,255,255,0.8) 8px, transparent 8px),
-                      radial-gradient(circle at 85px 45px, rgba(255,255,255,0.8) 6px, transparent 6px),
-                      radial-gradient(circle at 120px 60px, rgba(255,255,255,0.8) 11px, transparent 11px),
-                      radial-gradient(circle at 155px 50px, rgba(255,255,255,0.8) 9px, transparent 9px),
-                      radial-gradient(circle at 0px 75px, rgba(255,255,255,0.8) 7px, transparent 7px),
-                      radial-gradient(circle at 35px 80px, rgba(255,255,255,0.8) 10px, transparent 10px),
-                      radial-gradient(circle at 70px 70px, rgba(255,255,255,0.8) 8px, transparent 8px),
-                      radial-gradient(circle at 105px 85px, rgba(255,255,255,0.8) 6px, transparent 6px),
-                      radial-gradient(circle at 140px 75px, rgba(255,255,255,0.8) 12px, transparent 12px),
-                      radial-gradient(circle at 175px 80px, rgba(255,255,255,0.8) 9px, transparent 9px),
-                      radial-gradient(circle at 25px 100px, rgba(255,255,255,0.8) 8px, transparent 8px),
-                      radial-gradient(circle at 60px 105px, rgba(255,255,255,0.8) 7px, transparent 7px),
-                      radial-gradient(circle at 95px 110px, rgba(255,255,255,0.8) 10px, transparent 10px),
-                      radial-gradient(circle at 130px 100px, rgba(255,255,255,0.8) 6px, transparent 6px),
-                      radial-gradient(circle at 165px 115px, rgba(255,255,255,0.8) 9px, transparent 9px)
-                    `,
-                    backgroundSize: "220px 120px",
-                    backgroundRepeat: "repeat",
-                    border: "2px solid #9c27b0",
-                    borderRadius: "4px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "12px",
-                    fontWeight: "bold",
-                    color: "#9c27b0"
-                  }}>
-                    薄い水色
-                  </div>
-                  <div style={{ 
-                    position: "relative",
-                    width: "200px",
-                    height: "120px",
-                    backgroundColor: "#b2ebf2",
-                    backgroundImage: `
-                      radial-gradient(circle at 0px 5px, rgba(255,255,255,0.4) 9px, transparent 9px),
-                      radial-gradient(circle at 35px 2px, rgba(255,255,255,0.4) 7px, transparent 7px),
-                      radial-gradient(circle at 70px 8px, rgba(255,255,255,0.4) 11px, transparent 11px),
-                      radial-gradient(circle at 105px 0px, rgba(255,255,255,0.4) 8px, transparent 8px),
-                      radial-gradient(circle at 140px 10px, rgba(255,255,255,0.4) 6px, transparent 6px),
-                      radial-gradient(circle at 175px 5px, rgba(255,255,255,0.4) 10px, transparent 10px),
-                      radial-gradient(circle at 10px 30px, rgba(255,255,255,0.4) 8px, transparent 8px),
-                      radial-gradient(circle at 45px 35px, rgba(255,255,255,0.4) 12px, transparent 12px),
-                      radial-gradient(circle at 80px 25px, rgba(255,255,255,0.4) 7px, transparent 7px),
-                      radial-gradient(circle at 115px 38px, rgba(255,255,255,0.4) 9px, transparent 9px),
-                      radial-gradient(circle at 150px 30px, rgba(255,255,255,0.4) 6px, transparent 6px),
-                      radial-gradient(circle at 185px 35px, rgba(255,255,255,0.4) 8px, transparent 8px),
-                      radial-gradient(circle at 5px 55px, rgba(255,255,255,0.4) 10px, transparent 10px),
-                      radial-gradient(circle at 40px 60px, rgba(255,255,255,0.4) 7px, transparent 7px),
-                      radial-gradient(circle at 75px 50px, rgba(255,255,255,0.4) 11px, transparent 11px),
-                      radial-gradient(circle at 110px 65px, rgba(255,255,255,0.4) 8px, transparent 8px),
-                      radial-gradient(circle at 145px 55px, rgba(255,255,255,0.4) 6px, transparent 6px),
-                      radial-gradient(circle at 180px 60px, rgba(255,255,255,0.4) 9px, transparent 9px),
-                      radial-gradient(circle at 15px 85px, rgba(255,255,255,0.4) 8px, transparent 8px),
-                      radial-gradient(circle at 50px 80px, rgba(255,255,255,0.4) 12px, transparent 12px),
-                      radial-gradient(circle at 85px 90px, rgba(255,255,255,0.4) 7px, transparent 7px),
-                      radial-gradient(circle at 120px 85px, rgba(255,255,255,0.4) 10px, transparent 10px),
-                      radial-gradient(circle at 155px 95px, rgba(255,255,255,0.4) 6px, transparent 6px),
-                      radial-gradient(circle at 0px 110px, rgba(255,255,255,0.4) 9px, transparent 9px),
-                      radial-gradient(circle at 35px 115px, rgba(255,255,255,0.4) 8px, transparent 8px),
-                      radial-gradient(circle at 70px 105px, rgba(255,255,255,0.4) 11px, transparent 11px),
-                      radial-gradient(circle at 105px 120px, rgba(255,255,255,0.4) 7px, transparent 7px),
-                      radial-gradient(circle at 140px 110px, rgba(255,255,255,0.4) 9px, transparent 9px),
-                      radial-gradient(circle at 175px 115px, rgba(255,255,255,0.4) 6px, transparent 6px)
-                    `,
-                    backgroundSize: "220px 120px",
-                    backgroundRepeat: "repeat",
-                    border: "2px solid #9c27b0",
-                    borderRadius: "4px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "12px",
-                    fontWeight: "bold",
-                    color: "#9c27b0"
-                  }}>
-                    濃い水色
-                  </div>
-                </div>
                 <nostalgic-bbs id="nostalgic-0962d8eb" theme="kawaii" />
               </div>
             </div>
@@ -756,7 +657,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - Mother テーマ◆</b>
+                  <b>◆ゲストブックのサンプル - Mother ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -767,7 +668,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - FF テーマ◆</b>
+                  <b>◆ゲストブックのサンプル - FF ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>

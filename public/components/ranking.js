@@ -153,12 +153,33 @@ class NostalgicRanking extends HTMLElement {
         headerColor: '#ffffff',
         textColor: '#cccccc'
       },
+      retro: {
+        bgColor: '#0d1117',
+        borderColor: '#00ff41',
+        headerBg: '#161b22',
+        headerColor: '#00ff41',
+        textColor: '#00ff41'
+      },
       kawaii: {
         bgColor: '#e0f7fa',
         borderColor: '#9c27b0',
         headerBg: '#b2ebf2',
         headerColor: '#ff69b4',
         textColor: '#f06292'
+      },
+      mom: {
+        bgColor: '#ffffff',
+        borderColor: '#000000',
+        headerBg: '#f5f5f5',
+        headerColor: '#000000',
+        textColor: '#000000'
+      },
+      final: {
+        bgColor: '#1a237e',
+        borderColor: '#3f51b5',
+        headerBg: '#0d47a1',
+        headerColor: '#e3f2fd',
+        textColor: '#bbdefb'
       }
     };
 
@@ -223,6 +244,25 @@ class NostalgicRanking extends HTMLElement {
           width: 100%;
           width: min(var(--ranking-width), 100%);
           box-sizing: border-box;
+          position: relative;
+        }
+        .ranking-container.retro::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-image: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 255, 65, 0.1) 2px,
+            rgba(0, 255, 65, 0.1) 4px
+          );
+          pointer-events: none;
+          z-index: 10;
+          border-radius: inherit;
         }
         .ranking-header {
           background: var(--ranking-header-bg);
@@ -291,7 +331,7 @@ class NostalgicRanking extends HTMLElement {
           font-size: 14px;
         }
       </style>
-      <div class="ranking-container ${theme === 'kawaii' ? 'kawaii' : ''}">
+      <div class="ranking-container ${theme || ''}">
         <div class="ranking-header ${theme === 'kawaii' ? 'kawaii' : ''}">${this.escapeHtml(this.rankingData.settings?.title || 'RANKING')}</div>
         ${entries.length > 0 ? `
           <ul class="ranking-list">
