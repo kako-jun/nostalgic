@@ -332,7 +332,7 @@ class NostalgicLike extends HTMLElement {
         shadowColor: '#9c27b0'
       },
       mom: {
-        bgColor: '#d8f5d8',
+        bgColor: '#98fb98',
         hoverBgColor: '#a5d6a7',
         textColor: '#2d4a2b',
         borderColor: '#ff8c00',
