@@ -404,11 +404,10 @@ class NostalgicBBS extends HTMLElement {
           min-height: 400px;
           max-height: 400px;
           overflow-y: auto;
-          padding-right: 12px;
           box-sizing: border-box;
         }
         .bbs-messages::-webkit-scrollbar {
-          width: 8px;
+          width: 12px;
         }
         .bbs-messages::-webkit-scrollbar-track {
           background: var(--bbs-bg-color);
@@ -417,7 +416,9 @@ class NostalgicBBS extends HTMLElement {
         .bbs-messages::-webkit-scrollbar-thumb {
           background: var(--bbs-scrollbar-thumb);
           border: 1px solid var(--bbs-bg-color);
+          border-right: 4px solid transparent;
           border-radius: 6px;
+          background-clip: padding-box;
         }
         .bbs-messages::-webkit-scrollbar-thumb:hover {
           background: var(--bbs-scrollbar-hover);
@@ -580,6 +581,10 @@ class NostalgicBBS extends HTMLElement {
         .bbs-container.final .delete-btn,
         .bbs-container.final .empty-message {
           color: #cccccc;
+        }
+        .bbs-container.final input::placeholder,
+        .bbs-container.final textarea::placeholder {
+          color: #999999;
         }
         .empty-message {
           text-align: center;
@@ -762,11 +767,11 @@ class NostalgicBBS extends HTMLElement {
             <div class="form-header ${theme}">コメントを投稿</div>
             <div class="form-body">
               <div class="form-row">
-                <input type="text" id="message-author" placeholder="名前（省略可、20文字まで）" maxlength="20">
+                <input type="text" id="message-author" placeholder="名前（省略可、20文字まで）" maxlength="20" spellcheck="false">
                 ${this.generateSelectDropdowns()}
               </div>
               <div class="form-row">
-                <textarea id="message-content" placeholder="メッセージを入力（200文字まで）" maxlength="200" rows="5"></textarea>
+                <textarea id="message-content" placeholder="メッセージを入力（200文字まで）" maxlength="200" rows="5" spellcheck="false"></textarea>
               </div>
               <div class="form-row button-right">
                 <button id="post-button" class="${theme}" onclick="this.getRootNode().host.postMessage()">投稿</button>
