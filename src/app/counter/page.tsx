@@ -531,7 +531,7 @@ declare module 'react' {
                 </p>
                 {publicId ? (
                   <div style={{ textAlign: "center", margin: "20px 0" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "20px", justifyItems: "center", maxWidth: "800px", margin: "0 auto" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "20px", justifyItems: "center", alignItems: "start", maxWidth: "800px", margin: "0 auto" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "14px", marginBottom: "10px" }}>Light</p>
                         <img 
