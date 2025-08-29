@@ -52,11 +52,11 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       border: '#ff8c00'
     },
     final: {
-      backgroundColor: '#1a237e',
-      textColor: '#e3f2fd',
+      backgroundColor: '#0000ff',
+      textColor: '#ffffff',
       fontFamily: 'Times New Roman, Times, serif',
       fontSize: '16',
-      border: '#64b5f6'
+      border: '#ffffff'
     }
   }
   
@@ -87,21 +87,26 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       <defs>
         <pattern id="stripes" patternUnits="userSpaceOnUse" width="14" height="14" patternTransform="rotate(45)">
           <rect width="7" height="14" fill="#90ee90"/>
-          <rect x="7" width="7" height="14" fill="#e8f8e8"/>
+          <rect x="7" width="7" height="14" fill="#98fb98"/>
         </pattern>
       </defs>
       <rect width="${width}" height="${height}" fill="url(#stripes)" opacity="0.3"/>
       ` : ''}
       
       ${style === 'final' ? `
-      <!-- FF風グラデーション -->
+      <!-- Final風グラデーション -->
       <defs>
-        <radialGradient id="ffGradient" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(100, 181, 246, 0.2)"/>
-          <stop offset="100%" stop-color="rgba(25, 118, 210, 0.1)"/>
+        <radialGradient id="finalTopLeft" cx="0%" cy="0%" r="70%">
+          <stop offset="0%" stop-color="rgba(255, 219, 44, 0.3)"/>
+          <stop offset="100%" stop-color="rgba(255, 219, 44, 0)"/>
+        </radialGradient>
+        <radialGradient id="finalTopRight" cx="100%" cy="0%" r="70%">
+          <stop offset="0%" stop-color="rgba(255, 105, 180, 0.3)"/>
+          <stop offset="100%" stop-color="rgba(255, 105, 180, 0)"/>
         </radialGradient>
       </defs>
-      <rect width="${width}" height="${height}" fill="url(#ffGradient)"/>
+      <rect width="${width}" height="${height}" fill="url(#finalTopLeft)"/>
+      <rect width="${width}" height="${height}" fill="url(#finalTopRight)"/>
       ` : ''}
       
       <!-- カウンター値 -->
