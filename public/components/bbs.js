@@ -404,18 +404,21 @@ class NostalgicBBS extends HTMLElement {
           min-height: 400px;
           max-height: 400px;
           overflow-y: auto;
-          box-sizing: border-box;
-          padding-right: 4px;
         }
         .bbs-messages::-webkit-scrollbar {
-          width: 6px;
+          width: 8px;
         }
         .bbs-messages::-webkit-scrollbar-track {
-          background: transparent;
+          background: var(--bbs-bg-color);
+          border-radius: 2px;
         }
         .bbs-messages::-webkit-scrollbar-thumb {
           background: var(--bbs-scrollbar-thumb);
-          border-radius: 3px;
+          border: 1px solid var(--bbs-bg-color);
+          border-radius: 6px;
+        }
+        .bbs-messages::-webkit-scrollbar-thumb:hover {
+          background: var(--bbs-scrollbar-hover);
         }
         .message-item {
           background: var(--bbs-message-bg);
