@@ -168,7 +168,7 @@ class NostalgicRanking extends HTMLElement {
         textColor: '#f06292'
       },
       mom: {
-        bgColor: '#c8e6c9',
+        bgColor: '#d8f5d8',
         borderColor: '#ff8c00',
         headerBg: '#98fb98',
         headerColor: '#2d4a2b',
@@ -352,6 +352,13 @@ class NostalgicRanking extends HTMLElement {
         .ranking-container.retro .score {
           text-shadow: 0 0 3px currentColor;
         }
+        .ranking-container.final .ranking-header,
+        .ranking-container.final .rank,
+        .ranking-container.final .name,
+        .ranking-container.final .score,
+        .ranking-container.final .empty-message {
+          text-shadow: 1px 1px 0px black;
+        }
         .ranking-list {
           padding: 10px;
           margin: 0;
@@ -409,7 +416,7 @@ class NostalgicRanking extends HTMLElement {
         
         /* Font balancing for Japanese-English mixed text in header only */
         .ranking-header .jp-text {
-          font-size: 0.95em;
+          font-size: 0.85em;
           font-feature-settings: "palt" 1;
         }
         

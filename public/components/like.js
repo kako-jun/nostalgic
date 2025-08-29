@@ -253,8 +253,11 @@ class NostalgicLike extends HTMLElement {
           .like-text.mom {
             text-shadow: 1px 1px 0px white;
           }
+          .like-text.final {
+            text-shadow: 1px 1px 0px black;
+          }
         </style>
-        <span class="like-text ${likedClass} ${isLoading ? 'loading' : ''} ${theme === 'mom' ? 'mom' : ''}" onclick="this.getRootNode().host.toggleLike()">${total}</span>
+        <span class="like-text ${likedClass} ${isLoading ? 'loading' : ''} ${theme === 'mom' ? 'mom' : ''} ${theme === 'final' ? 'final' : ''}" onclick="this.getRootNode().host.toggleLike()">${total}</span>
       `;
       return;
     }
@@ -328,7 +331,7 @@ class NostalgicLike extends HTMLElement {
         shadowColor: '#9c27b0'
       },
       mom: {
-        bgColor: '#c8e6c9',
+        bgColor: '#d8f5d8',
         hoverBgColor: '#a5d6a7',
         textColor: '#2d4a2b',
         borderColor: '#ff8c00',
@@ -534,6 +537,13 @@ class NostalgicLike extends HTMLElement {
         }
         .like-text.retro {
           text-shadow: 0 0 3px currentColor;
+        }
+        .like-button.final .heart-icon,
+        .like-button.final .like-count {
+          text-shadow: 1px 1px 0px black;
+        }
+        .like-text.final {
+          text-shadow: 1px 1px 0px black;
         }
         
         .heart-icon {
