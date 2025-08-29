@@ -168,11 +168,11 @@ class NostalgicRanking extends HTMLElement {
         textColor: '#f06292'
       },
       mom: {
-        bgColor: '#ffffff',
-        borderColor: '#000000',
-        headerBg: '#f5f5f5',
-        headerColor: '#000000',
-        textColor: '#000000'
+        bgColor: '#98fb98',
+        borderColor: '#ff8c00',
+        headerBg: '#98fb98',
+        headerColor: '#2d4a2b',
+        textColor: '#2d4a2b'
       },
       final: {
         bgColor: 'linear-gradient(to bottom right, #87ceeb 0%, #4682b4 50%, #9370db 50%, #191970 100%)',

@@ -192,7 +192,7 @@ export default function HomePage() {
                 </div>
               </div>
               
-              <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap", marginTop: "20px" }}>
+              <div style={{ display: "flex", gap: "2px", justifyContent: "center", flexWrap: "wrap", marginTop: "20px" }}>
                 <div className="nostalgic-counter-item">
                   <div style={{ textAlign: "center" }}><b>Kawaii</b></div>
                   <br />
@@ -240,10 +240,10 @@ export default function HomePage() {
               <div style={{ textAlign: "center", margin: "20px 0" }}>
                 <p style={{ marginBottom: "10px" }}>このサイトが気に入ったら、いいねを押してください！</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "20px", alignItems: "center" }}>
-                  {/* Light Theme - 3 icons in a row */}
+                  {/* Light Theme - 4 icons in a row */}
                   <div>
                     <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Light </p>
-                    <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
+                    <div style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart</p>
                         <div style={{ padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -262,13 +262,19 @@ export default function HomePage() {
                           <nostalgic-like id="nostalgic-b89803bb" theme="light" icon="thumb" />
                         </div>
                       </div>
+                      <div style={{ textAlign: "center" }}>
+                        <p style={{ fontSize: "12px", marginBottom: "10px" }}>Peta</p>
+                        <div style={{ padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <nostalgic-like id="nostalgic-b89803bb" theme="light" icon="peta" />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Dark Theme - 3 icons in a row */}
+                  {/* Dark Theme - 4 icons in a row */}
                   <div>
                     <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Dark </p>
-                    <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
+                    <div style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart</p>
                         <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -287,13 +293,19 @@ export default function HomePage() {
                           <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="thumb" />
                         </div>
                       </div>
+                      <div style={{ textAlign: "center" }}>
+                        <p style={{ fontSize: "12px", marginBottom: "10px" }}>Peta</p>
+                        <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="peta" />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Retro Theme - 3 icons in a row */}
+                  {/* Retro Theme - 4 icons in a row */}
                   <div>
                     <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Retro </p>
-                    <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
+                    <div style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart</p>
                         <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -310,6 +322,12 @@ export default function HomePage() {
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Thumb</p>
                         <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                           <nostalgic-like id="nostalgic-b89803bb" theme="retro" icon="thumb" />
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        <p style={{ fontSize: "12px", marginBottom: "10px" }}>Peta</p>
+                        <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <nostalgic-like id="nostalgic-b89803bb" theme="retro" icon="peta" />
                         </div>
                       </div>
                     </div>
@@ -566,7 +584,7 @@ export default function HomePage() {
               <div style={{ margin: "20px 0" }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: "20px", alignItems: "center" }}>
                   {/* Kawaii Theme */}
-                  <div style={{ width: "100%", maxWidth: "400px" }}>
+                  <div style={{ width: "100%", maxWidth: "100%" }}>
                     <div style={{ 
                       padding: "15px"
                     }}>
@@ -575,7 +593,7 @@ export default function HomePage() {
                   </div>
 
                   {/* Mother Theme */}
-                  <div style={{ width: "100%", maxWidth: "400px" }}>
+                  <div style={{ width: "100%", maxWidth: "100%" }}>
                     <div style={{ 
                       padding: "15px"
                     }}>
@@ -584,7 +602,7 @@ export default function HomePage() {
                   </div>
 
                   {/* FF Theme */}
-                  <div style={{ width: "100%", maxWidth: "400px" }}>
+                  <div style={{ width: "100%", maxWidth: "100%" }}>
                     <div style={{ 
                       background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
                       padding: "10px"
@@ -656,7 +674,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - Mother ◆</b>
+                  <b>◆ゲストブックのサンプル - Mother味 ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -667,7 +685,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - FF ◆</b>
+                  <b>◆ゲストブックのサンプル - FF味 ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -688,89 +706,6 @@ export default function HomePage() {
             <p style={{ textAlign: "center", fontSize: "20px", fontWeight: "bold", margin: "20px 0" }}>
               Sorry, This Homepage is Earthlings Only.
             </p>
-          </>
-        );
-
-      case "usage":
-        return (
-          <>
-            <div className="nostalgic-title-bar">★☆★ 使い方 ★☆★</div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆STEP 1: カウンター作成◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセス：</p>
-              <p
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                  wordBreak: "break-all",
-                }}
-              >
-                https://nostalgic.llll-ll.com/api/visit?action=create&url=<span style={{ color: "#008000" }}>サイトURL</span>
-                &token=<span style={{ color: "#008000" }}>オーナートークン</span>
-              </p>
-              <p>
-                ※サイトURLには、カウンターを設置する予定のサイトを指定してください。「https://」から始まっている必要があります。
-                <br />
-                ※オーナートークンに、
-                <span style={{ color: "#ff0000" }}>ほかのサイトでのパスワードを使い回さないでください</span>
-                。（8〜16文字）
-              </p>
-              <p>上記URLにアクセスすると、JSONで公開IDが返されます。この公開IDをSTEP 2で使用してください。</p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆STEP 2: カウンター表示◆</b>
-                </span>
-              </p>
-              <p>HTMLに以下のコードを追加：</p>
-              <pre style={{ backgroundColor: "#f0f0f0", padding: "10px", overflow: "auto", fontSize: "14px", margin: "10px 0" }}>
-                {`<script src="https://nostalgic.llll-ll.com/components/display.js"></script>
-<nostalgic-counter id="`}
-                <span style={{ color: "#008000" }}>あなたの公開ID</span>
-                {`" type="`}
-                <span style={{ color: "#008000" }}>total</span>
-                {`" style="`}
-                <span style={{ color: "#008000" }}>dark</span>
-                {`"></nostalgic-counter>`}
-              </pre>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆type 表示タイプ◆</b>
-                </span>
-              </p>
-              <p>
-                • <span style={{ color: "#008000" }}>total</span> - 累計訪問数
-                <br />• <span style={{ color: "#008000" }}>today</span> - 今日の訪問数
-                <br />• <span style={{ color: "#008000" }}>yesterday</span> - 昨日の訪問数
-                <br />• <span style={{ color: "#008000" }}>week</span> - 今週の訪問数
-                <br />• <span style={{ color: "#008000" }}>month</span> - 今月の訪問数
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆theme デザインテーマ◆</b>
-                </span>
-              </p>
-              <p>
-                • <span style={{ color: "#008000" }}>light</span> - ライトテーマ（明るい背景）
-                <br />• <span style={{ color: "#008000" }}>dark</span> - ダークテーマ（暗い背景）
-                <br />• <span style={{ color: "#008000" }}>kawaii</span> - かわいいテーマ（ピンク系）
-              </p>
-            </div>
           </>
         );
 
