@@ -216,8 +216,9 @@ class NostalgicLike extends HTMLElement {
         }
       };
       
-      // デフォルトテーマはdark
-      const textStyle = textThemes[theme] || textThemes.dark;
+      // デフォルトテーマはdark（安全にアクセス）
+      const currentTheme = textThemes[theme] || textThemes.dark;
+      const textStyle = currentTheme;
       const likedClass = userLiked ? 'liked' : 'unliked';
       
       this.shadowRoot.innerHTML = `
@@ -226,9 +227,9 @@ class NostalgicLike extends HTMLElement {
             display: inline;
             /* CSS Custom Properties for external customization */
             --like-text-color-unliked: ${textStyle.color};
-            --like-text-color-liked: ${userLiked ? textStyle.color : textThemes[theme].color};
+            --like-text-color-liked: ${userLiked ? textStyle.color : textStyle.color};
             --like-text-hover-color-unliked: ${textStyle.hoverColor};
-            --like-text-hover-color-liked: ${userLiked ? textStyle.hoverColor : textThemes[theme].hoverColor};
+            --like-text-hover-color-liked: ${userLiked ? textStyle.hoverColor : textStyle.hoverColor};
           }
           .like-text {
             cursor: pointer;
@@ -242,13 +243,13 @@ class NostalgicLike extends HTMLElement {
             color: var(--like-text-color-unliked, ${textStyle.color});
           }
           .like-text.liked {
-            color: var(--like-text-color-liked, ${userLiked ? textStyle.color : textThemes[theme].color});
+            color: var(--like-text-color-liked, ${userLiked ? textStyle.color : textStyle.color});
           }
           .like-text.unliked:hover:not(.loading) {
             color: var(--like-text-hover-color-unliked, ${textStyle.hoverColor});
           }
           .like-text.liked:hover:not(.loading) {
-            color: var(--like-text-hover-color-liked, ${userLiked ? textStyle.hoverColor : textThemes[theme].hoverColor});
+            color: var(--like-text-hover-color-liked, ${userLiked ? textStyle.hoverColor : textStyle.hoverColor});
           }
           .like-text.mom {
             text-shadow: 1px 1px 0px white;
@@ -523,7 +524,7 @@ class NostalgicLike extends HTMLElement {
         .like-button.mom {
           background-image: 
             repeating-linear-gradient(45deg, rgba(216, 245, 216, 0.7), rgba(216, 245, 216, 0.7) 10px, transparent 10px, transparent 20px),
-            repeating-linear-gradient(-45deg, rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5) 10px, transparent 20px);
+            repeating-linear-gradient(-45deg, rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5) 10px, transparent 10px, transparent 20px);
         }
         .like-button.mom,
         .like-button.mom .heart-icon,
