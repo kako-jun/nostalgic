@@ -424,7 +424,7 @@ export default function HomePage() {
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "center" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <span>いいね数:</span>
-                    <nostalgic-like id="nostalgic-b89803bb" format="text" theme="retro" />
+                    <nostalgic-like id="nostalgic-b89803bb" format="text" theme="kawaii" />
                     <span>（クリックでトグル）</span>
                   </div>
                 </div>

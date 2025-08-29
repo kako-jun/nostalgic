@@ -315,36 +315,6 @@ class NostalgicRanking extends HTMLElement {
           position: relative;
           z-index: 2;
         }
-        .ranking-container.final {
-          border: 3px solid #ffffff;
-        }
-        .ranking-container.final::after {
-          content: '';
-          position: absolute;
-          top: 1px;
-          left: 1px;
-          right: 1px;
-          bottom: 1px;
-          border: 1px solid #000000;
-          pointer-events: none;
-          z-index: 11;
-        }
-        /* ヘッダ部分にも内側黒枠 */
-        .ranking-container.final .ranking-header {
-          border: 3px solid #ffffff;
-          position: relative;
-        }
-        .ranking-container.final .ranking-header::after {
-          content: '';
-          position: absolute;
-          top: 1px;
-          left: 1px;
-          right: 1px;
-          bottom: 1px;
-          border: 1px solid #000000;
-          pointer-events: none;
-          z-index: 11;
-        }
         .ranking-header {
           background: var(--ranking-header-bg);
           color: var(--ranking-header-color);
