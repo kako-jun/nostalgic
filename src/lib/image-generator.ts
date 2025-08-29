@@ -86,7 +86,7 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       <!-- MOTHER2風ストライプパターン -->
       <defs>
         <pattern id="stripes" patternUnits="userSpaceOnUse" width="14" height="14" patternTransform="rotate(45)">
-          <rect width="7" height="14" fill="#90ee90"/>
+          <rect width="7" height="14" fill="#ffff00"/>
           <rect x="7" width="7" height="14" fill="#98fb98"/>
         </pattern>
       </defs>
@@ -94,19 +94,33 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       ` : ''}
       
       ${style === 'final' ? `
-      <!-- Final風グラデーション -->
+      <!-- Final風4隅グラデーション -->
       <defs>
-        <radialGradient id="finalTopLeft" cx="0%" cy="0%" r="70%">
-          <stop offset="0%" stop-color="rgba(255, 219, 44, 0.3)"/>
-          <stop offset="100%" stop-color="rgba(255, 219, 44, 0)"/>
+        <radialGradient id="finalTopLeft" cx="0%" cy="0%" r="80%">
+          <stop offset="5%" stop-color="rgba(173, 216, 230, 0.4)"/>
+          <stop offset="60%" stop-color="rgba(173, 216, 230, 0.1)"/>
+          <stop offset="100%" stop-color="rgba(173, 216, 230, 0)"/>
         </radialGradient>
-        <radialGradient id="finalTopRight" cx="100%" cy="0%" r="70%">
-          <stop offset="0%" stop-color="rgba(255, 105, 180, 0.3)"/>
-          <stop offset="100%" stop-color="rgba(255, 105, 180, 0)"/>
+        <radialGradient id="finalTopRight" cx="100%" cy="0%" r="80%">
+          <stop offset="5%" stop-color="rgba(135, 206, 235, 0.4)"/>
+          <stop offset="60%" stop-color="rgba(135, 206, 235, 0.1)"/>
+          <stop offset="100%" stop-color="rgba(135, 206, 235, 0)"/>
+        </radialGradient>
+        <radialGradient id="finalBottomLeft" cx="0%" cy="100%" r="80%">
+          <stop offset="5%" stop-color="rgba(156, 39, 176, 0.4)"/>
+          <stop offset="60%" stop-color="rgba(156, 39, 176, 0.1)"/>
+          <stop offset="100%" stop-color="rgba(156, 39, 176, 0)"/>
+        </radialGradient>
+        <radialGradient id="finalBottomRight" cx="100%" cy="100%" r="80%">
+          <stop offset="5%" stop-color="rgba(0, 0, 128, 0.4)"/>
+          <stop offset="60%" stop-color="rgba(0, 0, 128, 0.1)"/>
+          <stop offset="100%" stop-color="rgba(0, 0, 128, 0)"/>
         </radialGradient>
       </defs>
       <rect width="${width}" height="${height}" fill="url(#finalTopLeft)"/>
       <rect width="${width}" height="${height}" fill="url(#finalTopRight)"/>
+      <rect width="${width}" height="${height}" fill="url(#finalBottomLeft)"/>
+      <rect width="${width}" height="${height}" fill="url(#finalBottomRight)"/>
       ` : ''}
       
       <!-- カウンター値 -->

@@ -204,7 +204,7 @@ class NostalgicBBS extends HTMLElement {
         scrollbarHover: '#41ff00'
       },
       mom: {
-        bgColor: '#90ee90',
+        bgColor: '#e8f8e8',
         borderColor: '#ff8c00',
         shadowColor: '#ff8c00',
         headerBg: '#98fb98',
@@ -327,44 +327,42 @@ class NostalgicBBS extends HTMLElement {
         .bbs-container.final::before {
           content: '';
           position: absolute;
-          top: -20px;
-          left: -20px;
-          width: 60px;
-          height: 60px;
-          background: radial-gradient(#ffdb2c 10%, rgba(255, 105, 34, 0.65) 55%, rgba(255, 88, 96, 0) 70%);
+          top: 0;
+          left: 0;
+          width: 60%;
+          height: 60%;
+          background: radial-gradient(circle at top left, #add8e6 5%, rgba(173, 216, 230, 0.4) 30%, rgba(173, 216, 230, 0.1) 60%, rgba(173, 216, 230, 0) 100%);
           pointer-events: none;
           z-index: 1;
         }
         .bbs-container.final::after {
           content: '';
           position: absolute;
-          top: -20px;
-          right: -20px;
-          width: 60px;
-          height: 60px;
-          background: radial-gradient(#ff69b4 10%, rgba(255, 105, 180, 0.65) 55%, rgba(255, 88, 180, 0) 70%);
+          top: 0;
+          right: 0;
+          width: 60%;
+          height: 60%;
+          background: radial-gradient(circle at top right, #87ceeb 5%, rgba(135, 206, 235, 0.4) 30%, rgba(135, 206, 235, 0.1) 60%, rgba(135, 206, 235, 0) 100%);
           pointer-events: none;
           z-index: 1;
         }
         .bbs-container.final .gradient-bottom-left {
-          content: '';
           position: absolute;
-          bottom: -20px;
-          left: -20px;
-          width: 60px;
-          height: 60px;
-          background: radial-gradient(#87ceeb 10%, rgba(135, 206, 235, 0.65) 55%, rgba(135, 206, 235, 0) 70%);
+          bottom: 0;
+          left: 0;
+          width: 60%;
+          height: 60%;
+          background: radial-gradient(circle at bottom left, #9c27b0 5%, rgba(156, 39, 176, 0.4) 30%, rgba(156, 39, 176, 0.1) 60%, rgba(156, 39, 176, 0) 100%);
           pointer-events: none;
           z-index: 1;
         }
         .bbs-container.final .gradient-bottom-right {
-          content: '';
           position: absolute;
-          bottom: -20px;
-          right: -20px;
-          width: 60px;
-          height: 60px;
-          background: radial-gradient(#9c27b0 10%, rgba(156, 39, 176, 0.65) 55%, rgba(156, 39, 176, 0) 70%);
+          bottom: 0;
+          right: 0;
+          width: 60%;
+          height: 60%;
+          background: radial-gradient(circle at bottom right, #000080 5%, rgba(0, 0, 128, 0.4) 30%, rgba(0, 0, 128, 0.1) 60%, rgba(0, 0, 128, 0) 100%);
           pointer-events: none;
           z-index: 1;
         }
@@ -390,8 +388,8 @@ class NostalgicBBS extends HTMLElement {
         }
         .bbs-header.mom {
           background-image: 
-            repeating-linear-gradient(45deg, rgba(144, 238, 144, 0.7), rgba(144, 238, 144, 0.7) 10px, transparent 10px, transparent 20px),
-            repeating-linear-gradient(-45deg, rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5) 10px, transparent 10px, transparent 20px);
+            repeating-linear-gradient(45deg, rgba(255, 255, 0, 0.7), rgba(255, 255, 0, 0.7) 10px, transparent 10px, transparent 20px),
+            repeating-linear-gradient(-45deg, rgba(144, 238, 144, 0.5), rgba(144, 238, 144, 0.5) 10px, transparent 10px, transparent 20px);
           text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
         }
         .bbs-header.retro {
@@ -474,15 +472,9 @@ class NostalgicBBS extends HTMLElement {
           font-size: 12px;
           font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
         }
-        .bbs-container.mom .message-author {
-          text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
-        }
         .message-time {
           font-size: 12px;
           font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
-        }
-        .bbs-container.mom .message-time {
-          text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
         }
         .message-content {
           margin: 4px 0;
@@ -495,9 +487,6 @@ class NostalgicBBS extends HTMLElement {
           text-align: left;
           font-size: clamp(12px, 2vw, 16px);
         }
-        .bbs-container.mom .message-content {
-          text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
-        }
         .bbs-container.retro .message-content {
           text-shadow: 0 0 3px currentColor;
         }
@@ -506,8 +495,9 @@ class NostalgicBBS extends HTMLElement {
           color: #999;
           margin-top: 4px;
         }
-        .bbs-container.mom .message-meta {
-          text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
+        .bbs-container.mom .message-item {
+          border: 2px solid #ff8c00;
+          background: transparent;
         }
         .pagination {
           padding: 10px;
