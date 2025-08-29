@@ -86,7 +86,7 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       <!-- MOTHER2風ストライプパターン -->
       <defs>
         <pattern id="stripes" patternUnits="userSpaceOnUse" width="14" height="14" patternTransform="rotate(45)">
-          <rect width="7" height="14" fill="#4caf50"/>
+          <rect width="7" height="14" fill="#d8f5d8"/>
           <rect x="7" width="7" height="14" fill="#98fb98"/>
         </pattern>
       </defs>
