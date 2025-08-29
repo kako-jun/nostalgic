@@ -188,35 +188,35 @@ class NostalgicLike extends HTMLElement {
       const total = this.likeData ? this.likeData.total : 0;
       const userLiked = this.likeData ? this.likeData.userLiked : false;
       
-      // テーマ別デフォルト色（CSS変数のフォールバック）
+      // テーマ別デフォルト色（ボタン版textColorと完全一致）
       const textThemes = {
         light: {
-          color: userLiked ? '#000000' : '#666666',
-          hoverColor: userLiked ? '#333333' : '#000000'
+          color: '#000000',
+          hoverColor: '#333333'
         },
         dark: {
-          color: userLiked ? '#ffffff' : '#999999',
-          hoverColor: userLiked ? '#cccccc' : '#ffffff'
+          color: '#ffffff',
+          hoverColor: '#cccccc'
         },
         retro: {
-          color: userLiked ? '#00ff41' : '#00cc33',
-          hoverColor: userLiked ? '#00cc33' : '#00ff41'
+          color: '#00ff41',
+          hoverColor: '#00cc33'
         },
         kawaii: {
-          color: userLiked ? '#ff69b4' : '#f06292',
-          hoverColor: userLiked ? '#f06292' : '#ff4081'
+          color: '#ff69b4',
+          hoverColor: '#ff4081'
         },
         mom: {
-          color: userLiked ? '#2d4a2b' : '#4d6b4a',
-          hoverColor: userLiked ? '#4d6b4a' : '#2d4a2b'
+          color: '#2d4a2b',
+          hoverColor: '#1a3319'
         },
         final: {
-          color: userLiked ? '#ffffff' : '#f0f0f0',
-          hoverColor: userLiked ? '#f0f0f0' : '#ffffff'
+          color: '#f0f0f0',
+          hoverColor: '#ffffff'
         }
       };
       
-      // デフォルトテーマはdark（安全にアクセス）
+      // デフォルトテーマはdark
       const currentTheme = textThemes[theme] || textThemes.dark;
       const textStyle = currentTheme;
       const likedClass = userLiked ? 'liked' : 'unliked';
@@ -226,10 +226,8 @@ class NostalgicLike extends HTMLElement {
           :host {
             display: inline;
             /* CSS Custom Properties for external customization */
-            --like-text-color-unliked: ${textStyle.color};
-            --like-text-color-liked: ${userLiked ? textStyle.color : textStyle.color};
-            --like-text-hover-color-unliked: ${textStyle.hoverColor};
-            --like-text-hover-color-liked: ${userLiked ? textStyle.hoverColor : textStyle.hoverColor};
+            --like-text-color: ${textStyle.color};
+            --like-text-hover-color: ${textStyle.hoverColor};
           }
           .like-text {
             cursor: pointer;
@@ -239,17 +237,11 @@ class NostalgicLike extends HTMLElement {
             opacity: ${isLoading ? '0.6' : '1'};
             transition: color 0.2s ease;
           }
-          .like-text.unliked {
-            color: var(--like-text-color-unliked, ${textStyle.color});
+          .like-text {
+            color: var(--like-text-color, ${textStyle.color});
           }
-          .like-text.liked {
-            color: var(--like-text-color-liked, ${userLiked ? textStyle.color : textStyle.color});
-          }
-          .like-text.unliked:hover:not(.loading) {
-            color: var(--like-text-hover-color-unliked, ${textStyle.hoverColor});
-          }
-          .like-text.liked:hover:not(.loading) {
-            color: var(--like-text-hover-color-liked, ${userLiked ? textStyle.hoverColor : textStyle.hoverColor});
+          .like-text:hover:not(.loading) {
+            color: var(--like-text-hover-color, ${textStyle.hoverColor});
           }
           .like-text.mom {
             text-shadow: 1px 1px 0px white;
@@ -258,7 +250,7 @@ class NostalgicLike extends HTMLElement {
             text-shadow: 1px 1px 0px black;
           }
         </style>
-        <span class="like-text ${likedClass} ${isLoading ? 'loading' : ''} ${theme === 'mom' ? 'mom' : ''} ${theme === 'final' ? 'final' : ''}" onclick="this.getRootNode().host.toggleLike()">${total}</span>
+        <span class="like-text ${isLoading ? 'loading' : ''} ${theme === 'mom' ? 'mom' : ''} ${theme === 'final' ? 'final' : ''}" onclick="this.getRootNode().host.toggleLike()">${total}</span>
       `;
       return;
     }
