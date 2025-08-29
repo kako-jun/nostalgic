@@ -179,7 +179,7 @@ class NostalgicRanking extends HTMLElement {
         borderColor: '#ffffff',
         headerBg: 'transparent',
         headerColor: '#ffffff',
-        textColor: '#ffffff'
+        textColor: '#f0f0f0'
       }
     };
 
@@ -333,7 +333,7 @@ class NostalgicRanking extends HTMLElement {
         }
         .ranking-header.mom {
           background-image: 
-            repeating-linear-gradient(45deg, rgba(76, 175, 80, 0.7), rgba(76, 175, 80, 0.7) 10px, transparent 10px, transparent 20px),
+            repeating-linear-gradient(45deg, rgba(216, 245, 216, 0.7), rgba(216, 245, 216, 0.7) 10px, transparent 10px, transparent 20px),
             repeating-linear-gradient(-45deg, rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5) 10px, transparent 10px, transparent 20px);
           text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
         }

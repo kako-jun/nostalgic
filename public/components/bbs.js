@@ -221,9 +221,9 @@ class NostalgicBBS extends HTMLElement {
         headerBg: 'transparent',
         headerColor: '#ffffff',
         messageBg: 'transparent',
-        textColor: '#ffffff',
+        textColor: '#f0f0f0',
         scrollbarThumb: '#ffffff',
-        scrollbarHover: '#e0e0e0'
+        scrollbarHover: '#f0f0f0'
       }
     };
 
@@ -388,7 +388,7 @@ class NostalgicBBS extends HTMLElement {
         }
         .bbs-header.mom {
           background-image: 
-            repeating-linear-gradient(45deg, rgba(76, 175, 80, 0.7), rgba(76, 175, 80, 0.7) 10px, transparent 10px, transparent 20px),
+            repeating-linear-gradient(45deg, rgba(216, 245, 216, 0.7), rgba(216, 245, 216, 0.7) 10px, transparent 10px, transparent 20px),
             repeating-linear-gradient(-45deg, rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5) 10px, transparent 10px, transparent 20px);
           text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
         }
@@ -557,15 +557,15 @@ class NostalgicBBS extends HTMLElement {
           padding: 4px 8px;
         }
         .bbs-container.final .pagination {
-          border-top: 1px solid #ffffff;
+          border-top: 1px solid #ffffff !important;
         }
         .bbs-container.final .pagination button {
-          background: transparent;
-          color: #ffffff;
-          border: 1px solid #ffffff;
+          background: transparent !important;
+          color: #ffffff !important;
+          border: 1px solid #ffffff !important;
         }
-        .bbs-container.final .current-page {
-          color: #ffffff;
+        .bbs-container.final .pagination .current-page {
+          color: #ffffff !important;
         }
         .empty-message {
           text-align: center;
@@ -604,7 +604,7 @@ class NostalgicBBS extends HTMLElement {
         }
         .form-header.mom {
           background-image: 
-            repeating-linear-gradient(45deg, rgba(76, 175, 80, 0.7), rgba(76, 175, 80, 0.7) 10px, transparent 10px, transparent 20px),
+            repeating-linear-gradient(45deg, rgba(216, 245, 216, 0.7), rgba(216, 245, 216, 0.7) 10px, transparent 10px, transparent 20px),
             repeating-linear-gradient(-45deg, rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5) 10px, transparent 10px, transparent 20px);
           text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
         }

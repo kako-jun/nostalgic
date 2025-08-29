@@ -211,8 +211,8 @@ class NostalgicLike extends HTMLElement {
           hoverColor: userLiked ? '#4d6b4a' : '#2d4a2b'
         },
         final: {
-          color: userLiked ? '#ffffff' : '#e0e0e0',
-          hoverColor: userLiked ? '#e0e0e0' : '#ffffff'
+          color: userLiked ? '#ffffff' : '#f0f0f0',
+          hoverColor: userLiked ? '#f0f0f0' : '#ffffff'
         }
       };
       
@@ -340,7 +340,7 @@ class NostalgicLike extends HTMLElement {
       final: {
         bgColor: '#0000ff',
         hoverBgColor: '#3333ff',
-        textColor: '#ffffff',
+        textColor: '#f0f0f0',
         borderColor: '#ffffff',
         shadowColor: '#ffffff'
       }
@@ -522,8 +522,8 @@ class NostalgicLike extends HTMLElement {
         
         .like-button.mom {
           background-image: 
-            repeating-linear-gradient(45deg, rgba(76, 175, 80, 0.7), rgba(76, 175, 80, 0.7) 10px, transparent 10px, transparent 20px),
-            repeating-linear-gradient(-45deg, rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5) 10px, transparent 10px, transparent 20px);
+            repeating-linear-gradient(45deg, rgba(216, 245, 216, 0.7), rgba(216, 245, 216, 0.7) 10px, transparent 10px, transparent 20px),
+            repeating-linear-gradient(-45deg, rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5) 10px, transparent 20px);
         }
         .like-button.mom,
         .like-button.mom .heart-icon,
