@@ -168,16 +168,16 @@ class NostalgicRanking extends HTMLElement {
         textColor: '#f06292'
       },
       mom: {
-        bgColor: '#98fb98',
+        bgColor: '#e8f8e8',
         borderColor: '#ff8c00',
-        headerBg: '#98fb98',
+        headerBg: '#e8f8e8',
         headerColor: '#2d4a2b',
         textColor: '#2d4a2b'
       },
       final: {
-        bgColor: 'linear-gradient(to bottom right, #87ceeb 0%, #4682b4 50%, #9370db 50%, #191970 100%)',
+        bgColor: '#4682b4',
         borderColor: '#ffffff',
-        headerBg: 'linear-gradient(to bottom right, #87ceeb 0%, #4682b4 50%, #9370db 50%, #191970 100%)',
+        headerBg: 'transparent',
         headerColor: '#ffffff',
         textColor: '#ffffff'
       }
@@ -264,6 +264,36 @@ class NostalgicRanking extends HTMLElement {
           z-index: 100;
           border-radius: inherit;
         }
+        .ranking-container.final::before {
+          content: '';
+          position: absolute;
+          top: -30px;
+          left: -30px;
+          width: 80px;
+          height: 80px;
+          background: radial-gradient(#87ceeb 20%, rgba(135, 206, 235, 0.4) 60%, rgba(135, 206, 235, 0) 80%);
+          pointer-events: none;
+          z-index: 1;
+        }
+        .ranking-container.final::after {
+          content: '';
+          position: absolute;
+          top: -30px;
+          right: -30px;
+          width: 80px;
+          height: 80px;
+          background: radial-gradient(#4682b4 20%, rgba(70, 130, 180, 0.4) 60%, rgba(70, 130, 180, 0) 80%);
+          pointer-events: none;
+          z-index: 1;
+        }
+        .ranking-container.final {
+          position: relative;
+        }
+        .ranking-container.final .ranking-header,
+        .ranking-container.final .ranking-list {
+          position: relative;
+          z-index: 2;
+        }
         .ranking-header {
           background: var(--ranking-header-bg);
           color: var(--ranking-header-color);
@@ -284,14 +314,19 @@ class NostalgicRanking extends HTMLElement {
           background-image: 
             repeating-linear-gradient(45deg, rgba(144, 238, 144, 0.7), rgba(144, 238, 144, 0.7) 10px, transparent 10px, transparent 20px),
             repeating-linear-gradient(-45deg, rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5) 10px, transparent 10px, transparent 20px);
-          text-shadow: 1px 1px 0px white;
+          text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
         }
         .ranking-container.mom .ranking-item,
         .ranking-container.mom .rank,
         .ranking-container.mom .name,
         .ranking-container.mom .score,
         .ranking-container.mom .empty-message {
-          text-shadow: 1px 1px 0px white;
+          text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
+        }
+        .ranking-container.retro .rank,
+        .ranking-container.retro .name,
+        .ranking-container.retro .score {
+          text-shadow: 0 0 3px currentColor;
         }
         .ranking-list {
           padding: 10px;
@@ -346,6 +381,18 @@ class NostalgicRanking extends HTMLElement {
           padding: 15px;
           color: #666;
           font-size: 14px;
+        }
+        
+        /* Font balancing for Japanese-English mixed text in header only */
+        .ranking-header .jp-text {
+          font-size: 0.95em;
+          font-feature-settings: "palt" 1;
+        }
+        
+        .ranking-header .en-text {
+          font-size: 1.05em;
+          font-weight: bold;
+          letter-spacing: -0.02em;
         }
       </style>
       <div class="ranking-container ${theme || ''}">

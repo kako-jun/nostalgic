@@ -87,7 +87,7 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       <defs>
         <pattern id="stripes" patternUnits="userSpaceOnUse" width="14" height="14" patternTransform="rotate(45)">
           <rect width="7" height="14" fill="#90ee90"/>
-          <rect x="7" width="7" height="14" fill="#98fb98"/>
+          <rect x="7" width="7" height="14" fill="#e8f8e8"/>
         </pattern>
       </defs>
       <rect width="${width}" height="${height}" fill="url(#stripes)" opacity="0.3"/>

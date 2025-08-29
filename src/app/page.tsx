@@ -192,27 +192,18 @@ export default function HomePage() {
                 </div>
               </div>
               
-              <div style={{ display: "flex", gap: "2px", justifyContent: "center", flexWrap: "wrap", marginTop: "20px" }}>
-                <div className="nostalgic-counter-item">
-                  <div style={{ textAlign: "center" }}><b>Kawaii</b></div>
-                  <br />
-                  <div style={{ marginTop: "10px" }}>
-                    <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="kawaii" digits="5" />
-                  </div>
+              <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap", marginTop: "20px" }}>
+                <div style={{ textAlign: "center" }}>
+                  <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>Kawaii</p>
+                  <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="kawaii" digits="5" />
                 </div>
-                <div className="nostalgic-counter-item">
-                  <div style={{ textAlign: "center" }}><b>Mother味</b></div>
-                  <br />
-                  <div style={{ marginTop: "10px" }}>
-                    <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="mom" digits="5" />
-                  </div>
+                <div style={{ textAlign: "center" }}>
+                  <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>Mother味</p>
+                  <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="mom" digits="5" />
                 </div>
-                <div className="nostalgic-counter-item">
-                  <div style={{ textAlign: "center" }}><b>FF味</b></div>
-                  <br />
-                  <div style={{ marginTop: "10px" }}>
-                    <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="final" digits="5" />
-                  </div>
+                <div style={{ textAlign: "center" }}>
+                  <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>FF味</p>
+                  <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="final" digits="5" />
                 </div>
               </div>
               
@@ -333,10 +324,10 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Kawaii Theme - 3 icons in a row */}
+                  {/* Kawaii Theme - 4 icons in a row */}
                   <div>
                     <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Kawaii </p>
-                    <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
+                    <div style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart</p>
                         <div style={{ padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -355,13 +346,19 @@ export default function HomePage() {
                           <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" icon="thumb" />
                         </div>
                       </div>
+                      <div style={{ textAlign: "center" }}>
+                        <p style={{ fontSize: "12px", marginBottom: "10px" }}>Peta</p>
+                        <div style={{ padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" icon="peta" />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Mother Theme - 3 icons in a row */}
+                  {/* Mother Theme - 4 icons in a row */}
                   <div>
                     <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>Mother味</p>
-                    <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
+                    <div style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart</p>
                         <div style={{ padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -380,13 +377,19 @@ export default function HomePage() {
                           <nostalgic-like id="nostalgic-b89803bb" theme="mom" icon="thumb" />
                         </div>
                       </div>
+                      <div style={{ textAlign: "center" }}>
+                        <p style={{ fontSize: "12px", marginBottom: "10px" }}>Peta</p>
+                        <div style={{ padding: "10px", borderRadius: "4px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <nostalgic-like id="nostalgic-b89803bb" theme="mom" icon="peta" />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Final Theme - 3 icons in a row */}
+                  {/* Final Theme - 4 icons in a row */}
                   <div>
                     <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold", textAlign: "center" }}>FF味</p>
-                    <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
+                    <div style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
                       <div style={{ textAlign: "center" }}>
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Heart</p>
                         <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -403,6 +406,12 @@ export default function HomePage() {
                         <p style={{ fontSize: "12px", marginBottom: "10px" }}>Thumb</p>
                         <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                           <nostalgic-like id="nostalgic-b89803bb" theme="final" icon="thumb" />
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        <p style={{ fontSize: "12px", marginBottom: "10px" }}>Peta</p>
+                        <div style={{ background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)", padding: "10px", minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <nostalgic-like id="nostalgic-b89803bb" theme="final" icon="peta" />
                         </div>
                       </div>
                     </div>
@@ -423,7 +432,6 @@ export default function HomePage() {
                     <span>（クリックでトグル）</span>
                   </div>
                 </div>
-                <p style={{ marginTop: "10px", fontSize: "14px", color: "#666" }}>※プレーンテキストは背景に溶け込みやすい形式です</p>
               </div>
             </div>
 
@@ -552,7 +560,7 @@ export default function HomePage() {
               </div>
               <div style={{ textAlign: "center", marginTop: "15px" }}>
                 <a href="https://llll-ll.com/easter-egg" className="nostalgic-old-link" target="_blank" rel="noopener noreferrer">
-                  🔢 ナンバークリックゲームを遊んでみる
+                  ナンバークリックゲームを遊んでみる
                 </a>
               </div>
             </div>
@@ -570,7 +578,7 @@ export default function HomePage() {
               </div>
               <div style={{ textAlign: "center", marginTop: "15px" }}>
                 <a href="https://noun-gender.llll-ll.com/quiz" className="nostalgic-old-link" target="_blank" rel="noopener noreferrer">
-                  📝 名詞性別クイズを遊んでみる
+                  名詞性別クイズを遊んでみる
                 </a>
               </div>
             </div>
@@ -617,7 +625,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - Light ◆</b>
+                  <b>◆<span className="jp-text">雑談</span><span className="en-text">BBS</span>のサンプル - Light ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -631,7 +639,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - Dark ◆</b>
+                  <b>◆<span className="jp-text">雑談</span><span className="en-text">BBS</span>のサンプル - Dark ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -644,7 +652,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - Retro ◆</b>
+                  <b>◆BBSのサンプル - Retro ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -663,7 +671,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - Kawaii ◆</b>
+                  <b>◆BBSのサンプル - Kawaii ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -674,7 +682,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - Mother味 ◆</b>
+                  <b>◆BBSのサンプル - Mother味 ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -685,7 +693,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ゲストブックのサンプル - FF味 ◆</b>
+                  <b>◆BBSのサンプル - FF味 ◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
