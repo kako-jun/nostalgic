@@ -9,7 +9,7 @@ import { CommonSchemas } from '@/lib/core/validation'
  * Like固有のフィールドスキーマ
  */
 export const LikeFieldSchemas = {
-  likeIcon: z.enum(['heart', 'star', 'thumb']),
+  likeIcon: z.enum(['heart', 'star', 'thumb', 'peta']),
   likeFormat: z.enum(['interactive', 'text', 'image']),
   userLiked: z.boolean(),
   likeAction: z.enum(['liked', 'unliked'])

@@ -28,7 +28,7 @@ declare module 'react' {
       'nostalgic-like': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
         id?: string
         theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final'
-        icon?: 'heart' | 'star' | 'thumb'
+        icon?: 'heart' | 'star' | 'thumb' | 'peta'
         format?: 'interactive' | 'image' | 'text'
         'api-base'?: string
       }, HTMLElement>

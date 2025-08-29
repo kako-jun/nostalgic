@@ -42,7 +42,7 @@ export const COUNTER = {
 
 // === Like サービス ===
 export const LIKE = {
-  ICONS: ['heart', 'star', 'thumb'] as const,
+  ICONS: ['heart', 'star', 'thumb', 'peta'] as const,
   DEFAULT_ICON: 'heart' as const,
   
   FORMATS: ['interactive', 'text', 'image'] as const,

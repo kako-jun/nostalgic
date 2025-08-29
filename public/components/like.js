@@ -207,8 +207,8 @@ class NostalgicLike extends HTMLElement {
           hoverColor: userLiked ? '#f06292' : '#ff4081'
         },
         mom: {
-          color: userLiked ? '#000000' : '#666666',
-          hoverColor: userLiked ? '#333333' : '#000000'
+          color: userLiked ? '#2d4a2b' : '#4d6b4a',
+          hoverColor: userLiked ? '#4d6b4a' : '#2d4a2b'
         },
         final: {
           color: userLiked ? '#ffffff' : '#e0e0e0',
@@ -267,7 +267,8 @@ class NostalgicLike extends HTMLElement {
     const iconMapping = {
       heart: '♥',
       star: '★', 
-      thumb: '👍'
+      thumb: '👍',
+      peta: '🐾'
     };
     
     const displayIcon = iconMapping[icon] || iconMapping.heart;
@@ -284,8 +285,9 @@ class NostalgicLike extends HTMLElement {
         if (icon === 'heart') return userLiked ? '#ff69b4' : '#f06292';
         if (icon === 'star') return userLiked ? '#ff69b4' : '#f06292';
         if (icon === 'thumb') return userLiked ? '#ff69b4' : '#f06292';
+        if (icon === 'peta') return userLiked ? '#ff69b4' : '#f06292';
       } else if (theme === 'mom') {
-        return userLiked ? '#000000' : '#999999';
+        return userLiked ? '#2d4a2b' : '#4d6b4a';
       } else if (theme === 'final') {
         return userLiked ? '#ffffff' : '#e0e0e0';
       }
@@ -326,11 +328,11 @@ class NostalgicLike extends HTMLElement {
         shadowColor: '#9c27b0'
       },
       mom: {
-        bgColor: '#ffffff',
-        hoverBgColor: '#f5f5f5',
-        textColor: '#000000',
-        borderColor: '#000000',
-        shadowColor: '#000000'
+        bgColor: '#98fb98',
+        hoverBgColor: '#90ee90',
+        textColor: '#2d4a2b',
+        borderColor: '#ff8c00',
+        shadowColor: '#ff8c00'
       },
       final: {
         bgColor: 'linear-gradient(to bottom right, #87ceeb 0%, #4682b4 50%, #9370db 50%, #191970 100%)',
