@@ -11,7 +11,7 @@
 ## 属性設計
 ```html
 <!-- 画像ベース -->
-<nostalgic-counter id="xxx" format="image" theme="light" font="ff" />
+<nostalgic-counter id="xxx" format="image" theme="light" font="final" />
 <nostalgic-counter id="xxx" format="image" theme="dark" font="dot" />
 
 <!-- プレーンテキスト -->
@@ -25,7 +25,7 @@
 ```
 public/assets/numbers/
 ├── light/
-│   ├── ff/        # Final Fantasy風フォント
+│   ├── final/        # Final Fantasy風フォント
 │   │   ├── 0.svg
 │   │   ├── 1.svg
 │   │   └── ...9.svg
@@ -33,10 +33,10 @@ public/assets/numbers/
 │       ├── 0.svg
 │       └── ...9.svg
 ├── dark/
-│   ├── ff/
+│   ├── final/
 │   └── dot/
 └── kawaii/
-    ├── ff/
+    ├── final/
     └── dot/
 ```
 
@@ -70,16 +70,16 @@ function generateTextCounter(count: string): string
 
 ### テーマカラー
 - **light**: `#333333` (ダークグレー)
-- **dark**: `#ffffff` (ホワイト)
+- **dark**: `#finalfinalfinal` (ホワイト)
 - **kawaii**: `#e91e63` (ピンク)
 
 ### フォントスタイル
-- **ff**: Final Fantasy風角ばったフォント
+- **final**: Final Fantasy風角ばったフォント
 - **dot**: 8bitドット絵風フォント
 
 ## API仕様拡張
 ```
-GET /api/visit?action=display&format=image&theme=light&font=ff&id=xxx&type=total
+GET /api/visit?action=display&format=image&theme=light&font=final&id=xxx&type=total
 GET /api/visit?action=display&format=text&id=xxx&type=total
 ```
 
@@ -87,10 +87,10 @@ GET /api/visit?action=display&format=text&id=xxx&type=total
 ```xml
 <!-- format=image -->
 <svg width="120" height="40" xmlns="http://www.w3.org/2000/svg">
-  <image x="0" y="0" width="30" height="40" href="/assets/numbers/light/ff/1.svg" />
-  <image x="30" y="0" width="30" height="40" href="/assets/numbers/light/ff/2.svg" />
-  <image x="60" y="0" width="30" height="40" href="/assets/numbers/light/ff/3.svg" />
-  <image x="90" y="0" width="30" height="40" href="/assets/numbers/light/ff/4.svg" />
+  <image x="0" y="0" width="30" height="40" href="/assets/numbers/light/final/1.svg" />
+  <image x="30" y="0" width="30" height="40" href="/assets/numbers/light/final/2.svg" />
+  <image x="60" y="0" width="30" height="40" href="/assets/numbers/light/final/3.svg" />
+  <image x="90" y="0" width="30" height="40" href="/assets/numbers/light/final/4.svg" />
 </svg>
 ```
 
@@ -110,7 +110,7 @@ GET /api/visit?action=display&format=text&id=xxx&type=total
 ```html
 <!-- カウンターサンプルセクション -->
 <div>画像ベース（FF風）</div>
-<nostalgic-counter format="image" theme="light" font="ff" />
+<nostalgic-counter format="image" theme="light" font="final" />
 
 <div>画像ベース（ドット風）</div>
 <nostalgic-counter format="image" theme="kawaii" font="dot" />

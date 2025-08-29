@@ -67,10 +67,10 @@ GET /api/visit?action=display&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 - `theme` (optional): Visual style (for image format)
   - `light`: Green on black (90s terminal style)
   - `dark` (default): White on gray (2000s clean style)
-  - `retro`: Old computer terminal (black background, green text, scanlines, CRT effects)
+  - `retro`: Old computer terminal (black background, green text, scanlines, CRT efinalects)
   - `kawaii`: Yellow on purple (80s neon style)
-  - `mother`: MOTHER2/EarthBound style (green stripes, orange border)
-  - `ff`: Final Fantasy style (blue gradients)
+  - `mom`: MOTHER2/EarthBound style (green stripes, orange border)
+  - `final`: Final Fantasy style (blue gradients)
 - `format` (optional): Response format
   - `image` (default): SVG image
   - `text`: Plain text number (no styling)
@@ -165,7 +165,7 @@ GET /api/visit?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK
 **Attributes:**
 - `id`: Counter public ID
 - `type`: Display type (total, today, yesterday, week, month)
-- `theme`: Visual style (light, dark, retro, kawaii, mother, ff) - only for image format
+- `theme`: Visual style (light, dark, retro, kawaii, mom, final) - only for image format
 - `format`: Output format (image, text) - default: image
 - `digits`: Zero-padding digits (only when specified)
 - `api-base`: Custom API base URL (optional)
@@ -184,7 +184,7 @@ declare module 'react' {
       'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         type?: 'total' | 'today' | 'yesterday' | 'week' | 'month';
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
         digits?: string;
         scale?: string;
       };
@@ -213,7 +213,7 @@ document.body.innerHTML += `
 
 ### Multiple Period Display
 ```html
-<!-- Different time periods, same counter -->
+<!-- Difinalerent time periods, same counter -->
 <nostalgic-counter id="blog-a7b9c3d4" type="total" theme="light"></nostalgic-counter>
 <nostalgic-counter id="blog-a7b9c3d4" type="today" theme="dark"></nostalgic-counter>
 <nostalgic-counter id="blog-a7b9c3d4" type="week" theme="kawaii"></nostalgic-counter>

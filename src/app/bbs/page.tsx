@@ -704,9 +704,9 @@ export default function BBSPage() {
                   • <span style={{ color: "#008000" }}>light</span> - ライト（白系モノクロ）
                   <br />• <span style={{ color: "#008000" }}>dark</span> - ダーク（黒系モノクロ）
                   <br />• <span style={{ color: "#008000" }}>retro</span> - レトロ（古いコンピュータ画面風）
-                  <br />• <span style={{ color: "#008000" }}>kawaii</span> - かわいい（パステル系）
-                  <br />• <span style={{ color: "#008000" }}>mother</span> - MOTHER2（緑ストライプ）
-                  <br />• <span style={{ color: "#008000" }}>ff</span> - ファイナルファンタジー（青系）
+                  <br />• <span style={{ color: "#008000" }}>kawaii</span> - かわいい（ファンシー系）
+                  <br />• <span style={{ color: "#008000" }}>mom</span> - Mother味（緑チェック模様）
+                  <br />• <span style={{ color: "#008000" }}>final</span> - FF味（青系）
                 </p>
               </div>
 
@@ -727,7 +727,7 @@ declare module 'react' {
       'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         max?: string;
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
         perPage?: string;
       };
     }
@@ -848,12 +848,12 @@ declare module 'react' {
 
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Mother</p>
-                          <nostalgic-bbs id={publicId} theme="mother" />
+                          <nostalgic-bbs id={publicId} theme="mom" />
                         </div>
 
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>FF</p>
-                          <nostalgic-bbs id={publicId} theme="ff" />
+                          <nostalgic-bbs id={publicId} theme="final" />
                         </div>
                       </div>
                       

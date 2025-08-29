@@ -643,9 +643,9 @@ export default function RankingPage() {
                   • <span style={{ color: "#008000" }}>light</span> - ライト（シンプル）
                   <br />• <span style={{ color: "#008000" }}>dark</span> - ダーク（青系）
                   <br />• <span style={{ color: "#008000" }}>retro</span> - レトロ（古いコンピュータ画面風）
-                  <br />• <span style={{ color: "#008000" }}>kawaii</span> - カワイイ（黄系）
-                  <br />• <span style={{ color: "#008000" }}>mother</span> - MOTHER2（緑ストライプ）
-                  <br />• <span style={{ color: "#008000" }}>ff</span> - ファイナルファンタジー（青系）
+                  <br />• <span style={{ color: "#008000" }}>kawaii</span> - カワイイ（ファンシー系）
+                  <br />• <span style={{ color: "#008000" }}>mom</span> - Mother味（緑チェック模様）
+                  <br />• <span style={{ color: "#008000" }}>final</span> - FF味（青系）
                 </p>
               </div>
 
@@ -666,7 +666,7 @@ declare module 'react' {
       'nostalgic-ranking': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         limit?: string;
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
         format?: 'html' | 'json';
         url?: string;
         token?: string;
@@ -716,12 +716,12 @@ declare module 'react' {
 
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Mother</p>
-                          <nostalgic-ranking id={publicId} theme="mother" limit="5" />
+                          <nostalgic-ranking id={publicId} theme="mom" limit="5" />
                         </div>
 
                         <div>
                           <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>FF</p>
-                          <nostalgic-ranking id={publicId} theme="ff" limit="5" />
+                          <nostalgic-ranking id={publicId} theme="final" limit="5" />
                         </div>
                       </div>
                       

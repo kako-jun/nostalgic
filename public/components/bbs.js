@@ -191,6 +191,39 @@ class NostalgicBBS extends HTMLElement {
         textColor: '#f06292',
         scrollbarThumb: '#ff69b4',
         scrollbarHover: '#e91e63'
+      },
+      retro: {
+        bgColor: '#0d1117',
+        borderColor: '#00ff41',
+        shadowColor: '#00ff41',
+        headerBg: '#161b22',
+        headerColor: '#00ff41',
+        messageBg: '#0d1117',
+        textColor: '#00ff41',
+        scrollbarThumb: '#00ff41',
+        scrollbarHover: '#41ff00'
+      },
+      mom: {
+        bgColor: '#90ee90',
+        borderColor: '#ff8c00',
+        shadowColor: '#ff8c00',
+        headerBg: '#98fb98',
+        headerColor: '#2d4a2b',
+        messageBg: '#90ee90',
+        textColor: '#2d4a2b',
+        scrollbarThumb: '#ff8c00',
+        scrollbarHover: '#ffad33'
+      },
+      final: {
+        bgColor: '#1a237e',
+        borderColor: '#64b5f6',
+        shadowColor: '#64b5f6',
+        headerBg: '#1976d2',
+        headerColor: '#e3f2fd',
+        messageBg: '#1a237e',
+        textColor: '#e3f2fd',
+        scrollbarThumb: '#64b5f6',
+        scrollbarHover: '#90caf9'
       }
     };
 
@@ -281,6 +314,17 @@ class NostalgicBBS extends HTMLElement {
           background-image: var(--kawaii-dark-dots);
           background-size: 220px 120px;
           background-repeat: repeat;
+        }
+        .bbs-header.mom {
+          background-image: repeating-linear-gradient(45deg, #90ee90, #90ee90 10px, #98fb98 10px, #98fb98 20px);
+        }
+        .bbs-header.retro {
+          background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 65, 0.03) 2px, rgba(0, 255, 65, 0.03) 4px);
+          text-shadow: 0 0 5px currentColor;
+        }
+        .bbs-header.final {
+          background-image: radial-gradient(ellipse at center, rgba(100, 181, 246, 0.2) 0%, rgba(25, 118, 210, 0.1) 50%, #1a237e 100%);
+          text-shadow: 0 0 8px rgba(100, 181, 246, 0.5);
         }
         .bbs-messages {
           height: 400px;
@@ -429,6 +473,17 @@ class NostalgicBBS extends HTMLElement {
           background-size: 220px 120px;
           background-repeat: repeat;
         }
+        .form-header.mom {
+          background-image: repeating-linear-gradient(45deg, #90ee90, #90ee90 10px, #98fb98 10px, #98fb98 20px);
+        }
+        .form-header.retro {
+          background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 65, 0.03) 2px, rgba(0, 255, 65, 0.03) 4px);
+          text-shadow: 0 0 5px currentColor;
+        }
+        .form-header.final {
+          background-image: radial-gradient(ellipse at center, rgba(100, 181, 246, 0.2) 0%, rgba(25, 118, 210, 0.1) 50%, #1a237e 100%);
+          text-shadow: 0 0 8px rgba(100, 181, 246, 0.5);
+        }
         .form-body {
           padding: 0 5px;
         }
@@ -519,8 +574,8 @@ class NostalgicBBS extends HTMLElement {
           color: #2e7d32;
         }
       </style>
-      <div class="bbs-container ${theme === 'kawaii' ? 'kawaii' : ''}">
-        <div class="bbs-header ${theme === 'kawaii' ? 'kawaii' : ''}">${this.escapeHtml(this.bbsData.settings?.title || 'BBS')}</div>
+      <div class="bbs-container ${theme}">
+        <div class="bbs-header ${theme}">${this.escapeHtml(this.bbsData.settings?.title || 'BBS')}</div>
         <div class="bbs-messages">
           ${messages.length > 0 ? 
             messages.map((message, index) => `
@@ -555,7 +610,7 @@ class NostalgicBBS extends HTMLElement {
           </div>
         ` : ''}
         <div class="post-form">
-            <div class="form-header ${theme === 'kawaii' ? 'kawaii' : ''}">コメントを投稿</div>
+            <div class="form-header ${theme}">コメントを投稿</div>
             <div class="form-body">
               <div class="form-row">
                 <input type="text" id="message-author" placeholder="名前（省略可、20文字まで）" maxlength="20">
@@ -565,7 +620,7 @@ class NostalgicBBS extends HTMLElement {
                 <textarea id="message-content" placeholder="メッセージを入力（200文字まで）" maxlength="200" rows="5"></textarea>
               </div>
               <div class="form-row button-right">
-                <button id="post-button" class="${theme === 'kawaii' ? 'kawaii' : ''}" onclick="this.getRootNode().host.postMessage()">投稿</button>
+                <button id="post-button" class="${theme}" onclick="this.getRootNode().host.postMessage()">投稿</button>
               </div>
               <div class="message-area" id="form-message"></div>
             </div>
@@ -592,12 +647,6 @@ class NostalgicBBS extends HTMLElement {
         ❌ ${message}
       </div>
     `;
-  }
-
-  escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
   }
 
   generateSelectDropdowns() {

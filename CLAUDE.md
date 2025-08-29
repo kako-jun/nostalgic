@@ -12,7 +12,7 @@
 
 ## 🚀 将来機能計画
 - [**静的サイト統合システム**](.claude/static-site-integration-system.md) - 全4サービスの静的サイト対応計画
-- [**6テーマシステム拡張**](.claude/six-theme-expansion.md) - 6テーマシステム完了（light/dark/retro/kawaii/mother/ff）
+- [**6テーマシステム拡張**](.claude/six-theme-expansion.md) - 6テーマシステム完了（light/dark/retro/kawaii/mom/final）
 - [**カウンター画像化システム**](.claude/counter-image-system.md) - SVG数字画像ベースカウンター計画
 - [**BBSセレクト機能拡張**](.claude/bbs-select-system-expansion.md) - 3種類セレクト機能の詳細設計
 
@@ -28,7 +28,7 @@
 ### 📊 Counter Service
 - ✅ 複数期間統計（累計・今日・昨日・週間・月間）
 - ✅ 1日1回重複防止（0時リセット）
-- ✅ SVG画像生成（6スタイル：light/dark/retro/kawaii/mother/ff）
+- ✅ SVG画像生成（6スタイル：light/dark/retro/kawaii/mom/final）
 - ✅ Web Components による埋め込み
 
 ### 💖 Like Service  

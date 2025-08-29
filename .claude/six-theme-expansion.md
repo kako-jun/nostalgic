@@ -13,7 +13,7 @@
 - **特徴**: シンプル、汎用性高
 
 #### 2. dark - ダークテーマ  
-- **色調**: ホワイト (#ffffff)
+- **色調**: ホワイト (#finalfinalfinal)
 - **背景**: 暗い背景向け
 - **特徴**: コントラスト重視
 
@@ -24,13 +24,13 @@
 
 ### 新規テーマ（3種）🆕
 
-#### 4. mother2 - マザー2風テーマ
+#### 4. mom2 - マザー2風テーマ
 - **色調**: オレンジ系（枠・影）
 - **背景**: 黄緑系統の斜めチェック模様（リピートパターン）
 - **特徴**: レトロゲーム風、ノスタルジック
 - **イメージ**: MOTHER2/EarthBoundのウィンドウデザイン
 
-#### 5. ff - ファイナルファンタジー風青テーマ
+#### 5. final - ファイナルファンタジー風青テーマ
 - **色調**: 青系統
 - **背景**: FF風デザイン（詳細は後日検討）
 - **特徴**: RPG風、ファンタジー感
@@ -54,8 +54,8 @@
 ### CSS/スタイリング
 ```css
 /* 新テーマ例 */
-.theme-mother2 {
-  border: 2px solid #ff8c00; /* オレンジ枠 */
+.theme-mom2 {
+  border: 2px solid #final8c00; /* オレンジ枠 */
   box-shadow: 2px 2px 4px rgba(255, 140, 0, 0.3);
   background: 
     repeating-linear-gradient(
@@ -71,29 +71,29 @@
 ### Web Components対応
 既存の `theme` 属性拡張：
 ```html
-<nostalgic-counter theme="mother2" />
-<nostalgic-like theme="ff" />
+<nostalgic-counter theme="mom2" />
+<nostalgic-like theme="final" />
 <nostalgic-ranking theme="fancy" />
-<nostalgic-bbs theme="mother2" />
+<nostalgic-bbs theme="mom2" />
 ```
 
 ### API仕様拡張
 既存APIに新テーマ追加：
 ```
-/api/visit?action=display&theme=mother2
-/api/like?action=display&theme=ff  
+/api/visit?action=display&theme=mom2
+/api/like?action=display&theme=final  
 /api/ranking?action=display&theme=fancy
 ```
 
 ## パターン実装方針
 
-### 斜めチェックパターン（mother2）
+### 斜めチェックパターン（mom2）
 - `repeating-linear-gradient` 使用
 - 45度の斜め線
 - 黄緑系統の2色グラデーション
 - リピート間隔: 10-20px
 
-### FF風パターン（ff）
+### FF風パターン（final）
 - 青系統のグラデーション
 - 可能であればFF風の装飾要素
 - エレガントな印象
@@ -106,8 +106,8 @@
 ## 実装フェーズ
 
 ### Phase 1: 設計・デザイン確定
-- [ ] mother2テーマの詳細デザイン
-- [ ] ffテーマの詳細デザイン  
+- [ ] mom2テーマの詳細デザイン
+- [ ] finalテーマの詳細デザイン  
 - [ ] fancyテーマの詳細デザイン
 - [ ] CSS実装方針確定
 
@@ -135,11 +135,11 @@
 ## 命名規則統一
 
 ### テーマ名（小文字、ハイフンなし）
-- `light`, `dark`, `kawaii`, `mother2`, `ff`, `fancy`
+- `light`, `dark`, `kawaii`, `mom2`, `final`, `fancy`
 
 ### CSS クラス名
 - `.theme-light`, `.theme-dark`, `.theme-kawaii`
-- `.theme-mother2`, `.theme-ff`, `.theme-fancy`
+- `.theme-mom2`, `.theme-final`, `.theme-fancy`
 
 ### 設定ファイル・コード内
 - 統一した命名でメンテナンス性向上

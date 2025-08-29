@@ -8,7 +8,7 @@ declare namespace JSX {
     'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
       id?: string
       type?: 'total' | 'today' | 'yesterday' | 'week' | 'month'
-      theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff'
+      theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final'
       digits?: string
       format?: 'image' | 'text'
       'api-base'?: string
@@ -17,7 +17,7 @@ declare namespace JSX {
     // Like Web Component
     'nostalgic-like': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
       id?: string
-      theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff'
+      theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final'
       icon?: 'heart' | 'star' | 'thumb'
       format?: 'interactive' | 'image' | 'text'
       'api-base'?: string
@@ -27,7 +27,7 @@ declare namespace JSX {
     'nostalgic-ranking': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
       id?: string
       limit?: string
-      theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff'
+      theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final'
       format?: 'interactive'
       url?: string
       token?: string
@@ -38,7 +38,7 @@ declare namespace JSX {
     'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
       id?: string
       page?: string
-      theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff'
+      theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final'
       format?: 'interactive'
       'show-header'?: 'true' | 'false'
       url?: string
