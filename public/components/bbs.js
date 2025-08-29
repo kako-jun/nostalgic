@@ -407,21 +407,14 @@ class NostalgicBBS extends HTMLElement {
           box-sizing: border-box;
         }
         .bbs-messages::-webkit-scrollbar {
-          width: 12px;
+          width: 6px;
         }
         .bbs-messages::-webkit-scrollbar-track {
-          background: var(--bbs-bg-color);
-          border-radius: 2px;
+          background: transparent;
         }
         .bbs-messages::-webkit-scrollbar-thumb {
           background: var(--bbs-scrollbar-thumb);
-          border: 1px solid var(--bbs-bg-color);
-          border-right: 4px solid transparent;
-          border-radius: 6px;
-          background-clip: padding-box;
-        }
-        .bbs-messages::-webkit-scrollbar-thumb:hover {
-          background: var(--bbs-scrollbar-hover);
+          border-radius: 3px;
         }
         .message-item {
           background: var(--bbs-message-bg);
@@ -580,11 +573,11 @@ class NostalgicBBS extends HTMLElement {
         .bbs-container.final .edit-btn,
         .bbs-container.final .delete-btn,
         .bbs-container.final .empty-message {
-          color: #cccccc;
+          color: #999999;
         }
         .bbs-container.final input::placeholder,
         .bbs-container.final textarea::placeholder {
-          color: #999999;
+          color: #999999 !important;
         }
         .empty-message {
           text-align: center;
