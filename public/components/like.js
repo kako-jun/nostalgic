@@ -211,7 +211,7 @@ class NostalgicLike extends HTMLElement {
           hoverColor: '#1a3319'
         },
         final: {
-          color: '#999999',
+          color: '#ffffff',
           hoverColor: '#ffffff'
         }
       };
@@ -336,7 +336,7 @@ class NostalgicLike extends HTMLElement {
       final: {
         bgColor: '#0000ff',
         hoverBgColor: '#3333ff',
-        textColor: '#999999',
+        textColor: '#ffffff',
         borderColor: '#ffffff',
         shadowColor: '#ffffff'
       }
