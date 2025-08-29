@@ -405,6 +405,7 @@ class NostalgicBBS extends HTMLElement {
           max-height: 400px;
           overflow-y: auto;
           box-sizing: border-box;
+          padding-right: 4px;
         }
         .bbs-messages::-webkit-scrollbar {
           width: 6px;
