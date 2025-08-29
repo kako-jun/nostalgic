@@ -170,12 +170,12 @@ class NostalgicRanking extends HTMLElement {
       mom: {
         bgColor: '#e8f8e8',
         borderColor: '#ff8c00',
-        headerBg: '#e8f8e8',
+        headerBg: '#98fb98',
         headerColor: '#2d4a2b',
         textColor: '#2d4a2b'
       },
       final: {
-        bgColor: '#4682b4',
+        bgColor: '#0000ff',
         borderColor: '#ffffff',
         headerBg: 'transparent',
         headerColor: '#ffffff',
@@ -264,30 +264,53 @@ class NostalgicRanking extends HTMLElement {
           z-index: 100;
           border-radius: inherit;
         }
+        .ranking-container.final {
+          position: relative;
+          overflow: hidden;
+        }
         .ranking-container.final::before {
           content: '';
           position: absolute;
-          top: -30px;
-          left: -30px;
-          width: 80px;
-          height: 80px;
-          background: radial-gradient(#87ceeb 20%, rgba(135, 206, 235, 0.4) 60%, rgba(135, 206, 235, 0) 80%);
+          top: -20px;
+          left: -20px;
+          width: 60px;
+          height: 60px;
+          background: radial-gradient(#ffdb2c 10%, rgba(255, 105, 34, 0.65) 55%, rgba(255, 88, 96, 0) 70%);
           pointer-events: none;
           z-index: 1;
         }
         .ranking-container.final::after {
           content: '';
           position: absolute;
-          top: -30px;
-          right: -30px;
-          width: 80px;
-          height: 80px;
-          background: radial-gradient(#4682b4 20%, rgba(70, 130, 180, 0.4) 60%, rgba(70, 130, 180, 0) 80%);
+          top: -20px;
+          right: -20px;
+          width: 60px;
+          height: 60px;
+          background: radial-gradient(#ff69b4 10%, rgba(255, 105, 180, 0.65) 55%, rgba(255, 88, 180, 0) 70%);
           pointer-events: none;
           z-index: 1;
         }
-        .ranking-container.final {
-          position: relative;
+        .ranking-container.final .gradient-bottom-left {
+          content: '';
+          position: absolute;
+          bottom: -20px;
+          left: -20px;
+          width: 60px;
+          height: 60px;
+          background: radial-gradient(#87ceeb 10%, rgba(135, 206, 235, 0.65) 55%, rgba(135, 206, 235, 0) 70%);
+          pointer-events: none;
+          z-index: 1;
+        }
+        .ranking-container.final .gradient-bottom-right {
+          content: '';
+          position: absolute;
+          bottom: -20px;
+          right: -20px;
+          width: 60px;
+          height: 60px;
+          background: radial-gradient(#9c27b0 10%, rgba(156, 39, 176, 0.65) 55%, rgba(156, 39, 176, 0) 70%);
+          pointer-events: none;
+          z-index: 1;
         }
         .ranking-container.final .ranking-header,
         .ranking-container.final .ranking-list {
@@ -322,6 +345,9 @@ class NostalgicRanking extends HTMLElement {
         .ranking-container.mom .score,
         .ranking-container.mom .empty-message {
           text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
+        }
+        .ranking-header.retro {
+          text-shadow: 0 0 3px currentColor;
         }
         .ranking-container.retro .rank,
         .ranking-container.retro .name,
@@ -396,6 +422,7 @@ class NostalgicRanking extends HTMLElement {
         }
       </style>
       <div class="ranking-container ${theme || ''}">
+        ${theme === 'final' ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ''}
         <div class="ranking-header ${theme || ''}">${this.escapeHtml(this.rankingData.settings?.title || 'RANKING')}</div>
         ${entries.length > 0 ? `
           <ul class="ranking-list">

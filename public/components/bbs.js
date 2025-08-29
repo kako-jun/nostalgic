@@ -207,15 +207,15 @@ class NostalgicBBS extends HTMLElement {
         bgColor: '#90ee90',
         borderColor: '#ff8c00',
         shadowColor: '#ff8c00',
-        headerBg: '#e8f8e8',
+        headerBg: '#98fb98',
         headerColor: '#2d4a2b',
-        messageBg: '#90ee90',
+        messageBg: '#e8f8e8',
         textColor: '#2d4a2b',
         scrollbarThumb: '#ff8c00',
         scrollbarHover: '#ffad33'
       },
       final: {
-        bgColor: '#4682b4',
+        bgColor: '#0000ff',
         borderColor: '#ffffff',
         shadowColor: '#ffffff',
         headerBg: 'transparent',
@@ -320,30 +320,53 @@ class NostalgicBBS extends HTMLElement {
           z-index: 100;
           border-radius: inherit;
         }
+        .bbs-container.final {
+          position: relative;
+          overflow: hidden;
+        }
         .bbs-container.final::before {
           content: '';
           position: absolute;
-          top: -30px;
-          left: -30px;
-          width: 80px;
-          height: 80px;
-          background: radial-gradient(#87ceeb 20%, rgba(135, 206, 235, 0.4) 60%, rgba(135, 206, 235, 0) 80%);
+          top: -20px;
+          left: -20px;
+          width: 60px;
+          height: 60px;
+          background: radial-gradient(#ffdb2c 10%, rgba(255, 105, 34, 0.65) 55%, rgba(255, 88, 96, 0) 70%);
           pointer-events: none;
           z-index: 1;
         }
         .bbs-container.final::after {
           content: '';
           position: absolute;
-          top: -30px;
-          right: -30px;
-          width: 80px;
-          height: 80px;
-          background: radial-gradient(#4682b4 20%, rgba(70, 130, 180, 0.4) 60%, rgba(70, 130, 180, 0) 80%);
+          top: -20px;
+          right: -20px;
+          width: 60px;
+          height: 60px;
+          background: radial-gradient(#ff69b4 10%, rgba(255, 105, 180, 0.65) 55%, rgba(255, 88, 180, 0) 70%);
           pointer-events: none;
           z-index: 1;
         }
-        .bbs-container.final {
-          position: relative;
+        .bbs-container.final .gradient-bottom-left {
+          content: '';
+          position: absolute;
+          bottom: -20px;
+          left: -20px;
+          width: 60px;
+          height: 60px;
+          background: radial-gradient(#87ceeb 10%, rgba(135, 206, 235, 0.65) 55%, rgba(135, 206, 235, 0) 70%);
+          pointer-events: none;
+          z-index: 1;
+        }
+        .bbs-container.final .gradient-bottom-right {
+          content: '';
+          position: absolute;
+          bottom: -20px;
+          right: -20px;
+          width: 60px;
+          height: 60px;
+          background: radial-gradient(#9c27b0 10%, rgba(156, 39, 176, 0.65) 55%, rgba(156, 39, 176, 0) 70%);
+          pointer-events: none;
+          z-index: 1;
         }
         .bbs-container.final .bbs-header,
         .bbs-container.final .bbs-messages,
@@ -659,7 +682,8 @@ class NostalgicBBS extends HTMLElement {
         }
       </style>
       <div class="bbs-container ${theme}">
-        <div class="bbs-header ${theme}">${this.escapeHtml(this.bbsData.settings?.title || 'BBS')}</div>
+        ${theme === 'final' ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ''}
+        <div class="bbs-header ${theme}">${this.formatMixedText(this.bbsData.settings?.title || 'BBS')}</div>
         <div class="bbs-messages">
           ${messages.length > 0 ? 
             messages.map((message, index) => `
@@ -1092,6 +1116,24 @@ class NostalgicBBS extends HTMLElement {
     div.textContent = text;
     // 全角スペースを半角スペース2つに変換
     return div.innerHTML.replace(/　/g, '  ');
+  }
+
+  formatMixedText(text) {
+    const escapedText = this.escapeHtml(text);
+    // 日本語文字（ひらがな、カタカナ、漢字）を検出
+    const japanesePattern = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/;
+    // 英数字を検出  
+    const englishPattern = /[a-zA-Z0-9]/;
+    
+    return escapedText.replace(/(.)/g, (char) => {
+      if (japanesePattern.test(char)) {
+        return `<span class="jp-text">${char}</span>`;
+      } else if (englishPattern.test(char)) {
+        return `<span class="en-text">${char}</span>`;
+      } else {
+        return char;
+      }
+    });
   }
 }
 

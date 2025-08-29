@@ -328,15 +328,15 @@ class NostalgicLike extends HTMLElement {
         shadowColor: '#9c27b0'
       },
       mom: {
-        bgColor: '#e8f8e8',
+        bgColor: '#98fb98',
         hoverBgColor: '#90ee90',
         textColor: '#2d4a2b',
         borderColor: '#ff8c00',
         shadowColor: '#ff8c00'
       },
       final: {
-        bgColor: '#4682b4',
-        hoverBgColor: '#5a8fc4',
+        bgColor: '#0000ff',
+        hoverBgColor: '#3333ff',
         textColor: '#ffffff',
         borderColor: '#ffffff',
         shadowColor: '#ffffff'
@@ -449,31 +449,32 @@ class NostalgicLike extends HTMLElement {
           z-index: 100;
           border-radius: inherit;
         }
+        .like-button.final {
+          position: relative;
+          overflow: hidden;
+          background: linear-gradient(135deg, #0000ff 0%, #0066ff 100%);
+        }
         .like-button.final::before {
           content: '';
           position: absolute;
-          top: -20px;
-          left: -20px;
-          width: 60px;
-          height: 60px;
-          background: radial-gradient(#87ceeb 20%, rgba(135, 206, 235, 0.4) 60%, rgba(135, 206, 235, 0) 80%);
+          top: -15px;
+          left: -15px;
+          width: 40px;
+          height: 40px;
+          background: radial-gradient(#ffdb2c 10%, rgba(255, 105, 34, 0.65) 55%, rgba(255, 88, 96, 0) 70%);
           pointer-events: none;
           z-index: 1;
         }
         .like-button.final::after {
           content: '';
           position: absolute;
-          top: -20px;
-          right: -20px;
-          width: 60px;
-          height: 60px;
-          background: radial-gradient(#4682b4 20%, rgba(70, 130, 180, 0.4) 60%, rgba(70, 130, 180, 0) 80%);
+          top: -15px;
+          right: -15px;
+          width: 40px;
+          height: 40px;
+          background: radial-gradient(#ff69b4 10%, rgba(255, 105, 180, 0.65) 55%, rgba(255, 88, 180, 0) 70%);
           pointer-events: none;
           z-index: 1;
-        }
-        .like-button.final {
-          position: relative;
-          overflow: visible;
         }
         .like-button.final .heart-icon,
         .like-button.final .like-count {
