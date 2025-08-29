@@ -61,8 +61,8 @@ GET /api/visit?action=display&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
   - `dark` (デフォルト): グレー背景に白文字（2000年代クリーンスタイル）
   - `retro`: 古いコンピュータ端末風（黒背景、緑文字、スキャンライン、CRT効果）
   - `kawaii`: 紫背景に黄文字（80年代ネオンスタイル）
-  - `mother`: MOTHER2/EarthBoundスタイル（緑ストライプ、オレンジボーダー）
-  - `ff`: ファイナルファンタジースタイル（青系グラデーション）
+  - `mom`: MOTHER2/EarthBoundスタイル（緑ストライプ、オレンジボーダー）
+  - `final`: ファイナルファンタジースタイル（青系グラデーション）
 - `format` (オプション): レスポンス形式
   - `image` (デフォルト): SVG画像
   - `text`: プレーンテキスト数値（スタイルなし）
@@ -135,7 +135,7 @@ declare module 'react' {
       'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         type?: 'total' | 'today' | 'yesterday' | 'week' | 'month';
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
         digits?: string;
         scale?: string;
       };
@@ -178,7 +178,7 @@ declare module 'react' {
 **属性:**
 - `id`: 公開カウンターID
 - `type`: 表示タイプ（total, today, yesterday, week, month）
-- `theme`: 表示スタイル（light, dark, retro, kawaii, mother, ff）- 画像形式のみ
+- `theme`: 表示スタイル（light, dark, retro, kawaii, mom, final）- 画像形式のみ
 - `format`: 出力形式（image, text）- デフォルト: image
 - `digits`: ゼロ埋め桁数（指定時のみ）
 - `api-base`: カスタムAPI ベースURL（オプション）
@@ -197,7 +197,7 @@ declare module 'react' {
       'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
         id?: string
         type?: 'total' | 'today' | 'yesterday' | 'week' | 'month'
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff'
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final'
         digits?: string
         format?: 'image' | 'text'
         'api-base'?: string

@@ -171,13 +171,13 @@ const svgHandler = ApiHandler.createSpecialResponse(
           border: '#9c27b0',
           icon: '#ff69b4'
         },
-        mother: {
+        mom: {
           bg: '#f0f8e8',
           text: '#2d4a2b',
           border: '#ff8c00',
           icon: '#ff8c00'
         },
-        ff: {
+        final: {
           bg: '#1a237e',
           text: '#e3f2fd',
           border: '#64b5f6',

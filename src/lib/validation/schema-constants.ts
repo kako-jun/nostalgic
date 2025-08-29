@@ -22,7 +22,7 @@ export const URL = {
 } as const;
 
 // === テーマ関連 ===
-export const THEMES = ['light', 'dark', 'retro', 'kawaii', 'mother', 'ff'] as const;
+export const THEMES = ['light', 'dark', 'retro', 'kawaii', 'mom', 'final'] as const;
 export const DEFAULT_THEME = 'dark' as const;
 
 // === Counter サービス ===

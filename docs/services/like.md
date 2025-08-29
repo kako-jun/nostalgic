@@ -109,7 +109,7 @@ GET /api/like?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_
 
 **Attributes:**
 - `id`: Like button public ID
-- `theme`: Visual style (light, dark, retro, kawaii, mother, ff)
+- `theme`: Visual style (light, dark, retro, kawaii, mom, final)
 - `icon`: Icon type (heart, star, thumb) - interactive format only
 - `format`: Display format (interactive, text, image) - default: interactive
 - `api-base`: Custom API base URL (optional)
@@ -127,7 +127,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-like': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
         icon?: 'heart' | 'star' | 'thumb';
       };
     }
@@ -165,9 +165,9 @@ document.body.innerHTML += `
 <style>
 nostalgic-like {
   --like-text-color-unliked: #666;
-  --like-text-color-liked: #ff4757;
+  --like-text-color-liked: #final4757;
   --like-text-hover-color-unliked: #333;
-  --like-text-hover-color-liked: #ff3838;
+  --like-text-hover-color-liked: #final3838;
 }
 </style>
 <nostalgic-like id="post-123" format="text"></nostalgic-like>

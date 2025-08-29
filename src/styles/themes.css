@@ -116,8 +116,8 @@
   --accent-pink: #ff4081;       /* アクセントピンク */
 }
 
-/* Mother Theme (MOTHER2/EarthBound inspired) */
-.theme-mother {
+/* Mom Theme (MOTHER2/EarthBound inspired) */
+.theme-mom {
   --bg-primary: #f0f8e8;        /* 淡い黄緑 */
   --bg-secondary: #e8f0d8;      /* やや濃い黄緑 */
   --bg-tertiary: #d8e8c8;       /* 濃い黄緑 */
@@ -134,7 +134,7 @@
   --active-bg: rgba(255, 140, 0, 0.1);
   --focus-outline: rgba(255, 140, 0, 0.5);
   
-  /* Mother specific pattern - diagonal stripes */
+  /* Mom specific pattern - diagonal stripes */
   background-image: 
     repeating-linear-gradient(
       45deg,
@@ -145,8 +145,8 @@
     );
 }
 
-/* FF Theme (Final Fantasy inspired) */
-.theme-ff {
+/* Final Theme (Final Fantasy inspired) */
+.theme-final {
   --bg-primary: #1a237e;        /* 濃い青 */
   --bg-secondary: #283593;      /* 中間の青 */
   --bg-tertiary: #3949ab;       /* 明るい青 */
@@ -163,7 +163,7 @@
   --active-bg: rgba(100, 181, 246, 0.1);
   --focus-outline: rgba(100, 181, 246, 0.5);
   
-  /* FF specific gradient background */
+  /* Final specific gradient background */
   background-image: 
     radial-gradient(
       ellipse at center,

@@ -3,7 +3,7 @@ import { CounterType } from '@/types/counter'
 export interface CounterImageOptions {
   value: number
   type: CounterType
-  style?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff'
+  style?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final'
   digits?: number
 }
 
@@ -44,14 +44,14 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       fontSize: '18',
       border: '#9c27b0'
     },
-    mother: {
+    mom: {
       backgroundColor: '#f0f8e8',
       textColor: '#2d4a2b',
       fontFamily: 'Impact, Arial Black, sans-serif',
       fontSize: '16',
       border: '#ff8c00'
     },
-    ff: {
+    final: {
       backgroundColor: '#1a237e',
       textColor: '#e3f2fd',
       fontFamily: 'Times New Roman, Times, serif',
@@ -82,7 +82,7 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       <!-- 背景 -->
       <rect width="${width}" height="${height}" fill="${currentStyle.backgroundColor}" stroke="${currentStyle.border}" stroke-width="1"/>
       
-      ${style === 'mother' ? `
+      ${style === 'mom' ? `
       <!-- MOTHER2風ストライプパターン -->
       <defs>
         <pattern id="stripes" patternUnits="userSpaceOnUse" width="14" height="14" patternTransform="rotate(45)">
@@ -93,7 +93,7 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       <rect width="${width}" height="${height}" fill="url(#stripes)" opacity="0.3"/>
       ` : ''}
       
-      ${style === 'ff' ? `
+      ${style === 'final' ? `
       <!-- FF風グラデーション -->
       <defs>
         <radialGradient id="ffGradient" cx="50%" cy="50%" r="50%">

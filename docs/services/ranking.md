@@ -266,7 +266,7 @@ await fetch('/api/ranking?action=clear&url=https://mygame.com&token=game-secret'
 
 ## Data Structure
 
-Rankings use Redis Sorted Sets for efficient sorting:
+Rankings use Redis Sorted Sets for efinalicient sorting:
 - Scores are automatically sorted in descending order
 - When max entries exceeded, lowest scores are removed
 - O(log N) performance for score operations
@@ -285,7 +285,7 @@ Rankings use Redis Sorted Sets for efficient sorting:
 
 **Attributes:**
 - `id`: Ranking public ID
-- `theme`: Visual style (light, dark, retro, kawaii, mother, ff)
+- `theme`: Visual style (light, dark, retro, kawaii, mom, final)
 - `limit`: Number of entries to display (1-100, default: 10)
 - `format`: Display format (interactive, text) - default: interactive
 - `api-base`: Custom API base URL (optional)
@@ -303,7 +303,7 @@ declare module 'react' {
     interface IntrinsicElements {
       'nostalgic-ranking': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mother' | 'ff';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
         limit?: string;
       };
     }
