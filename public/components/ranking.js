@@ -179,7 +179,7 @@ class NostalgicRanking extends HTMLElement {
         borderColor: '#ffffff',
         headerBg: 'transparent',
         headerColor: '#ffffff',
-        textColor: '#f8f8f8'
+        textColor: '#f0f0f0'
       }
     };
 

@@ -221,9 +221,9 @@ class NostalgicBBS extends HTMLElement {
         headerBg: 'transparent',
         headerColor: '#ffffff',
         messageBg: 'transparent',
-        textColor: '#f8f8f8',
+        textColor: '#f0f0f0',
         scrollbarThumb: '#ffffff',
-        scrollbarHover: '#f8f8f8'
+        scrollbarHover: '#f0f0f0'
       }
     };
 
@@ -405,6 +405,7 @@ class NostalgicBBS extends HTMLElement {
           max-height: 400px;
           overflow-y: auto;
           padding-right: 4px;
+          box-sizing: border-box;
         }
         .bbs-messages::-webkit-scrollbar {
           width: 8px;
@@ -412,7 +413,6 @@ class NostalgicBBS extends HTMLElement {
         .bbs-messages::-webkit-scrollbar-track {
           background: var(--bbs-bg-color);
           border-radius: 2px;
-          margin-right: 4px;
         }
         .bbs-messages::-webkit-scrollbar-thumb {
           background: var(--bbs-scrollbar-thumb);
@@ -573,6 +573,13 @@ class NostalgicBBS extends HTMLElement {
         }
         .bbs-container.final .pagination .current-page {
           color: #ffffff;
+        }
+        .bbs-container.final .loading,
+        .bbs-container.final .message-header,
+        .bbs-container.final .edit-btn,
+        .bbs-container.final .delete-btn,
+        .bbs-container.final .empty-message {
+          color: #f0f0f0;
         }
         .empty-message {
           text-align: center;
