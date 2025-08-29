@@ -211,8 +211,8 @@ class NostalgicLike extends HTMLElement {
           hoverColor: userLiked ? '#333333' : '#000000'
         },
         final: {
-          color: userLiked ? '#e3f2fd' : '#bbdefb',
-          hoverColor: userLiked ? '#bbdefb' : '#e3f2fd'
+          color: userLiked ? '#ffffff' : '#e0e0e0',
+          hoverColor: userLiked ? '#e0e0e0' : '#ffffff'
         }
       };
       
@@ -250,8 +250,11 @@ class NostalgicLike extends HTMLElement {
           .like-text.liked:hover:not(.loading) {
             color: var(--like-text-hover-color-liked, ${userLiked ? textStyle.hoverColor : textThemes[theme].hoverColor});
           }
+          .like-text.mom {
+            text-shadow: 1px 1px 0px white;
+          }
         </style>
-        <span class="like-text ${likedClass} ${isLoading ? 'loading' : ''}" onclick="this.getRootNode().host.toggleLike()">${total}</span>
+        <span class="like-text ${likedClass} ${isLoading ? 'loading' : ''} ${theme === 'mom' ? 'mom' : ''}" onclick="this.getRootNode().host.toggleLike()">${total}</span>
       `;
       return;
     }
@@ -284,7 +287,7 @@ class NostalgicLike extends HTMLElement {
       } else if (theme === 'mom') {
         return userLiked ? '#000000' : '#999999';
       } else if (theme === 'final') {
-        return userLiked ? '#e3f2fd' : '#bbdefb';
+        return userLiked ? '#ffffff' : '#e0e0e0';
       }
       // デフォルト（dark）
       return userLiked ? '#ffffff' : '#666666';
@@ -330,11 +333,11 @@ class NostalgicLike extends HTMLElement {
         shadowColor: '#000000'
       },
       final: {
-        bgColor: '#1a237e',
-        hoverBgColor: '#0d47a1',
-        textColor: '#e3f2fd',
-        borderColor: '#3f51b5',
-        shadowColor: '#3f51b5'
+        bgColor: 'linear-gradient(to bottom right, #87ceeb 0%, #4682b4 50%, #9370db 50%, #191970 100%)',
+        hoverBgColor: 'linear-gradient(to bottom right, #7ac3e6 0%, #3f7fb0 50%, #8a68d6 50%, #141459 100%)',
+        textColor: '#ffffff',
+        borderColor: '#ffffff',
+        shadowColor: '#ffffff'
       }
     };
     
@@ -437,11 +440,11 @@ class NostalgicLike extends HTMLElement {
             0deg,
             transparent,
             transparent 2px,
-            rgba(0, 255, 65, 0.1) 2px,
-            rgba(0, 255, 65, 0.1) 4px
+            rgba(0, 255, 65, 0.15) 2px,
+            rgba(0, 255, 65, 0.15) 4px
           );
           pointer-events: none;
-          z-index: 1;
+          z-index: 100;
           border-radius: inherit;
         }
         
@@ -461,6 +464,17 @@ class NostalgicLike extends HTMLElement {
           background-image: var(--kawaii-light-dots-hover);
         }
         
+        .like-button.mom {
+          background-image: 
+            repeating-linear-gradient(45deg, rgba(144, 238, 144, 0.7), rgba(144, 238, 144, 0.7) 10px, transparent 10px, transparent 20px),
+            repeating-linear-gradient(-45deg, rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5) 10px, transparent 10px, transparent 20px);
+        }
+        .like-button.mom,
+        .like-button.mom .heart-icon,
+        .like-button.mom .like-count {
+          text-shadow: 1px 1px 0px white;
+        }
+        
         .heart-icon {
           font-size: var(--like-icon-size, 16px);
           line-height: 1;
@@ -468,12 +482,16 @@ class NostalgicLike extends HTMLElement {
           width: 16px;
           text-align: center;
           display: inline-block;
+          position: relative;
+          z-index: 10;
         }
         
         .like-count {
           font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
           min-width: 20px;
           text-align: center;
+          position: relative;
+          z-index: 10;
         }
         
         .loading {

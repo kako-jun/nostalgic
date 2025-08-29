@@ -163,7 +163,7 @@ class NostalgicBBS extends HTMLElement {
         bgColor: '#ffffff',
         borderColor: '#000000',
         shadowColor: '#000000',
-        headerBg: '#f5f5f5',
+        headerBg: '#e8e8e8',
         headerColor: '#000000',
         messageBg: '#ffffff',
         textColor: '#000000',
@@ -215,15 +215,15 @@ class NostalgicBBS extends HTMLElement {
         scrollbarHover: '#ffad33'
       },
       final: {
-        bgColor: '#1a237e',
-        borderColor: '#64b5f6',
-        shadowColor: '#64b5f6',
-        headerBg: '#1976d2',
-        headerColor: '#e3f2fd',
-        messageBg: '#1a237e',
-        textColor: '#e3f2fd',
-        scrollbarThumb: '#64b5f6',
-        scrollbarHover: '#90caf9'
+        bgColor: 'linear-gradient(to bottom right, #87ceeb 0%, #4682b4 50%, #9370db 50%, #191970 100%)',
+        borderColor: '#ffffff',
+        shadowColor: '#ffffff',
+        headerBg: 'linear-gradient(to bottom right, #87ceeb 0%, #4682b4 50%, #9370db 50%, #191970 100%)',
+        headerColor: '#ffffff',
+        messageBg: 'linear-gradient(to bottom right, #87ceeb 0%, #4682b4 50%, #9370db 50%, #191970 100%)',
+        textColor: '#ffffff',
+        scrollbarThumb: '#ffffff',
+        scrollbarHover: '#e0e0e0'
       }
     };
 
@@ -313,11 +313,11 @@ class NostalgicBBS extends HTMLElement {
             0deg,
             transparent,
             transparent 2px,
-            rgba(0, 255, 65, 0.1) 2px,
-            rgba(0, 255, 65, 0.1) 4px
+            rgba(0, 255, 65, 0.15) 2px,
+            rgba(0, 255, 65, 0.15) 4px
           );
           pointer-events: none;
-          z-index: 10;
+          z-index: 100;
           border-radius: inherit;
         }
         .bbs-header {
@@ -345,8 +345,8 @@ class NostalgicBBS extends HTMLElement {
           text-shadow: 0 0 5px currentColor;
         }
         .bbs-header.final {
-          background-image: radial-gradient(ellipse at center, rgba(100, 181, 246, 0.2) 0%, rgba(25, 118, 210, 0.1) 50%, #1a237e 100%);
-          text-shadow: 0 0 8px rgba(100, 181, 246, 0.5);
+          background: linear-gradient(to bottom right, #87ceeb 0%, #4682b4 50%, #9370db 50%, #191970 100%);
+          text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
         }
         .bbs-messages {
           height: 400px;
@@ -376,6 +376,8 @@ class NostalgicBBS extends HTMLElement {
           border: 1px solid var(--bbs-border-color);
           border-radius: var(--bbs-message-border-radius, 2px);
           color: var(--bbs-text-color);
+          position: relative;
+          z-index: 1;
         }
         .message-header {
           display: flex;
@@ -419,9 +421,15 @@ class NostalgicBBS extends HTMLElement {
           font-size: 12px;
           font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
         }
+        .bbs-container.mom .message-author {
+          text-shadow: 1px 1px 0px white;
+        }
         .message-time {
           font-size: 12px;
           font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
+        }
+        .bbs-container.mom .message-time {
+          text-shadow: 1px 1px 0px white;
         }
         .message-content {
           margin: 4px 0;
@@ -434,10 +442,16 @@ class NostalgicBBS extends HTMLElement {
           text-align: left;
           font-size: clamp(12px, 2vw, 16px);
         }
+        .bbs-container.mom .message-content {
+          text-shadow: 1px 1px 0px white;
+        }
         .message-meta {
           font-size: 10px;
           color: #999;
           margin-top: 4px;
+        }
+        .bbs-container.mom .message-meta {
+          text-shadow: 1px 1px 0px white;
         }
         .pagination {
           padding: 10px;
@@ -506,8 +520,8 @@ class NostalgicBBS extends HTMLElement {
           text-shadow: 0 0 5px currentColor;
         }
         .form-header.final {
-          background-image: radial-gradient(ellipse at center, rgba(100, 181, 246, 0.2) 0%, rgba(25, 118, 210, 0.1) 50%, #1a237e 100%);
-          text-shadow: 0 0 8px rgba(100, 181, 246, 0.5);
+          background: linear-gradient(to bottom right, #87ceeb 0%, #4682b4 50%, #9370db 50%, #191970 100%);
+          text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
         }
         .form-body {
           padding: 0 5px;
