@@ -557,15 +557,15 @@ class NostalgicBBS extends HTMLElement {
           padding: 4px 8px;
         }
         .bbs-container.final .pagination {
-          border-top: 1px solid #ffffff !important;
+          border-top: 1px solid #ffffff;
         }
         .bbs-container.final .pagination button {
-          background: transparent !important;
-          color: #ffffff !important;
-          border: 1px solid #ffffff !important;
+          background: transparent;
+          color: #ffffff;
+          border: 1px solid #ffffff;
         }
         .bbs-container.final .pagination .current-page {
-          color: #ffffff !important;
+          color: #ffffff;
         }
         .empty-message {
           text-align: center;
