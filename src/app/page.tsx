@@ -192,23 +192,23 @@ export default function HomePage() {
                 </div>
               </div>
               
-              <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap", marginTop: "20px" }}>
+              <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap", marginTop: "20px" }}>
                 <div className="nostalgic-counter-item">
-                  <b>Kawaii</b>
+                  <div style={{ textAlign: "center" }}><b>Kawaii</b></div>
                   <br />
                   <div style={{ marginTop: "10px" }}>
                     <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="kawaii" digits="5" />
                   </div>
                 </div>
                 <div className="nostalgic-counter-item">
-                  <b>Mother味</b>
+                  <div style={{ textAlign: "center" }}><b>Mother味</b></div>
                   <br />
                   <div style={{ marginTop: "10px" }}>
                     <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="mom" digits="5" />
                   </div>
                 </div>
                 <div className="nostalgic-counter-item">
-                  <b>FF味</b>
+                  <div style={{ textAlign: "center" }}><b>FF味</b></div>
                   <br />
                   <div style={{ marginTop: "10px" }}>
                     <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="final" digits="5" />
@@ -228,7 +228,6 @@ export default function HomePage() {
                     <nostalgic-counter id="nostalgic-b89803bb" type="today" format="text" />
                   </div>
                 </div>
-                <p style={{ marginTop: "10px", fontSize: "14px", color: "#666" }}>※プレーンテキストは背景に溶け込みやすい形式です</p>
               </div>
             </div>
 
@@ -441,7 +440,7 @@ export default function HomePage() {
                   onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#e3f2fd'; }}
                 >
                   📊 Counter<br/>
-                  <small style={{fontWeight: 'normal'}}>アクセス数カウンター</small>
+                  <small style={{fontWeight: 'normal'}}>アクセスカウンター</small>
                 </button>
                 
                 <button
