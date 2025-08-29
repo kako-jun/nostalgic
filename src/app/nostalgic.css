@@ -188,6 +188,22 @@ p {
   margin: 0 0 10px 0 !important;
   font-size: clamp(16px, 2.5vw, 18px) !important;
   white-space: nowrap !important;
+  /* Balance Japanese and English character sizes */
+  font-feature-settings: "palt" 1 !important; /* Proportional alternate width for Japanese */
+  text-rendering: optimizeLegibility !important;
+  letter-spacing: 0 !important;
+}
+
+/* Mixed Japanese-English title balancing */
+.nostalgic-section-title .jp-text {
+  font-size: 0.95em !important; /* Slightly smaller Japanese text */
+  vertical-align: baseline !important;
+}
+
+.nostalgic-section-title .en-text {
+  font-size: 1.05em !important; /* Slightly larger English text */
+  vertical-align: baseline !important;
+  font-weight: bold !important; /* Make English text bolder to match visual weight */
 }
 
 /* 更新履歴ボックス */

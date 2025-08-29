@@ -328,15 +328,15 @@ class NostalgicLike extends HTMLElement {
         shadowColor: '#9c27b0'
       },
       mom: {
-        bgColor: '#98fb98',
+        bgColor: '#e8f8e8',
         hoverBgColor: '#90ee90',
         textColor: '#2d4a2b',
         borderColor: '#ff8c00',
         shadowColor: '#ff8c00'
       },
       final: {
-        bgColor: 'linear-gradient(to bottom right, #87ceeb 0%, #4682b4 50%, #9370db 50%, #191970 100%)',
-        hoverBgColor: 'linear-gradient(to bottom right, #7ac3e6 0%, #3f7fb0 50%, #8a68d6 50%, #141459 100%)',
+        bgColor: '#4682b4',
+        hoverBgColor: '#5a8fc4',
         textColor: '#ffffff',
         borderColor: '#ffffff',
         shadowColor: '#ffffff'
@@ -449,6 +449,37 @@ class NostalgicLike extends HTMLElement {
           z-index: 100;
           border-radius: inherit;
         }
+        .like-button.final::before {
+          content: '';
+          position: absolute;
+          top: -20px;
+          left: -20px;
+          width: 60px;
+          height: 60px;
+          background: radial-gradient(#87ceeb 20%, rgba(135, 206, 235, 0.4) 60%, rgba(135, 206, 235, 0) 80%);
+          pointer-events: none;
+          z-index: 1;
+        }
+        .like-button.final::after {
+          content: '';
+          position: absolute;
+          top: -20px;
+          right: -20px;
+          width: 60px;
+          height: 60px;
+          background: radial-gradient(#4682b4 20%, rgba(70, 130, 180, 0.4) 60%, rgba(70, 130, 180, 0) 80%);
+          pointer-events: none;
+          z-index: 1;
+        }
+        .like-button.final {
+          position: relative;
+          overflow: visible;
+        }
+        .like-button.final .heart-icon,
+        .like-button.final .like-count {
+          position: relative;
+          z-index: 2;
+        }
         
         .like-button:hover:not(.loading) {
           background: var(--like-hover-bg, ${style.hoverBgColor});
@@ -474,7 +505,15 @@ class NostalgicLike extends HTMLElement {
         .like-button.mom,
         .like-button.mom .heart-icon,
         .like-button.mom .like-count {
-          text-shadow: 1px 1px 0px white;
+          text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
+        }
+        .like-button.retro,
+        .like-button.retro .heart-icon,
+        .like-button.retro .like-count {
+          text-shadow: 0 0 3px currentColor;
+        }
+        .like-text.retro {
+          text-shadow: 0 0 3px currentColor;
         }
         
         .heart-icon {
