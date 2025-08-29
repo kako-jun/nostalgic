@@ -499,6 +499,21 @@ class NostalgicLike extends HTMLElement {
           position: relative;
           z-index: 2;
         }
+        .like-button.final {
+          border: 3px solid #ffffff !important;
+        }
+        .like-button.final::after {
+          content: '';
+          position: absolute;
+          top: 1px;
+          left: 1px;
+          right: 1px;
+          bottom: 1px;
+          border: 1px solid #000000;
+          pointer-events: none;
+          z-index: 11;
+          border-radius: inherit;
+        }
         
         .like-button:hover:not(.loading) {
           background: var(--like-hover-bg, ${style.hoverBgColor});

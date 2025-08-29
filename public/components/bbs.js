@@ -372,6 +372,51 @@ class NostalgicBBS extends HTMLElement {
           position: relative;
           z-index: 10;
         }
+        .bbs-container.final {
+          border: 3px solid #ffffff;
+        }
+        .bbs-container.final::after {
+          content: '';
+          position: absolute;
+          top: 1px;
+          left: 1px;
+          right: 1px;
+          bottom: 1px;
+          border: 1px solid #000000;
+          pointer-events: none;
+          z-index: 11;
+        }
+        /* 投稿フォームヘッダとページネーションにも内側黒枠 */
+        .bbs-container.final .pagination {
+          border: 3px solid #ffffff;
+          position: relative;
+        }
+        .bbs-container.final .pagination::after {
+          content: '';
+          position: absolute;
+          top: 1px;
+          left: 1px;
+          right: 1px;
+          bottom: 1px;
+          border: 1px solid #000000;
+          pointer-events: none;
+          z-index: 11;
+        }
+        .bbs-container.final .form-header {
+          border: 3px solid #ffffff;
+          position: relative;
+        }
+        .bbs-container.final .form-header::after {
+          content: '';
+          position: absolute;
+          top: 1px;
+          left: 1px;
+          right: 1px;
+          bottom: 1px;
+          border: 1px solid #000000;
+          pointer-events: none;
+          z-index: 11;
+        }
         .bbs-header {
           background-color: var(--bbs-header-bg);
           color: var(--bbs-header-color);
@@ -416,6 +461,7 @@ class NostalgicBBS extends HTMLElement {
           background: var(--bbs-scrollbar-thumb);
           border: 1px solid var(--bbs-bg-color);
           border-radius: 6px;
+          border-right: 4px solid var(--bbs-bg-color);
         }
         .bbs-messages::-webkit-scrollbar-thumb:hover {
           background: var(--bbs-scrollbar-hover);
