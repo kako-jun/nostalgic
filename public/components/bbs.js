@@ -177,7 +177,7 @@ class NostalgicBBS extends HTMLElement {
         headerBg: '#000000',
         headerColor: '#ffffff',
         messageBg: '#2a2a2a',
-        textColor: '#cccccc',
+        textColor: '#ffffff',
         scrollbarThumb: '#555555',
         scrollbarHover: '#777777'
       },
@@ -188,7 +188,7 @@ class NostalgicBBS extends HTMLElement {
         headerBg: '#b2ebf2',
         headerColor: '#ff69b4',
         messageBg: '#e0f7fa',
-        textColor: '#f06292',
+        textColor: '#ff69b4',
         scrollbarThumb: '#ff69b4',
         scrollbarHover: '#e91e63'
       },

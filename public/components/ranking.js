@@ -151,7 +151,7 @@ class NostalgicRanking extends HTMLElement {
         borderColor: '#ffffff',
         headerBg: '#000000',
         headerColor: '#ffffff',
-        textColor: '#cccccc'
+        textColor: '#ffffff'
       },
       retro: {
         bgColor: '#0d1117',
@@ -165,7 +165,7 @@ class NostalgicRanking extends HTMLElement {
         borderColor: '#9c27b0',
         headerBg: '#b2ebf2',
         headerColor: '#ff69b4',
-        textColor: '#f06292'
+        textColor: '#ff69b4'
       },
       mom: {
         bgColor: '#d8f5d8',

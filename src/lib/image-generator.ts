@@ -23,7 +23,7 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       border: '#000000'
     },
     dark: {
-      backgroundColor: '#1a1a1a',
+      backgroundColor: '#2a2a2a',
       textColor: '#ffffff',
       fontFamily: 'Courier New, Consolas, Monaco, Liberation Mono, DejaVu Sans Mono, monospace',
       fontSize: '16',
@@ -45,7 +45,7 @@ export function generateCounterSVG(options: CounterImageOptions): string {
       border: '#9c27b0'
     },
     mom: {
-      backgroundColor: '#c8e6c9',
+      backgroundColor: '#d8f5d8',
       textColor: '#2d4a2b',
       fontFamily: 'Impact, Arial Black, sans-serif',
       fontSize: '16',
@@ -53,7 +53,7 @@ export function generateCounterSVG(options: CounterImageOptions): string {
     },
     final: {
       backgroundColor: '#0000ff',
-      textColor: '#ffffff',
+      textColor: '#f0f0f0',
       fontFamily: 'Times New Roman, Times, serif',
       fontSize: '16',
       border: '#ffffff'

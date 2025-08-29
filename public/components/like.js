@@ -249,8 +249,11 @@ class NostalgicLike extends HTMLElement {
           .like-text.final {
             text-shadow: 1px 1px 0px black;
           }
+          .like-text.retro {
+            text-shadow: 0 0 3px currentColor;
+          }
         </style>
-        <span class="like-text ${isLoading ? 'loading' : ''} ${theme === 'mom' ? 'mom' : ''} ${theme === 'final' ? 'final' : ''}" onclick="this.getRootNode().host.toggleLike()">${total}</span>
+        <span class="like-text ${isLoading ? 'loading' : ''} ${theme || ''}" onclick="this.getRootNode().host.toggleLike()">${total}</span>
       `;
       return;
     }
