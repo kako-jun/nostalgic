@@ -204,12 +204,12 @@ class NostalgicBBS extends HTMLElement {
         scrollbarHover: '#41ff00'
       },
       mom: {
-        bgColor: '#c8e6c9',
+        bgColor: '#d8f5d8',
         borderColor: '#ff8c00',
         shadowColor: '#ff8c00',
         headerBg: '#98fb98',
         headerColor: '#2d4a2b',
-        messageBg: '#c8e6c9',
+        messageBg: '#d8f5d8',
         textColor: '#2d4a2b',
         scrollbarThumb: '#ff8c00',
         scrollbarHover: '#ffad33'
@@ -406,7 +406,7 @@ class NostalgicBBS extends HTMLElement {
           overflow-y: auto;
         }
         .bbs-messages::-webkit-scrollbar {
-          width: 12px;
+          width: 8px;
         }
         .bbs-messages::-webkit-scrollbar-track {
           background: var(--bbs-bg-color);
@@ -510,6 +510,21 @@ class NostalgicBBS extends HTMLElement {
         .bbs-container.mom button {
           text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
         }
+        .bbs-container.final .bbs-header,
+        .bbs-container.final .message-author,
+        .bbs-container.final .message-time,
+        .bbs-container.final .message-content,
+        .bbs-container.final .pagination,
+        .bbs-container.final .pagination button,
+        .bbs-container.final .current-page,
+        .bbs-container.final input,
+        .bbs-container.final textarea,
+        .bbs-container.final select,
+        .bbs-container.final button,
+        .bbs-container.final .form-header,
+        .bbs-container.final label {
+          text-shadow: 1px 1px 0px black;
+        }
         .pagination {
           padding: 10px;
           text-align: center;
@@ -541,6 +556,17 @@ class NostalgicBBS extends HTMLElement {
           color: var(--bbs-text-color);
           padding: 4px 8px;
         }
+        .bbs-container.final .pagination {
+          border-top: 1px solid #ffffff;
+        }
+        .bbs-container.final .pagination button {
+          background: transparent;
+          color: #ffffff;
+          border: 1px solid #ffffff;
+        }
+        .bbs-container.final .current-page {
+          color: #ffffff;
+        }
         .empty-message {
           text-align: center;
           padding: 20px;
@@ -549,7 +575,7 @@ class NostalgicBBS extends HTMLElement {
         }
         /* Font balancing for Japanese-English mixed text in header only */
         .bbs-header .jp-text {
-          font-size: 0.95em;
+          font-size: 0.85em;
           font-feature-settings: "palt" 1;
         }
         .bbs-header .en-text {
