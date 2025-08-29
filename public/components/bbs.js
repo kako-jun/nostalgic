@@ -409,13 +409,15 @@ class NostalgicBBS extends HTMLElement {
           width: 8px;
         }
         .bbs-messages::-webkit-scrollbar-track {
-          background: var(--bbs-bg-color);
+          background: transparent;
           border-radius: 2px;
         }
         .bbs-messages::-webkit-scrollbar-thumb {
           background: var(--bbs-scrollbar-thumb);
           border: 1px solid var(--bbs-bg-color);
+          border-right: 3px solid transparent;
           border-radius: 6px;
+          background-clip: padding-box;
         }
         .bbs-messages::-webkit-scrollbar-thumb:hover {
           background: var(--bbs-scrollbar-hover);
