@@ -370,7 +370,7 @@ class NostalgicBBS extends HTMLElement {
         .bbs-container.final .bbs-messages,
         .bbs-container.final .post-form {
           position: relative;
-          z-index: 2;
+          z-index: 10;
         }
         .bbs-header {
           background-color: var(--bbs-header-bg);
@@ -429,6 +429,9 @@ class NostalgicBBS extends HTMLElement {
           color: var(--bbs-text-color);
           position: relative;
           z-index: 1;
+        }
+        .bbs-container.final .message-item {
+          z-index: 10;
         }
         .message-header {
           display: flex;
@@ -524,6 +527,8 @@ class NostalgicBBS extends HTMLElement {
         .bbs-container.final .form-header,
         .bbs-container.final label {
           text-shadow: 1px 1px 0px black;
+          position: relative;
+          z-index: 10;
         }
         .pagination {
           padding: 10px;
