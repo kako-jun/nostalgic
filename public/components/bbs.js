@@ -404,7 +404,7 @@ class NostalgicBBS extends HTMLElement {
           min-height: 400px;
           max-height: 400px;
           overflow-y: auto;
-          padding-right: 4px;
+          padding-right: 12px;
           box-sizing: border-box;
         }
         .bbs-messages::-webkit-scrollbar {
@@ -579,7 +579,7 @@ class NostalgicBBS extends HTMLElement {
         .bbs-container.final .edit-btn,
         .bbs-container.final .delete-btn,
         .bbs-container.final .empty-message {
-          color: #f0f0f0;
+          color: #cccccc;
         }
         .empty-message {
           text-align: center;
