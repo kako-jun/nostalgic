@@ -221,9 +221,9 @@ class NostalgicBBS extends HTMLElement {
         headerBg: 'transparent',
         headerColor: '#ffffff',
         messageBg: 'transparent',
-        textColor: '#f0f0f0',
+        textColor: '#f8f8f8',
         scrollbarThumb: '#ffffff',
-        scrollbarHover: '#f0f0f0'
+        scrollbarHover: '#f8f8f8'
       }
     };
 
@@ -404,6 +404,7 @@ class NostalgicBBS extends HTMLElement {
           min-height: 400px;
           max-height: 400px;
           overflow-y: auto;
+          padding-right: 4px;
         }
         .bbs-messages::-webkit-scrollbar {
           width: 8px;
