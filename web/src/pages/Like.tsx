@@ -1,13 +1,12 @@
 import { useState } from "react";
 import NostalgicLayout from "../components/NostalgicLayout";
-import ResponseDisplay from "../components/ResponseDisplay";
-import ApiUrlDisplay, { GreenParam } from "../components/ApiUrlDisplay";
 import TabNavigation from "../components/TabNavigation";
 import LikeFeaturesTab from "../components/like/LikeFeaturesTab";
 import CreateServiceSection from "../components/sections/CreateServiceSection";
-import ActionSection from "../components/sections/ActionSection";
+import DataDrivenFormSection from "../components/DataDrivenFormSection";
 import useHashNavigation from "../hooks/useHashNavigation";
 import { callApi, callApiWithFormat } from "../utils/apiHelpers";
+import { getLikeFormSections } from "../config/likeFormConfig";
 
 const TABS = [
   { id: "features", label: "機能" },
@@ -21,23 +20,12 @@ export default function LikePage() {
   });
   const [publicId, setPublicId] = useState("");
   const [responseType, setResponseType] = useState<"json" | "text" | "svg">("json");
-
-  // 全フォーム共通のstate
   const [sharedUrl, setSharedUrl] = useState("");
   const [sharedToken, setSharedToken] = useState("");
-
-  // URLとTokenはcontrolled componentsで管理するのでref不要
-
-  // Webhook URLの状態管理用
   const [webhookUrl, setWebhookUrl] = useState("");
-
-  // 表示フォームの選択値
   const [selectedFormat, setSelectedFormat] = useState("json");
-
-  // 設定値
   const [setValue, setSetValue] = useState("");
 
-  // 各フォーム用の独立したレスポンスstate
   const [createResponse, setCreateResponse] = useState("");
   const [displayResponse, setDisplayResponse] = useState("");
   const [toggleResponse, setToggleResponse] = useState("");
@@ -53,9 +41,7 @@ export default function LikePage() {
     if (!sharedUrl || !sharedToken) return;
 
     let apiUrl = `/api/like?action=create&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
-    if (webhookUrl) {
-      apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
-    }
+    if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setCreateResponse, setPublicId);
   };
@@ -110,12 +96,44 @@ export default function LikePage() {
     if (!sharedUrl || !sharedToken) return;
 
     let apiUrl = `/api/like?action=updateSettings&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
-    if (webhookUrl) {
-      apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
-    }
+    if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setUpdateSettingsResponse);
   };
+
+  const formSections = getLikeFormSections(
+    sharedUrl,
+    setSharedUrl,
+    sharedToken,
+    setSharedToken,
+    publicId,
+    setPublicId,
+    webhookUrl,
+    setWebhookUrl,
+    selectedFormat,
+    setSelectedFormat,
+    setValue,
+    setSetValue,
+    {
+      handleCreate,
+      handleDisplay,
+      handleToggle,
+      handleGet,
+      handleSet,
+      handleUpdateSettings,
+      handleDelete,
+    },
+    {
+      createResponse,
+      displayResponse,
+      toggleResponse,
+      getResponse,
+      setValueResponse,
+      updateSettingsResponse,
+      deleteResponse,
+    },
+    responseType
+  );
 
   const renderContent = () => {
     switch (currentPage) {
@@ -141,81 +159,9 @@ export default function LikePage() {
               createResponse={createResponse}
             />
 
-            <ActionSection title="◆STEP 2: いいね表示◆">
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay
-                url={`https://nostalgic.llll-ll.com/api/like?action=display&id=${encodeURIComponent(publicId || "公開ID")}&format=${selectedFormat}`}
-              >
-                https://nostalgic.llll-ll.com/api/like?action=display&id=
-                <GreenParam>{publicId || "公開ID"}</GreenParam>
-                &format=<GreenParam>{selectedFormat}</GreenParam>
-              </ApiUrlDisplay>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-
-              <p>または、以下のフォームでデータを取得できます。</p>
-
-              <form style={{ marginTop: "10px" }}>
-                <p>
-                  <b>公開ID：</b>
-                  <input
-                    value={publicId}
-                    onChange={(e) => setPublicId(e.target.value)}
-                    type="text"
-                    placeholder="STEP 1で作成後に表示されます"
-                    style={{
-                      width: "40%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "monospace",
-                      fontSize: "16px",
-                    }}
-                  />
-                </p>
-
-                <p>
-                  <b>形式：</b>
-                  <select
-                    value={selectedFormat}
-                    onChange={(e) => setSelectedFormat(e.target.value)}
-                    style={{
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                  >
-                    <option value="json">JSON</option>
-                    <option value="text">テキスト</option>
-                    <option value="svg">SVG画像</option>
-                  </select>
-                </p>
-                <p>
-                  <button
-                    type="button"
-                    style={{
-                      padding: "4px 12px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "2px outset #2196F3",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                    }}
-                    onClick={handleDisplay}
-                  >
-                    表示データ取得
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay
-                response={displayResponse}
-                responseType={responseType}
-                show={!!displayResponse}
-              />
-            </ActionSection>
+            {formSections.map((section, index) => (
+              <DataDrivenFormSection key={index} {...section} />
+            ))}
 
             <div className="nostalgic-section">
               <p>
@@ -327,537 +273,6 @@ declare module 'react' {
                   Componentsを使用してもビルドエラーが発生しません。
                 </p>
               </div>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆公開IDを再確認したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay
-                url={`https://nostalgic.llll-ll.com/api/like?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}
-              >
-                https://nostalgic.llll-ll.com/api/like?action=create&url=
-                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
-                {webhookUrl && (
-                  <>
-                    &webhookUrl=<GreenParam>{encodeURIComponent(webhookUrl)}</GreenParam>
-                  </>
-                )}
-              </ApiUrlDisplay>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-
-              <p>または、以下のフォームで確認できます。</p>
-
-              <form style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    value={sharedUrl}
-                    onChange={(e) => setSharedUrl(e.target.value)}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    value={sharedToken}
-                    onChange={(e) => setSharedToken(e.target.value)}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <button
-                    type="button"
-                    style={{
-                      padding: "4px 12px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "2px outset #2196F3",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                    }}
-                    onClick={handleCreate}
-                  >
-                    公開ID確認
-                  </button>
-                </p>
-              </form>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆いいねをトグルしたいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay
-                url={`https://nostalgic.llll-ll.com/api/like?action=toggle&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}
-              >
-                https://nostalgic.llll-ll.com/api/like?action=toggle&url=
-                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
-              </ApiUrlDisplay>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-
-              <p>または、以下のフォームでトグルできます。</p>
-
-              <form style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    value={sharedUrl}
-                    onChange={(e) => setSharedUrl(e.target.value)}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    value={sharedToken}
-                    onChange={(e) => setSharedToken(e.target.value)}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                    required
-                  />
-                </p>
-                <p>
-                  <button
-                    type="button"
-                    style={{
-                      padding: "4px 12px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "2px outset #2196F3",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                    }}
-                    onClick={handleToggle}
-                  >
-                    いいねトグル
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay
-                response={toggleResponse}
-                responseType={responseType}
-                show={!!toggleResponse}
-              />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆いいねデータを取得したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay
-                url={`https://nostalgic.llll-ll.com/api/like?action=get&id=${encodeURIComponent(publicId || "公開ID")}`}
-              >
-                https://nostalgic.llll-ll.com/api/like?action=get&id=
-                <GreenParam>{publicId || "公開ID"}</GreenParam>
-              </ApiUrlDisplay>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-
-              <p>または、以下のフォームで取得できます。</p>
-
-              <form style={{ marginTop: "10px" }}>
-                <p>
-                  <b>公開ID：</b>
-                  <input
-                    value={publicId}
-                    onChange={(e) => setPublicId(e.target.value)}
-                    type="text"
-                    placeholder="STEP 1で作成後に表示されます"
-                    style={{
-                      width: "40%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "monospace",
-                      fontSize: "16px",
-                    }}
-                  />
-                </p>
-                <p>
-                  <button
-                    type="button"
-                    style={{
-                      padding: "4px 12px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "2px outset #2196F3",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                    }}
-                    onClick={handleGet}
-                  >
-                    データ取得
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay
-                response={getResponse}
-                responseType={responseType}
-                show={!!getResponse}
-              />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆いいね数を設定したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay
-                url={`https://nostalgic.llll-ll.com/api/like?action=set&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&value=${setValue || "数値"}`}
-              >
-                https://nostalgic.llll-ll.com/api/like?action=set&url=
-                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&value=
-                <GreenParam>{setValue || "数値"}</GreenParam>
-              </ApiUrlDisplay>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-
-              <p>または、以下のフォームで設定できます。</p>
-
-              <form style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    value={sharedUrl}
-                    onChange={(e) => setSharedUrl(e.target.value)}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    value={sharedToken}
-                    onChange={(e) => setSharedToken(e.target.value)}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>設定値：</b>
-                  <input
-                    value={setValue}
-                    onChange={(e) => setSetValue(e.target.value)}
-                    type="number"
-                    min="0"
-                    placeholder="0"
-                    style={{
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>Webhook URL（オプション）：</b>
-                  <input
-                    value={webhookUrl}
-                    onChange={(e) => setWebhookUrl(e.target.value)}
-                    type="url"
-                    placeholder="https://hooks.slack.com/services/..."
-                    style={{
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                  />
-                </p>
-
-                <p>
-                  <button
-                    type="button"
-                    style={{
-                      padding: "4px 12px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "2px outset #2196F3",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                    }}
-                    onClick={handleSet}
-                  >
-                    いいね数設定
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay
-                response={setValueResponse}
-                responseType={responseType}
-                show={!!setValueResponse}
-              />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆設定更新◆</b>
-                </span>
-              </p>
-              <p>いいねボタンの設定を更新します。</p>
-
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay
-                url={`https://nostalgic.llll-ll.com/api/like?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}
-              >
-                https://nostalgic.llll-ll.com/api/like?action=updateSettings&url=
-                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
-                {webhookUrl && (
-                  <>
-                    &webhookUrl=<GreenParam>{webhookUrl}</GreenParam>
-                  </>
-                )}
-              </ApiUrlDisplay>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-
-              <p>または、以下のフォームで更新できます。</p>
-
-              <form style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    value={sharedUrl}
-                    onChange={(e) => setSharedUrl(e.target.value)}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    value={sharedToken}
-                    onChange={(e) => setSharedToken(e.target.value)}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>Webhook URL（オプション）：</b>
-                  <input
-                    value={webhookUrl}
-                    onChange={(e) => setWebhookUrl(e.target.value)}
-                    type="url"
-                    placeholder="https://example.com/webhook"
-                    style={{
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                  />
-                </p>
-                <p>
-                  <button
-                    type="button"
-                    style={{
-                      padding: "4px 12px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "2px outset #2196F3",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                    }}
-                    onClick={handleUpdateSettings}
-                  >
-                    設定更新
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay
-                response={updateSettingsResponse}
-                responseType={responseType}
-                show={!!updateSettingsResponse}
-              />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆いいねを削除したいときは？◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay
-                url={`https://nostalgic.llll-ll.com/api/like?action=delete&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}
-              >
-                https://nostalgic.llll-ll.com/api/like?action=delete&url=
-                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
-              </ApiUrlDisplay>
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-
-              <p>または、以下のフォームで削除できます。</p>
-              <p style={{ color: "#ff0000", fontWeight: "bold" }}>
-                ※削除すると復元できません。十分にご注意ください。
-              </p>
-
-              <form style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    value={sharedUrl}
-                    onChange={(e) => setSharedUrl(e.target.value)}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    value={sharedToken}
-                    onChange={(e) => setSharedToken(e.target.value)}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                    required
-                  />
-                </p>
-                <p>
-                  <button
-                    type="button"
-                    style={{
-                      padding: "4px 12px",
-                      backgroundColor: "#F44336",
-                      color: "white",
-                      border: "2px outset #F44336",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                    }}
-                    onClick={handleDelete}
-                  >
-                    削除
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay
-                response={deleteResponse}
-                responseType={responseType}
-                show={!!deleteResponse}
-              />
             </div>
 
             {publicId && (
