@@ -1,4 +1,5 @@
 import React from "react";
+import NostalgicButton from "./NostalgicButton";
 
 interface ApiUrlDisplayProps {
   url: string;
@@ -11,18 +12,16 @@ export const GreenParam = ({ children }: { children: React.ReactNode }) => (
 );
 
 export default function ApiUrlDisplay({ url, children }: ApiUrlDisplayProps) {
+  const [copied, setCopied] = React.useState(false);
+
   const handleCopy = () => {
     navigator.clipboard
       .writeText(url)
       .then(() => {
-        const btn = document.activeElement as HTMLButtonElement;
-        if (btn) {
-          const originalText = btn.textContent;
-          btn.textContent = "コピー済み";
-          setTimeout(() => {
-            btn.textContent = originalText;
-          }, 1500);
-        }
+        setCopied(true);
+        setTimeout(() => {
+          setCopied(false);
+        }, 1500);
       })
       .catch(() => {
         alert("クリップボードへのコピーに失敗しました");
@@ -40,22 +39,9 @@ export default function ApiUrlDisplay({ url, children }: ApiUrlDisplayProps) {
       }}
     >
       <div style={{ marginBottom: "8px" }}>{children}</div>
-      <button
-        type="button"
-        onClick={handleCopy}
-        style={{
-          padding: "4px 12px",
-          backgroundColor: "#c0c0c0",
-          color: "#000000",
-          border: "2px outset #c0c0c0",
-          fontSize: "14px",
-          fontWeight: "bold",
-          cursor: "pointer",
-          fontFamily: "inherit",
-        }}
-      >
-        コピー
-      </button>
+      <NostalgicButton onClick={handleCopy} color="#c0c0c0">
+        {copied ? "コピー済み" : "コピー"}
+      </NostalgicButton>
     </div>
   );
 }

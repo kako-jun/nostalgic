@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import ResponseDisplay from "../ResponseDisplay";
+import NostalgicButton from "../NostalgicButton";
 
 interface SimpleFormProps {
   onSubmit: (e: React.FormEvent) => void;
@@ -21,22 +22,7 @@ export default function SimpleForm({
       <form style={{ marginTop: "10px" }}>
         {children}
         <p>
-          <button
-            type="button"
-            style={{
-              padding: "4px 12px",
-              backgroundColor: "#2196F3",
-              color: "white",
-              border: "2px outset #2196F3",
-              fontSize: "16px",
-              fontWeight: "bold",
-              cursor: "pointer",
-              fontFamily: "inherit",
-            }}
-            onClick={onSubmit}
-          >
-            {buttonText}
-          </button>
+          <NostalgicButton onClick={onSubmit}>{buttonText}</NostalgicButton>
         </p>
       </form>
 
