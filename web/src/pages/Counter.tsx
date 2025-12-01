@@ -1,7 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import NostalgicLayout from "../components/NostalgicLayout";
 import ResponseDisplay from "../components/ResponseDisplay";
 import ApiUrlDisplay, { GreenParam } from "../components/ApiUrlDisplay";
+import TabNavigation from "../components/TabNavigation";
+import CounterFeaturesTab from "../components/counter/CounterFeaturesTab";
+import useHashNavigation from "../hooks/useHashNavigation";
+import { callApi, callApiWithFormat } from "../utils/apiHelpers";
+
+const TABS = [
+  { id: "features", label: "機能" },
+  { id: "usage", label: "使い方" },
+];
 
 export default function CounterPage() {
   const [currentPage, setCurrentPage] = useState(() => {
@@ -35,19 +44,7 @@ export default function CounterPage() {
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
 
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.slice(1);
-      if (hash) {
-        setCurrentPage(hash);
-      } else {
-        setCurrentPage("features");
-      }
-    };
-
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
+  useHashNavigation(currentPage, setCurrentPage);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,25 +55,7 @@ export default function CounterPage() {
       apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
     }
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-        if (jsonResponse.data?.id) {
-          setPublicId(jsonResponse.data.id);
-        }
-      } else {
-        responseText = await res.text();
-      }
-
-      setCreateResponse(responseText);
-    } catch (_error) {
-      setCreateResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setCreateResponse, setPublicId);
   };
 
   const handleDisplay = async (e: React.FormEvent) => {
@@ -84,28 +63,12 @@ export default function CounterPage() {
     if (!publicId) return;
 
     const apiUrl = `/api/visit?action=display&id=${encodeURIComponent(publicId)}&type=${selectedType}&format=${selectedFormat}`;
-    setResponseType(selectedFormat as "json" | "text" | "svg");
-
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      let responseText = "";
-
-      if (selectedFormat === "svg") {
-        responseText = await res.text();
-      } else {
-        const contentType = res.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-          const jsonResponse = await res.json();
-          responseText = JSON.stringify(jsonResponse, null, 2);
-        } else {
-          responseText = await res.text();
-        }
-      }
-
-      setDisplayResponse(responseText);
-    } catch (_error) {
-      setDisplayResponse(`エラー: ${error}`);
-    }
+    await callApiWithFormat(
+      apiUrl,
+      selectedFormat as "json" | "text" | "svg",
+      setDisplayResponse,
+      setResponseType
+    );
   };
 
   const handleSet = async (e: React.FormEvent) => {
@@ -113,23 +76,7 @@ export default function CounterPage() {
     if (!sharedUrl || !sharedToken || !setValue) return;
 
     const apiUrl = `/api/visit?action=set&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&total=${setValue}`;
-
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setSetValueResponse(responseText);
-    } catch (_error) {
-      setSetValueResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setSetValueResponse);
   };
 
   const handleIncrement = async (e: React.FormEvent) => {
@@ -137,23 +84,7 @@ export default function CounterPage() {
     if (!publicId) return;
 
     const apiUrl = `/api/visit?action=increment&id=${encodeURIComponent(publicId)}`;
-
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setIncrementResponse(responseText);
-    } catch (_error) {
-      setIncrementResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setIncrementResponse);
   };
 
   const handleDelete = async (e: React.FormEvent) => {
@@ -161,23 +92,7 @@ export default function CounterPage() {
     if (!sharedUrl || !sharedToken) return;
 
     const apiUrl = `/api/visit?action=delete&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
-
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setDeleteResponse(responseText);
-    } catch (_error) {
-      setDeleteResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setDeleteResponse);
   };
 
   const handleUpdateSettings = async (e: React.FormEvent) => {
@@ -189,22 +104,7 @@ export default function CounterPage() {
       apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
     }
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setUpdateSettingsResponse(responseText);
-    } catch (_error) {
-      setUpdateSettingsResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setUpdateSettingsResponse);
   };
 
   const renderContent = () => {
@@ -1139,77 +1039,7 @@ declare module 'react' {
         );
 
       case "features":
-        return (
-          <>
-            <div className="nostalgic-title-bar">
-              ★ Nostalgic Counter ★
-              <br />
-              機能一覧
-            </div>
-
-            <div className="nostalgic-marquee-box">
-              <div className="nostalgic-marquee-text">
-                懐かしのアクセスカウンターがここに復活！累計・今日・昨日・週間・月間のカウントを表示できます！
-              </div>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆基本機能◆</b>
-                </span>
-              </p>
-              <p>
-                <span>●</span> 累計・日別・週別・月別カウント
-                <br />
-                <span>●</span> 24時間重複カウント防止
-                <br />
-                <span>●</span> 3種類のデザインテーマ
-                <br />
-                <span>●</span> Web Componentsで簡単設置
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆管理機能◆</b>
-                </span>
-              </p>
-              <p>
-                <span>●</span> バレてはいけない「オーナートークン」で安全管理
-                <br />
-                <span>●</span> バレてもかまわない「公開ID」で表示専用アクセス
-                <br />
-                <span>●</span> カウンター値の手動設定（
-                <span style={{ textDecoration: "line-through" }}>訪問者数を水増し可能</span>{" "}
-                リセットされても再開可能）
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆技術仕様◆</b>
-                </span>
-              </p>
-              <p>
-                • Next.js + Vercel でホスティング
-                <br />
-                • Redis でデータ保存
-                <br />
-                • SVG画像で美しい表示
-                <br />• 必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
-              </p>
-            </div>
-
-            <p style={{ textAlign: "center", marginTop: "30px" }}>
-              <a href="#usage" className="nostalgic-old-link">
-                【使い方】へ
-              </a>
-            </p>
-          </>
-        );
+        return <CounterFeaturesTab />;
 
       default:
         return null;
@@ -1218,6 +1048,7 @@ declare module 'react' {
 
   return (
     <NostalgicLayout serviceName="Counter" serviceIcon="📊">
+      <TabNavigation tabs={TABS} currentTab={currentPage} onTabChange={setCurrentPage} />
       {renderContent()}
     </NostalgicLayout>
   );
