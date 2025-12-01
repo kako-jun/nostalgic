@@ -1,7 +1,7 @@
 {
   "name": "nostalgic",
   "version": "1.0.0",
-  "private": false,
+  "private": true,
   "description": "懐かしのWebツールを最新技術で復活させた総合プラットフォーム - カウンター、いいね、ランキング、BBS機能を提供",
   "author": "kako-jun",
   "license": "MIT",
@@ -20,46 +20,13 @@
     "ranking",
     "bbs",
     "web-components",
-    "kawaii",
-    "1997",
-    "vintage-web",
-    "nextjs",
-    "typescript",
-    "redis",
-    "vercel"
+    "hono",
+    "cloudflare",
+    "d1"
   ],
   "scripts": {
-    "dev": "next dev",
-    "dev:debug": "next dev --inspect",
-    "dev:open": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "db:summary": "node scripts/db-summary.js",
-    "db:detail": "node scripts/db-detail.js",
-    "db:delete": "node scripts/delete-service.js"
-  },
-  "dependencies": {
-    "@tailwindcss/postcss": "^4.1.8",
-    "@types/ioredis": "^4.28.10",
-    "@types/node": "^24.0.0",
-    "@types/react": "^19.1.7",
-    "@types/react-dom": "^19.1.6",
-    "ioredis": "^5.7.0",
-    "next": "^15.3.3",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "typescript": "^5.8.3",
-    "zod": "^4.0.17"
-  },
-  "devDependencies": {
-    "@opennextjs/cloudflare": "^1.14.0",
-    "autoprefixer": "^10.4.21",
-    "dotenv": "^17.2.1",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11",
-    "tsx": "^4.20.4",
-    "wrangler": "^4.51.0"
+    "dev": "pnpm --parallel -r dev",
+    "build": "pnpm -r build",
+    "deploy": "pnpm --filter @nostalgic/api deploy"
   }
 }
