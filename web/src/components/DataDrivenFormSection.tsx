@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import ApiUrlDisplay from "./ApiUrlDisplay";
 import ResponseDisplay from "./ResponseDisplay";
 import NostalgicButton from "./NostalgicButton";
+import SectionDivider from "./common/SectionDivider";
 
 type FieldType = "text" | "url" | "number" | "select";
 
@@ -59,7 +60,7 @@ export default function DataDrivenFormSection({
 
       {additionalContent}
 
-      <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+      <SectionDivider />
 
       <p>または、以下のフォームで実行できます。</p>
       {warningMessage && warningMessage}

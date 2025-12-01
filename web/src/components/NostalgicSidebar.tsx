@@ -1,4 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
+import { FooterDivider } from "./common";
 
 interface NostalgicSidebarProps {
   isOpen?: boolean;
@@ -231,7 +232,7 @@ export default function NostalgicSidebar({
           </>
         )}
       </p>
-      <hr />
+      <FooterDivider />
       <p>
         <b>◆リンク集◆</b>
       </p>
@@ -314,7 +315,7 @@ export default function NostalgicSidebar({
       <div style={{ marginTop: "10px" }}>
         <img src="/nostalgic-banner.webp" alt="Nostalgic" style={{ display: "block" }} />
       </div>
-      <hr />
+      <FooterDivider />
       <div className="nostalgic-update-box">
         <p style={{ margin: "5px 0", textAlign: "center" }}>
           <b style={{ color: "#008000" }}>◆更新履歴◆</b>

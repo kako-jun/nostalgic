@@ -23,7 +23,9 @@ export default function ActionFormSection({
         </span>
       </p>
       {children}
-      {showResponse && response && <ResponseDisplay response={response} type={responseType} />}
+      {showResponse && response && (
+        <ResponseDisplay response={response} responseType={responseType} />
+      )}
     </div>
   );
 }

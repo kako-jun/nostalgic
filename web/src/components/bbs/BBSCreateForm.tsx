@@ -1,5 +1,6 @@
 import FormField from "../forms/FormField";
 import ActionFormSection from "../sections/ActionFormSection";
+import SectionDivider from "../common/SectionDivider";
 
 interface BBSCreateFormProps {
   sharedUrl: string;
@@ -65,7 +66,7 @@ export default function BBSCreateForm(props: BBSCreateFormProps) {
           placeholder="20"
         />
 
-        <hr style={{ margin: "20px 0" }} />
+        <SectionDivider />
         <p>
           <b>標準セレクト設定（オプション）</b>
         </p>
@@ -81,7 +82,7 @@ export default function BBSCreateForm(props: BBSCreateFormProps) {
           placeholder="選択1,選択2,選択3"
         />
 
-        <hr style={{ margin: "20px 0" }} />
+        <SectionDivider />
         <p>
           <b>インクリメンタルセレクト設定（オプション）</b>
         </p>
@@ -97,7 +98,7 @@ export default function BBSCreateForm(props: BBSCreateFormProps) {
           placeholder="選択1,選択2,選択3"
         />
 
-        <hr style={{ margin: "20px 0" }} />
+        <SectionDivider />
         <p>
           <b>エモートセレクト設定（オプション）</b>
         </p>

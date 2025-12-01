@@ -62,12 +62,6 @@ export default function CounterFeaturesTab() {
           <br />• 必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
         </p>
       </div>
-
-      <p style={{ textAlign: "center", marginTop: "30px" }}>
-        <a href="/counter/usage" className="nostalgic-old-link">
-          【使い方】へ
-        </a>
-      </p>
     </>
   );
 }

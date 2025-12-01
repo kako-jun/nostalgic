@@ -2,6 +2,7 @@ import ApiUrlDisplay from "../ApiUrlDisplay";
 import ActionSection from "../sections/ActionSection";
 import SimpleForm from "../forms/SimpleForm";
 import InputField from "../forms/InputField";
+import SectionDivider from "../common/SectionDivider";
 
 interface AdminActionSectionProps {
   title: string;
@@ -36,7 +37,7 @@ export default function AdminActionSection({
     <ActionSection title={title}>
       <p>{description || "ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。"}</p>
       <ApiUrlDisplay url={apiUrl}>{apiUrlDisplay}</ApiUrlDisplay>
-      <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+      <SectionDivider />
 
       <p>または、以下のフォームで実行できます。</p>
 

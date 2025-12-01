@@ -4,6 +4,7 @@ import NostalgicLayout from "../components/NostalgicLayout";
 import BBSFeaturesTab from "../components/bbs/BBSFeaturesTab";
 import CreateServiceSection from "../components/sections/CreateServiceSection";
 import DataDrivenFormSection from "../components/DataDrivenFormSection";
+import { PageFooter } from "../components/common";
 import { callApi } from "../utils/apiHelpers";
 import { getBBSFormSections } from "../config/bbsFormConfig";
 
@@ -268,12 +269,19 @@ export default function BBSPage() {
                 {`"></nostalgic-bbs>`}
               </pre>
             </div>
+
+            <PageFooter servicePath="bbs" currentPage="usage" />
           </>
         );
 
       case "features":
       default:
-        return <BBSFeaturesTab />;
+        return (
+          <>
+            <BBSFeaturesTab />
+            <PageFooter servicePath="bbs" currentPage="features" />
+          </>
+        );
     }
   };
 
