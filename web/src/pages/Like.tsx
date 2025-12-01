@@ -1,17 +1,11 @@
 import { useState } from "react";
 import NostalgicLayout from "../components/NostalgicLayout";
-import TabNavigation from "../components/TabNavigation";
 import LikeFeaturesTab from "../components/like/LikeFeaturesTab";
 import CreateServiceSection from "../components/sections/CreateServiceSection";
 import DataDrivenFormSection from "../components/DataDrivenFormSection";
 import useHashNavigation from "../hooks/useHashNavigation";
 import { callApi, callApiWithFormat } from "../utils/apiHelpers";
 import { getLikeFormSections } from "../config/likeFormConfig";
-
-const TABS = [
-  { id: "features", label: "機能" },
-  { id: "usage", label: "使い方" },
-];
 
 export default function LikePage() {
   const [currentPage, setCurrentPage] = useState(() => {
@@ -334,7 +328,6 @@ declare module 'react' {
 
   return (
     <NostalgicLayout serviceName="Like" serviceIcon="💖">
-      <TabNavigation tabs={TABS} currentTab={currentPage} onTabChange={setCurrentPage} />
       {renderContent()}
     </NostalgicLayout>
   );
