@@ -1,6 +1,7 @@
 {
   "name": "nostalgic",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
   "description": "懐かしのWebツールを最新技術で復活させた総合プラットフォーム - カウンター、いいね、ランキング、BBS機能を提供",
   "author": "kako-jun",
@@ -27,6 +28,31 @@
   "scripts": {
     "dev": "pnpm --parallel -r dev",
     "build": "pnpm -r build",
-    "deploy": "pnpm --filter @nostalgic/api deploy"
+    "deploy": "pnpm --filter @nostalgic/api deploy",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,json,css,md}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.3"
   }
 }
