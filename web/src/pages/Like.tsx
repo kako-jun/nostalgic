@@ -1,7 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import NostalgicLayout from "../components/NostalgicLayout";
 import ResponseDisplay from "../components/ResponseDisplay";
 import ApiUrlDisplay, { GreenParam } from "../components/ApiUrlDisplay";
+import TabNavigation from "../components/TabNavigation";
+import LikeFeaturesTab from "../components/like/LikeFeaturesTab";
+import useHashNavigation from "../hooks/useHashNavigation";
+import { callApi, callApiWithFormat } from "../utils/apiHelpers";
+
+const TABS = [
+  { id: "features", label: "機能" },
+  { id: "usage", label: "使い方" },
+];
 
 export default function LikePage() {
   const [currentPage, setCurrentPage] = useState(() => {
@@ -35,19 +44,7 @@ export default function LikePage() {
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
 
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.slice(1);
-      if (hash) {
-        setCurrentPage(hash);
-      } else {
-        setCurrentPage("features");
-      }
-    };
-
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
+  useHashNavigation(currentPage, setCurrentPage);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,25 +55,7 @@ export default function LikePage() {
       apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
     }
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-        if (jsonResponse.data?.id) {
-          setPublicId(jsonResponse.data.id);
-        }
-      } else {
-        responseText = await res.text();
-      }
-
-      setCreateResponse(responseText);
-    } catch (_error) {
-      setCreateResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setCreateResponse, setPublicId);
   };
 
   const handleDisplay = async (e: React.FormEvent) => {
@@ -84,28 +63,12 @@ export default function LikePage() {
     if (!publicId) return;
 
     const apiUrl = `/api/like?action=display&id=${encodeURIComponent(publicId)}&format=${selectedFormat}`;
-    setResponseType(selectedFormat as "json" | "text" | "svg");
-
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      let responseText = "";
-
-      if (selectedFormat === "svg") {
-        responseText = await res.text();
-      } else {
-        const contentType = res.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-          const jsonResponse = await res.json();
-          responseText = JSON.stringify(jsonResponse, null, 2);
-        } else {
-          responseText = await res.text();
-        }
-      }
-
-      setDisplayResponse(responseText);
-    } catch (_error) {
-      setDisplayResponse(`エラー: ${error}`);
-    }
+    await callApiWithFormat(
+      apiUrl,
+      selectedFormat as "json" | "text" | "svg",
+      setDisplayResponse,
+      setResponseType
+    );
   };
 
   const handleToggle = async (e: React.FormEvent) => {
@@ -113,23 +76,7 @@ export default function LikePage() {
     if (!sharedUrl || !sharedToken) return;
 
     const apiUrl = `/api/like?action=toggle&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
-
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setToggleResponse(responseText);
-    } catch (_error) {
-      setToggleResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setToggleResponse);
   };
 
   const handleGet = async (e: React.FormEvent) => {
@@ -137,23 +84,7 @@ export default function LikePage() {
     if (!publicId) return;
 
     const apiUrl = `/api/like?action=get&id=${encodeURIComponent(publicId)}`;
-
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setGetResponse(responseText);
-    } catch (_error) {
-      setGetResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setGetResponse);
   };
 
   const handleSet = async (e: React.FormEvent) => {
@@ -161,23 +92,7 @@ export default function LikePage() {
     if (!sharedUrl || !sharedToken || !setValue) return;
 
     const apiUrl = `/api/like?action=set&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&value=${setValue}`;
-
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setSetValueResponse(responseText);
-    } catch (_error) {
-      setSetValueResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setSetValueResponse);
   };
 
   const handleDelete = async (e: React.FormEvent) => {
@@ -185,23 +100,7 @@ export default function LikePage() {
     if (!sharedUrl || !sharedToken) return;
 
     const apiUrl = `/api/like?action=delete&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
-
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setDeleteResponse(responseText);
-    } catch (_error) {
-      setDeleteResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setDeleteResponse);
   };
 
   const handleUpdateSettings = async (e: React.FormEvent) => {
@@ -213,22 +112,7 @@ export default function LikePage() {
       apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
     }
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setUpdateSettingsResponse(responseText);
-    } catch (_error) {
-      setUpdateSettingsResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setUpdateSettingsResponse);
   };
 
   const renderContent = () => {
@@ -1134,77 +1018,7 @@ declare module 'react' {
         );
 
       case "features":
-        return (
-          <>
-            <div className="nostalgic-title-bar">
-              ★ Nostalgic Like ★
-              <br />
-              機能一覧
-            </div>
-
-            <div className="nostalgic-marquee-box">
-              <div className="nostalgic-marquee-text">
-                懐かしのいいねボタンがここに復活！ハート・星・サムズアップのアイコンでサイトを盛り上げましょう！
-              </div>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆基本機能◆</b>
-                </span>
-              </p>
-              <p>
-                <span>●</span> トグル型いいね・いいね取り消し機能
-                <br />
-                <span>●</span> 24時間ユーザー状態記憶
-                <br />
-                <span>●</span> 3種類のデザインテーマ
-                <br />
-                <span>●</span> 3種類のアイコン（ハート・星・サムズアップ）
-                <br />
-                <span>●</span> Web Componentsで簡単設置
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆管理機能◆</b>
-                </span>
-              </p>
-              <p>
-                <span>●</span> バレてはいけない「オーナートークン」で安全管理
-                <br />
-                <span>●</span> バレてもかまわない「公開ID」で表示専用アクセス
-                <br />
-                <span>●</span> いいね数の手動設定（リセットされても再開可能）
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆技術仕様◆</b>
-                </span>
-              </p>
-              <p>
-                • Next.js + Vercel でホスティング
-                <br />
-                • Redis でデータ保存
-                <br />
-                • インタラクティブボタンで即座のフィードバック
-                <br />• 必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
-              </p>
-            </div>
-
-            <p style={{ textAlign: "center", marginTop: "30px" }}>
-              <a href="#usage" className="nostalgic-old-link">
-                【使い方】へ
-              </a>
-            </p>
-          </>
-        );
+        return <LikeFeaturesTab />;
 
       default:
         return null;
@@ -1213,6 +1027,7 @@ declare module 'react' {
 
   return (
     <NostalgicLayout serviceName="Like" serviceIcon="💖">
+      <TabNavigation tabs={TABS} currentTab={currentPage} onTabChange={setCurrentPage} />
       {renderContent()}
     </NostalgicLayout>
   );
