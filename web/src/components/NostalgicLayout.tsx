@@ -8,19 +8,17 @@ interface NostalgicLayoutProps {
 }
 
 export default function NostalgicLayout({ children }: NostalgicLayoutProps) {
-  const [currentPage, setCurrentPage] = useState("main");
-  const [visitedPages, setVisitedPages] = useState<Set<string>>(new Set(["main"]));
+  const [currentPage, setCurrentPage] = useState(() => {
+    const hash = window.location.hash.slice(1);
+    return hash || "main";
+  });
+  const [visitedPages, setVisitedPages] = useState<Set<string>>(() => {
+    const hash = window.location.hash.slice(1);
+    return new Set(hash ? ["main", hash] : ["main"]);
+  });
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const hash = window.location.hash.slice(1);
-    if (hash) {
-      setCurrentPage(hash);
-      setVisitedPages((prev) => new Set([...prev, hash]));
-    } else {
-      setCurrentPage("main");
-    }
-
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1);
       if (hash) {

@@ -4,7 +4,10 @@ import ResponseDisplay from "../components/ResponseDisplay";
 import ApiUrlDisplay, { GreenParam } from "../components/ApiUrlDisplay";
 
 export default function LikePage() {
-  const [currentPage, setCurrentPage] = useState("features");
+  const [currentPage, setCurrentPage] = useState(() => {
+    const hash = window.location.hash.slice(1);
+    return hash || "features";
+  });
   const [publicId, setPublicId] = useState("");
   const [responseType, setResponseType] = useState<"json" | "text" | "svg">("json");
 
@@ -33,13 +36,6 @@ export default function LikePage() {
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
 
   useEffect(() => {
-    const hash = window.location.hash.slice(1);
-    if (hash) {
-      setCurrentPage(hash);
-    } else {
-      setCurrentPage("features");
-    }
-
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1);
       if (hash) {
@@ -78,7 +74,7 @@ export default function LikePage() {
       }
 
       setCreateResponse(responseText);
-    } catch (error) {
+    } catch (_error) {
       setCreateResponse(`エラー: ${error}`);
     }
   };
@@ -107,7 +103,7 @@ export default function LikePage() {
       }
 
       setDisplayResponse(responseText);
-    } catch (error) {
+    } catch (_error) {
       setDisplayResponse(`エラー: ${error}`);
     }
   };
@@ -131,7 +127,7 @@ export default function LikePage() {
       }
 
       setToggleResponse(responseText);
-    } catch (error) {
+    } catch (_error) {
       setToggleResponse(`エラー: ${error}`);
     }
   };
@@ -155,7 +151,7 @@ export default function LikePage() {
       }
 
       setGetResponse(responseText);
-    } catch (error) {
+    } catch (_error) {
       setGetResponse(`エラー: ${error}`);
     }
   };
@@ -179,7 +175,7 @@ export default function LikePage() {
       }
 
       setSetValueResponse(responseText);
-    } catch (error) {
+    } catch (_error) {
       setSetValueResponse(`エラー: ${error}`);
     }
   };
@@ -203,7 +199,7 @@ export default function LikePage() {
       }
 
       setDeleteResponse(responseText);
-    } catch (error) {
+    } catch (_error) {
       setDeleteResponse(`エラー: ${error}`);
     }
   };
@@ -230,7 +226,7 @@ export default function LikePage() {
       }
 
       setUpdateSettingsResponse(responseText);
-    } catch (error) {
+    } catch (_error) {
       setUpdateSettingsResponse(`エラー: ${error}`);
     }
   };

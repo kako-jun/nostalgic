@@ -29,6 +29,19 @@ export default function HomePage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isMobileSidebarOpen]);
 
+  const loadVotingResults = async () => {
+    try {
+      const rankingId = "nostalgic-9c044ad0";
+      const response = await fetch(`/api/ranking?action=get&id=${rankingId}&limit=4`);
+      if (response.ok) {
+        const data = await response.json();
+        setVotingResults(data.data?.entries || []);
+      }
+    } catch (_error) {
+      // エラーは無視
+    }
+  };
+
   useEffect(() => {
     // 初期ランキングデータを読み込み
     loadVotingResults();
@@ -72,21 +85,8 @@ export default function HomePage() {
       } else {
         setVotingMessage("投票に失敗しました。もう一度お試しください。");
       }
-    } catch (error) {
+    } catch (_error) {
       setVotingMessage("エラーが発生しました。");
-    }
-  };
-
-  const loadVotingResults = async () => {
-    try {
-      const rankingId = "nostalgic-9c044ad0";
-      const response = await fetch(`/api/ranking?action=get&id=${rankingId}&limit=4`);
-      if (response.ok) {
-        const data = await response.json();
-        setVotingResults(data.data?.entries || []);
-      }
-    } catch (error) {
-      // エラーは無視
     }
   };
 
