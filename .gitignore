@@ -54,7 +54,8 @@ tmp/
 temp/
 
 # Serena MCP Server files
-.serena/.claude/settings.local.json
+.serena/
+.claude/settings.local.json
 
 # Cloudflare
 .wrangler/
