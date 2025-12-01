@@ -15,17 +15,17 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
     --ranking-min-width: 250px;
     --ranking-max-width: 500px;
     --ranking-padding: 15px;
-    
+
     /* 色調整 */
     --ranking-bg-color: #f8f9fa;
     --ranking-border-color: #007bff;
     --ranking-header-bg: #007bff;
     --ranking-header-color: white;
     --ranking-text-color: #333;
-    
+
     /* フォント調整 */
-    --ranking-font-family: 'Arial', sans-serif;
-    
+    --ranking-font-family: "Arial", sans-serif;
+
     /* アイテム間隔調整 */
     --ranking-item-padding: 10px 15px;
     --ranking-header-padding: 12px;
@@ -44,12 +44,12 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
     --bbs-min-width: 400px;
     --bbs-max-width: 800px;
     --bbs-max-height: 500px;
-    
+
     /* メッセージ調整 */
     --bbs-message-padding: 12px;
     --bbs-message-margin: 8px;
     --bbs-message-border-radius: 8px;
-    
+
     /* 色調整 */
     --bbs-bg-color: #ffffff;
     --bbs-border-color: #28a745;
@@ -57,9 +57,9 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
     --bbs-header-color: white;
     --bbs-message-bg: #f8f9fa;
     --bbs-text-color: #212529;
-    
+
     /* フォント調整 */
-    --bbs-font-family: 'Helvetica', sans-serif;
+    --bbs-font-family: "Helvetica", sans-serif;
   }
 </style>
 
@@ -109,11 +109,11 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
     --ranking-header-bg: linear-gradient(135deg, #0066cc, #004499);
     --ranking-header-color: white;
     --ranking-text-color: #333333;
-    --ranking-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --ranking-font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     --ranking-border-radius: 8px;
     --ranking-item-padding: 12px 16px;
   }
-  
+
   /* ダークテーマ */
   .dark-theme {
     --bbs-bg-color: #2c3e50;
@@ -124,7 +124,7 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
     --bbs-text-color: #ecf0f1;
     --bbs-message-border-radius: 6px;
   }
-  
+
   /* ゲーム風テーマ */
   .game-theme {
     --ranking-bg-color: #1a1a2e;
@@ -132,7 +132,7 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
     --ranking-header-bg: linear-gradient(45deg, #e94560, #f39c12);
     --ranking-header-color: white;
     --ranking-text-color: #eee;
-    --ranking-font-family: 'Courier New', monospace;
+    --ranking-font-family: "Courier New", monospace;
     --ranking-border-radius: 0;
     --ranking-item-padding: 8px 12px;
   }
@@ -154,7 +154,7 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
       --ranking-max-width: 100%;
       --ranking-item-padding: 8px 12px;
     }
-    
+
     nostalgic-bbs {
       --bbs-min-width: 280px;
       --bbs-max-width: 100%;
@@ -162,13 +162,13 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
       --bbs-message-padding: 8px;
     }
   }
-  
+
   /* デスクトップ対応 */
   @media (min-width: 1200px) {
     nostalgic-ranking {
       --ranking-max-width: 600px;
     }
-    
+
     nostalgic-bbs {
       --bbs-max-width: 900px;
       --bbs-max-height: 600px;
@@ -191,7 +191,7 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
     --ranking-text-color: #212529;
     --ranking-item-padding: 12px 16px;
     --ranking-border-radius: 0;
-    --ranking-font-family: 'Arial', sans-serif;
+    --ranking-font-family: "Arial", sans-serif;
     --ranking-min-width: 400px;
   }
 </style>
@@ -215,7 +215,7 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
     --bbs-message-margin: 2px 8px;
     --bbs-border-radius: 12px;
     --bbs-max-width: 700px;
-    --bbs-font-family: 'Roboto', sans-serif;
+    --bbs-font-family: "Roboto", sans-serif;
   }
 </style>
 
@@ -225,6 +225,7 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
 ## 5. 利用可能なCSS Variables一覧
 
 ### Ranking Component
+
 - `--ranking-bg-color`: 背景色
 - `--ranking-border-color`: 枠線色
 - `--ranking-header-bg`: ヘッダー背景色
@@ -239,6 +240,7 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
 - `--ranking-header-padding`: ヘッダー内余白
 
 ### BBS Component
+
 - `--bbs-bg-color`: 背景色
 - `--bbs-border-color`: 枠線色
 - `--bbs-header-bg`: ヘッダー背景色

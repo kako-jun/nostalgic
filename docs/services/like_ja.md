@@ -7,6 +7,7 @@
 ## アクション
 
 ### create
+
 新しいいいねボタンを作成または既存ボタンIDを取得。
 
 ```
@@ -14,10 +15,12 @@ GET /api/like?action=create&url={URL}&token={TOKEN}
 ```
 
 **パラメータ:**
+
 - `url` (必須): いいねボタン対象URL
 - `token` (必須): オーナートークン（8-16文字）
 
 **レスポンス:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -29,6 +32,7 @@ GET /api/like?action=create&url={URL}&token={TOKEN}
 ```
 
 ### toggle
+
 現在のユーザーのいいね/取り消し状態をトグル。
 
 ```
@@ -36,10 +40,12 @@ GET /api/like?action=toggle&url={URL}&token={TOKEN}
 ```
 
 **パラメータ:**
+
 - `url` (必須): 対象URL
 - `token` (必須): オーナートークン
 
 **レスポンス:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -51,6 +57,7 @@ GET /api/like?action=toggle&url={URL}&token={TOKEN}
 ```
 
 ### get
+
 現在のいいねデータを取得（公開アクセス）。
 
 ```
@@ -58,9 +65,11 @@ GET /api/like?action=get&id={ID}
 ```
 
 **パラメータ:**
+
 - `id` (必須): 公開いいねボタンID
 
 **レスポンス:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -71,6 +80,7 @@ GET /api/like?action=get&id={ID}
 ```
 
 ### updateSettings
+
 いいねボタン設定を更新（オーナーのみ）。
 
 ```
@@ -78,11 +88,13 @@ GET /api/like?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_
 ```
 
 **パラメータ:**
+
 - `url` (必須): 対象URL
 - `token` (必須): オーナートークン
 - `webhookUrl` (オプション): 通知用WebhookURL
 
 **レスポンス:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -108,6 +120,7 @@ GET /api/like?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_
 ```
 
 **属性:**
+
 - `id`: 公開いいねボタンID
 - `theme`: 表示スタイル（light, dark, retro, kawaii, mom, final）
 - `icon`: アイコン種類（heart, star, thumb, peta）- インタラクティブ形式のみ
@@ -117,20 +130,22 @@ GET /api/like?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_
 ## 使用例
 
 ### 基本的ないいねボタン設置
+
 ```javascript
 // 1. いいねボタン作成
-const response = await fetch('/api/like?action=create&url=https://myblog.com&token=my-secret')
-const data = await response.json()
-console.log('いいねボタンID:', data.id)
+const response = await fetch("/api/like?action=create&url=https://myblog.com&token=my-secret");
+const data = await response.json();
+console.log("いいねボタンID:", data.id);
 
 // 2. HTMLに埋め込み
 document.body.innerHTML += `
   <script src="/components/like.js"></script>
   <nostalgic-like id="${data.id}"></nostalgic-like>
-`
+`;
 ```
 
 ### テキスト形式の活用
+
 ```html
 <!-- モダンなレイアウト用インラインテキスト -->
 <div class="post-stats">
@@ -140,27 +155,28 @@ document.body.innerHTML += `
 
 <!-- カスタムスタイルのテキストいいね -->
 <style>
-nostalgic-like {
-  --like-text-color-unliked: #666;
-  --like-text-color-liked: #final4757;
-  --like-text-hover-color-unliked: #333;
-  --like-text-hover-color-liked: #final3838;
-}
+  nostalgic-like {
+    --like-text-color-unliked: #666;
+    --like-text-color-liked: #final4757;
+    --like-text-hover-color-unliked: #333;
+    --like-text-hover-color-liked: #final3838;
+  }
 </style>
 <nostalgic-like id="post-123" format="text"></nostalgic-like>
 ```
 
 ### 手動いいね制御
+
 ```javascript
 // 手動でいいねトグル
-const response = await fetch('/api/like?action=toggle&url=https://myblog.com&token=my-secret')
-const data = await response.json()
-console.log('ユーザーがいいね:', data.userLiked, '合計:', data.total)
+const response = await fetch("/api/like?action=toggle&url=https://myblog.com&token=my-secret");
+const data = await response.json();
+console.log("ユーザーがいいね:", data.userLiked, "合計:", data.total);
 
 // 現在の状態取得
-const current = await fetch('/api/like?action=get&id=myblog-a7b9c3d4')
-const state = await current.json()
-console.log('現在のいいね数:', state.total)
+const current = await fetch("/api/like?action=get&id=myblog-a7b9c3d4");
+const state = await current.json();
+console.log("現在のいいね数:", state.total);
 ```
 
 ## 特徴
@@ -177,17 +193,17 @@ TypeScriptプロジェクトでWeb Componentsを使用する場合、プロジ�
 
 ```typescript
 // types.d.ts
-import 'react'
+import "react";
 
-declare module 'react' {
+declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      'nostalgic-like': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+      "nostalgic-like": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
-        icon?: 'heart' | 'star' | 'thumb' | 'peta';
-        format?: 'interactive' | 'text' | 'image';
-        'api-base'?: string;
+        theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
+        icon?: "heart" | "star" | "thumb" | "peta";
+        format?: "interactive" | "text" | "image";
+        "api-base"?: string;
       };
     }
   }

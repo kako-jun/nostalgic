@@ -1,30 +1,34 @@
 # Nostalgic
 
-*[日本語版はこちら](README_ja.md)*
+_[日本語版はこちら](README_ja.md)_
 
 A comprehensive nostalgic web tools platform that brings back the 90s internet culture with modern technology. Four essential services that used to be on every personal homepage: Counter, Like, Ranking, and BBS.
 
 ## ✨ Services
 
 ### 📊 Counter Service
+
 - Multiple time periods: Total, today, yesterday, weekly, monthly statistics
 - Daily duplicate prevention (resets at midnight)
 - 3 nostalgic display styles: Light, Dark, Kawaii
 - Web Components for easy embedding
 
 ### 💖 Like Service
+
 - Toggle-based like/unlike functionality
 - User state tracking (IP + UserAgent)
 - Daily limit: One like per day per user (resets at midnight)
 - Instant feedback with current state
 
-### 🏆 Ranking Service  
+### 🏆 Ranking Service
+
 - Score leaderboards with automatic sorting
 - Score management (submit, update, remove)
 - Configurable entry limits
 - Real-time ranking updates with formatted display scores
 
 ### 💬 BBS Service
+
 - Message board with fixed height display (400px)
 - Pagination that starts at latest messages
 - Customizable dropdown selections
@@ -44,11 +48,13 @@ A comprehensive nostalgic web tools platform that brings back the 90s internet c
 ### Counter Service
 
 1. **Create your counter**:
+
 ```
 https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&token=your-secret-token
 ```
 
 2. **Embed in your site**:
+
 ```html
 <script src="https://nostalgic.llll-ll.com/components/visit.js"></script>
 <nostalgic-counter id="yoursite-a7b9c3d4" type="total" theme="dark"></nostalgic-counter>
@@ -57,11 +63,13 @@ https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&t
 ### Like Service
 
 1. **Create like button**:
+
 ```
 https://nostalgic.llll-ll.com/api/like?action=create&url=https://yoursite.com&token=your-secret-token
 ```
 
 2. **Toggle like**:
+
 ```
 https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.com&token=your-secret-token
 ```
@@ -69,11 +77,13 @@ https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.com&to
 ### Ranking Service
 
 1. **Create ranking**:
+
 ```
 https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret-token&max=100
 ```
 
 2. **Submit scores**:
+
 ```
 https://nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursite.com&token=your-secret-token&name=Player1&score=1000
 ```
@@ -81,11 +91,13 @@ https://nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursite.com
 ### BBS Service
 
 1. **Create BBS**:
+
 ```
 https://nostalgic.llll-ll.com/api/bbs?action=create&url=https://yoursite.com&token=your-secret-token&max=1000
 ```
 
 2. **Post messages** (pure GET, 1990s style):
+
 ```
 https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com&token=your-secret-token&author=User&message=Hello!
 ```
@@ -95,7 +107,7 @@ https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com&token
 Visit our interactive demo pages:
 
 - **[Counter Demo](https://nostalgic.llll-ll.com/counter)** - Test counter creation and management
-- **[Like Demo](https://nostalgic.llll-ll.com/like)** - Try the like/unlike functionality  
+- **[Like Demo](https://nostalgic.llll-ll.com/like)** - Try the like/unlike functionality
 - **[Ranking Demo](https://nostalgic.llll-ll.com/ranking)** - Submit and manage scores
 - **[BBS Demo](https://nostalgic.llll-ll.com/bbs)** - Post and edit messages
 
@@ -119,46 +131,53 @@ Just like the original 1990s web tools, everything can be operated directly from
 
 ### Available Actions by Service:
 
-| Service | Actions | Description |
-|---------|---------|-------------|
-| **Counter** | `create`, `increment`, `display`, `set` | Traditional visitor counter |
-| **Like** | `create`, `toggle`, `get` | Like/unlike button |
-| **Ranking** | `create`, `submit`, `update`, `remove`, `clear`, `get` | Score leaderboard |
-| **BBS** | `create`, `post`, `update`, `remove`, `clear`, `get` | Message board |
+| Service     | Actions                                                | Description                 |
+| ----------- | ------------------------------------------------------ | --------------------------- |
+| **Counter** | `create`, `increment`, `display`, `set`                | Traditional visitor counter |
+| **Like**    | `create`, `toggle`, `get`                              | Like/unlike button          |
+| **Ranking** | `create`, `submit`, `update`, `remove`, `clear`, `get` | Score leaderboard           |
+| **BBS**     | `create`, `post`, `update`, `remove`, `clear`, `get`   | Message board               |
 
 ## 📖 Documentation
 
 ### API Documentation
+
 - **[Complete API Reference](docs/api.md)** - Full API documentation for all services
 - **[Japanese API Documentation](docs/api_ja.md)** - APIドキュメント（日本語）
 
 ### Service-Specific Guides
+
 - **[Counter Service](docs/services/counter.md)** - Visitor counter implementation
 - **[Like Service](docs/services/like.md)** - Like/unlike button functionality
 - **[Ranking Service](docs/services/ranking.md)** - Leaderboard and scoring
 - **[BBS Service](docs/services/bbs.md)** - Message board system
 
 ### Customization
+
 - **[Customization Guide](docs/customization.md)** - Themes, styling, and configuration
 
 ### Live Demo
+
 - **[Interactive Demo](https://nostalgic.llll-ll.com)** - Try it on our nostalgic homepage
 
 ## 🛡️ Security & Privacy
 
 ### What data we collect and store:
+
 - **Service URLs** (identifier only, not used for tracking)
 - **Secret tokens** (hashed with SHA256)
 - **User identification** (IP + UserAgent hash, for duplicate prevention and authorship)
 - **Service data** (counts, likes, scores, messages - no personal data)
 
 ### What we DON'T collect:
+
 - No cookies, no tracking pixels
 - No personal information (name, email, etc.)
 - No browsing history or referrer data
 - IP addresses are hashed for privacy
 
 ### Security measures:
+
 - Your secret tokens are hashed and stored securely
 - Public IDs can only display/interact, not modify
 - User identification via temporary IP+UserAgent hash
@@ -174,4 +193,4 @@ Issues and pull requests are welcome! Let's bring back the nostalgic web togethe
 
 ---
 
-*Made with ❤️ for the nostalgic web*
+_Made with ❤️ for the nostalgic web_

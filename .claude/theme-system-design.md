@@ -1,22 +1,26 @@
 # Nostalgic Theme System Design
 
 ## 概要
+
 新テーマシステムでは、現在のclassic/modern/retroから、light/dark/kawaiiの3つのテーマに移行する。
 
 ## 設計方針
 
 ### 1. カラースキーム
+
 - **light/dark**: モノクロームのみで構成
   - 白、黒、グレースケールのみ使用
   - 色彩は一切使用しない
 - **kawaii**: パステルカラーや装飾的要素を使用
 
 ### 2. スタイルの外部カスタマイズ
+
 - 全サービス（Counter/Like/Ranking/BBS）で外部からスタイルを変更可能
 - CSS変数による柔軟なカスタマイズ
 - Web Componentsでも同様の仕組みを提供
 
 ### 3. 実装方法
+
 - テーマはCSSクラスとして実装
 - CSS変数でカスタマイズポイントを定義
 - インラインスタイルの上書きにも対応
@@ -24,6 +28,7 @@
 ## テーマ定義
 
 ### Light Theme (モノクロ)
+
 ```css
 .theme-light {
   --bg-primary: #ffffff;
@@ -36,6 +41,7 @@
 ```
 
 ### Dark Theme (モノクロ)
+
 ```css
 .theme-dark {
   --bg-primary: #1a1a1a;
@@ -48,6 +54,7 @@
 ```
 
 ### Kawaii Theme
+
 ```css
 .theme-kawaii {
   --bg-primary: #fff0f5;
@@ -63,6 +70,7 @@
 ## カスタマイズAPI
 
 ### Web Components
+
 ```html
 <!-- デフォルトテーマ（darkが適用される） -->
 <nostalgic-like id="..."></nostalgic-like>
@@ -71,21 +79,15 @@
 <nostalgic-like id="..." theme="light"></nostalgic-like>
 
 <!-- インラインスタイル上書き -->
-<nostalgic-like 
-  id="..." 
-  theme="light"
-  style="--bg-primary: #f0f0f0; --text-primary: #333333;">
+<nostalgic-like id="..." theme="light" style="--bg-primary: #f0f0f0; --text-primary: #333333;">
 </nostalgic-like>
 
 <!-- カスタムCSSクラス -->
-<nostalgic-like 
-  id="..." 
-  theme="light"
-  class="my-custom-style">
-</nostalgic-like>
+<nostalgic-like id="..." theme="light" class="my-custom-style"> </nostalgic-like>
 ```
 
 ### API Response
+
 ```json
 {
   "display": {
@@ -99,6 +101,7 @@
 ```
 
 ## デフォルトテーマ
+
 - システム全体のデフォルトテーマは **dark**
 - ユーザーが明示的に指定しない場合は dark テーマを使用
 

@@ -7,6 +7,7 @@
 ## アクション
 
 ### create
+
 新しいカウンターを作成または既存カウンターIDを取得。
 
 ```
@@ -14,10 +15,12 @@ GET /api/visit?action=create&url={URL}&token={TOKEN}
 ```
 
 **パラメータ:**
+
 - `url` (必須): カウント対象URL
 - `token` (必須): オーナートークン（8-16文字）
 
 **レスポンス:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -32,6 +35,7 @@ GET /api/visit?action=create&url={URL}&token={TOKEN}
 ```
 
 ### increment
+
 カウンターをカウントアップ（自動重複防止）。
 
 ```
@@ -39,9 +43,11 @@ GET /api/visit?action=increment&id={ID}
 ```
 
 **パラメータ:**
+
 - `id` (必須): 公開カウンターID
 
 ### display
+
 カウンターデータまたは画像を取得。
 
 ```
@@ -49,6 +55,7 @@ GET /api/visit?action=display&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 ```
 
 **パラメータ:**
+
 - `id` (必須): 公開カウンターID
 - `type` (オプション): 表示タイプ
   - `total` (デフォルト): 累計カウント
@@ -69,6 +76,7 @@ GET /api/visit?action=display&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 - `digits` (オプション): ゼロ埋め桁数（指定時のみ、画像・テキスト両方で有効）
 
 ### set
+
 カウンター値を設定（オーナーのみ）。
 
 ```
@@ -76,6 +84,7 @@ GET /api/visit?action=set&url={URL}&token={TOKEN}&total={VALUE}
 ```
 
 **パラメータ:**
+
 - `url` (必須): 対象URL
 - `token` (必須): オーナートークン
 - `total` (必須): 新しい累計値
@@ -83,6 +92,7 @@ GET /api/visit?action=set&url={URL}&token={TOKEN}&total={VALUE}
 **注意:** 設定変更（webhookUrl等）は`updateSettings`アクションを使用してください。
 
 **レスポンス:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -96,6 +106,7 @@ GET /api/visit?action=set&url={URL}&token={TOKEN}&total={VALUE}
 ```
 
 ### updateSettings
+
 カウンター設定を更新（オーナーのみ）。
 
 ```
@@ -103,11 +114,13 @@ GET /api/visit?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK
 ```
 
 **パラメータ:**
+
 - `url` (必須): 対象URL
 - `token` (必須): オーナートークン
 - `webhookUrl` (オプション): 通知用WebhookURL
 
 **レスポンス:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -127,15 +140,18 @@ TypeScript プロジェクトで Web Components を使用する場合、プロ�
 
 ```typescript
 // types.d.ts
-import 'react'
+import "react";
 
-declare module 'react' {
+declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+      "nostalgic-counter": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > & {
         id?: string;
-        type?: 'total' | 'today' | 'yesterday' | 'week' | 'month';
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
+        type?: "total" | "today" | "yesterday" | "week" | "month";
+        theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
         digits?: string;
         scale?: string;
       };
@@ -152,30 +168,19 @@ declare module 'react' {
 <script src="https://nostalgic.llll-ll.com/components/visit.js"></script>
 
 <!-- 画像形式（デフォルト） -->
-<nostalgic-counter 
-  id="yoursite-a7b9c3d4" 
-  type="total" 
-  theme="light"
-  digits="6">
+<nostalgic-counter id="yoursite-a7b9c3d4" type="total" theme="light" digits="6">
 </nostalgic-counter>
 
 <!-- テキスト形式 -->
-<nostalgic-counter 
-  id="yoursite-a7b9c3d4" 
-  type="total" 
-  format="text">
-</nostalgic-counter>
+<nostalgic-counter id="yoursite-a7b9c3d4" type="total" format="text"> </nostalgic-counter>
 
 <!-- テキスト形式（ゼロ埋めあり） -->
-<nostalgic-counter 
-  id="yoursite-a7b9c3d4" 
-  type="total" 
-  format="text"
-  digits="6">
+<nostalgic-counter id="yoursite-a7b9c3d4" type="total" format="text" digits="6">
 </nostalgic-counter>
 ```
 
 **属性:**
+
 - `id`: 公開カウンターID
 - `type`: 表示タイプ（total, today, yesterday, week, month）
 - `theme`: 表示スタイル（light, dark, retro, kawaii, mom, final）- 画像形式のみ
@@ -189,19 +194,22 @@ TypeScriptプロジェクトでWeb Componentsを使用する場合は、プロ�
 
 ```typescript
 // types.d.ts
-import React from 'react'
+import React from "react";
 
-declare module 'react' {
+declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
-        id?: string
-        type?: 'total' | 'today' | 'yesterday' | 'week' | 'month'
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final'
-        digits?: string
-        format?: 'image' | 'text'
-        'api-base'?: string
-      }, HTMLElement>
+      "nostalgic-counter": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement> & {
+          id?: string;
+          type?: "total" | "today" | "yesterday" | "week" | "month";
+          theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
+          digits?: string;
+          format?: "image" | "text";
+          "api-base"?: string;
+        },
+        HTMLElement
+      >;
     }
   }
 }
@@ -212,20 +220,22 @@ declare module 'react' {
 ## 使用例
 
 ### 基本的なカウンター設置
+
 ```javascript
 // 1. カウンター作成
-const response = await fetch('/api/visit?action=create&url=https://myblog.com&token=my-secret')
-const data = await response.json()
-console.log('カウンターID:', data.id)
+const response = await fetch("/api/visit?action=create&url=https://myblog.com&token=my-secret");
+const data = await response.json();
+console.log("カウンターID:", data.id);
 
 // 2. HTMLに埋め込み
 document.body.innerHTML += `
   <script src="/components/display.js"></script>
   <nostalgic-counter id="${data.id}" type="total" theme="light"></nostalgic-counter>
-`
+`;
 ```
 
 ### 複数期間表示
+
 ```html
 <!-- 異なる期間、同じカウンター -->
 <nostalgic-counter id="blog-a7b9c3d4" type="total" theme="light"></nostalgic-counter>
@@ -234,16 +244,23 @@ document.body.innerHTML += `
 ```
 
 ### テキスト形式の活用
+
 ```html
 <!-- モダンなレイアウト用インラインテキストカウンター -->
 <div class="stats">
-  <span>総訪問者数: <nostalgic-counter id="blog-a7b9c3d4" type="total" format="text"></nostalgic-counter></span>
-  <span>今日: <nostalgic-counter id="blog-a7b9c3d4" type="today" format="text"></nostalgic-counter></span>
+  <span
+    >総訪問者数:
+    <nostalgic-counter id="blog-a7b9c3d4" type="total" format="text"></nostalgic-counter
+  ></span>
+  <span
+    >今日: <nostalgic-counter id="blog-a7b9c3d4" type="today" format="text"></nostalgic-counter
+  ></span>
 </div>
 
 <!-- ゼロ埋め表示 -->
 <div class="retro-style">
-  訪問者数: <nostalgic-counter id="blog-a7b9c3d4" type="total" format="text" digits="8"></nostalgic-counter>
+  訪問者数:
+  <nostalgic-counter id="blog-a7b9c3d4" type="total" format="text" digits="8"></nostalgic-counter>
 </div>
 ```
 

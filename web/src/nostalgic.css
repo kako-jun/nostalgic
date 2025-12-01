@@ -8,7 +8,9 @@
 /* ボディスタイル */
 body {
   background-color: #ffffff !important;
-  font-family: "ＭＳ ゴシック", "MS Gothic", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro", "Yu Gothic", "游ゴシック", monospace !important;
+  font-family:
+    "ＭＳ ゴシック", "MS Gothic", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro", "Yu Gothic",
+    "游ゴシック", monospace !important;
   margin: 0 !important;
   padding: 0 !important;
   color: black !important;
@@ -91,7 +93,6 @@ body {
   font-size: 16px !important;
 }
 
-
 /* 古いリンクスタイル */
 .nostalgic-old-link {
   color: #0000ee !important;
@@ -171,7 +172,9 @@ p {
 
 /* 強制スタイル適用 */
 .nostalgic-main-frame * {
-  font-family: "ＭＳ ゴシック", "MS Gothic", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro", "Yu Gothic", "游ゴシック", monospace !important;
+  font-family:
+    "ＭＳ ゴシック", "MS Gothic", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro", "Yu Gothic",
+    "游ゴシック", monospace !important;
 }
 
 /* ナビゲーションリンクのアクティブ状態 */
@@ -223,8 +226,12 @@ p {
 }
 
 @keyframes nostalgic-rainbow {
-  0% { filter: hue-rotate(0deg); }
-  100% { filter: hue-rotate(360deg); }
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
 }
 
 /* モバイルメニューボタン */
@@ -269,11 +276,11 @@ p {
   .nostalgic-main-frame {
     flex-direction: column !important;
   }
-  
+
   .nostalgic-mobile-menu-button {
     display: block !important;
   }
-  
+
   .nostalgic-sidebar-left {
     position: fixed !important;
     top: 0 !important;
@@ -286,22 +293,22 @@ p {
     flex: none !important;
     padding: 0 10px 10px 10px !important;
   }
-  
+
   .nostalgic-mobile-menu-title {
     padding: 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
   }
-  
+
   .nostalgic-sidebar-left.mobile-open {
     left: 0 !important;
   }
-  
+
   .nostalgic-content-area {
     margin-left: 0 !important;
   }
-  
+
   .nostalgic-mobile-overlay {
     display: block !important;
   }
@@ -313,7 +320,7 @@ p {
     flex: 0 0 250px !important;
     font-size: 16px !important;
   }
-  
+
   .nostalgic-content-area {
     font-size: 18px !important;
     min-width: 0 !important;

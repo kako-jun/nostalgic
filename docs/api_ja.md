@@ -25,31 +25,38 @@ Nostalgicは90年代のインターネット文化から懐かしいWebツール
 ## サービス
 
 ### 📊 [カウンターサービス](services/counter_ja.md)
+
 複数期間統計と懐かしい表示スタイルを持つ従来の訪問者カウンター。
 
-### 💖 [いいねサービス](services/like_ja.md) 
+### 💖 [いいねサービス](services/like_ja.md)
+
 ユーザー状態追跡機能付きのトグル型いいね/取り消しボタン。
 
 ### 🏆 [ランキングサービス](services/ranking_ja.md)
+
 自動ソートと管理機能を持つスコアリーダーボードシステム。
 
 ### 💬 [BBSサービス](services/bbs_ja.md)
+
 カスタマイズ可能なオプションと投稿者による編集機能を持つメッセージボード。
 
 ## 共通概念
 
 ### 認証と所有権
+
 - **オーナートークン**: サービス管理用の8-16文字秘密文字列
 - **公開ID**: 表示/操作用の安全な識別子（形式: `domain-hash8`）
 - **ユーザーハッシュ**: 重複防止と投稿者確認用のIP+UserAgent
 
 ### セキュリティ機能
+
 - SHA256ハッシュ化トークン保存
 - 1日1回重複防止（0時リセット）
 - 公開IDシステムによる不正アクセス防止
 - 投稿者確認による編集権限管理
 
 ### Webhook機能
+
 各サービスは、重要なイベント発生時に自動通知を送信するWebhook機能をサポートしています：
 
 - **リアルタイム通知**: サービスイベント（カウントアップ、いいね、ランキング変動、BBS投稿など）の即座通知
@@ -58,6 +65,7 @@ Nostalgicは90年代のインターネット文化から懐かしいWebツール
 - **オプション設定**: サービス作成時またはアップデート時にwebhookUrlパラメータで設定
 
 ### サービスライフサイクル
+
 1. **作成**: URL + トークン → 公開ID返却
 2. **使用**: 公開IDで表示/操作
 3. **管理**: URL + トークンでオーナー操作
@@ -65,6 +73,7 @@ Nostalgicは90年代のインターネット文化から懐かしいWebツール
 ## クイックスタート例
 
 ### カウンター
+
 ```bash
 # カウンター作成（Webhook付き）
 curl "https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
@@ -74,6 +83,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=display&id=yoursite-a7b9c3d
 ```
 
 ### いいね
+
 ```bash
 # いいねボタン作成（Webhook付き）
 curl "https://nostalgic.llll-ll.com/api/like?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
@@ -83,6 +93,7 @@ curl "https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.
 ```
 
 ### ランキング
+
 ```bash
 # スコア系ゲーム用ランキング作成（高スコア優先、Webhook付き）
 curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=desc&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
@@ -95,6 +106,7 @@ curl "https://nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursi
 ```
 
 ### BBS
+
 ```bash
 # BBS作成（Webhook付き）
 curl "https://nostalgic.llll-ll.com/api/bbs?action=create&url=https://yoursite.com&token=your-secret&max=1000&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
@@ -108,16 +120,18 @@ curl "https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com
 すべてのサービスをテストできるインタラクティブデモページ：
 
 - **[カウンターデモ](https://nostalgic.llll-ll.com/counter)**
-- **[いいねデモ](https://nostalgic.llll-ll.com/like)**  
+- **[いいねデモ](https://nostalgic.llll-ll.com/like)**
 - **[ランキングデモ](https://nostalgic.llll-ll.com/ranking)**
 - **[BBSデモ](https://nostalgic.llll-ll.com/bbs)**
 
 ## デプロイメント
 
 ### ホスト型サービス（推奨）
+
 `https://nostalgic.llll-ll.com` を使用 - セットアップ不要！
 
 ### セルフホスティング
+
 1. このリポジトリをフォーク
 2. Vercelにデプロイ
 3. Redis URL環境変数を追加
@@ -125,4 +139,4 @@ curl "https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com
 
 ---
 
-*各サービスの詳細なAPI仕様については、`/docs/services/` ディレクトリ内の個別サービスドキュメントを参照してください。*
+_各サービスの詳細なAPI仕様については、`/docs/services/` ディレクトリ内の個別サービスドキュメントを参照してください。_

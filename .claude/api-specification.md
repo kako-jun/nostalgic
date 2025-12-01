@@ -38,31 +38,33 @@ https://nostalgic.llll-ll.com/api
 
 ### エラーコード
 
-| Code | Status | Description |
-|------|--------|-------------|
-| `VALIDATION_ERROR` | 400 | パラメータ検証エラー |
-| `UNAUTHORIZED` | 403 | 認証エラー（トークン不正） |
-| `NOT_FOUND` | 404 | リソースが見つからない |
-| `BUSINESS_LOGIC_ERROR` | 422 | ビジネスロジックエラー |
-| `STORAGE_ERROR` | 500 | ストレージエラー |
+| Code                   | Status | Description                |
+| ---------------------- | ------ | -------------------------- |
+| `VALIDATION_ERROR`     | 400    | パラメータ検証エラー       |
+| `UNAUTHORIZED`         | 403    | 認証エラー（トークン不正） |
+| `NOT_FOUND`            | 404    | リソースが見つからない     |
+| `BUSINESS_LOGIC_ERROR` | 422    | ビジネスロジックエラー     |
+| `STORAGE_ERROR`        | 500    | ストレージエラー           |
 
 ### パラメータの仕様
 
 #### 必須・任意パラメータ
+
 - **必須パラメータ**: 省略時はバリデーションエラー
 - **任意パラメータ**: 省略時はスキーマで定義されたデフォルト値が適用
 
 #### デフォルト値の適用
+
 任意パラメータが未指定の場合、以下のデフォルト値が自動適用される：
 
-| パラメータ | デフォルト値 | 対象サービス |
-|-----------|------------|-------------|
-| `type` | `total` | Counter |
-| `theme` | `dark` | Counter, Like, Ranking, BBS |
-| `format` | `image` | Counter |
-| `format` | `interactive` | Like |
-| `page` | `1` | BBS |
-| `limit` | `10` | Ranking, BBS |
+| パラメータ | デフォルト値  | 対象サービス                |
+| ---------- | ------------- | --------------------------- |
+| `type`     | `total`       | Counter                     |
+| `theme`    | `dark`        | Counter, Like, Ranking, BBS |
+| `format`   | `image`       | Counter                     |
+| `format`   | `interactive` | Like                        |
+| `page`     | `1`           | BBS                         |
+| `limit`    | `10`          | Ranking, BBS                |
 
 **重要**: WebComponentsからパラメータを送信しない場合、上記デフォルト値が自動的に適用される。
 クライアント側でのデフォルト値設定は不要。
@@ -85,11 +87,13 @@ https://nostalgic.llll-ll.com/api
 | `token` | string | Yes | オーナートークン（8-16文字） |
 
 **Example Request**:
+
 ```bash
 curl "https://nostalgic.llll-ll.com/api/visit?action=create&url=https://example.com&token=mysecret123"
 ```
 
 **Example Response**:
+
 ```json
 {
   "success": true,
@@ -113,11 +117,13 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=create&url=https://example.
 | `id` | string | Yes | カウンターID |
 
 **Example Request**:
+
 ```bash
 curl "https://nostalgic.llll-ll.com/api/visit?action=increment&id=example-a7b9c3d4"
 ```
 
 **Example Response**:
+
 ```json
 {
   "success": true,
@@ -154,11 +160,13 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=increment&id=example-a7b9c3
 **Example Requests**:
 
 SVG画像取得:
+
 ```bash
 curl "https://nostalgic.llll-ll.com/api/visit?action=display&id=example-a7b9c3d4&format=image&theme=kawaii"
 ```
 
 JSON取得:
+
 ```bash
 curl "https://nostalgic.llll-ll.com/api/visit?action=display&id=example-a7b9c3d4&format=json"
 ```
@@ -178,6 +186,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=display&id=example-a7b9c3d4
 | `total` | number | Yes | 設定する値（0以上） |
 
 **Example Request**:
+
 ```bash
 curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com&token=mysecret123&total=1000"
 ```
@@ -200,6 +209,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 | `token` | string | Yes | オーナートークン（8-16文字） |
 
 **Example Response**:
+
 ```json
 {
   "success": true,
@@ -223,6 +233,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 | `id` | string | Yes | いいねボタンID |
 
 **Example Response**:
+
 ```json
 {
   "success": true,
@@ -283,6 +294,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 | `score` | number | Yes | スコア |
 
 **Example Response**:
+
 ```json
 {
   "success": true,
@@ -401,6 +413,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 | `emoteValue` | string | No | エモートセレクト値 |
 
 **Example Response**:
+
 ```json
 {
   "success": true,
@@ -422,6 +435,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 メッセージを編集します（投稿者またはオーナー権限必要）。
 
 #### 投稿者による編集
+
 **Endpoint**: `GET /api/bbs?action=editMessage`
 
 **Parameters**:
@@ -436,6 +450,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 | `emoteValue` | string | No | 新しいエモートセレクト値 |
 
 #### オーナーによる編集
+
 **Endpoint**: `GET /api/bbs?action=editMessage`
 
 **Parameters**:
@@ -455,6 +470,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 メッセージを削除します（投稿者またはオーナー権限必要）。
 
 #### 投稿者による削除
+
 **Endpoint**: `GET /api/bbs?action=deleteMessage`
 
 **Parameters**:
@@ -465,6 +481,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 | `messageId` | string | Yes | メッセージID |
 
 #### オーナーによる削除
+
 **Endpoint**: `GET /api/bbs?action=deleteMessage`
 
 **Parameters**:
@@ -489,6 +506,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 | `page` | number | No | `1` | ページ番号 |
 
 **Example Response**:
+
 ```json
 {
   "success": true,
@@ -555,11 +573,13 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 ### 公開ID形式
 
 各サービスのIDは以下の形式で生成されます：
+
 ```
 {domain}-{hash8桁}
 ```
 
 例:
+
 - `blog-a7b9c3d4`
 - `mysite-b8c2d5e9`
 
@@ -572,6 +592,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 ### 日付形式
 
 すべての日付はISO 8601形式：
+
 ```
 2025-08-18T15:30:00.000Z
 ```
@@ -592,23 +613,23 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com
 
 ```javascript
 // カウンターをインクリメント
-fetch('https://nostalgic.llll-ll.com/api/visit?action=increment&id=blog-a7b9c3d4')
-  .then(res => res.json())
-  .then(data => {
+fetch("https://nostalgic.llll-ll.com/api/visit?action=increment&id=blog-a7b9c3d4")
+  .then((res) => res.json())
+  .then((data) => {
     if (data.success) {
-      console.log('Total count:', data.data.total)
+      console.log("Total count:", data.data.total);
     }
-  })
+  });
 
 // いいねトグル
-fetch('https://nostalgic.llll-ll.com/api/like?action=toggle&id=blog-b8c2d5e9')
-  .then(res => res.json())
-  .then(data => {
+fetch("https://nostalgic.llll-ll.com/api/like?action=toggle&id=blog-b8c2d5e9")
+  .then((res) => res.json())
+  .then((data) => {
     if (data.success) {
-      console.log('Liked:', data.data.userLiked)
-      console.log('Total likes:', data.data.total)
+      console.log("Liked:", data.data.userLiked);
+      console.log("Total likes:", data.data.total);
     }
-  })
+  });
 ```
 
 ### cURLでの利用

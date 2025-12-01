@@ -1,5 +1,3 @@
-
-
 import { useState, useEffect } from "react";
 import NostalgicLayout from "../components/NostalgicLayout";
 import ResponseDisplay from "../components/ResponseDisplay";
@@ -8,8 +6,8 @@ import ApiUrlDisplay, { GreenParam } from "../components/ApiUrlDisplay";
 export default function RankingPage() {
   const [currentPage, setCurrentPage] = useState("features");
   const [publicId, setPublicId] = useState("");
-  const [responseType] = useState<'json' | 'text' | 'svg'>('json');
-  
+  const [responseType] = useState<"json" | "text" | "svg">("json");
+
   // 全フォーム共通のstate
   const [sharedUrl, setSharedUrl] = useState("");
   const [sharedToken, setSharedToken] = useState("");
@@ -19,7 +17,7 @@ export default function RankingPage() {
   const [sortOrder, setSortOrder] = useState("desc");
   const [webhookUrl, setWebhookUrl] = useState("");
 
-  // Submit form specific states  
+  // Submit form specific states
   const [submitName, setSubmitName] = useState("");
   const [submitScore, setSubmitScore] = useState("");
   const [submitDisplayScore, setSubmitDisplayScore] = useState("");
@@ -48,7 +46,7 @@ export default function RankingPage() {
   const [clearResponse, setClearResponse] = useState("");
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
-  
+
   useEffect(() => {
     const hash = window.location.hash.slice(1);
     if (hash) {
@@ -56,7 +54,7 @@ export default function RankingPage() {
     } else {
       setCurrentPage("features");
     }
-    
+
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1);
       if (hash) {
@@ -65,9 +63,9 @@ export default function RankingPage() {
         setCurrentPage("features");
       }
     };
-    
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -89,11 +87,11 @@ export default function RankingPage() {
     }
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
-      const contentType = res.headers.get('content-type');
-      let responseText = '';
-      
-      if (contentType && contentType.includes('application/json')) {
+      const res = await fetch(apiUrl, { method: "GET" });
+      const contentType = res.headers.get("content-type");
+      let responseText = "";
+
+      if (contentType && contentType.includes("application/json")) {
         const jsonResponse = await res.json();
         responseText = JSON.stringify(jsonResponse, null, 2);
         if (jsonResponse.data?.id) {
@@ -102,7 +100,7 @@ export default function RankingPage() {
       } else {
         responseText = await res.text();
       }
-      
+
       setCreateResponse(responseText);
     } catch (error) {
       setCreateResponse(`エラー: ${error}`);
@@ -119,17 +117,17 @@ export default function RankingPage() {
     }
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
-      const contentType = res.headers.get('content-type');
-      let responseText = '';
-      
-      if (contentType && contentType.includes('application/json')) {
+      const res = await fetch(apiUrl, { method: "GET" });
+      const contentType = res.headers.get("content-type");
+      let responseText = "";
+
+      if (contentType && contentType.includes("application/json")) {
         const jsonResponse = await res.json();
         responseText = JSON.stringify(jsonResponse, null, 2);
       } else {
         responseText = await res.text();
       }
-      
+
       setSubmitResponse(responseText);
     } catch (error) {
       setSubmitResponse(`エラー: ${error}`);
@@ -143,17 +141,17 @@ export default function RankingPage() {
     const apiUrl = `/api/ranking?action=get&id=${encodeURIComponent(publicId)}`;
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
-      const contentType = res.headers.get('content-type');
-      let responseText = '';
-      
-      if (contentType && contentType.includes('application/json')) {
+      const res = await fetch(apiUrl, { method: "GET" });
+      const contentType = res.headers.get("content-type");
+      let responseText = "";
+
+      if (contentType && contentType.includes("application/json")) {
         const jsonResponse = await res.json();
         responseText = JSON.stringify(jsonResponse, null, 2);
       } else {
         responseText = await res.text();
       }
-      
+
       setGetResponse(responseText);
     } catch (error) {
       setGetResponse(`エラー: ${error}`);
@@ -170,17 +168,17 @@ export default function RankingPage() {
     }
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
-      const contentType = res.headers.get('content-type');
-      let responseText = '';
-      
-      if (contentType && contentType.includes('application/json')) {
+      const res = await fetch(apiUrl, { method: "GET" });
+      const contentType = res.headers.get("content-type");
+      let responseText = "";
+
+      if (contentType && contentType.includes("application/json")) {
         const jsonResponse = await res.json();
         responseText = JSON.stringify(jsonResponse, null, 2);
       } else {
         responseText = await res.text();
       }
-      
+
       setUpdateResponse(responseText);
     } catch (error) {
       setUpdateResponse(`エラー: ${error}`);
@@ -194,17 +192,17 @@ export default function RankingPage() {
     const apiUrl = `/api/ranking?action=remove&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&name=${encodeURIComponent(removeName)}`;
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
-      const contentType = res.headers.get('content-type');
-      let responseText = '';
-      
-      if (contentType && contentType.includes('application/json')) {
+      const res = await fetch(apiUrl, { method: "GET" });
+      const contentType = res.headers.get("content-type");
+      let responseText = "";
+
+      if (contentType && contentType.includes("application/json")) {
         const jsonResponse = await res.json();
         responseText = JSON.stringify(jsonResponse, null, 2);
       } else {
         responseText = await res.text();
       }
-      
+
       setRemoveResponse(responseText);
     } catch (error) {
       setRemoveResponse(`エラー: ${error}`);
@@ -218,17 +216,17 @@ export default function RankingPage() {
     const apiUrl = `/api/ranking?action=clear&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
-      const contentType = res.headers.get('content-type');
-      let responseText = '';
-      
-      if (contentType && contentType.includes('application/json')) {
+      const res = await fetch(apiUrl, { method: "GET" });
+      const contentType = res.headers.get("content-type");
+      let responseText = "";
+
+      if (contentType && contentType.includes("application/json")) {
         const jsonResponse = await res.json();
         responseText = JSON.stringify(jsonResponse, null, 2);
       } else {
         responseText = await res.text();
       }
-      
+
       setClearResponse(responseText);
     } catch (error) {
       setClearResponse(`エラー: ${error}`);
@@ -242,17 +240,17 @@ export default function RankingPage() {
     const apiUrl = `/api/ranking?action=delete&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
-      const contentType = res.headers.get('content-type');
-      let responseText = '';
-      
-      if (contentType && contentType.includes('application/json')) {
+      const res = await fetch(apiUrl, { method: "GET" });
+      const contentType = res.headers.get("content-type");
+      let responseText = "";
+
+      if (contentType && contentType.includes("application/json")) {
         const jsonResponse = await res.json();
         responseText = JSON.stringify(jsonResponse, null, 2);
       } else {
         responseText = await res.text();
       }
-      
+
       setDeleteResponse(responseText);
     } catch (error) {
       setDeleteResponse(`エラー: ${error}`);
@@ -278,17 +276,17 @@ export default function RankingPage() {
     }
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
-      const contentType = res.headers.get('content-type');
-      let responseText = '';
-      
-      if (contentType && contentType.includes('application/json')) {
+      const res = await fetch(apiUrl, { method: "GET" });
+      const contentType = res.headers.get("content-type");
+      let responseText = "";
+
+      if (contentType && contentType.includes("application/json")) {
         const jsonResponse = await res.json();
         responseText = JSON.stringify(jsonResponse, null, 2);
       } else {
         responseText = await res.text();
       }
-      
+
       setUpdateSettingsResponse(responseText);
     } catch (error) {
       setUpdateSettingsResponse(`エラー: ${error}`);
@@ -313,29 +311,51 @@ export default function RankingPage() {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${maxEntries ? `&max=${maxEntries}` : ""}${sortOrder !== "desc" ? `&sortOrder=${sortOrder}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}>
-                https://nostalgic.llll-ll.com/api/ranking?action=create&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/ranking?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${maxEntries ? `&max=${maxEntries}` : ""}${sortOrder !== "desc" ? `&sortOrder=${sortOrder}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}
+              >
+                https://nostalgic.llll-ll.com/api/ranking?action=create&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
                 &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
-                {title && <>&title=<GreenParam>{title}</GreenParam></>}
-                {maxEntries && <>&max=<GreenParam>{maxEntries}</GreenParam></>}
-                {sortOrder !== "desc" && <>&sortOrder=<GreenParam>{sortOrder}</GreenParam></>}
-                {webhookUrl && <>&webhookUrl=<GreenParam>{webhookUrl}</GreenParam></>}
+                {title && (
+                  <>
+                    &title=<GreenParam>{title}</GreenParam>
+                  </>
+                )}
+                {maxEntries && (
+                  <>
+                    &max=<GreenParam>{maxEntries}</GreenParam>
+                  </>
+                )}
+                {sortOrder !== "desc" && (
+                  <>
+                    &sortOrder=<GreenParam>{sortOrder}</GreenParam>
+                  </>
+                )}
+                {webhookUrl && (
+                  <>
+                    &webhookUrl=<GreenParam>{webhookUrl}</GreenParam>
+                  </>
+                )}
               </ApiUrlDisplay>
               <p>
                 ※サイトURLには、ランキングを設置する予定のサイトを指定してください。「https://」から始まっている必要があります。
                 <br />
                 ※オーナートークンに、
-                <span style={{ color: "#ff0000" }}>ほかのサイトでのパスワードを使い回さないでください</span>
+                <span style={{ color: "#ff0000" }}>
+                  ほかのサイトでのパスワードを使い回さないでください
+                </span>
                 。（8-16文字）
               </p>
-              <p>上記URLにアクセスすると、JSONで公開IDが返されます。この公開IDをSTEP 2で使用してください。</p>
-              
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
-              <p style={{ marginTop: "20px" }}>
-                または、以下のフォームで簡単に作成できます。
+              <p>
+                上記URLにアクセスすると、JSONで公開IDが返されます。この公開IDをSTEP
+                2で使用してください。
               </p>
-              
+
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+
+              <p style={{ marginTop: "20px" }}>または、以下のフォームで簡単に作成できます。</p>
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -349,7 +369,7 @@ export default function RankingPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -367,7 +387,7 @@ export default function RankingPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -385,7 +405,7 @@ export default function RankingPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -404,7 +424,7 @@ export default function RankingPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -419,7 +439,7 @@ export default function RankingPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   >
                     <option value="desc">高い順（スコア系ゲーム用）</option>
@@ -439,7 +459,7 @@ export default function RankingPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -455,7 +475,7 @@ export default function RankingPage() {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleCreate}
                   >
@@ -464,7 +484,11 @@ export default function RankingPage() {
                 </p>
               </form>
 
-              <ResponseDisplay response={createResponse} responseType={responseType} show={!!createResponse} />
+              <ResponseDisplay
+                response={createResponse}
+                responseType={responseType}
+                show={!!createResponse}
+              />
               {publicId && (
                 <div
                   style={{
@@ -472,12 +496,22 @@ export default function RankingPage() {
                     border: "2px solid #ff0000",
                     padding: "10px",
                     marginTop: "10px",
-                    fontSize: "14px"
+                    fontSize: "14px",
                   }}
                 >
                   <b style={{ color: "#ff0000" }}>✨ 作成成功！</b>
                   <br />
-                  あなたの公開ID：<span style={{ color: "#008000", fontWeight: "bold", fontSize: "16px", fontFamily: "monospace" }}>{publicId}</span>
+                  あなたの公開ID：
+                  <span
+                    style={{
+                      color: "#008000",
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      fontFamily: "monospace",
+                    }}
+                  >
+                    {publicId}
+                  </span>
                   <br />
                   <small>※この公開IDをSTEP 2で使用してください</small>
                 </div>
@@ -491,13 +525,16 @@ export default function RankingPage() {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=get&id=${encodeURIComponent(publicId || "公開ID")}`}>
-                https://nostalgic.llll-ll.com/api/ranking?action=get&id=<GreenParam>{publicId || "公開ID"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/ranking?action=get&id=${encodeURIComponent(publicId || "公開ID")}`}
+              >
+                https://nostalgic.llll-ll.com/api/ranking?action=get&id=
+                <GreenParam>{publicId || "公開ID"}</GreenParam>
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームでランキングデータを取得できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>公開ID：</b>
@@ -511,11 +548,11 @@ export default function RankingPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "monospace",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -527,7 +564,7 @@ export default function RankingPage() {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleGet}
                   >
@@ -536,7 +573,11 @@ export default function RankingPage() {
                 </p>
               </form>
 
-              <ResponseDisplay response={getResponse} responseType={responseType} show={!!getResponse} />
+              <ResponseDisplay
+                response={getResponse}
+                responseType={responseType}
+                show={!!getResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -546,17 +587,37 @@ export default function RankingPage() {
                 </span>
               </p>
               <p>あなたのサイトのHTMLに以下のコードを追加してください。</p>
-              
+
               {publicId ? (
                 <div>
-                  <p><b>埋め込みコード:</b></p>
-                  <pre style={{ backgroundColor: "#f0f0f0", padding: "10px", overflow: "auto", fontSize: "14px", margin: "10px 0" }}>
-{`<script src="https://nostalgic.llll-ll.com/components/ranking.js"></script>
-<nostalgic-ranking id="`}<span style={{ color: "#00AA00" }}>{publicId}</span>{`" theme="light"></nostalgic-ranking>`}
+                  <p>
+                    <b>埋め込みコード:</b>
+                  </p>
+                  <pre
+                    style={{
+                      backgroundColor: "#f0f0f0",
+                      padding: "10px",
+                      overflow: "auto",
+                      fontSize: "14px",
+                      margin: "10px 0",
+                    }}
+                  >
+                    {`<script src="https://nostalgic.llll-ll.com/components/ranking.js"></script>
+<nostalgic-ranking id="`}
+                    <span style={{ color: "#00AA00" }}>{publicId}</span>
+                    {`" theme="light"></nostalgic-ranking>`}
                   </pre>
                 </div>
               ) : (
-                <pre style={{ backgroundColor: "#f0f0f0", padding: "10px", overflow: "auto", fontSize: "14px", margin: "10px 0" }}>
+                <pre
+                  style={{
+                    backgroundColor: "#f0f0f0",
+                    padding: "10px",
+                    overflow: "auto",
+                    fontSize: "14px",
+                    margin: "10px 0",
+                  }}
+                >
                   {`<script src="https://nostalgic.llll-ll.com/components/ranking.js"></script>
 <nostalgic-ranking id="`}
                   <span style={{ color: "#008000" }}>公開ID</span>
@@ -565,7 +626,7 @@ export default function RankingPage() {
                   {`"></nostalgic-ranking>`}
                 </pre>
               )}
-              
+
               <div className="nostalgic-section">
                 <p>
                   <span className="nostalgic-section-title">
@@ -575,8 +636,10 @@ export default function RankingPage() {
                 <p>
                   • <span style={{ color: "#008000" }}>light</span> - ライト（シンプル）
                   <br />• <span style={{ color: "#008000" }}>dark</span> - ダーク（青系）
-                  <br />• <span style={{ color: "#008000" }}>retro</span> - レトロ（古いコンピュータ画面風）
-                  <br />• <span style={{ color: "#008000" }}>kawaii</span> - カワイイ（ファンシー系）
+                  <br />• <span style={{ color: "#008000" }}>retro</span> -
+                  レトロ（古いコンピュータ画面風）
+                  <br />• <span style={{ color: "#008000" }}>kawaii</span> -
+                  カワイイ（ファンシー系）
                   <br />• <span style={{ color: "#008000" }}>mom</span> - Mother味（緑チェック模様）
                   <br />• <span style={{ color: "#008000" }}>final</span> - FF味（青系）
                 </p>
@@ -588,9 +651,20 @@ export default function RankingPage() {
                     <b>◆TypeScript使用時の設定◆</b>
                   </span>
                 </p>
-                <p>TypeScriptプロジェクトでWeb Componentsを使用する場合、プロジェクトルートに <code>types.d.ts</code> ファイルを作成してください。</p>
-                <pre style={{ backgroundColor: "#f0f0f0", padding: "10px", overflow: "auto", fontSize: "12px", margin: "10px 0" }}>
-{`// types.d.ts
+                <p>
+                  TypeScriptプロジェクトでWeb Componentsを使用する場合、プロジェクトルートに{" "}
+                  <code>types.d.ts</code> ファイルを作成してください。
+                </p>
+                <pre
+                  style={{
+                    backgroundColor: "#f0f0f0",
+                    padding: "10px",
+                    overflow: "auto",
+                    fontSize: "12px",
+                    margin: "10px 0",
+                  }}
+                >
+                  {`// types.d.ts
 import 'react'
 
 declare module 'react' {
@@ -610,7 +684,8 @@ declare module 'react' {
 }`}
                 </pre>
                 <p style={{ fontSize: "14px", color: "#666" }}>
-                  ※この設定により、TypeScriptでWeb Componentsを使用してもビルドエラーが発生しません。
+                  ※この設定により、TypeScriptでWeb
+                  Componentsを使用してもビルドエラーが発生しません。
                 </p>
               </div>
 
@@ -622,42 +697,72 @@ declare module 'react' {
                     </span>
                   </p>
                   <div style={{ textAlign: "center", margin: "20px 0" }}>
-                    <div style={{ backgroundColor: "#fffacd", border: "2px solid #ffa500", padding: "20px", borderRadius: "4px" }}>
-                      <p style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "15px" }}>◆デモ用ランキング◆</p>
-                      <p style={{ marginBottom: "15px" }}>このデモページのランキング（実際に動作します）：</p>
-                      
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "20px", justifyItems: "center" }}>
+                    <div
+                      style={{
+                        backgroundColor: "#fffacd",
+                        border: "2px solid #ffa500",
+                        padding: "20px",
+                        borderRadius: "4px",
+                      }}
+                    >
+                      <p style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "15px" }}>
+                        ◆デモ用ランキング◆
+                      </p>
+                      <p style={{ marginBottom: "15px" }}>
+                        このデモページのランキング（実際に動作します）：
+                      </p>
+
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                          gap: "20px",
+                          justifyItems: "center",
+                        }}
+                      >
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Light</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>
+                            Light
+                          </p>
                           <nostalgic-ranking id={publicId} theme="light" limit="5" />
                         </div>
-                        
+
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Dark</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>
+                            Dark
+                          </p>
                           <nostalgic-ranking id={publicId} theme="dark" limit="5" />
                         </div>
 
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Retro</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>
+                            Retro
+                          </p>
                           <nostalgic-ranking id={publicId} theme="retro" limit="5" />
                         </div>
-                        
+
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Kawaii</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>
+                            Kawaii
+                          </p>
                           <nostalgic-ranking id={publicId} theme="kawaii" limit="5" />
                         </div>
 
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Mother</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>
+                            Mother
+                          </p>
                           <nostalgic-ranking id={publicId} theme="mom" limit="5" />
                         </div>
 
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>FF</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>
+                            FF
+                          </p>
                           <nostalgic-ranking id={publicId} theme="final" limit="5" />
                         </div>
                       </div>
-                      
+
                       <p style={{ fontSize: "12px", color: "#666", marginTop: "15px" }}>
                         ※スコア投稿フォームからテストデータを送信してください！
                       </p>
@@ -674,17 +779,32 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${maxEntries ? `&max=${maxEntries}` : ""}${sortOrder !== "desc" ? `&sortOrder=${sortOrder}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}>
-                https://nostalgic.llll-ll.com/api/ranking?action=create&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/ranking?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${maxEntries ? `&max=${maxEntries}` : ""}${sortOrder !== "desc" ? `&sortOrder=${sortOrder}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}
+              >
+                https://nostalgic.llll-ll.com/api/ranking?action=create&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
                 &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
-                {maxEntries && <>&max=<GreenParam>{maxEntries}</GreenParam></>}
-                {sortOrder !== "desc" && <>&sortOrder=<GreenParam>{sortOrder}</GreenParam></>}
-                {webhookUrl && <>&webhookUrl=<GreenParam>{webhookUrl}</GreenParam></>}
+                {maxEntries && (
+                  <>
+                    &max=<GreenParam>{maxEntries}</GreenParam>
+                  </>
+                )}
+                {sortOrder !== "desc" && (
+                  <>
+                    &sortOrder=<GreenParam>{sortOrder}</GreenParam>
+                  </>
+                )}
+                {webhookUrl && (
+                  <>
+                    &webhookUrl=<GreenParam>{webhookUrl}</GreenParam>
+                  </>
+                )}
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで確認できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -698,7 +818,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -716,12 +836,12 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -733,7 +853,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleCreate}
                   >
@@ -750,16 +870,21 @@ declare module 'react' {
                 </span>
               </p>
               <p>作成したランキングの公開IDを使用してスコアを送信できます。</p>
-              
+
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=submit&id=${encodeURIComponent(publicId || "公開ID")}&name=${encodeURIComponent(submitName || "プレイヤー名")}&score=${submitScore || "スコア"}&displayScore=${encodeURIComponent(submitDisplayScore || "表示用スコア")}`}>
-                https://nostalgic.llll-ll.com/api/ranking?action=submit&id=<GreenParam>{publicId || "公開ID"}</GreenParam>
-                &name=<GreenParam>{submitName || "プレイヤー名"}</GreenParam>&score=<GreenParam>{submitScore || "スコア"}</GreenParam>&displayScore=<GreenParam>{submitDisplayScore || "表示用スコア"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/ranking?action=submit&id=${encodeURIComponent(publicId || "公開ID")}&name=${encodeURIComponent(submitName || "プレイヤー名")}&score=${submitScore || "スコア"}&displayScore=${encodeURIComponent(submitDisplayScore || "表示用スコア")}`}
+              >
+                https://nostalgic.llll-ll.com/api/ranking?action=submit&id=
+                <GreenParam>{publicId || "公開ID"}</GreenParam>
+                &name=<GreenParam>{submitName || "プレイヤー名"}</GreenParam>&score=
+                <GreenParam>{submitScore || "スコア"}</GreenParam>&displayScore=
+                <GreenParam>{submitDisplayScore || "表示用スコア"}</GreenParam>
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで送信できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>公開ID：</b>
@@ -773,7 +898,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "monospace",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -790,7 +915,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -809,7 +934,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -827,11 +952,11 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -843,7 +968,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleSubmit}
                   >
@@ -852,7 +977,11 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={submitResponse} responseType={responseType} show={!!submitResponse} />
+              <ResponseDisplay
+                response={submitResponse}
+                responseType={responseType}
+                show={!!submitResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -862,14 +991,20 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&name=${encodeURIComponent(updateName || "プレイヤー名")}&score=${updateScore || "新スコア"}&displayScore=${encodeURIComponent(updateDisplayScore || "表示用スコア")}`}>
-                https://nostalgic.llll-ll.com/api/ranking?action=update&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&name=<GreenParam>{updateName || "プレイヤー名"}</GreenParam>&score=<GreenParam>{updateScore || "新スコア"}</GreenParam>&displayScore=<GreenParam>{updateDisplayScore || "表示用スコア"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/ranking?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&name=${encodeURIComponent(updateName || "プレイヤー名")}&score=${updateScore || "新スコア"}&displayScore=${encodeURIComponent(updateDisplayScore || "表示用スコア")}`}
+              >
+                https://nostalgic.llll-ll.com/api/ranking?action=update&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&name=
+                <GreenParam>{updateName || "プレイヤー名"}</GreenParam>&score=
+                <GreenParam>{updateScore || "新スコア"}</GreenParam>&displayScore=
+                <GreenParam>{updateDisplayScore || "表示用スコア"}</GreenParam>
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで更新できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -883,7 +1018,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -901,7 +1036,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -919,7 +1054,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -938,7 +1073,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -956,7 +1091,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -972,7 +1107,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleUpdate}
                   >
@@ -981,7 +1116,11 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={updateResponse} responseType={responseType} show={!!updateResponse} />
+              <ResponseDisplay
+                response={updateResponse}
+                responseType={responseType}
+                show={!!updateResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -991,14 +1130,18 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=remove&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&name=${encodeURIComponent(removeName || "プレイヤー名")}`}>
-                https://nostalgic.llll-ll.com/api/ranking?action=remove&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&name=<GreenParam>{removeName || "プレイヤー名"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/ranking?action=remove&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&name=${encodeURIComponent(removeName || "プレイヤー名")}`}
+              >
+                https://nostalgic.llll-ll.com/api/ranking?action=remove&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&name=
+                <GreenParam>{removeName || "プレイヤー名"}</GreenParam>
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで削除できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -1012,7 +1155,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1030,7 +1173,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1048,12 +1191,12 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -1065,7 +1208,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleRemove}
                   >
@@ -1074,7 +1217,11 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={removeResponse} responseType={responseType} show={!!removeResponse} />
+              <ResponseDisplay
+                response={removeResponse}
+                responseType={responseType}
+                show={!!removeResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -1084,17 +1231,20 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=clear&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}>
-                https://nostalgic.llll-ll.com/api/ranking?action=clear&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/ranking?action=clear&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}
+              >
+                https://nostalgic.llll-ll.com/api/ranking?action=clear&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
                 &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームでクリアできます。</p>
               <p style={{ color: "#ff0000", fontWeight: "bold" }}>
                 ※すべてのエントリーが削除されます。十分にご注意ください。
               </p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -1108,7 +1258,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1126,12 +1276,12 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -1143,7 +1293,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleClear}
                   >
@@ -1152,7 +1302,11 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={clearResponse} responseType={responseType} show={!!clearResponse} />
+              <ResponseDisplay
+                response={clearResponse}
+                responseType={responseType}
+                show={!!clearResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -1162,20 +1316,39 @@ declare module 'react' {
                 </span>
               </p>
               <p>ランキングの設定を更新します。</p>
-              
+
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${settingsTitle ? `&title=${encodeURIComponent(settingsTitle)}` : ""}${settingsMax ? `&max=${settingsMax}` : ""}${settingsSortOrder ? `&sortOrder=${settingsSortOrder}` : ""}${settingsWebhookUrl ? `&webhookUrl=${encodeURIComponent(settingsWebhookUrl)}` : ""}`}>
-                https://nostalgic.llll-ll.com/api/ranking?action=updateSettings&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/ranking?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${settingsTitle ? `&title=${encodeURIComponent(settingsTitle)}` : ""}${settingsMax ? `&max=${settingsMax}` : ""}${settingsSortOrder ? `&sortOrder=${settingsSortOrder}` : ""}${settingsWebhookUrl ? `&webhookUrl=${encodeURIComponent(settingsWebhookUrl)}` : ""}`}
+              >
+                https://nostalgic.llll-ll.com/api/ranking?action=updateSettings&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
                 &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
-                {settingsTitle && <>&title=<GreenParam>{settingsTitle}</GreenParam></>}
-                {settingsMax && <>&max=<GreenParam>{settingsMax}</GreenParam></>}
-                {settingsSortOrder && <>&sortOrder=<GreenParam>{settingsSortOrder}</GreenParam></>}
-                {settingsWebhookUrl && <>&webhookUrl=<GreenParam>{settingsWebhookUrl}</GreenParam></>}
+                {settingsTitle && (
+                  <>
+                    &title=<GreenParam>{settingsTitle}</GreenParam>
+                  </>
+                )}
+                {settingsMax && (
+                  <>
+                    &max=<GreenParam>{settingsMax}</GreenParam>
+                  </>
+                )}
+                {settingsSortOrder && (
+                  <>
+                    &sortOrder=<GreenParam>{settingsSortOrder}</GreenParam>
+                  </>
+                )}
+                {settingsWebhookUrl && (
+                  <>
+                    &webhookUrl=<GreenParam>{settingsWebhookUrl}</GreenParam>
+                  </>
+                )}
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで更新できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -1189,7 +1362,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1207,7 +1380,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1225,7 +1398,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -1244,7 +1417,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -1258,7 +1431,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   >
                     <option value="">変更しない</option>
@@ -1279,11 +1452,11 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -1295,7 +1468,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleUpdateSettings}
                   >
@@ -1304,7 +1477,11 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={updateSettingsResponse} responseType={responseType} show={!!updateSettingsResponse} />
+              <ResponseDisplay
+                response={updateSettingsResponse}
+                responseType={responseType}
+                show={!!updateSettingsResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -1314,17 +1491,20 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/ranking?action=delete&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}>
-                https://nostalgic.llll-ll.com/api/ranking?action=delete&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/ranking?action=delete&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}
+              >
+                https://nostalgic.llll-ll.com/api/ranking?action=delete&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
                 &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで削除できます。</p>
               <p style={{ color: "#ff0000", fontWeight: "bold" }}>
                 ※ランキングが完全に削除され復元できません。十分にご注意ください。
               </p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -1338,7 +1518,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1356,12 +1536,12 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -1373,7 +1553,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleDelete}
                   >
@@ -1382,14 +1562,21 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={deleteResponse} responseType={responseType} show={!!deleteResponse} />
+              <ResponseDisplay
+                response={deleteResponse}
+                responseType={responseType}
+                show={!!deleteResponse}
+              />
             </div>
 
             <hr />
 
             <p style={{ textAlign: "center" }}>
               これ以上の詳しい説明は{" "}
-              <a href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md" className="nostalgic-old-link">
+              <a
+                href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md"
+                className="nostalgic-old-link"
+              >
                 【GitHub】
               </a>{" "}
               へ
@@ -1467,7 +1654,6 @@ declare module 'react' {
                 【使い方】へ
               </a>
             </p>
-
           </>
         );
 

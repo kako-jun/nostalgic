@@ -17,7 +17,7 @@ All services use the same URL pattern with action parameters using **GET request
 Just like the original 1990s web tools, everything can be operated directly from the browser URL bar:
 
 1. **Click-to-create**: Share a link and instantly create services
-2. **URL-based operations**: All actions are simple GET links  
+2. **URL-based operations**: All actions are simple GET links
 3. **Nostalgic simplicity**: No complex forms or POST requests needed
 4. **Easy sharing**: Every operation is a shareable URL
 5. **BBS culture**: Even message posting uses GET parameters, just like the old days
@@ -25,31 +25,38 @@ Just like the original 1990s web tools, everything can be operated directly from
 ## Services
 
 ### 📊 [Counter Service](services/counter.md)
+
 Traditional visitor counter with multiple time periods and nostalgic display styles.
 
-### 💖 [Like Service](services/like.md) 
+### 💖 [Like Service](services/like.md)
+
 Toggle-based like/unlike button with user state tracking.
 
 ### 🏆 [Ranking Service](services/ranking.md)
+
 Score leaderboard system with automatic sorting and management features.
 
 ### 💬 [BBS Service](services/bbs.md)
+
 Message board with customizable options and author-based editing.
 
 ## Common Concepts
 
 ### Authentication & Ownership
+
 - **Owner Token**: 8-16 character secret for service management
 - **Public ID**: Safe identifier for display/interaction (format: `domain-hash8`)
 - **User Hash**: IP+UserAgent for duplicate prevention and authorship
 
 ### Security Features
+
 - SHA256 hashed token storage
 - Daily duplicate prevention (resets at midnight)
 - Public ID system prevents unauthorized access
 - Author verification for post editing/removal
 
 ### Webhook Features
+
 All services support webhook functionality for real-time event notifications:
 
 - **Real-time notifications**: Instant alerts for service events (counter increments, likes, ranking changes, BBS posts, etc.)
@@ -58,13 +65,15 @@ All services support webhook functionality for real-time event notifications:
 - **Optional configuration**: Set via webhookUrl parameter during service creation or updates
 
 ### Service Lifecycle
+
 1. **Create**: URL + token → returns public ID
-2. **Use**: Public ID for display/interaction 
+2. **Use**: Public ID for display/interaction
 3. **Manage**: URL + token for owner operations
 
 ## Quick Start Examples
 
 ### Counter
+
 ```bash
 # Create counter with webhook
 curl "https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
@@ -74,6 +83,7 @@ curl "https://nostalgic.llll-ll.com/api/visit?action=display&id=yoursite-a7b9c3d
 ```
 
 ### Like
+
 ```bash
 # Create like button with webhook
 curl "https://nostalgic.llll-ll.com/api/like?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
@@ -83,6 +93,7 @@ curl "https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.
 ```
 
 ### Ranking
+
 ```bash
 # Create ranking (score-based game, high score wins) with webhook
 curl "https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=desc&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
@@ -95,6 +106,7 @@ curl "https://nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursi
 ```
 
 ### BBS
+
 ```bash
 # Create BBS with webhook
 curl "https://nostalgic.llll-ll.com/api/bbs?action=create&url=https://yoursite.com&token=your-secret&max=1000&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
@@ -108,21 +120,23 @@ curl "https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com
 Visit our interactive demo pages to test all services:
 
 - **[Counter Demo](https://nostalgic.llll-ll.com/counter)**
-- **[Like Demo](https://nostalgic.llll-ll.com/like)**  
+- **[Like Demo](https://nostalgic.llll-ll.com/like)**
 - **[Ranking Demo](https://nostalgic.llll-ll.com/ranking)**
 - **[BBS Demo](https://nostalgic.llll-ll.com/bbs)**
 
 ## Deployment
 
 ### Hosted Service (Recommended)
+
 Use `https://nostalgic.llll-ll.com` - no setup required!
 
 ### Self-Hosting
+
 1. Fork this repository
-2. Deploy to Vercel 
+2. Deploy to Vercel
 3. Add Redis URL environment variable
 4. Update Web Component URLs to your domain
 
 ---
 
-*For detailed API specifications of each service, see the individual service documentation in the `/docs/services/` directory.*
+_For detailed API specifications of each service, see the individual service documentation in the `/docs/services/` directory._

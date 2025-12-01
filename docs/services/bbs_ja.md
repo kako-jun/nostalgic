@@ -7,6 +7,7 @@
 ## アクション
 
 ### create
+
 新しいBBSメッセージボードを作成。
 
 ```
@@ -14,6 +15,7 @@ GET /api/bbs?action=create&url={URL}&token={TOKEN}&max={MAX_MESSAGES}&perPage={P
 ```
 
 **パラメータ:**
+
 - `url` (必須): BBS対象URL
 - `token` (必須): オーナートークン（8-16文字）
 - `max` (オプション): 最大メッセージ数（1-10000、デフォルト: 1000）
@@ -24,6 +26,7 @@ GET /api/bbs?action=create&url={URL}&token={TOKEN}&max={MAX_MESSAGES}&perPage={P
 - `select3Label`, `select3Values`, `select3Required`: 第3ドロップダウン設定
 
 ### post
+
 BBSに新しいメッセージを投稿。
 
 ```
@@ -31,6 +34,7 @@ GET /api/bbs?action=post&url={URL}&token={TOKEN}&author={AUTHOR}&message={MESSAG
 ```
 
 **パラメータ:**
+
 - `url` (必須): 対象URL
 - `token` (必須): オーナートークン
 - `author` (オプション): 投稿者名（デフォルト: "名無しさん"、最大50文字）
@@ -39,6 +43,7 @@ GET /api/bbs?action=post&url={URL}&token={TOKEN}&author={AUTHOR}&message={MESSAG
 - `select1`, `select2`, `select3` (オプション): ドロップダウン選択
 
 ### update
+
 自分のメッセージを更新（投稿者確認が必要）。
 
 ```
@@ -46,11 +51,13 @@ GET /api/bbs?action=update&url={URL}&messageId={MESSAGE_ID}&message={NEW_MESSAGE
 ```
 
 **パラメータ:**
+
 - `url` (必須): 対象URL
 - `messageId` (必須): 更新するメッセージID
 - `message` (必須): 新しいメッセージ内容
 
 ### remove
+
 メッセージを削除（オーナーまたは投稿者が削除可能）。
 
 ```
@@ -58,11 +65,13 @@ GET /api/bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
 ```
 
 **パラメータ:**
+
 - `url` (必須): 対象URL
 - `token` (オプション): オーナートークン（提供されればオーナーは任意のメッセージを削除可能）
 - `messageId` (必須): 削除するメッセージID
 
 ### clear
+
 すべてのメッセージをクリア（オーナーのみ）。
 
 ```
@@ -70,6 +79,7 @@ GET /api/bbs?action=clear&url={URL}&token={TOKEN}
 ```
 
 ### get
+
 BBSメッセージを取得（公開アクセス）。
 
 ```
@@ -77,50 +87,63 @@ GET /api/bbs?action=get&id={ID}&page={PAGE}
 ```
 
 **パラメータ:**
+
 - `id` (必須): 公開BBS ID
 - `page` (オプション): ページ番号（デフォルト: 1）
 
 ## 使用例
 
 ### 基本的なBBS設置
+
 ```javascript
 // 1. カスタムオプション付きBBS作成
-const response = await fetch(`/api/bbs?action=create&url=https://mysite.com&token=my-secret&max=500&perPage=20&icons=😀,😎,😍,🤔,😢&select1Label=国&select1Values=日本,アメリカ,イギリス&select2Label=トピック&select2Values=一般,技術,ゲーム`)
+const response = await fetch(
+  `/api/bbs?action=create&url=https://mysite.com&token=my-secret&max=500&perPage=20&icons=😀,😎,😍,🤔,😢&select1Label=国&select1Values=日本,アメリカ,イギリス&select2Label=トピック&select2Values=一般,技術,ゲーム`
+);
 
-const data = await response.json()
-console.log('BBS ID:', data.id)
+const data = await response.json();
+console.log("BBS ID:", data.id);
 
 // 2. メッセージ投稿
-await fetch('/api/bbs?action=post&url=https://mysite.com&token=my-secret&author=太郎&message=みなさんこんにちは！&icon=😀&select1=日本&select2=一般')
+await fetch(
+  "/api/bbs?action=post&url=https://mysite.com&token=my-secret&author=太郎&message=みなさんこんにちは！&icon=😀&select1=日本&select2=一般"
+);
 ```
 
 ### メッセージ管理
+
 ```javascript
 // 自分のメッセージ更新（同じIP+UserAgentが必要）
-await fetch('/api/bbs?action=update&url=https://mysite.com&messageId=abc123def456&message=更新されたメッセージ！')
+await fetch(
+  "/api/bbs?action=update&url=https://mysite.com&messageId=abc123def456&message=更新されたメッセージ！"
+);
 
 // メッセージ削除（オーナーまたは投稿者）
-await fetch('/api/bbs?action=remove&url=https://mysite.com&token=my-secret&messageId=abc123def456')
+await fetch("/api/bbs?action=remove&url=https://mysite.com&token=my-secret&messageId=abc123def456");
 
 // 全メッセージクリア（オーナーのみ）
-await fetch('/api/bbs?action=clear&url=https://mysite.com&token=my-secret')
+await fetch("/api/bbs?action=clear&url=https://mysite.com&token=my-secret");
 ```
 
 ## カスタマイズオプション
 
 ### アイコン選択
+
 ```
 &icons=😀,😎,😍,🤔,😢,😊,😭,😡,😱,🤗
 ```
+
 - 最大20個のアイコン
 - ユーザーは投稿時に選択可能
 
 ### ドロップダウン選択
+
 ```
 &select1Label=国&select1Values=日本,アメリカ,イギリス,フランス,ドイツ&select1Required=true
 &select2Label=カテゴリ&select2Values=一般,技術,ゲーム,音楽
 &select3Label=優先度&select3Values=高,中,低
 ```
+
 - 最大3つの設定可能ドロップダウン
 - それぞれ最大50個のオプション
 - 必須選択として指定可能
@@ -137,6 +160,7 @@ await fetch('/api/bbs?action=clear&url=https://mysite.com&token=my-secret')
 ## データ構造
 
 メッセージはRedis ListにJSON形式で保存：
+
 - 最新メッセージが先頭（LPUSH）
 - 最大メッセージ数を超えると自動トリム
 - IP+UserAgentハッシュによる投稿者確認
@@ -154,6 +178,7 @@ await fetch('/api/bbs?action=clear&url=https://mysite.com&token=my-secret')
 ```
 
 **属性:**
+
 - `id`: 公開BBS ID
 - `theme`: 表示スタイル（light, dark, retro, kawaii, mom, final）
 - `page`: 表示ページ番号（デフォルト: 最終ページで最新メッセージ表示）
@@ -161,6 +186,7 @@ await fetch('/api/bbs?action=clear&url=https://mysite.com&token=my-secret')
 - `api-base`: カスタムAPIベースURL（オプション）
 
 **表示特徴:**
+
 - メッセージ数に関わらず400pxの固定高さ
 - ページネーション形式: "2/3"（現在/全ページ）
 - 初期表示時に最新メッセージを自動表示
@@ -171,20 +197,20 @@ TypeScriptプロジェクトでWeb Componentsを使用する場合、プロジ�
 
 ```typescript
 // types.d.ts
-import 'react'
+import "react";
 
-declare module 'react' {
+declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+      "nostalgic-bbs": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         page?: string;
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
-        format?: 'interactive' | 'text';
-        'show-header'?: string;
+        theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
+        format?: "interactive" | "text";
+        "show-header"?: string;
         url?: string;
         token?: string;
-        'api-base'?: string;
+        "api-base"?: string;
       };
     }
   }
@@ -194,6 +220,7 @@ declare module 'react' {
 これにより、React/Next.jsプロジェクトでWeb Componentsを使用してもTypeScriptビルドエラーが発生しません。
 
 ### updateSettings
+
 BBS設定を更新（オーナーのみ）。
 
 ```
@@ -201,6 +228,7 @@ GET /api/bbs?action=updateSettings&url={URL}&token={TOKEN}&title={TITLE}&message
 ```
 
 **パラメータ:**
+
 - `url` (必須): 対象URL
 - `token` (必須): オーナートークン
 - `title` (オプション): BBSタイトル
@@ -209,6 +237,7 @@ GET /api/bbs?action=updateSettings&url={URL}&token={TOKEN}&title={TITLE}&message
 - `webhookUrl` (オプション): 通知用WebhookURL
 
 **レスポンス:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",

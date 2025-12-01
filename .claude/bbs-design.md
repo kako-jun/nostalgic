@@ -3,6 +3,7 @@
 ## 機能要件
 
 ### 1. 基本機能
+
 - [x] BBSサービス作成（オーナートークン）
 - [x] メッセージ投稿（IDのみ、認証不要）
 - [x] メッセージ編集（投稿者のみ、userHash使用）
@@ -12,19 +13,23 @@
 - [x] カスタムドロップダウン（3つまで）
 
 ### 2. 権限管理
+
 #### オーナー権限（URLトークン認証）
+
 - [x] BBSサービス作成・削除
 - [x] 設定変更（タイトル、最大メッセージ数等）
 - [x] 全メッセージの編雈・削除（editMessage/deleteMessage）
 - [x] BBS全体クリア
 
 #### 投稿者権限（userHash認証）
+
 - [x] 自分の投稿の編雈・削除（editMessageById/deleteMessageById）
 - userHashはサーバーサイドで生成（IP+UserAgentハッシュ）
 
 ### 3. API設計
 
 #### 完成済みAPI
+
 - `GET /api/bbs?action=create` - BBS作成
 - `GET /api/bbs?action=post&id=xxx` - メッセージ投稿
 - `GET /api/bbs?action=get&id=xxx&page=1` - メッセージ一覧取得
@@ -40,6 +45,7 @@
 ### 4. Web Component機能
 
 #### 実装状態 ✅
+
 - [x] BBS表示（メッセージ一覧、ページネーション）
 - [x] 投稿フォーム（名前、メッセージ、アイコン選択）
 - [x] カスタムドロップダウン機能
@@ -49,6 +55,7 @@
 ### 5. 認証システム
 
 #### 実装済み
+
 - [x] userHashによる投稿者認証
 - [x] サーバーサイドでのuserHash生成（IP+UserAgent）
 - [x] 投稿時のuserHash保存
@@ -57,9 +64,10 @@
 ## 実装状況チェックリスト
 
 ### サーバーサイド
+
 - [x] BBSServiceのDDD実装
 - [x] postMessage メソッド
-- [x] updateMessage メソッド  
+- [x] updateMessage メソッド
 - [x] removeMessage メソッド
 - [x] getMessages メソッド
 - [x] clearMessages メソッド
@@ -68,6 +76,7 @@
 - [x] API route実装（`/api/bbs/route.ts`）
 
 ### クライアントサイド
+
 - [x] デモページ（`/bbs/page.tsx`）
 - [ ] Web Component（`/components/bbs.js`）
 

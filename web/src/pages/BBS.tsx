@@ -1,5 +1,3 @@
-
-
 import { useState, useEffect } from "react";
 import NostalgicLayout from "../components/NostalgicLayout";
 import ResponseDisplay from "../components/ResponseDisplay";
@@ -8,8 +6,8 @@ import ApiUrlDisplay, { GreenParam } from "../components/ApiUrlDisplay";
 export default function BBSPage() {
   const [currentPage, setCurrentPage] = useState("features");
   const [publicId, setPublicId] = useState("");
-  const [responseType, setResponseType] = useState<'json' | 'text' | 'svg'>('json');
-  
+  const [responseType, setResponseType] = useState<"json" | "text" | "svg">("json");
+
   // 全フォーム共通のstate
   const [sharedUrl, setSharedUrl] = useState("");
   const [sharedToken, setSharedToken] = useState("");
@@ -19,7 +17,7 @@ export default function BBSPage() {
   const [title, setTitle] = useState("");
   const [maxMessages, setMaxMessages] = useState("");
   const [messagesPerPage, setMessagesPerPage] = useState("");
-  
+
   // 3種類のセレクト設定
   const [standardSelectLabel, setStandardSelectLabel] = useState("");
   const [standardSelectOptions, setStandardSelectOptions] = useState("");
@@ -27,14 +25,14 @@ export default function BBSPage() {
   const [incrementalSelectOptions, setIncrementalSelectOptions] = useState("");
   const [emoteSelectLabel, setEmoteSelectLabel] = useState("");
   const [emoteSelectOptions, setEmoteSelectOptions] = useState("");
-  
+
   // 投稿フォーム用
   const [postAuthor, setPostAuthor] = useState("");
   const [postMessage, setPostMessage] = useState("");
   const [standardValue, setStandardValue] = useState("");
   const [incrementalValue, setIncrementalValue] = useState("");
   const [emoteValue, setEmoteValue] = useState("");
-  
+
   // 編集・削除フォーム用
   const [messageId, setMessageId] = useState("");
   const [editAuthor, setEditAuthor] = useState("");
@@ -53,7 +51,7 @@ export default function BBSPage() {
   const [clearResponse, setClearResponse] = useState("");
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
-  
+
   useEffect(() => {
     const hash = window.location.hash.slice(1);
     if (hash) {
@@ -61,7 +59,7 @@ export default function BBSPage() {
     } else {
       setCurrentPage("features");
     }
-    
+
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1);
       if (hash) {
@@ -70,9 +68,9 @@ export default function BBSPage() {
         setCurrentPage("features");
       }
     };
-    
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -83,7 +81,7 @@ export default function BBSPage() {
     if (maxMessages) apiUrl += `&max=${maxMessages}`;
     if (messagesPerPage) apiUrl += `&perPage=${messagesPerPage}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
-    
+
     // 3種類のセレクト設定を追加
     if (standardSelectLabel && standardSelectOptions) {
       apiUrl += `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}`;
@@ -99,7 +97,7 @@ export default function BBSPage() {
     }
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
+      const res = await fetch(apiUrl, { method: "GET" });
       const data = await res.json();
       const responseText = JSON.stringify(data, null, 2);
 
@@ -108,10 +106,10 @@ export default function BBSPage() {
       }
 
       setCreateResponse(responseText);
-      setResponseType('json');
+      setResponseType("json");
     } catch (error) {
       setCreateResponse(`エラー: ${error}`);
-      setResponseType('json');
+      setResponseType("json");
     }
   };
 
@@ -120,22 +118,22 @@ export default function BBSPage() {
     if (!sharedUrl || !sharedToken || !postAuthor || !postMessage) return;
 
     let apiUrl = `/api/bbs?action=post&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&author=${encodeURIComponent(postAuthor)}&message=${encodeURIComponent(postMessage)}`;
-    
+
     // セレクト値を追加
     if (standardValue) apiUrl += `&standardValue=${encodeURIComponent(standardValue)}`;
     if (incrementalValue) apiUrl += `&incrementalValue=${encodeURIComponent(incrementalValue)}`;
-    if (emoteValue) apiUrl += `&emoteValue=${encodeURIComponent(emoteValue)}`;;
+    if (emoteValue) apiUrl += `&emoteValue=${encodeURIComponent(emoteValue)}`;
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
+      const res = await fetch(apiUrl, { method: "GET" });
       const data = await res.json();
       const responseText = JSON.stringify(data, null, 2);
 
       setPostResponse(responseText);
-      setResponseType('json');
+      setResponseType("json");
     } catch (error) {
       setPostResponse(`エラー: ${error}`);
-      setResponseType('json');
+      setResponseType("json");
     }
   };
 
@@ -146,15 +144,15 @@ export default function BBSPage() {
     const apiUrl = `/api/bbs?action=get&id=${encodeURIComponent(publicId)}`;
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
+      const res = await fetch(apiUrl, { method: "GET" });
       const data = await res.json();
       const responseText = JSON.stringify(data, null, 2);
 
       setGetResponse(responseText);
-      setResponseType('json');
+      setResponseType("json");
     } catch (error) {
       setGetResponse(`エラー: ${error}`);
-      setResponseType('json');
+      setResponseType("json");
     }
   };
 
@@ -163,22 +161,23 @@ export default function BBSPage() {
     if (!sharedUrl || !sharedToken || !messageId || !editAuthor || !editMessage) return;
 
     let apiUrl = `/api/bbs?action=editMessage&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}&message=${encodeURIComponent(editMessage)}`;
-    
+
     // セレクト値を追加
     if (editStandardValue) apiUrl += `&standardValue=${encodeURIComponent(editStandardValue)}`;
-    if (editIncrementalValue) apiUrl += `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`;
-    if (editEmoteValue) apiUrl += `&emoteValue=${encodeURIComponent(editEmoteValue)}`;;
+    if (editIncrementalValue)
+      apiUrl += `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`;
+    if (editEmoteValue) apiUrl += `&emoteValue=${encodeURIComponent(editEmoteValue)}`;
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
+      const res = await fetch(apiUrl, { method: "GET" });
       const data = await res.json();
       const responseText = JSON.stringify(data, null, 2);
 
       setUpdateResponse(responseText);
-      setResponseType('json');
+      setResponseType("json");
     } catch (error) {
       setUpdateResponse(`エラー: ${error}`);
-      setResponseType('json');
+      setResponseType("json");
     }
   };
 
@@ -189,15 +188,15 @@ export default function BBSPage() {
     const apiUrl = `/api/bbs?action=deleteMessage&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}`;
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
+      const res = await fetch(apiUrl, { method: "GET" });
       const data = await res.json();
       const responseText = JSON.stringify(data, null, 2);
 
       setRemoveResponse(responseText);
-      setResponseType('json');
+      setResponseType("json");
     } catch (error) {
       setRemoveResponse(`エラー: ${error}`);
-      setResponseType('json');
+      setResponseType("json");
     }
   };
 
@@ -208,15 +207,15 @@ export default function BBSPage() {
     const apiUrl = `/api/bbs?action=clear&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
+      const res = await fetch(apiUrl, { method: "GET" });
       const data = await res.json();
       const responseText = JSON.stringify(data, null, 2);
 
       setClearResponse(responseText);
-      setResponseType('json');
+      setResponseType("json");
     } catch (error) {
       setClearResponse(`エラー: ${error}`);
-      setResponseType('json');
+      setResponseType("json");
     }
   };
 
@@ -227,15 +226,15 @@ export default function BBSPage() {
     const apiUrl = `/api/bbs?action=delete&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
+      const res = await fetch(apiUrl, { method: "GET" });
       const data = await res.json();
       const responseText = JSON.stringify(data, null, 2);
 
       setDeleteResponse(responseText);
-      setResponseType('json');
+      setResponseType("json");
     } catch (error) {
       setDeleteResponse(`エラー: ${error}`);
-      setResponseType('json');
+      setResponseType("json");
     }
   };
 
@@ -259,39 +258,41 @@ export default function BBSPage() {
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
+      const res = await fetch(apiUrl, { method: "GET" });
       const data = await res.json();
       const responseText = JSON.stringify(data, null, 2);
 
       setUpdateSettingsResponse(responseText);
-      setResponseType('json');
+      setResponseType("json");
     } catch (error) {
       setUpdateSettingsResponse(`エラー: ${error}`);
-      setResponseType('json');
+      setResponseType("json");
     }
   };
 
   const handleEditMessageById = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sharedUrl || !sharedToken || !messageId || !editAuthor || !editMessage || !editToken) return;
+    if (!sharedUrl || !sharedToken || !messageId || !editAuthor || !editMessage || !editToken)
+      return;
 
     let apiUrl = `/api/bbs?action=editMessageById&id=${encodeURIComponent(publicId)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}&message=${encodeURIComponent(editMessage)}&editToken=${encodeURIComponent(editToken)}`;
-    
+
     // セレクト値を追加
     if (editStandardValue) apiUrl += `&standardValue=${encodeURIComponent(editStandardValue)}`;
-    if (editIncrementalValue) apiUrl += `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`;
-    if (editEmoteValue) apiUrl += `&emoteValue=${encodeURIComponent(editEmoteValue)}`;;
+    if (editIncrementalValue)
+      apiUrl += `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`;
+    if (editEmoteValue) apiUrl += `&emoteValue=${encodeURIComponent(editEmoteValue)}`;
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
+      const res = await fetch(apiUrl, { method: "GET" });
       const data = await res.json();
       const responseText = JSON.stringify(data, null, 2);
 
       setUpdateResponse(responseText);
-      setResponseType('json');
+      setResponseType("json");
     } catch (error) {
       setUpdateResponse(`エラー: ${error}`);
-      setResponseType('json');
+      setResponseType("json");
     }
   };
 
@@ -302,15 +303,15 @@ export default function BBSPage() {
     const apiUrl = `/api/bbs?action=deleteMessageById&id=${encodeURIComponent(publicId)}&messageId=${messageId}&editToken=${encodeURIComponent(editToken)}`;
 
     try {
-      const res = await fetch(apiUrl, { method: 'GET' });
+      const res = await fetch(apiUrl, { method: "GET" });
       const data = await res.json();
       const responseText = JSON.stringify(data, null, 2);
 
       setRemoveResponse(responseText);
-      setResponseType('json');
+      setResponseType("json");
     } catch (error) {
       setRemoveResponse(`エラー: ${error}`);
-      setResponseType('json');
+      setResponseType("json");
     }
   };
 
@@ -332,32 +333,69 @@ export default function BBSPage() {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${maxMessages ? `&max=${maxMessages}` : ""}${messagesPerPage ? `&perPage=${messagesPerPage}` : ""}${standardSelectLabel && standardSelectOptions ? `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}` : ""}${incrementalSelectLabel && incrementalSelectOptions ? `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}` : ""}${emoteSelectLabel && emoteSelectOptions ? `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}>
-                https://nostalgic.llll-ll.com/api/bbs?action=create&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/bbs?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${maxMessages ? `&max=${maxMessages}` : ""}${messagesPerPage ? `&perPage=${messagesPerPage}` : ""}${standardSelectLabel && standardSelectOptions ? `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}` : ""}${incrementalSelectLabel && incrementalSelectOptions ? `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}` : ""}${emoteSelectLabel && emoteSelectOptions ? `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=create&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
                 &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
-                {title && <>&title=<GreenParam>{title}</GreenParam></>}
-                {maxMessages && <>&max=<GreenParam>{maxMessages}</GreenParam></>}
-                {messagesPerPage && <>&perPage=<GreenParam>{messagesPerPage}</GreenParam></>}
-                {standardSelectLabel && standardSelectOptions && <>&standardSelectLabel=<GreenParam>{standardSelectLabel}</GreenParam>&standardSelectOptions=<GreenParam>{standardSelectOptions}</GreenParam></>}
-                {incrementalSelectLabel && incrementalSelectOptions && <>&incrementalSelectLabel=<GreenParam>{incrementalSelectLabel}</GreenParam>&incrementalSelectOptions=<GreenParam>{incrementalSelectOptions}</GreenParam></>}
-                {emoteSelectLabel && emoteSelectOptions && <>&emoteSelectLabel=<GreenParam>{emoteSelectLabel}</GreenParam>&emoteSelectOptions=<GreenParam>{emoteSelectOptions}</GreenParam></>}
-                {webhookUrl && <>&webhookUrl=<GreenParam>{webhookUrl}</GreenParam></>}
+                {title && (
+                  <>
+                    &title=<GreenParam>{title}</GreenParam>
+                  </>
+                )}
+                {maxMessages && (
+                  <>
+                    &max=<GreenParam>{maxMessages}</GreenParam>
+                  </>
+                )}
+                {messagesPerPage && (
+                  <>
+                    &perPage=<GreenParam>{messagesPerPage}</GreenParam>
+                  </>
+                )}
+                {standardSelectLabel && standardSelectOptions && (
+                  <>
+                    &standardSelectLabel=<GreenParam>{standardSelectLabel}</GreenParam>
+                    &standardSelectOptions=<GreenParam>{standardSelectOptions}</GreenParam>
+                  </>
+                )}
+                {incrementalSelectLabel && incrementalSelectOptions && (
+                  <>
+                    &incrementalSelectLabel=<GreenParam>{incrementalSelectLabel}</GreenParam>
+                    &incrementalSelectOptions=<GreenParam>{incrementalSelectOptions}</GreenParam>
+                  </>
+                )}
+                {emoteSelectLabel && emoteSelectOptions && (
+                  <>
+                    &emoteSelectLabel=<GreenParam>{emoteSelectLabel}</GreenParam>
+                    &emoteSelectOptions=<GreenParam>{emoteSelectOptions}</GreenParam>
+                  </>
+                )}
+                {webhookUrl && (
+                  <>
+                    &webhookUrl=<GreenParam>{webhookUrl}</GreenParam>
+                  </>
+                )}
               </ApiUrlDisplay>
               <p>
                 ※サイトURLには、BBSを設置する予定のサイトを指定してください。「https://」から始まっている必要があります。
                 <br />
                 ※オーナートークンに、
-                <span style={{ color: "#ff0000" }}>ほかのサイトでのパスワードを使い回さないでください</span>
+                <span style={{ color: "#ff0000" }}>
+                  ほかのサイトでのパスワードを使い回さないでください
+                </span>
                 。（8-16文字）
               </p>
-              <p>上記URLにアクセスすると、JSONで公開IDが返されます。この公開IDをSTEP 2で使用してください。</p>
-              
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
-              <p style={{ marginTop: "20px" }}>
-                または、以下のフォームで簡単に作成できます。
+              <p>
+                上記URLにアクセスすると、JSONで公開IDが返されます。この公開IDをSTEP
+                2で使用してください。
               </p>
-              
+
+              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+
+              <p style={{ marginTop: "20px" }}>または、以下のフォームで簡単に作成できます。</p>
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -371,7 +409,7 @@ export default function BBSPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -389,7 +427,7 @@ export default function BBSPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -407,7 +445,7 @@ export default function BBSPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -426,7 +464,7 @@ export default function BBSPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -445,7 +483,7 @@ export default function BBSPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -466,7 +504,7 @@ export default function BBSPage() {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -483,7 +521,7 @@ export default function BBSPage() {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -504,7 +542,7 @@ export default function BBSPage() {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -521,7 +559,7 @@ export default function BBSPage() {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -542,7 +580,7 @@ export default function BBSPage() {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -559,7 +597,7 @@ export default function BBSPage() {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -576,7 +614,7 @@ export default function BBSPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -592,7 +630,7 @@ export default function BBSPage() {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleCreate}
                   >
@@ -601,7 +639,11 @@ export default function BBSPage() {
                 </p>
               </form>
 
-              <ResponseDisplay response={createResponse} responseType={responseType} show={!!createResponse} />
+              <ResponseDisplay
+                response={createResponse}
+                responseType={responseType}
+                show={!!createResponse}
+              />
 
               {publicId && (
                 <div
@@ -610,12 +652,22 @@ export default function BBSPage() {
                     border: "2px solid #ff0000",
                     padding: "10px",
                     marginTop: "10px",
-                    fontSize: "14px"
+                    fontSize: "14px",
                   }}
                 >
                   <b style={{ color: "#ff0000" }}>✨ 作成成功！</b>
                   <br />
-                  あなたの公開ID：<span style={{ color: "#008000", fontWeight: "bold", fontSize: "16px", fontFamily: "monospace" }}>{publicId}</span>
+                  あなたの公開ID：
+                  <span
+                    style={{
+                      color: "#008000",
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      fontFamily: "monospace",
+                    }}
+                  >
+                    {publicId}
+                  </span>
                   <br />
                   <small>※この公開IDをSTEP 2で使用してください</small>
                 </div>
@@ -629,13 +681,16 @@ export default function BBSPage() {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=get&id=${encodeURIComponent(publicId || "公開ID")}`}>
-                https://nostalgic.llll-ll.com/api/bbs?action=get&id=<GreenParam>{publicId || "公開ID"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/bbs?action=get&id=${encodeURIComponent(publicId || "公開ID")}`}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=get&id=
+                <GreenParam>{publicId || "公開ID"}</GreenParam>
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで取得できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>公開ID：</b>
@@ -649,7 +704,7 @@ export default function BBSPage() {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "monospace",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -665,7 +720,7 @@ export default function BBSPage() {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleGet}
                   >
@@ -674,7 +729,11 @@ export default function BBSPage() {
                 </p>
               </form>
 
-              <ResponseDisplay response={getResponse} responseType={responseType} show={!!getResponse} />
+              <ResponseDisplay
+                response={getResponse}
+                responseType={responseType}
+                show={!!getResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -684,7 +743,15 @@ export default function BBSPage() {
                 </span>
               </p>
               <p>あなたのサイトのHTMLに以下のコードを追加してください。</p>
-              <pre style={{ backgroundColor: "#f0f0f0", padding: "10px", overflow: "auto", fontSize: "14px", margin: "10px 0" }}>
+              <pre
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  padding: "10px",
+                  overflow: "auto",
+                  fontSize: "14px",
+                  margin: "10px 0",
+                }}
+              >
                 {`<script src="https://nostalgic.llll-ll.com/components/bbs.js"></script>
 <nostalgic-bbs id="`}
                 <span style={{ color: "#008000" }}>{publicId || "公開ID"}</span>
@@ -692,7 +759,7 @@ export default function BBSPage() {
                 <span style={{ color: "#008000" }}>dark</span>
                 {`"></nostalgic-bbs>`}
               </pre>
-              
+
               <div className="nostalgic-section">
                 <p>
                   <span className="nostalgic-section-title">
@@ -702,8 +769,10 @@ export default function BBSPage() {
                 <p>
                   • <span style={{ color: "#008000" }}>light</span> - ライト（白系モノクロ）
                   <br />• <span style={{ color: "#008000" }}>dark</span> - ダーク（黒系モノクロ）
-                  <br />• <span style={{ color: "#008000" }}>retro</span> - レトロ（古いコンピュータ画面風）
-                  <br />• <span style={{ color: "#008000" }}>kawaii</span> - かわいい（ファンシー系）
+                  <br />• <span style={{ color: "#008000" }}>retro</span> -
+                  レトロ（古いコンピュータ画面風）
+                  <br />• <span style={{ color: "#008000" }}>kawaii</span> -
+                  かわいい（ファンシー系）
                   <br />• <span style={{ color: "#008000" }}>mom</span> - Mother味（緑チェック模様）
                   <br />• <span style={{ color: "#008000" }}>final</span> - FF味（青系）
                 </p>
@@ -715,9 +784,20 @@ export default function BBSPage() {
                     <b>◆TypeScript使用時の設定◆</b>
                   </span>
                 </p>
-                <p>TypeScriptプロジェクトでWeb Componentsを使用する場合、プロジェクトルートに <code>types.d.ts</code> ファイルを作成してください。</p>
-                <pre style={{ backgroundColor: "#f0f0f0", padding: "10px", overflow: "auto", fontSize: "12px", margin: "10px 0" }}>
-{`// types.d.ts
+                <p>
+                  TypeScriptプロジェクトでWeb Componentsを使用する場合、プロジェクトルートに{" "}
+                  <code>types.d.ts</code> ファイルを作成してください。
+                </p>
+                <pre
+                  style={{
+                    backgroundColor: "#f0f0f0",
+                    padding: "10px",
+                    overflow: "auto",
+                    fontSize: "12px",
+                    margin: "10px 0",
+                  }}
+                >
+                  {`// types.d.ts
 import 'react'
 
 declare module 'react' {
@@ -734,7 +814,8 @@ declare module 'react' {
 }`}
                 </pre>
                 <p style={{ fontSize: "14px", color: "#666" }}>
-                  ※この設定により、TypeScriptでWeb Componentsを使用してもビルドエラーが発生しません。
+                  ※この設定により、TypeScriptでWeb
+                  Componentsを使用してもビルドエラーが発生しません。
                 </p>
               </div>
 
@@ -746,22 +827,38 @@ declare module 'react' {
                     </span>
                   </p>
                   <div style={{ textAlign: "center", margin: "20px 0" }}>
-                    <div style={{ backgroundColor: "#f0f0f0", border: "1px solid #ccc", padding: "15px", borderRadius: "4px" }}>
-                      <p style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "15px" }}>HTTPリクエストデモ</p>
+                    <div
+                      style={{
+                        backgroundColor: "#f0f0f0",
+                        border: "1px solid #ccc",
+                        padding: "15px",
+                        borderRadius: "4px",
+                      }}
+                    >
+                      <p style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "15px" }}>
+                        HTTPリクエストデモ
+                      </p>
                       <div style={{ marginBottom: "15px" }}>
-                        <p style={{ fontSize: "14px", marginBottom: "10px" }}>BBSメッセージを取得：</p>
+                        <p style={{ fontSize: "14px", marginBottom: "10px" }}>
+                          BBSメッセージを取得：
+                        </p>
                         <button
                           onClick={async () => {
                             try {
-                              const response = await fetch(`/api/bbs?action=get&id=${publicId}&page=1`)
-                              const data = await response.json()
-                              const messages = data.data?.messages || []
-                              const messageText = messages.length > 0 
-                                ? messages.map((msg: any) => `${msg.author}: ${msg.message}`).join('\n')
-                                : 'まだメッセージがありません'
-                              alert(`BBS メッセージ:\n${messageText}`)
+                              const response = await fetch(
+                                `/api/bbs?action=get&id=${publicId}&page=1`
+                              );
+                              const data = await response.json();
+                              const messages = data.data?.messages || [];
+                              const messageText =
+                                messages.length > 0
+                                  ? messages
+                                      .map((msg: any) => `${msg.author}: ${msg.message}`)
+                                      .join("\n")
+                                  : "まだメッセージがありません";
+                              alert(`BBS メッセージ:\n${messageText}`);
                             } catch (error) {
-                              alert('エラーが発生しました')
+                              alert("エラーが発生しました");
                             }
                           }}
                           style={{
@@ -772,23 +869,27 @@ declare module 'react' {
                             borderRadius: "3px",
                             cursor: "pointer",
                             fontSize: "14px",
-                            marginRight: "10px"
+                            marginRight: "10px",
                           }}
                         >
                           メッセージ取得
                         </button>
                         <button
                           onClick={async () => {
-                            const author = prompt('お名前を入力してください:') || '匿名'
-                            const message = prompt('メッセージを入力してください:')
-                            if (!message) return
-                            
+                            const author = prompt("お名前を入力してください:") || "匿名";
+                            const message = prompt("メッセージを入力してください:");
+                            if (!message) return;
+
                             try {
-                              const response = await fetch(`/api/bbs?action=post&id=${publicId}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}`)
-                              const data = await response.json()
-                              alert(data.success ? 'メッセージを投稿しました！' : 'エラーが発生しました')
+                              const response = await fetch(
+                                `/api/bbs?action=post&id=${publicId}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}`
+                              );
+                              const data = await response.json();
+                              alert(
+                                data.success ? "メッセージを投稿しました！" : "エラーが発生しました"
+                              );
                             } catch (error) {
-                              alert('エラーが発生しました')
+                              alert("エラーが発生しました");
                             }
                           }}
                           style={{
@@ -798,14 +899,15 @@ declare module 'react' {
                             border: "1px solid #1976D2",
                             borderRadius: "3px",
                             cursor: "pointer",
-                            fontSize: "14px"
+                            fontSize: "14px",
                           }}
                         >
                           テスト投稿
                         </button>
                       </div>
                       <p style={{ fontSize: "12px", color: "#666" }}>
-                        ※この例では、Web ComponentsではなくHTTPリクエストを直接送信してBBSと連携しています
+                        ※この例では、Web
+                        ComponentsではなくHTTPリクエストを直接送信してBBSと連携しています
                       </p>
                     </div>
                   </div>
@@ -820,42 +922,72 @@ declare module 'react' {
                     </span>
                   </p>
                   <div style={{ textAlign: "center", margin: "20px 0" }}>
-                    <div style={{ backgroundColor: "#fffacd", border: "2px solid #ffa500", padding: "20px", borderRadius: "4px" }}>
-                      <p style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "15px" }}>◆デモ用BBS◆</p>
-                      <p style={{ marginBottom: "15px" }}>このデモページのBBS（実際に動作します）：</p>
-                      
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px", justifyItems: "center" }}>
+                    <div
+                      style={{
+                        backgroundColor: "#fffacd",
+                        border: "2px solid #ffa500",
+                        padding: "20px",
+                        borderRadius: "4px",
+                      }}
+                    >
+                      <p style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "15px" }}>
+                        ◆デモ用BBS◆
+                      </p>
+                      <p style={{ marginBottom: "15px" }}>
+                        このデモページのBBS（実際に動作します）：
+                      </p>
+
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                          gap: "20px",
+                          justifyItems: "center",
+                        }}
+                      >
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Light</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>
+                            Light
+                          </p>
                           <nostalgic-bbs id={publicId} theme="light" />
                         </div>
-                        
+
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Dark</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>
+                            Dark
+                          </p>
                           <nostalgic-bbs id={publicId} theme="dark" />
                         </div>
 
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Retro</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>
+                            Retro
+                          </p>
                           <nostalgic-bbs id={publicId} theme="retro" />
                         </div>
-                        
+
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Kawaii</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>
+                            Kawaii
+                          </p>
                           <nostalgic-bbs id={publicId} theme="kawaii" />
                         </div>
 
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>Mother</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>
+                            Mother
+                          </p>
                           <nostalgic-bbs id={publicId} theme="mom" />
                         </div>
 
                         <div>
-                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>FF</p>
+                          <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>
+                            FF
+                          </p>
                           <nostalgic-bbs id={publicId} theme="final" />
                         </div>
                       </div>
-                      
+
                       <p style={{ fontSize: "12px", color: "#666", marginTop: "15px" }}>
                         ※投稿フォームから実際にメッセージを投稿してください！
                       </p>
@@ -872,24 +1004,67 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${messagesPerPage ? `&messagesPerPage=${messagesPerPage}` : ""}${maxMessages ? `&max=${maxMessages}` : ""}${standardSelectLabel ? `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}` : ""}${standardSelectOptions ? `&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}` : ""}${incrementalSelectLabel ? `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}` : ""}${incrementalSelectOptions ? `&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}` : ""}${emoteSelectLabel ? `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}` : ""}${emoteSelectOptions ? `&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}>
-                https://nostalgic.llll-ll.com/api/bbs?action=create&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/bbs?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${messagesPerPage ? `&messagesPerPage=${messagesPerPage}` : ""}${maxMessages ? `&max=${maxMessages}` : ""}${standardSelectLabel ? `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}` : ""}${standardSelectOptions ? `&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}` : ""}${incrementalSelectLabel ? `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}` : ""}${incrementalSelectOptions ? `&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}` : ""}${emoteSelectLabel ? `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}` : ""}${emoteSelectOptions ? `&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=create&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
                 &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
-                {title && <>&title=<GreenParam>{title}</GreenParam></>}
-                {messagesPerPage && <>&messagesPerPage=<GreenParam>{messagesPerPage}</GreenParam></>}
-                {maxMessages && <>&max=<GreenParam>{maxMessages}</GreenParam></>}
-                {standardSelectLabel && <>&standardSelectLabel=<GreenParam>{standardSelectLabel}</GreenParam></>}
-                {standardSelectOptions && <>&standardSelectOptions=<GreenParam>{standardSelectOptions}</GreenParam></>}
-                {incrementalSelectLabel && <>&incrementalSelectLabel=<GreenParam>{incrementalSelectLabel}</GreenParam></>}
-                {incrementalSelectOptions && <>&incrementalSelectOptions=<GreenParam>{incrementalSelectOptions}</GreenParam></>}
-                {emoteSelectLabel && <>&emoteSelectLabel=<GreenParam>{emoteSelectLabel}</GreenParam></>}
-                {emoteSelectOptions && <>&emoteSelectOptions=<GreenParam>{emoteSelectOptions}</GreenParam></>}
-                {webhookUrl && <>&webhookUrl=<GreenParam>{webhookUrl}</GreenParam></>}
+                {title && (
+                  <>
+                    &title=<GreenParam>{title}</GreenParam>
+                  </>
+                )}
+                {messagesPerPage && (
+                  <>
+                    &messagesPerPage=<GreenParam>{messagesPerPage}</GreenParam>
+                  </>
+                )}
+                {maxMessages && (
+                  <>
+                    &max=<GreenParam>{maxMessages}</GreenParam>
+                  </>
+                )}
+                {standardSelectLabel && (
+                  <>
+                    &standardSelectLabel=<GreenParam>{standardSelectLabel}</GreenParam>
+                  </>
+                )}
+                {standardSelectOptions && (
+                  <>
+                    &standardSelectOptions=<GreenParam>{standardSelectOptions}</GreenParam>
+                  </>
+                )}
+                {incrementalSelectLabel && (
+                  <>
+                    &incrementalSelectLabel=<GreenParam>{incrementalSelectLabel}</GreenParam>
+                  </>
+                )}
+                {incrementalSelectOptions && (
+                  <>
+                    &incrementalSelectOptions=<GreenParam>{incrementalSelectOptions}</GreenParam>
+                  </>
+                )}
+                {emoteSelectLabel && (
+                  <>
+                    &emoteSelectLabel=<GreenParam>{emoteSelectLabel}</GreenParam>
+                  </>
+                )}
+                {emoteSelectOptions && (
+                  <>
+                    &emoteSelectOptions=<GreenParam>{emoteSelectOptions}</GreenParam>
+                  </>
+                )}
+                {webhookUrl && (
+                  <>
+                    &webhookUrl=<GreenParam>{webhookUrl}</GreenParam>
+                  </>
+                )}
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで確認できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -903,7 +1078,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -921,12 +1096,12 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -938,7 +1113,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleCreate}
                   >
@@ -955,17 +1130,34 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=post&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&author=${encodeURIComponent(postAuthor || "投稿者名")}&message=${encodeURIComponent(postMessage || "メッセージ")}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ""}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ""}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ""}`}>
-                https://nostalgic.llll-ll.com/api/bbs?action=post&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&author=<GreenParam>{postAuthor || "投稿者名"}</GreenParam>&message=<GreenParam>{postMessage || "メッセージ"}</GreenParam>
-                {standardValue && <>&standardValue=<GreenParam>{standardValue}</GreenParam></>}
-                {incrementalValue && <>&incrementalValue=<GreenParam>{incrementalValue}</GreenParam></>}
-                {emoteValue && <>&emoteValue=<GreenParam>{emoteValue}</GreenParam></>}
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/bbs?action=post&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&author=${encodeURIComponent(postAuthor || "投稿者名")}&message=${encodeURIComponent(postMessage || "メッセージ")}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ""}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ""}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ""}`}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=post&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&author=
+                <GreenParam>{postAuthor || "投稿者名"}</GreenParam>&message=
+                <GreenParam>{postMessage || "メッセージ"}</GreenParam>
+                {standardValue && (
+                  <>
+                    &standardValue=<GreenParam>{standardValue}</GreenParam>
+                  </>
+                )}
+                {incrementalValue && (
+                  <>
+                    &incrementalValue=<GreenParam>{incrementalValue}</GreenParam>
+                  </>
+                )}
+                {emoteValue && (
+                  <>
+                    &emoteValue=<GreenParam>{emoteValue}</GreenParam>
+                  </>
+                )}
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで投稿できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -979,7 +1171,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -997,7 +1189,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1015,7 +1207,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1035,7 +1227,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1054,7 +1246,7 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -1072,7 +1264,7 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -1090,11 +1282,11 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -1106,7 +1298,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handlePost}
                   >
@@ -1115,7 +1307,11 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={postResponse} responseType={responseType} show={!!postResponse} />
+              <ResponseDisplay
+                response={postResponse}
+                responseType={responseType}
+                show={!!postResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -1125,16 +1321,35 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=editMessageById&id=${encodeURIComponent(publicId || "公開ID")}&messageId=${encodeURIComponent(messageId || "メッセージID")}&author=${encodeURIComponent(editAuthor || "投稿者名")}&message=${encodeURIComponent(editMessage || "新メッセージ")}&editToken=${encodeURIComponent(editToken || "編集トークン")}${editStandardValue ? `&standardValue=${encodeURIComponent(editStandardValue)}` : ""}${editIncrementalValue ? `&incrementalValue=${encodeURIComponent(editIncrementalValue)}` : ""}${editEmoteValue ? `&emoteValue=${encodeURIComponent(editEmoteValue)}` : ""}`}>
-                https://nostalgic.llll-ll.com/api/bbs?action=editMessageById&id=<GreenParam>{publicId || "公開ID"}</GreenParam>&messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>&author=<GreenParam>{editAuthor || "投稿者名"}</GreenParam>&message=<GreenParam>{editMessage || "新メッセージ"}</GreenParam>&editToken=<GreenParam>{editToken || "編集トークン"}</GreenParam>
-                {editStandardValue && <>&standardValue=<GreenParam>{editStandardValue}</GreenParam></>}
-                {editIncrementalValue && <>&incrementalValue=<GreenParam>{editIncrementalValue}</GreenParam></>}
-                {editEmoteValue && <>&emoteValue=<GreenParam>{editEmoteValue}</GreenParam></>}
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/bbs?action=editMessageById&id=${encodeURIComponent(publicId || "公開ID")}&messageId=${encodeURIComponent(messageId || "メッセージID")}&author=${encodeURIComponent(editAuthor || "投稿者名")}&message=${encodeURIComponent(editMessage || "新メッセージ")}&editToken=${encodeURIComponent(editToken || "編集トークン")}${editStandardValue ? `&standardValue=${encodeURIComponent(editStandardValue)}` : ""}${editIncrementalValue ? `&incrementalValue=${encodeURIComponent(editIncrementalValue)}` : ""}${editEmoteValue ? `&emoteValue=${encodeURIComponent(editEmoteValue)}` : ""}`}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=editMessageById&id=
+                <GreenParam>{publicId || "公開ID"}</GreenParam>&messageId=
+                <GreenParam>{messageId || "メッセージID"}</GreenParam>&author=
+                <GreenParam>{editAuthor || "投稿者名"}</GreenParam>&message=
+                <GreenParam>{editMessage || "新メッセージ"}</GreenParam>&editToken=
+                <GreenParam>{editToken || "編集トークン"}</GreenParam>
+                {editStandardValue && (
+                  <>
+                    &standardValue=<GreenParam>{editStandardValue}</GreenParam>
+                  </>
+                )}
+                {editIncrementalValue && (
+                  <>
+                    &incrementalValue=<GreenParam>{editIncrementalValue}</GreenParam>
+                  </>
+                )}
+                {editEmoteValue && (
+                  <>
+                    &emoteValue=<GreenParam>{editEmoteValue}</GreenParam>
+                  </>
+                )}
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで編集できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -1148,7 +1363,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1166,7 +1381,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1184,7 +1399,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1202,7 +1417,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1222,7 +1437,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1241,7 +1456,7 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -1259,7 +1474,7 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -1277,7 +1492,7 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -1294,12 +1509,12 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -1311,7 +1526,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleEditMessageById}
                   >
@@ -1320,7 +1535,11 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={updateResponse} responseType={responseType} show={!!updateResponse} />
+              <ResponseDisplay
+                response={updateResponse}
+                responseType={responseType}
+                show={!!updateResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -1330,13 +1549,18 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&id=${encodeURIComponent(publicId || "公開ID")}&messageId=${encodeURIComponent(messageId || "メッセージID")}&editToken=${encodeURIComponent(editToken || "編集トークン")}`}>
-                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&id=<GreenParam>{publicId || "公開ID"}</GreenParam>&messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>&editToken=<GreenParam>{editToken || "編集トークン"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&id=${encodeURIComponent(publicId || "公開ID")}&messageId=${encodeURIComponent(messageId || "メッセージID")}&editToken=${encodeURIComponent(editToken || "編集トークン")}`}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&id=
+                <GreenParam>{publicId || "公開ID"}</GreenParam>&messageId=
+                <GreenParam>{messageId || "メッセージID"}</GreenParam>&editToken=
+                <GreenParam>{editToken || "編集トークン"}</GreenParam>
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで削除できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -1350,7 +1574,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1368,7 +1592,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1386,7 +1610,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1404,7 +1628,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1422,12 +1646,12 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -1439,7 +1663,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleDeleteMessageById}
                   >
@@ -1448,7 +1672,11 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={removeResponse} responseType={responseType} show={!!removeResponse} />
+              <ResponseDisplay
+                response={removeResponse}
+                responseType={responseType}
+                show={!!removeResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -1458,17 +1686,35 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=editMessage&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&messageId=${encodeURIComponent(messageId || "メッセージID")}&author=${encodeURIComponent(editAuthor || "投稿者名")}&message=${encodeURIComponent(editMessage || "新メッセージ")}${editStandardValue ? `&standardValue=${encodeURIComponent(editStandardValue)}` : ""}${editIncrementalValue ? `&incrementalValue=${encodeURIComponent(editIncrementalValue)}` : ""}${editEmoteValue ? `&emoteValue=${encodeURIComponent(editEmoteValue)}` : ""}`}>
-                https://nostalgic.llll-ll.com/api/bbs?action=editMessage&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>&author=<GreenParam>{editAuthor || "投稿者名"}</GreenParam>&message=<GreenParam>{editMessage || "新メッセージ"}</GreenParam>
-                {editStandardValue && <>&standardValue=<GreenParam>{editStandardValue}</GreenParam></>}
-                {editIncrementalValue && <>&incrementalValue=<GreenParam>{editIncrementalValue}</GreenParam></>}
-                {editEmoteValue && <>&emoteValue=<GreenParam>{editEmoteValue}</GreenParam></>}
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/bbs?action=editMessage&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&messageId=${encodeURIComponent(messageId || "メッセージID")}&author=${encodeURIComponent(editAuthor || "投稿者名")}&message=${encodeURIComponent(editMessage || "新メッセージ")}${editStandardValue ? `&standardValue=${encodeURIComponent(editStandardValue)}` : ""}${editIncrementalValue ? `&incrementalValue=${encodeURIComponent(editIncrementalValue)}` : ""}${editEmoteValue ? `&emoteValue=${encodeURIComponent(editEmoteValue)}` : ""}`}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=editMessage&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&messageId=
+                <GreenParam>{messageId || "メッセージID"}</GreenParam>&author=
+                <GreenParam>{editAuthor || "投稿者名"}</GreenParam>&message=
+                <GreenParam>{editMessage || "新メッセージ"}</GreenParam>
+                {editStandardValue && (
+                  <>
+                    &standardValue=<GreenParam>{editStandardValue}</GreenParam>
+                  </>
+                )}
+                {editIncrementalValue && (
+                  <>
+                    &incrementalValue=<GreenParam>{editIncrementalValue}</GreenParam>
+                  </>
+                )}
+                {editEmoteValue && (
+                  <>
+                    &emoteValue=<GreenParam>{editEmoteValue}</GreenParam>
+                  </>
+                )}
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで編集できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -1482,7 +1728,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1500,7 +1746,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1518,7 +1764,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1536,7 +1782,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1556,7 +1802,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1575,7 +1821,7 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -1593,7 +1839,7 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -1611,11 +1857,11 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -1627,7 +1873,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleUpdate}
                   >
@@ -1636,7 +1882,11 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={updateResponse} responseType={responseType} show={!!updateResponse} />
+              <ResponseDisplay
+                response={updateResponse}
+                responseType={responseType}
+                show={!!updateResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -1646,14 +1896,18 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=deleteMessage&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&messageId=${encodeURIComponent(messageId || "メッセージID")}`}>
-                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessage&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/bbs?action=deleteMessage&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&messageId=${encodeURIComponent(messageId || "メッセージID")}`}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=deleteMessage&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&messageId=
+                <GreenParam>{messageId || "メッセージID"}</GreenParam>
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで削除できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -1667,7 +1921,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1685,7 +1939,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1703,7 +1957,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1721,12 +1975,12 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -1738,7 +1992,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleRemove}
                   >
@@ -1747,7 +2001,11 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={removeResponse} responseType={responseType} show={!!removeResponse} />
+              <ResponseDisplay
+                response={removeResponse}
+                responseType={responseType}
+                show={!!removeResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -1757,17 +2015,20 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=clear&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}>
-                https://nostalgic.llll-ll.com/api/bbs?action=clear&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/bbs?action=clear&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=clear&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
                 &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームでクリアできます。</p>
               <p style={{ color: "#ff0000", fontWeight: "bold" }}>
                 ※全メッセージが削除されます。十分にご注意ください。
               </p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -1781,7 +2042,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1799,12 +2060,12 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -1816,7 +2077,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleClear}
                   >
@@ -1825,7 +2086,11 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={clearResponse} responseType={responseType} show={!!clearResponse} />
+              <ResponseDisplay
+                response={clearResponse}
+                responseType={responseType}
+                show={!!clearResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -1835,21 +2100,55 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${maxMessages ? `&maxMessages=${maxMessages}` : ""}${messagesPerPage ? `&messagesPerPage=${messagesPerPage}` : ""}${standardSelectLabel && standardSelectOptions ? `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}` : ""}${incrementalSelectLabel && incrementalSelectOptions ? `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}` : ""}${emoteSelectLabel && emoteSelectOptions ? `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}>
-                https://nostalgic.llll-ll.com/api/bbs?action=updateSettings&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/bbs?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${maxMessages ? `&maxMessages=${maxMessages}` : ""}${messagesPerPage ? `&messagesPerPage=${messagesPerPage}` : ""}${standardSelectLabel && standardSelectOptions ? `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}` : ""}${incrementalSelectLabel && incrementalSelectOptions ? `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}` : ""}${emoteSelectLabel && emoteSelectOptions ? `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=updateSettings&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
                 &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
-                {title && <>&title=<GreenParam>{title}</GreenParam></>}
-                {maxMessages && <>&maxMessages=<GreenParam>{maxMessages}</GreenParam></>}
-                {messagesPerPage && <>&messagesPerPage=<GreenParam>{messagesPerPage}</GreenParam></>}
-                {standardSelectLabel && standardSelectOptions && <>&standardSelectLabel=<GreenParam>{standardSelectLabel}</GreenParam>&standardSelectOptions=<GreenParam>{standardSelectOptions}</GreenParam></>}
-                {incrementalSelectLabel && incrementalSelectOptions && <>&incrementalSelectLabel=<GreenParam>{incrementalSelectLabel}</GreenParam>&incrementalSelectOptions=<GreenParam>{incrementalSelectOptions}</GreenParam></>}
-                {emoteSelectLabel && emoteSelectOptions && <>&emoteSelectLabel=<GreenParam>{emoteSelectLabel}</GreenParam>&emoteSelectOptions=<GreenParam>{emoteSelectOptions}</GreenParam></>}
-                {webhookUrl && <>&webhookUrl=<GreenParam>{webhookUrl}</GreenParam></>}
+                {title && (
+                  <>
+                    &title=<GreenParam>{title}</GreenParam>
+                  </>
+                )}
+                {maxMessages && (
+                  <>
+                    &maxMessages=<GreenParam>{maxMessages}</GreenParam>
+                  </>
+                )}
+                {messagesPerPage && (
+                  <>
+                    &messagesPerPage=<GreenParam>{messagesPerPage}</GreenParam>
+                  </>
+                )}
+                {standardSelectLabel && standardSelectOptions && (
+                  <>
+                    &standardSelectLabel=<GreenParam>{standardSelectLabel}</GreenParam>
+                    &standardSelectOptions=<GreenParam>{standardSelectOptions}</GreenParam>
+                  </>
+                )}
+                {incrementalSelectLabel && incrementalSelectOptions && (
+                  <>
+                    &incrementalSelectLabel=<GreenParam>{incrementalSelectLabel}</GreenParam>
+                    &incrementalSelectOptions=<GreenParam>{incrementalSelectOptions}</GreenParam>
+                  </>
+                )}
+                {emoteSelectLabel && emoteSelectOptions && (
+                  <>
+                    &emoteSelectLabel=<GreenParam>{emoteSelectLabel}</GreenParam>
+                    &emoteSelectOptions=<GreenParam>{emoteSelectOptions}</GreenParam>
+                  </>
+                )}
+                {webhookUrl && (
+                  <>
+                    &webhookUrl=<GreenParam>{webhookUrl}</GreenParam>
+                  </>
+                )}
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで設定を更新できます。</p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -1863,7 +2162,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1881,7 +2180,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -1899,7 +2198,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -1918,7 +2217,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -1937,7 +2236,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
@@ -1958,7 +2257,7 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -1975,7 +2274,7 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -1996,7 +2295,7 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -2013,7 +2312,7 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -2034,7 +2333,7 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -2051,7 +2350,7 @@ declare module 'react' {
                       border: "1px solid #666",
                       fontFamily: "inherit",
                       fontSize: "16px",
-                      marginLeft: "10px"
+                      marginLeft: "10px",
                     }}
                   />
                 </p>
@@ -2068,11 +2367,11 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -2084,7 +2383,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleUpdateSettings}
                   >
@@ -2093,7 +2392,11 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={updateSettingsResponse} responseType={responseType} show={!!updateSettingsResponse} />
+              <ResponseDisplay
+                response={updateSettingsResponse}
+                responseType={responseType}
+                show={!!updateSettingsResponse}
+              />
             </div>
 
             <div className="nostalgic-section">
@@ -2103,17 +2406,20 @@ declare module 'react' {
                 </span>
               </p>
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay url={`https://nostalgic.llll-ll.com/api/bbs?action=delete&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}>
-                https://nostalgic.llll-ll.com/api/bbs?action=delete&url=<GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+              <ApiUrlDisplay
+                url={`https://nostalgic.llll-ll.com/api/bbs?action=delete&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`}
+              >
+                https://nostalgic.llll-ll.com/api/bbs?action=delete&url=
+                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
                 &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
               </ApiUrlDisplay>
               <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-              
+
               <p>または、以下のフォームで削除できます。</p>
               <p style={{ color: "#ff0000", fontWeight: "bold" }}>
                 ※BBSが完全に削除され復元できません。十分にご注意ください。
               </p>
-              
+
               <form style={{ marginTop: "10px" }}>
                 <p>
                   <b>サイトURL：</b>
@@ -2127,7 +2433,7 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
@@ -2145,12 +2451,12 @@ declare module 'react' {
                       padding: "4px",
                       border: "1px solid #666",
                       fontFamily: "inherit",
-                      fontSize: "16px"
+                      fontSize: "16px",
                     }}
                     required
                   />
                 </p>
-                
+
                 <p>
                   <button
                     type="button"
@@ -2162,7 +2468,7 @@ declare module 'react' {
                       fontSize: "16px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      fontFamily: "inherit"
+                      fontFamily: "inherit",
                     }}
                     onClick={handleDelete}
                   >
@@ -2171,14 +2477,21 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay response={deleteResponse} responseType={responseType} show={!!deleteResponse} />
+              <ResponseDisplay
+                response={deleteResponse}
+                responseType={responseType}
+                show={!!deleteResponse}
+              />
             </div>
 
             <hr />
 
             <p style={{ textAlign: "center" }}>
               これ以上の詳しい説明は{" "}
-              <a href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md" className="nostalgic-old-link">
+              <a
+                href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md"
+                className="nostalgic-old-link"
+              >
                 【GitHub】
               </a>{" "}
               へ
@@ -2197,7 +2510,9 @@ declare module 'react' {
 
             <div className="nostalgic-marquee-box">
               <div className="nostalgic-marquee-text">
-                💬 懐かしの掲示板！３種類のセレクト機能（純正・検索・エモート）・編集削除・ページネーション！昔の掲示板がここに復活！ 💬
+                💬
+                懐かしの掲示板！３種類のセレクト機能（純正・検索・エモート）・編集削除・ページネーション！昔の掲示板がここに復活！
+                💬
               </div>
             </div>
 
@@ -2256,7 +2571,6 @@ declare module 'react' {
                 【使い方】へ
               </a>
             </p>
-
           </>
         );
 
