@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 import NostalgicSidebar from "../components/NostalgicSidebar";
+import { FooterDivider } from "../components/common";
 
 export default function HomePage() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -1246,7 +1247,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <hr />
+            <FooterDivider />
 
             <p
               style={{
@@ -1315,7 +1316,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <hr />
+            <FooterDivider />
 
             <div style={{ textAlign: "center", marginTop: "20px" }}>
               <img src="/footer.webp" alt="Footer" style={{ maxWidth: "100%", height: "auto" }} />

@@ -4,6 +4,7 @@ import NostalgicLayout from "../components/NostalgicLayout";
 import LikeFeaturesTab from "../components/like/LikeFeaturesTab";
 import CreateServiceSection from "../components/sections/CreateServiceSection";
 import DataDrivenFormSection from "../components/DataDrivenFormSection";
+import { PageFooter } from "../components/common";
 import { callApi, callApiWithFormat } from "../utils/apiHelpers";
 import { getLikeFormSections } from "../config/likeFormConfig";
 
@@ -299,23 +300,17 @@ declare module 'react' {
               </div>
             )}
 
-            <hr />
-
-            <p style={{ textAlign: "center" }}>
-              これ以上の詳しい説明は{" "}
-              <a
-                href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md"
-                className="nostalgic-old-link"
-              >
-                【GitHub】
-              </a>{" "}
-              へ
-            </p>
+            <PageFooter servicePath="like" currentPage="usage" />
           </>
         );
 
       case "features":
-        return <LikeFeaturesTab />;
+        return (
+          <>
+            <LikeFeaturesTab />
+            <PageFooter servicePath="like" currentPage="features" />
+          </>
+        );
 
       default:
         return null;

@@ -1,3 +1,5 @@
+import { RequiredMark, HelpText } from "../common/FormHelpers";
+
 interface SelectFieldProps {
   label: string;
   value: string;
@@ -19,7 +21,7 @@ export default function SelectField({
     <div className="form-group">
       <label>
         {label}
-        {required && <span style={{ color: "red" }}>*</span>}:
+        {required && <RequiredMark />}:
       </label>
       <select value={value} onChange={(e) => onChange(e.target.value)} required={required}>
         {options.map((opt) => (
@@ -28,7 +30,7 @@ export default function SelectField({
           </option>
         ))}
       </select>
-      {helpText && <small style={{ color: "#666" }}>{helpText}</small>}
+      {helpText && <HelpText>{helpText}</HelpText>}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import ApiUrlDisplay, { GreenParam } from "../ApiUrlDisplay";
 import ActionSection from "../sections/ActionSection";
 import SimpleForm from "../forms/SimpleForm";
 import InputField from "../forms/InputField";
+import SectionDivider from "../common/SectionDivider";
 
 interface CreateServiceSectionProps {
   serviceName: string;
@@ -61,7 +62,7 @@ export default function CreateServiceSection({
         上記URLにアクセスすると、JSONで公開IDが返されます。この公開IDをSTEP 2で使用してください。
       </p>
 
-      <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
+      <SectionDivider />
 
       <p style={{ marginTop: "20px" }}>または、以下のフォームで簡単に作成できます。</p>
 

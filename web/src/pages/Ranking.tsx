@@ -4,6 +4,7 @@ import NostalgicLayout from "../components/NostalgicLayout";
 import RankingFeaturesTab from "../components/ranking/RankingFeaturesTab";
 import CreateServiceSection from "../components/sections/CreateServiceSection";
 import DataDrivenFormSection from "../components/DataDrivenFormSection";
+import { PageFooter } from "../components/common";
 import { callApi } from "../utils/apiHelpers";
 import { getRankingFormSections } from "../config/rankingFormConfig";
 
@@ -11,7 +12,6 @@ export default function RankingPage() {
   const location = useLocation();
   const currentPage = location.pathname === "/ranking/usage" ? "usage" : "features";
   const [publicId, setPublicId] = useState("");
-  const [responseType] = useState<"json" | "text" | "svg">("json");
   const [sharedUrl, setSharedUrl] = useState("");
   const [sharedToken, setSharedToken] = useState("");
   const [webhookUrl, setWebhookUrl] = useState("");
@@ -126,14 +126,6 @@ export default function RankingPage() {
     setSharedToken,
     publicId,
     setPublicId,
-    webhookUrl,
-    setWebhookUrl,
-    title,
-    setTitle,
-    maxEntries,
-    setMaxEntries,
-    sortOrder,
-    setSortOrder,
     submitName,
     setSubmitName,
     submitScore,
@@ -148,6 +140,8 @@ export default function RankingPage() {
     setUpdateDisplayScore,
     removeName,
     setRemoveName,
+    webhookUrl,
+    setWebhookUrl,
     settingsTitle,
     setSettingsTitle,
     settingsMax,
@@ -157,26 +151,23 @@ export default function RankingPage() {
     settingsWebhookUrl,
     setSettingsWebhookUrl,
     {
-      handleCreate,
       handleSubmit,
       handleGet,
       handleUpdate,
       handleRemove,
       handleClear,
-      handleDelete,
       handleUpdateSettings,
+      handleDelete,
     },
     {
-      createResponse,
       submitResponse,
       getResponse,
       updateResponse,
       removeResponse,
       clearResponse,
-      deleteResponse,
       updateSettingsResponse,
-    },
-    responseType
+      deleteResponse,
+    }
   );
 
   const renderContent = () => {
@@ -292,23 +283,17 @@ export default function RankingPage() {
               </div>
             )}
 
-            <hr />
-
-            <p style={{ textAlign: "center" }}>
-              これ以上の詳しい説明は{" "}
-              <a
-                href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md"
-                className="nostalgic-old-link"
-              >
-                【GitHub】
-              </a>{" "}
-              へ
-            </p>
+            <PageFooter servicePath="ranking" currentPage="usage" />
           </>
         );
 
       case "features":
-        return <RankingFeaturesTab />;
+        return (
+          <>
+            <RankingFeaturesTab />
+            <PageFooter servicePath="ranking" currentPage="features" />
+          </>
+        );
 
       default:
         return null;

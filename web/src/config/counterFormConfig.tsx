@@ -9,16 +9,16 @@ export const getCounterFormSections = (
   setPublicId: (v: string) => void,
   webhookUrl: string,
   setWebhookUrl: (v: string) => void,
-  selectedType: string,
-  setSelectedType: (v: string) => void,
   selectedFormat: string,
   setSelectedFormat: (v: string) => void,
+  setValue: string,
+  setSetValue: (v: string) => void,
   handlers: {
     handleCreate: (e: React.FormEvent) => void;
     handleDisplay: (e: React.FormEvent) => void;
     handleIncrement: (e: React.FormEvent) => void;
     handleGet: (e: React.FormEvent) => void;
-    handleClear: (e: React.FormEvent) => void;
+    handleSet: (e: React.FormEvent) => void;
     handleUpdateSettings: (e: React.FormEvent) => void;
     handleDelete: (e: React.FormEvent) => void;
   },
@@ -27,7 +27,7 @@ export const getCounterFormSections = (
     displayResponse: string;
     incrementResponse: string;
     getResponse: string;
-    clearResponse: string;
+    setResponse: string;
     updateSettingsResponse: string;
     deleteResponse: string;
   },
@@ -36,13 +36,12 @@ export const getCounterFormSections = (
   // Display
   {
     title: "◆STEP 2: 表示プレビュー◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/visit?action=display&id=${encodeURIComponent(publicId || "公開ID")}&type=${selectedType}&format=${selectedFormat}`,
+    apiUrl: `https://nostalgic.llll-ll.com/api/visit?action=display&id=${encodeURIComponent(publicId || "公開ID")}&format=${selectedFormat}`,
     apiUrlDisplay: (
       <>
         https://nostalgic.llll-ll.com/api/visit?action=display&id=
         <GreenParam>{publicId || "公開ID"}</GreenParam>
-        &type=<GreenParam>{selectedType}</GreenParam>&format=
-        <GreenParam>{selectedFormat}</GreenParam>
+        &format=<GreenParam>{selectedFormat}</GreenParam>
       </>
     ),
     fields: [
@@ -54,18 +53,6 @@ export const getCounterFormSections = (
         width: "40%",
         value: publicId,
         onChange: setPublicId,
-      },
-      {
-        name: "type",
-        label: "カウント方式",
-        type: "select" as const,
-        width: "30%",
-        value: selectedType,
-        onChange: setSelectedType,
-        options: [
-          { value: "page", label: "ページビュー" },
-          { value: "unique", label: "ユニーク訪問者" },
-        ],
       },
       {
         name: "format",
@@ -147,15 +134,16 @@ export const getCounterFormSections = (
     onSubmit: handlers.handleGet,
     response: responses.getResponse,
   },
-  // Clear
+  // Set
   {
-    title: "◆カウントをクリアしたいときは？◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/visit?action=clear&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
+    title: "◆カウント値を設定したいときは？◆",
+    apiUrl: `https://nostalgic.llll-ll.com/api/visit?action=set&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&value=${setValue || "0"}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/visit?action=clear&url=
+        https://nostalgic.llll-ll.com/api/visit?action=set&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+        &value=<GreenParam>{setValue || "0"}</GreenParam>
       </>
     ),
     fields: [
@@ -178,15 +166,23 @@ export const getCounterFormSections = (
         value: sharedToken,
         onChange: setSharedToken,
       },
+      {
+        name: "value",
+        label: "設定値",
+        type: "number" as const,
+        placeholder: "0",
+        required: true,
+        width: "20%",
+        value: setValue,
+        onChange: setSetValue,
+      },
     ],
-    buttonText: "カウントクリア",
+    buttonText: "値を設定",
     buttonColor: "#FF9800",
-    onSubmit: handlers.handleClear,
-    response: responses.clearResponse,
+    onSubmit: handlers.handleSet,
+    response: responses.setResponse,
     warningMessage: (
-      <p style={{ color: "#ff6600", fontWeight: "bold" }}>
-        ※カウントをリセットします。元に戻せません。
-      </p>
+      <p style={{ color: "#ff6600", fontWeight: "bold" }}>※カウント値を直接設定します。</p>
     ),
   },
   // Update Settings

@@ -4,6 +4,7 @@ import NostalgicLayout from "../components/NostalgicLayout";
 import CounterFeaturesTab from "../components/counter/CounterFeaturesTab";
 import CreateServiceSection from "../components/sections/CreateServiceSection";
 import DataDrivenFormSection from "../components/DataDrivenFormSection";
+import { PageFooter } from "../components/common";
 import { callApi, callApiWithFormat } from "../utils/apiHelpers";
 import { getCounterFormSections } from "../config/counterFormConfig";
 
@@ -20,9 +21,9 @@ export default function CounterPage() {
 
   const [createResponse, setCreateResponse] = useState("");
   const [displayResponse, setDisplayResponse] = useState("");
-  const [toggleResponse, setToggleResponse] = useState("");
+  const [incrementResponse, setIncrementResponse] = useState("");
   const [getResponse, setGetResponse] = useState("");
-  const [setValueResponse, setSetValueResponse] = useState("");
+  const [setResponse, setSetResponse] = useState("");
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
 
@@ -49,12 +50,12 @@ export default function CounterPage() {
     );
   };
 
-  const handleToggle = async (e: React.FormEvent) => {
+  const handleIncrement = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!sharedUrl || !sharedToken) return;
 
     const apiUrl = `/api/visit?action=increment&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
-    await callApi(apiUrl, setToggleResponse);
+    await callApi(apiUrl, setIncrementResponse);
   };
 
   const handleGet = async (e: React.FormEvent) => {
@@ -70,7 +71,7 @@ export default function CounterPage() {
     if (!sharedUrl || !sharedToken || !setValue) return;
 
     const apiUrl = `/api/visit?action=set&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&value=${setValue}`;
-    await callApi(apiUrl, setSetValueResponse);
+    await callApi(apiUrl, setSetResponse);
   };
 
   const handleDelete = async (e: React.FormEvent) => {
@@ -107,7 +108,7 @@ export default function CounterPage() {
     {
       handleCreate,
       handleDisplay,
-      handleToggle,
+      handleIncrement,
       handleGet,
       handleSet,
       handleUpdateSettings,
@@ -116,9 +117,9 @@ export default function CounterPage() {
     {
       createResponse,
       displayResponse,
-      toggleResponse,
+      incrementResponse,
       getResponse,
-      setValueResponse,
+      setResponse,
       updateSettingsResponse,
       deleteResponse,
     },
@@ -299,23 +300,17 @@ declare module 'react' {
               </div>
             )}
 
-            <hr />
-
-            <p style={{ textAlign: "center" }}>
-              これ以上の詳しい説明は{" "}
-              <a
-                href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md"
-                className="nostalgic-old-link"
-              >
-                【GitHub】
-              </a>{" "}
-              へ
-            </p>
+            <PageFooter servicePath="counter" currentPage="usage" />
           </>
         );
 
       case "features":
-        return <CounterFeaturesTab />;
+        return (
+          <>
+            <CounterFeaturesTab />
+            <PageFooter servicePath="counter" currentPage="features" />
+          </>
+        );
 
       default:
         return null;

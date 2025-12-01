@@ -1,4 +1,5 @@
 import NostalgicLayout from "../components/NostalgicLayout";
+import { FooterDivider } from "../components/common";
 
 export default function AboutPage() {
   return (
@@ -54,7 +55,7 @@ export default function AboutPage() {
         </p>
       </div>
 
-      <hr />
+      <FooterDivider />
 
       <div style={{ textAlign: "center", marginTop: "20px" }}>
         <img src="/footer.webp" alt="Footer" style={{ maxWidth: "100%", height: "auto" }} />

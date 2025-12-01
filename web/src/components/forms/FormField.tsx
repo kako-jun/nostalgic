@@ -1,3 +1,5 @@
+import { RequiredMark, HelpText } from "../common/FormHelpers";
+
 interface FormFieldProps {
   label: string;
   type?: string;
@@ -21,7 +23,7 @@ export default function FormField({
     <div className="form-group">
       <label>
         {label}
-        {required && <span style={{ color: "red" }}>*</span>}:
+        {required && <RequiredMark />}:
       </label>
       <input
         type={type}
@@ -30,7 +32,7 @@ export default function FormField({
         placeholder={placeholder}
         required={required}
       />
-      {helpText && <small style={{ color: "#666" }}>{helpText}</small>}
+      {helpText && <HelpText>{helpText}</HelpText>}
     </div>
   );
 }

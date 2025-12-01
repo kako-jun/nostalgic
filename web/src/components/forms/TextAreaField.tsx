@@ -1,3 +1,5 @@
+import { RequiredMark, HelpText } from "../common/FormHelpers";
+
 interface TextAreaFieldProps {
   label: string;
   value: string;
@@ -21,7 +23,7 @@ export default function TextAreaField({
     <div className="form-group">
       <label>
         {label}
-        {required && <span style={{ color: "red" }}>*</span>}:
+        {required && <RequiredMark />}:
       </label>
       <textarea
         value={value}
@@ -30,7 +32,7 @@ export default function TextAreaField({
         required={required}
         rows={rows}
       />
-      {helpText && <small style={{ color: "#666" }}>{helpText}</small>}
+      {helpText && <HelpText>{helpText}</HelpText>}
     </div>
   );
 }
