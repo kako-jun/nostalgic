@@ -7,8 +7,8 @@ import { Result, Ok, Err, ValidationError, NotFoundError } from '@/lib/core/resu
 import { BaseService } from '@/lib/core/base-service'
 import { ValidationFramework } from '@/lib/core/validation'
 import { RepositoryFactory, SortedSetRepository } from '@/lib/core/repository'
-import { getRedis } from '@/lib/core/db'
-import { createHash } from 'crypto'
+import { getDB } from '@/lib/core/db'
+import { generateUserHash as generateUserHashAsync } from '@/lib/core/crypto'
 import { RANKING } from '@/lib/validation/schema-constants'
 import {
   RankingEntity,
@@ -29,7 +29,6 @@ import {
  */
 export class RankingService extends BaseService<RankingEntity, RankingData, RankingCreateParams> {
   private readonly sortedSetRepository: SortedSetRepository
-  private readonly redis = getRedis()
 
   constructor() {
     const config = {
@@ -176,10 +175,13 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
       return Err(new ValidationError('Failed to add score', { error: addResult.error }))
     }
 
-    // 表示用スコアを保存（文字列）
+    // 表示用スコアを保存（D1テーブルのdisplay_scoreカラムを更新）
     if (params.displayScore) {
       try {
-        await this.redis.hset(`${entity.id}:display_scores`, params.name, params.displayScore)
+        const db = await getDB()
+        await db.prepare(`
+          UPDATE ranking_scores SET display_score = ? WHERE service_id = ? AND name = ?
+        `).bind(params.displayScore, `ranking:${entity.id}:scores`, params.name).run()
       } catch (error) {
         // ロールバック: スコアと連投防止マークを削除
         await this.sortedSetRepository.remove(`${entity.id}:scores`, params.name)
@@ -501,34 +503,30 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
    * トップエントリを取得（ソート順対応）
    */
   private async getTopEntries(id: string, limit: number, sortOrder: 'desc' | 'asc' = 'desc'): Promise<Result<RankingEntry[], ValidationError>> {
-    const entriesResult = await this.sortedSetRepository.getRangeWithScores(
-      `${id}:scores`, 
-      0, 
-      limit - 1,
-      sortOrder === 'asc'  // ascending = true for asc, false for desc
-    )
-    if (!entriesResult.success) {
+    try {
+      const db = await getDB()
+      const orderDirection = sortOrder === 'asc' ? 'ASC' : 'DESC'
+
+      const result = await db.prepare(`
+        SELECT name, score, display_score, created_at
+        FROM ranking_scores
+        WHERE service_id = ?
+        ORDER BY score ${orderDirection}
+        LIMIT ?
+      `).bind(`ranking:${id}:scores`, limit).all<{ name: string; score: number; display_score: string | null; created_at: string }>()
+
+      const entries: RankingEntry[] = result.results.map((row, index) => ({
+        name: row.name,
+        score: row.score,
+        displayScore: row.display_score || row.score.toString(),
+        rank: index + 1,
+        timestamp: new Date(row.created_at)
+      }))
+
+      return Ok(entries)
+    } catch (error) {
       return Ok([]) // エラーの場合は空配列を返す
     }
-
-    // 表示用スコアを取得
-    let displayScores: Record<string, string> = {}
-    try {
-      displayScores = await this.redis.hgetall(`${id}:display_scores`)
-    } catch (error) {
-      // エラーの場合は空オブジェクトを使用
-      displayScores = {}
-    }
-
-    const entries: RankingEntry[] = entriesResult.data.map((entry, index) => ({
-      name: entry.member,
-      score: entry.score,
-      displayScore: displayScores[entry.member] || entry.score.toString(),
-      rank: index + 1, // Web Components用にランク番号を追加（1から開始）
-      timestamp: new Date() // 実際には保存時のタイムスタンプを使用
-    }))
-
-    return Ok(entries)
   }
 
   /**
@@ -662,12 +660,8 @@ export class RankingService extends BaseService<RankingEntity, RankingData, Rank
   /**
    * ユーザーハッシュの生成
    */
-  generateUserHash(ip: string, userAgent: string): string {
-    const today = new Date().toISOString().split('T')[0]
-    return createHash('sha256')
-      .update(`${ip}:${userAgent}:${today}`)
-      .digest('hex')
-      .substring(0, 16)
+  async generateUserHash(ip: string, userAgent: string): Promise<string> {
+    return await generateUserHashAsync(ip, userAgent)
   }
 
 

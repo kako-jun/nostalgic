@@ -8,7 +8,7 @@ import { BaseService } from '@/lib/core/base-service'
 import { ValidationFramework } from '@/lib/core/validation'
 import { BBS } from '@/lib/validation/schema-constants'
 import { RepositoryFactory, ListRepository } from '@/lib/core/repository'
-import { createHash } from 'crypto'
+import { sha256Short } from '@/lib/core/crypto'
 import { ContentFilter } from '@/lib/filters/content-filter'
 import {
   BBSEntity,
@@ -534,11 +534,8 @@ export class BBSService extends BaseService<BBSEntity, BBSData, BBSCreateParams>
   /**
    * ユーザーハッシュの生成
    */
-  generateUserHash(ip: string, userAgent: string): string {
-    return createHash('sha256')
-      .update(`${ip}:${userAgent}`)
-      .digest('hex')
-      .substring(0, 16)
+  async generateUserHash(ip: string, userAgent: string): Promise<string> {
+    return await sha256Short(`${ip}:${userAgent}`, 16)
   }
 
   /**

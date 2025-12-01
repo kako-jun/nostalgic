@@ -1,5 +1,5 @@
 /**
- * Counter Domain Service - 新アーキテクチャ版
+ * Counter Domain Service - 新アーキテクチャ版 (D1対応)
  */
 
 import { z } from 'zod'
@@ -8,8 +8,8 @@ import { BaseNumericService } from '@/lib/core/base-service'
 import { ValidationFramework } from '@/lib/core/validation'
 import { COUNTER } from '@/lib/validation/schema-constants'
 import { RepositoryFactory } from '@/lib/core/repository'
-import { getRedis } from '@/lib/core/db'
-import { createHash } from 'crypto'
+import { getDB, getTodayDateString } from '@/lib/core/db'
+import { generateUserHash as generateUserHashAsync } from '@/lib/core/crypto'
 import {
   CounterEntity,
   CounterData,
@@ -23,7 +23,6 @@ import {
  * カウンターサービスクラス
  */
 export class CounterService extends BaseNumericService<CounterEntity, CounterData, CounterCreateParams> {
-  private readonly redis = getRedis()
 
   constructor() {
     const limits = { maxValue: 999999999, maxDigits: COUNTER.DIGITS.MAX, dailyRetentionDays: 365 }
@@ -31,7 +30,7 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
       serviceName: 'counter' as const,
       maxValue: limits.maxValue
     }
-    
+
     super(config, CounterEntitySchema, CounterDataSchema)
   }
 
@@ -39,8 +38,8 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
    * 新しいカウンターエンティティを作成
    */
   protected async createNewEntity(
-    id: string, 
-    url: string, 
+    id: string,
+    url: string,
     params: CounterCreateParams
   ): Promise<Result<CounterEntity, ValidationError>> {
     const entity: CounterEntity = {
@@ -91,24 +90,14 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
    * クリーンアップ処理
    */
   protected async performCleanup(id: string): Promise<Result<void, ValidationError>> {
-    // 日別カウントのクリーンアップ
-    const today = new Date()
-    const cleanupPromises: Promise<any>[] = []
-
-    // 過去1年分のデイリーカウントを削除
-    for (let i = 0; i < 365; i++) {
-      const date = new Date(today)
-      date.setDate(date.getDate() - i)
-      const dateStr = date.toISOString().split('T')[0]
-      const dailyKey = `counter:${id}:daily:${dateStr}`
-      
-      cleanupPromises.push(
-        this.redis.del(dailyKey)
-      )
-    }
-
     try {
-      await Promise.all(cleanupPromises)
+      const db = await getDB()
+
+      // 日別カウントの削除
+      await db.prepare(`
+        DELETE FROM counter_daily WHERE service_id = ?
+      `).bind(`counter:${id}`).run()
+
       return Ok(undefined)
     } catch (error) {
       return Err(new ValidationError('Cleanup failed', { error }))
@@ -158,17 +147,16 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
     }
 
     // 日別カウント増加
-    const today = new Date().toISOString().split('T')[0]
-    const dailyKey = `counter:${id}:daily:${today}`
+    const today = getTodayDateString()
     try {
-      await this.redis.incrby(dailyKey, incrementBy)
+      await this.incrementDailyCount(id, today, incrementBy)
     } catch (error) {
       // ロールバック処理
       await this.incrementValue(`${id}:total`, -incrementBy)
       await this.removeVisitMark(id, userHash)
       return Err(new ValidationError('Failed to increment daily count', { error }))
     }
-    
+
     // 最終訪問時刻の更新
     const previousCount = entity.totalCount
     entity.totalCount = incrementResult.data
@@ -179,7 +167,7 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
     if (!saveResult.success) {
       // ロールバック処理
       await this.incrementValue(`${id}:total`, -incrementBy)
-      await this.redis.decrby(dailyKey, incrementBy)
+      await this.decrementDailyCount(id, today, incrementBy)
       await this.removeVisitMark(id, userHash)
       return Err(new ValidationError('Failed to save entity', { error: saveResult.error }))
     }
@@ -282,27 +270,12 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
   }
 
   /**
-   * 重複訪問のチェック
-   */
-  private async checkDuplicateVisit(id: string, userHash: string): Promise<Result<boolean, ValidationError>> {
-    const visitKey = `counter:${id}:visit:${userHash}`
-    const visitRepo = RepositoryFactory.createEntity(z.string(), 'visit_check')
-    
-    const existsResult = await visitRepo.exists(visitKey)
-    if (!existsResult.success) {
-      return Err(new ValidationError('Failed to check visit', { error: existsResult.error }))
-    }
-
-    return Ok(existsResult.data)
-  }
-
-  /**
    * アトミックな訪問マーク（競合状態を解決、日付ベース制限）
    */
   private async atomicMarkVisit(id: string, userHash: string): Promise<Result<boolean, ValidationError>> {
     const visitKey = `counter:${id}:visit:${userHash}`
     const visitRepo = RepositoryFactory.createEntity(z.string(), 'visit_check')
-    
+
     // 今日の終わりまでのTTLを計算
     const now = new Date()
     const endOfDay = new Date(now)
@@ -310,16 +283,16 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
     const ttl = Math.floor((endOfDay.getTime() - now.getTime()) / 1000)
 
     try {
-      // Redis SET NX EX を使用してアトミックにチェック＆設定
+      // D1ではsetIfNotExistsがdaily_actionsテーブルを使用
       const result = await visitRepo.setIfNotExists(visitKey, new Date().toISOString(), ttl)
       if (!result.success) {
         return Err(new ValidationError('Failed to atomically mark visit', { error: result.error }))
       }
-      
+
       // true = 新規訪問、false = 重複訪問
       return Ok(result.data)
     } catch (error) {
-      return Err(new ValidationError('Redis operation failed', { error }))
+      return Err(new ValidationError('D1 operation failed', { error }))
     }
   }
 
@@ -339,46 +312,52 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
   }
 
   /**
-   * 訪問をマーク（日付ベース制限）
+   * ユーザーハッシュの生成
    */
-  private async markVisit(id: string, userHash: string): Promise<Result<void, ValidationError>> {
-    const visitKey = `counter:${id}:visit:${userHash}`
-    const visitRepo = RepositoryFactory.createEntity(z.string(), 'visit_check')
-    
-    // 今日の終わりまでのTTLを計算
-    const now = new Date()
-    const endOfDay = new Date(now)
-    endOfDay.setHours(23, 59, 59, 999)
-    const ttl = Math.floor((endOfDay.getTime() - now.getTime()) / 1000)
-
-    const saveResult = await visitRepo.saveWithTTL(visitKey, new Date().toISOString(), ttl)
-    if (!saveResult.success) {
-      return Err(new ValidationError('Failed to mark visit', { error: saveResult.error }))
-    }
-
-    return Ok(undefined)
+  async generateUserHash(ip: string, userAgent: string): Promise<string> {
+    return await generateUserHashAsync(ip, userAgent)
   }
 
   /**
-   * ユーザーハッシュの生成
+   * 日別カウント増加（D1用）
    */
-  generateUserHash(ip: string, userAgent: string): string {
-    const today = new Date().toISOString().split('T')[0]
-    return createHash('sha256')
-      .update(`${ip}:${userAgent}:${today}`)
-      .digest('hex')
-      .substring(0, 16)
+  private async incrementDailyCount(id: string, date: string, by: number): Promise<void> {
+    const db = await getDB()
+    const serviceId = `counter:${id}`
+
+    await db.prepare(`
+      INSERT INTO counter_daily (service_id, date, count)
+      VALUES (?, ?, ?)
+      ON CONFLICT(service_id, date) DO UPDATE SET count = count + ?
+    `).bind(serviceId, date, by, by).run()
+  }
+
+  /**
+   * 日別カウント減少（D1用、ロールバック用）
+   */
+  private async decrementDailyCount(id: string, date: string, by: number): Promise<void> {
+    const db = await getDB()
+    const serviceId = `counter:${id}`
+
+    await db.prepare(`
+      UPDATE counter_daily
+      SET count = MAX(0, count - ?)
+      WHERE service_id = ? AND date = ?
+    `).bind(by, serviceId, date).run()
   }
 
   /**
    * 今日のカウント取得
    */
   private async getTodayCount(id: string): Promise<Result<number, ValidationError>> {
-    const today = new Date().toISOString().split('T')[0]
-    const dailyKey = `counter:${id}:daily:${today}`
+    const today = getTodayDateString()
     try {
-      const value = await this.redis.get(dailyKey)
-      return Ok(value ? parseInt(value) : 0)
+      const db = await getDB()
+      const row = await db.prepare(`
+        SELECT count FROM counter_daily WHERE service_id = ? AND date = ?
+      `).bind(`counter:${id}`, today).first<{ count: number }>()
+
+      return Ok(row?.count ?? 0)
     } catch (error) {
       return Err(new ValidationError('Failed to get today count', { error }))
     }
@@ -389,10 +368,13 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
    */
   private async getYesterdayCount(id: string): Promise<Result<number, ValidationError>> {
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-    const dailyKey = `counter:${id}:daily:${yesterday}`
     try {
-      const value = await this.redis.get(dailyKey)
-      return Ok(value ? parseInt(value) : 0)
+      const db = await getDB()
+      const row = await db.prepare(`
+        SELECT count FROM counter_daily WHERE service_id = ? AND date = ?
+      `).bind(`counter:${id}`, yesterday).first<{ count: number }>()
+
+      return Ok(row?.count ?? 0)
     } catch (error) {
       return Err(new ValidationError('Failed to get yesterday count', { error }))
     }
@@ -402,22 +384,17 @@ export class CounterService extends BaseNumericService<CounterEntity, CounterDat
    * 指定期間のカウント取得
    */
   private async getPeriodCount(id: string, days: number): Promise<Result<number, ValidationError>> {
-    const promises: Promise<number>[] = []
-    
-    for (let i = 0; i < days; i++) {
-      const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000)
-      const dateStr = date.toISOString().split('T')[0]
-      const dailyKey = `counter:${id}:daily:${dateStr}`
-      
-      promises.push(
-        this.redis.get(dailyKey).then(value => value ? parseInt(value) : 0)
-      )
-    }
-
     try {
-      const results = await Promise.all(promises)
-      const total = results.reduce((sum, count) => sum + count, 0)
-      return Ok(total)
+      const db = await getDB()
+      const startDate = new Date(Date.now() - (days - 1) * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
+      const row = await db.prepare(`
+        SELECT COALESCE(SUM(count), 0) as total
+        FROM counter_daily
+        WHERE service_id = ? AND date >= ?
+      `).bind(`counter:${id}`, startDate).first<{ total: number }>()
+
+      return Ok(row?.total ?? 0)
     } catch (error) {
       return Err(new ValidationError('Failed to get period count', { error }))
     }

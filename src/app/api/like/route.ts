@@ -47,7 +47,7 @@ const toggleHandler = ApiHandler.create({
   handler: async ({ id }, request) => {
     const clientIP = getClientIP(request)
     const userAgent = getUserAgent(request)
-    const userHash = likeService.generateUserHash(clientIP, userAgent)
+    const userHash = await likeService.generateUserHash(clientIP, userAgent)
 
     return await likeService.toggleLike(id, userHash)
   }
@@ -62,7 +62,7 @@ const getHandler = ApiHandler.create({
   handler: async ({ id }, request) => {
     const clientIP = getClientIP(request)
     const userAgent = getUserAgent(request)
-    const userHash = likeService.generateUserHash(clientIP, userAgent)
+    const userHash = await likeService.generateUserHash(clientIP, userAgent)
 
     return await likeService.getLikeData(id, userHash)
   }
@@ -78,7 +78,7 @@ const displayHandler = ApiHandler.createSpecialResponse(
   async ({ id, format }, request) => {
     const clientIP = getClientIP(request)
     const userAgent = getUserAgent(request)
-    const userHash = likeService.generateUserHash(clientIP, userAgent)
+    const userHash = await likeService.generateUserHash(clientIP, userAgent)
 
     const likeDataResult = await likeService.getLikeData(id, userHash)
     if (!likeDataResult.success) {
@@ -117,7 +117,7 @@ const svgHandler = ApiHandler.createSpecialResponse(
   async ({ id, theme }, request) => {
     const clientIP = getClientIP(request)
     const userAgent = getUserAgent(request)
-    const userHash = likeService.generateUserHash(clientIP, userAgent)
+    const userHash = await likeService.generateUserHash(clientIP, userAgent)
 
     const likeDataResult = await likeService.getLikeData(id, userHash)
     if (!likeDataResult.success) {
@@ -219,8 +219,8 @@ const setHandler = ApiHandler.create({
   handler: async ({ url, token, value }, request) => {
     const ip = getClientIP(request)
     const userAgent = getUserAgent(request)
-    const userHash = likeService.generateUserHash(ip, userAgent)
-    
+    const userHash = await likeService.generateUserHash(ip, userAgent)
+
     return await likeService.setLikeValue(url, token, value, userHash)
   }
 })
@@ -243,7 +243,7 @@ const deleteHandler = ApiHandler.create({
   paramsSchema: LikeSchemas.delete,
   resultSchema: UnifiedAPISchemas.deleteSuccess,
   handler: async ({ url, token }) => {
-    const publicId = generatePublicId(url)
+    const publicId = await generatePublicId(url)
     const deleteResult = await likeService.delete(url, token)
     
     if (!deleteResult.success) {

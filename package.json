@@ -54,10 +54,12 @@
     "zod": "^4.0.17"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.14.0",
     "autoprefixer": "^10.4.21",
     "dotenv": "^17.2.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11",
-    "tsx": "^4.20.4"
+    "tsx": "^4.20.4",
+    "wrangler": "^4.51.0"
   }
 }

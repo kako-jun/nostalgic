@@ -1,22 +1,19 @@
 /**
  * 管理者用クリーンアップAPI
- * 古いフォーマットのインスタンスを削除するための特別なエンドポイント
+ * 古いフォーマットのインスタンスを削除するための特別なエンドポイント（D1版）
  */
 
 import { NextRequest } from 'next/server'
 import { z } from 'zod'
 import { ApiHandler } from '@/lib/core/api-handler'
 import { Ok, Err, ValidationError } from '@/lib/core/result'
-import { getRedis } from '@/lib/core/db'
+import { getDB } from '@/lib/core/db'
 import { runAutoCleanup } from '@/lib/core/auto-cleanup'
 
 const OLD_INSTANCE_IDS = [
   'llll-ll-3f2d5e94',
-  '"llll-ll-3f2d5e94"',
   'demo-562a8fd7',
-  '"demo-562a8fd7"',
-  'nostalgi-5e343478',
-  '"nostalgi-5e343478"'
+  'nostalgi-5e343478'
 ]
 
 /**
@@ -29,8 +26,8 @@ const cleanupHandler = ApiHandler.create({
   }),
   resultSchema: z.object({
     success: z.literal(true),
-    deletedKeys: z.array(z.string()),
-    totalDeleted: z.number()
+    deletedCount: z.number(),
+    message: z.string()
   }),
   handler: async ({ adminToken, targetId }) => {
     // 管理者トークンの検証（環境変数から取得）
@@ -39,53 +36,46 @@ const cleanupHandler = ApiHandler.create({
       return Err(new ValidationError('Invalid admin token'))
     }
 
-    const redis = getRedis()
-    const deletedKeys: string[] = []
-    
+    const db = await getDB()
+    let totalDeleted = 0
+
     try {
       // 削除対象のIDリスト（targetIdが指定されていない場合は古いIDリストを使用）
       const idsToDelete = targetId ? [targetId] : OLD_INSTANCE_IDS
-      
+
       for (const id of idsToDelete) {
-        console.log(`🧹 Cleaning up instance: ${id}`)
-        
-        // パターンマッチで関連するすべてのキーを検索（統一キー構造）
-        const patterns = [
-          `counter:${id}:*`,
-          `like:${id}:*`,
-          `ranking:${id}:*`,
-          `bbs:${id}:*`
-        ]
-        
-        // URLマッピングも検索・削除
-        const allUrlKeys = await redis.keys('url:*')
-        for (const urlKey of allUrlKeys) {
-          const mappedId = await redis.get(urlKey)
-          if (mappedId === id || mappedId === `"${id}"` || mappedId === `${id}`) {
-            deletedKeys.push(urlKey)
-            await redis.del(urlKey)
-          }
-        }
-        
-        for (const pattern of patterns) {
-          const keys = await redis.keys(pattern)
-          if (keys.length > 0) {
-            deletedKeys.push(...keys)
-            await redis.del(...keys)
-          }
-        }
+        console.log(`Cleaning up instance: ${id}`)
+
+        // 関連データを削除
+        const counterResult = await db.prepare(`DELETE FROM counters WHERE service_id LIKE ?`).bind(`%${id}%`).run()
+        const dailyResult = await db.prepare(`DELETE FROM counter_daily WHERE service_id LIKE ?`).bind(`%${id}%`).run()
+        const likeResult = await db.prepare(`DELETE FROM likes WHERE service_id LIKE ?`).bind(`%${id}%`).run()
+        const rankingResult = await db.prepare(`DELETE FROM ranking_scores WHERE service_id LIKE ?`).bind(`%${id}%`).run()
+        const bbsResult = await db.prepare(`DELETE FROM bbs_messages WHERE service_id LIKE ?`).bind(`%${id}%`).run()
+        const urlResult = await db.prepare(`DELETE FROM url_mappings WHERE service_id LIKE ?`).bind(`%${id}%`).run()
+        const dailyActionsResult = await db.prepare(`DELETE FROM daily_actions WHERE service_id LIKE ?`).bind(`%${id}%`).run()
+        const serviceResult = await db.prepare(`DELETE FROM services WHERE id LIKE ?`).bind(`%${id}%`).run()
+
+        totalDeleted +=
+          (counterResult.meta?.changes || 0) +
+          (dailyResult.meta?.changes || 0) +
+          (likeResult.meta?.changes || 0) +
+          (rankingResult.meta?.changes || 0) +
+          (bbsResult.meta?.changes || 0) +
+          (urlResult.meta?.changes || 0) +
+          (dailyActionsResult.meta?.changes || 0) +
+          (serviceResult.meta?.changes || 0)
       }
-      
+
       return Ok({
         success: true as const,
-        deletedKeys,
-        totalDeleted: deletedKeys.length
+        deletedCount: totalDeleted,
+        message: `Cleaned up ${idsToDelete.length} instances, ${totalDeleted} rows deleted`
       })
-      
+
     } catch (error: any) {
-      return Err(new ValidationError('Cleanup failed', { 
-        error: error.message,
-        deletedSoFar: deletedKeys
+      return Err(new ValidationError('Cleanup failed', {
+        error: error.message
       }))
     }
   }
@@ -116,7 +106,7 @@ const autoCleanupHandler = ApiHandler.create({
     }
 
     const { deleted, errors } = await runAutoCleanup()
-    
+
     return Ok({
       success: true as const,
       deletedServices: deleted.map(s => ({
@@ -141,8 +131,7 @@ const cleanupByUrlHandler = ApiHandler.create({
   resultSchema: z.object({
     success: z.literal(true),
     foundInstances: z.array(z.string()),
-    deletedKeys: z.array(z.string()),
-    totalDeleted: z.number()
+    deletedCount: z.number()
   }),
   handler: async ({ adminToken, urlPattern }) => {
     // 管理者トークンの検証
@@ -151,54 +140,41 @@ const cleanupByUrlHandler = ApiHandler.create({
       return Err(new ValidationError('Invalid admin token'))
     }
 
-    const redis = getRedis()
-    const deletedKeys: string[] = []
+    const db = await getDB()
     const foundInstances: string[] = []
-    
+    let totalDeleted = 0
+
     try {
       // URLパターンに一致するインスタンスを検索
-      const urlKeys = await redis.keys(`url:${urlPattern}:*`)
-      
-      for (const urlKey of urlKeys) {
-        const instanceId = await redis.get(urlKey)
-        if (instanceId) {
-          foundInstances.push(instanceId)
-          
-          // インスタンスに関連するすべてのキーを削除
-          const patterns = [
-            `*${instanceId}*`,
-            `counter:${instanceId}:*`,
-            `like:${instanceId}:*`,
-            `ranking:${instanceId}:*`,
-            `bbs:${instanceId}:*`,
-          ]
-          
-          for (const pattern of patterns) {
-            const keys = await redis.keys(pattern)
-            if (keys.length > 0) {
-              deletedKeys.push(...keys)
-              await redis.del(...keys)
-            }
-          }
-          
-          // URLマッピングも削除
-          deletedKeys.push(urlKey)
-          await redis.del(urlKey)
-        }
+      const services = await db.prepare(`
+        SELECT service_id FROM url_mappings WHERE url LIKE ?
+      `).bind(`%${urlPattern}%`).all<{ service_id: string }>()
+
+      for (const { service_id } of services.results) {
+        foundInstances.push(service_id)
+
+        // 関連データを削除
+        await db.prepare(`DELETE FROM counters WHERE service_id = ?`).bind(service_id).run()
+        await db.prepare(`DELETE FROM counter_daily WHERE service_id = ?`).bind(service_id).run()
+        await db.prepare(`DELETE FROM likes WHERE service_id = ?`).bind(service_id).run()
+        await db.prepare(`DELETE FROM ranking_scores WHERE service_id LIKE ?`).bind(`%${service_id}%`).run()
+        await db.prepare(`DELETE FROM bbs_messages WHERE service_id = ?`).bind(service_id).run()
+        await db.prepare(`DELETE FROM url_mappings WHERE service_id = ?`).bind(service_id).run()
+        await db.prepare(`DELETE FROM daily_actions WHERE service_id LIKE ?`).bind(`%${service_id}%`).run()
+        const result = await db.prepare(`DELETE FROM services WHERE id = ?`).bind(service_id).run()
+        totalDeleted += result.meta?.changes || 0
       }
-      
+
       return Ok({
         success: true as const,
         foundInstances,
-        deletedKeys,
-        totalDeleted: deletedKeys.length
+        deletedCount: totalDeleted
       })
-      
+
     } catch (error: any) {
-      return Err(new ValidationError('Cleanup failed', { 
+      return Err(new ValidationError('Cleanup failed', {
         error: error.message,
-        foundInstances,
-        deletedSoFar: deletedKeys
+        foundInstances
       }))
     }
   }
@@ -208,7 +184,7 @@ const cleanupByUrlHandler = ApiHandler.create({
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const action = searchParams.get('action')
-  
+
   switch (action) {
     case 'cleanup':
       return await cleanupHandler(request)
