@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import ApiUrlDisplay from "./ApiUrlDisplay";
 import ResponseDisplay from "./ResponseDisplay";
+import NostalgicButton from "./NostalgicButton";
 
 type FieldType = "text" | "url" | "number" | "select";
 
@@ -105,22 +106,9 @@ export default function DataDrivenFormSection({
           </p>
         ))}
         <p>
-          <button
-            type="button"
-            style={{
-              padding: "4px 12px",
-              backgroundColor: buttonColor,
-              color: "white",
-              border: `2px outset ${buttonColor}`,
-              fontSize: "16px",
-              fontWeight: "bold",
-              cursor: "pointer",
-              fontFamily: "inherit",
-            }}
-            onClick={onSubmit}
-          >
+          <NostalgicButton onClick={onSubmit} color={buttonColor}>
             {buttonText}
-          </button>
+          </NostalgicButton>
         </p>
       </form>
 
