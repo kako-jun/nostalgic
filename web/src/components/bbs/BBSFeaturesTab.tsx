@@ -66,7 +66,7 @@ export default function BBSFeaturesTab() {
       </div>
 
       <p style={{ textAlign: "center", marginTop: "30px" }}>
-        <a href="#usage" className="nostalgic-old-link">
+        <a href="/bbs/usage" className="nostalgic-old-link">
           【使い方】へ
         </a>
       </p>

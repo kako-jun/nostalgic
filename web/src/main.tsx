@@ -15,9 +15,13 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/counter" element={<CounterPage />} />
+        <Route path="/counter/usage" element={<CounterPage />} />
         <Route path="/like" element={<LikePage />} />
+        <Route path="/like/usage" element={<LikePage />} />
         <Route path="/ranking" element={<RankingPage />} />
+        <Route path="/ranking/usage" element={<RankingPage />} />
         <Route path="/bbs" element={<BBSPage />} />
+        <Route path="/bbs/usage" element={<BBSPage />} />
         <Route path="/about" element={<AboutPage />} />
       </Routes>
     </BrowserRouter>

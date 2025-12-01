@@ -1,17 +1,15 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import NostalgicLayout from "../components/NostalgicLayout";
 import CounterFeaturesTab from "../components/counter/CounterFeaturesTab";
 import CreateServiceSection from "../components/sections/CreateServiceSection";
 import DataDrivenFormSection from "../components/DataDrivenFormSection";
-import useHashNavigation from "../hooks/useHashNavigation";
 import { callApi, callApiWithFormat } from "../utils/apiHelpers";
 import { getCounterFormSections } from "../config/counterFormConfig";
 
 export default function CounterPage() {
-  const [currentPage, setCurrentPage] = useState(() => {
-    const hash = window.location.hash.slice(1);
-    return hash || "features";
-  });
+  const location = useLocation();
+  const currentPage = location.pathname === "/counter/usage" ? "usage" : "features";
   const [publicId, setPublicId] = useState("");
   const [responseType, setResponseType] = useState<"json" | "text" | "svg">("json");
   const [sharedUrl, setSharedUrl] = useState("");
@@ -27,8 +25,6 @@ export default function CounterPage() {
   const [setValueResponse, setSetValueResponse] = useState("");
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
-
-  useHashNavigation(currentPage, setCurrentPage);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();

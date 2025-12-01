@@ -1,17 +1,15 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import NostalgicLayout from "../components/NostalgicLayout";
 import BBSFeaturesTab from "../components/bbs/BBSFeaturesTab";
 import CreateServiceSection from "../components/sections/CreateServiceSection";
 import DataDrivenFormSection from "../components/DataDrivenFormSection";
-import useHashNavigation from "../hooks/useHashNavigation";
 import { callApi } from "../utils/apiHelpers";
 import { getBBSFormSections } from "../config/bbsFormConfig";
 
 export default function BBSPage() {
-  const [currentPage, setCurrentPage] = useState(() => {
-    const hash = window.location.hash.slice(1);
-    return hash || "features";
-  });
+  const location = useLocation();
+  const currentPage = location.pathname === "/bbs/usage" ? "usage" : "features";
   const [publicId, setPublicId] = useState("");
   const [sharedUrl, setSharedUrl] = useState("");
   const [sharedToken, setSharedToken] = useState("");
@@ -50,8 +48,6 @@ export default function BBSPage() {
   const [clearResponse, setClearResponse] = useState("");
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
-
-  useHashNavigation(currentPage, setCurrentPage);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
