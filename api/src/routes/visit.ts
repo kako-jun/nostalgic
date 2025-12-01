@@ -14,6 +14,10 @@ type Bindings = {
   DB: D1Database;
 };
 
+type CounterRecord = {
+  id: string;
+};
+
 const app = new Hono<{ Bindings: Bindings }>();
 
 // === Schemas ===
@@ -250,7 +254,7 @@ app.get("/", async (c) => {
     }
 
     // Verify ownership
-    const id = (counter as any).id.replace("counter:", "");
+    const id = (counter as CounterRecord).id.replace("counter:", "");
     const hashedToken = await hashToken(token);
     const owner = await db
       .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
@@ -291,7 +295,7 @@ app.get("/", async (c) => {
       return c.json({ error: "Counter not found" }, 404);
     }
 
-    const id = (counter as any).id.replace("counter:", "");
+    const id = (counter as CounterRecord).id.replace("counter:", "");
     const hashedToken = await hashToken(token);
     const owner = await db
       .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")

@@ -10,6 +10,21 @@ import { BBS } from "../lib/core/constants";
 
 type Bindings = { DB: D1Database };
 
+type BBSRecord = {
+  id: string;
+  metadata?: string;
+};
+
+type BBSMessageRow = {
+  id: string;
+  author: string;
+  message: string;
+  icon?: string;
+  selects?: string;
+  user_hash: string;
+  created_at: string;
+};
+
 const app = new Hono<{ Bindings: Bindings }>();
 
 // === Helper Functions ===
@@ -26,7 +41,7 @@ async function getBBSByUrl(db: D1Database, url: string) {
     .first();
 }
 
-async function getBBSById(db: D1Database, id: string) {
+async function _getBBSById(db: D1Database, id: string) {
   return db.prepare("SELECT * FROM services WHERE id = ?").bind(`bbs:${id}`).first();
 }
 
@@ -44,7 +59,7 @@ async function getMessages(db: D1Database, id: string, limit: number = 100) {
     .bind(`bbs:${id}:messages`, limit)
     .all();
 
-  return (results as any[]).map((row) => ({
+  return (results.results as BBSMessageRow[]).map((row) => ({
     id: row.id,
     author: row.author,
     message: row.message,
@@ -126,7 +141,7 @@ app.get("/", async (c) => {
       return c.json({ error: "BBS not found" }, 404);
     }
 
-    const id = (bbs as any).id.replace("bbs:", "");
+    const id = (bbs as BBSRecord).id.replace("bbs:", "");
     const hashedToken = await hashToken(token);
     const owner = await db
       .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
@@ -162,7 +177,7 @@ app.get("/", async (c) => {
       .run();
 
     // Trim excess messages
-    const metadata = JSON.parse((bbs as any).metadata || "{}");
+    const metadata = JSON.parse((bbs as BBSRecord).metadata || "{}");
     const maxMessages = metadata.maxMessages || 100;
 
     const count = await db
@@ -200,12 +215,12 @@ app.get("/", async (c) => {
       return c.json({ error: "id is required" }, 400);
     }
 
-    const bbs = await getBBSById(db, id);
+    const bbs = await getBBSByUrl(db, url);
     if (!bbs) {
       return c.json({ error: "BBS not found" }, 404);
     }
 
-    const metadata = JSON.parse((bbs as any).metadata || "{}");
+    const metadata = JSON.parse((bbs as BBSRecord).metadata || "{}");
     const messages = await getMessages(db, id, limit);
 
     // Add user hash for edit permission check
@@ -237,7 +252,7 @@ app.get("/", async (c) => {
       return c.json({ error: "BBS not found" }, 404);
     }
 
-    const id = (bbs as any).id.replace("bbs:", "");
+    const id = (bbs as BBSRecord).id.replace("bbs:", "");
     const hashedToken = await hashToken(token);
     const owner = await db
       .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
@@ -290,7 +305,7 @@ app.get("/", async (c) => {
       return c.json({ error: "BBS not found" }, 404);
     }
 
-    const id = (bbs as any).id.replace("bbs:", "");
+    const id = (bbs as BBSRecord).id.replace("bbs:", "");
     const hashedToken = await hashToken(token);
     const owner = await db
       .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
@@ -338,7 +353,7 @@ app.get("/", async (c) => {
       return c.json({ error: "BBS not found" }, 404);
     }
 
-    const id = (bbs as any).id.replace("bbs:", "");
+    const id = (bbs as BBSRecord).id.replace("bbs:", "");
     const hashedToken = await hashToken(token);
     const owner = await db
       .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
@@ -371,7 +386,7 @@ app.get("/", async (c) => {
       return c.json({ error: "BBS not found" }, 404);
     }
 
-    const id = (bbs as any).id.replace("bbs:", "");
+    const id = (bbs as BBSRecord).id.replace("bbs:", "");
     const hashedToken = await hashToken(token);
     const owner = await db
       .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")

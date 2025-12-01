@@ -9,6 +9,18 @@ import { RANKING } from "../lib/core/constants";
 
 type Bindings = { DB: D1Database };
 
+type RankingRecord = {
+  id: string;
+  metadata?: string;
+};
+
+type RankingRow = {
+  name: string;
+  score: number;
+  display_score?: string;
+  created_at: string;
+};
+
 const app = new Hono<{ Bindings: Bindings }>();
 
 // === Helper Functions ===
@@ -49,7 +61,7 @@ async function getTopEntries(
     .bind(`ranking:${id}:scores`, limit)
     .all();
 
-  return (results as any[]).map((row, index) => ({
+  return (results as RankingRow[]).map((row, index) => ({
     rank: index + 1,
     name: row.name,
     score: row.score,
@@ -127,7 +139,7 @@ app.get("/", async (c) => {
       return c.json({ error: "Ranking not found" }, 404);
     }
 
-    const id = (ranking as any).id.replace("ranking:", "");
+    const id = (ranking as RankingRecord).id.replace("ranking:", "");
     const hashedToken = await hashToken(token);
     const owner = await db
       .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
@@ -138,7 +150,7 @@ app.get("/", async (c) => {
       return c.json({ error: "Invalid token" }, 403);
     }
 
-    const metadata = JSON.parse((ranking as any).metadata || "{}");
+    const metadata = JSON.parse((ranking as RankingRecord).metadata || "{}");
     const sortOrder = metadata.sortOrder || "desc";
     const maxEntries = metadata.maxEntries || 100;
 
@@ -199,7 +211,7 @@ app.get("/", async (c) => {
       return c.json({ error: "Ranking not found" }, 404);
     }
 
-    const metadata = JSON.parse((ranking as any).metadata || "{}");
+    const metadata = JSON.parse((ranking as RankingRecord).metadata || "{}");
     const sortOrder = metadata.sortOrder || "desc";
 
     const entries = await getTopEntries(db, id, limit, sortOrder);
@@ -221,7 +233,7 @@ app.get("/", async (c) => {
       return c.json({ error: "Ranking not found" }, 404);
     }
 
-    const id = (ranking as any).id.replace("ranking:", "");
+    const id = (ranking as RankingRecord).id.replace("ranking:", "");
     const hashedToken = await hashToken(token);
     const owner = await db
       .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
@@ -255,7 +267,7 @@ app.get("/", async (c) => {
       return c.json({ error: "Ranking not found" }, 404);
     }
 
-    const id = (ranking as any).id.replace("ranking:", "");
+    const id = (ranking as RankingRecord).id.replace("ranking:", "");
     const hashedToken = await hashToken(token);
     const owner = await db
       .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
@@ -288,7 +300,7 @@ app.get("/", async (c) => {
       return c.json({ error: "Ranking not found" }, 404);
     }
 
-    const id = (ranking as any).id.replace("ranking:", "");
+    const id = (ranking as RankingRecord).id.replace("ranking:", "");
     const hashedToken = await hashToken(token);
     const owner = await db
       .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")

@@ -10,6 +10,10 @@ import { getTodayDateString } from "../lib/core/db";
 
 type Bindings = { DB: D1Database };
 
+type LikeRecord = {
+  id: string;
+};
+
 const app = new Hono<{ Bindings: Bindings }>();
 
 // === Helper Functions ===
@@ -114,7 +118,7 @@ app.get("/", async (c) => {
       return c.json({ error: "Like service not found" }, 404);
     }
 
-    const id = (like as any).id.replace("like:", "");
+    const id = (like as LikeRecord).id.replace("like:", "");
 
     // Verify ownership
     const hashedToken = await hashToken(token);
@@ -206,7 +210,7 @@ app.get("/", async (c) => {
       return c.json({ error: "Like service not found" }, 404);
     }
 
-    const id = (like as any).id.replace("like:", "");
+    const id = (like as LikeRecord).id.replace("like:", "");
     const hashedToken = await hashToken(token);
     const owner = await db
       .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")

@@ -6,7 +6,7 @@ export default function HomePage() {
   const [currentPage, setCurrentPage] = useState("home");
   const [visitedPages, setVisitedPages] = useState<Set<string>>(new Set(["home"]));
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [, setVotingResults] = useState<any[]>([]);
+  const [, setVotingResults] = useState<{ name: string; score: number }[]>([]);
   const [votingMessage, setVotingMessage] = useState("");
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function HomePage() {
       if (getCurrentResponse.ok) {
         const currentData = await getCurrentResponse.json();
         const currentEntry = currentData.data?.entries?.find(
-          (entry: any) => entry.name === serviceName
+          (entry: { name: string; score: number }) => entry.name === serviceName
         );
         if (currentEntry) {
           currentScore = currentEntry.score + 1;
