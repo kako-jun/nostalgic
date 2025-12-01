@@ -62,3 +62,6 @@ temp/
 
 # pnpm
 node_modules/
+
+# Vite build output
+dist/
