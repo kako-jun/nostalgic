@@ -54,4 +54,4 @@ tmp/
 temp/
 
 # Serena MCP Server files
-.serena/
+.serena/.claude/settings.local.json
