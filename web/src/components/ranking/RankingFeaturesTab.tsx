@@ -64,7 +64,7 @@ export default function RankingFeaturesTab() {
       </div>
 
       <p style={{ textAlign: "center", marginTop: "30px" }}>
-        <a href="#usage" className="nostalgic-old-link">
+        <a href="/ranking/usage" className="nostalgic-old-link">
           【使い方】へ
         </a>
       </p>

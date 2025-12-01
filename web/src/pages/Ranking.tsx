@@ -1,17 +1,15 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import NostalgicLayout from "../components/NostalgicLayout";
 import RankingFeaturesTab from "../components/ranking/RankingFeaturesTab";
 import CreateServiceSection from "../components/sections/CreateServiceSection";
 import DataDrivenFormSection from "../components/DataDrivenFormSection";
-import useHashNavigation from "../hooks/useHashNavigation";
 import { callApi } from "../utils/apiHelpers";
 import { getRankingFormSections } from "../config/rankingFormConfig";
 
 export default function RankingPage() {
-  const [currentPage, setCurrentPage] = useState(() => {
-    const hash = window.location.hash.slice(1);
-    return hash || "features";
-  });
+  const location = useLocation();
+  const currentPage = location.pathname === "/ranking/usage" ? "usage" : "features";
   const [publicId, setPublicId] = useState("");
   const [responseType] = useState<"json" | "text" | "svg">("json");
   const [sharedUrl, setSharedUrl] = useState("");
@@ -42,8 +40,6 @@ export default function RankingPage() {
   const [clearResponse, setClearResponse] = useState("");
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
-
-  useHashNavigation(currentPage, setCurrentPage);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();

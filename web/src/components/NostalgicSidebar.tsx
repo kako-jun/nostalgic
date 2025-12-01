@@ -82,7 +82,7 @@ export default function NostalgicSidebar({
         <br />
         <span>●</span>
         <Link
-          to="/counter#features"
+          to="/counter"
           className={
             currentService === "counter" ? "nostalgic-old-link-visited" : "nostalgic-old-link"
           }
@@ -93,19 +93,19 @@ export default function NostalgicSidebar({
         <br />
         <>
           <span style={{ marginLeft: "1em" }}>├</span>
-          {currentService === "counter" && currentPage === "features" ? (
+          {currentService === "counter" && location.pathname === "/counter" ? (
             <span className="nostalgic-nav-active">機能一覧</span>
           ) : (
-            <Link to="/counter#features" className="nostalgic-old-link" onClick={() => onClose?.()}>
+            <Link to="/counter" className="nostalgic-old-link" onClick={() => onClose?.()}>
               機能一覧
             </Link>
           )}
           <br />
           <span style={{ marginLeft: "1em" }}>└</span>
-          {currentService === "counter" && currentPage === "usage" ? (
+          {currentService === "counter" && location.pathname === "/counter/usage" ? (
             <span className="nostalgic-nav-active">使い方</span>
           ) : (
-            <Link to="/counter#usage" className="nostalgic-old-link" onClick={() => onClose?.()}>
+            <Link to="/counter/usage" className="nostalgic-old-link" onClick={() => onClose?.()}>
               使い方
             </Link>
           )}
@@ -113,7 +113,7 @@ export default function NostalgicSidebar({
         </>
         <span>●</span>
         <Link
-          to="/like#features"
+          to="/like"
           className={
             currentService === "like" ? "nostalgic-old-link-visited" : "nostalgic-old-link"
           }
@@ -124,19 +124,19 @@ export default function NostalgicSidebar({
         <br />
         <>
           <span style={{ marginLeft: "1em" }}>├</span>
-          {currentService === "like" && currentPage === "features" ? (
+          {currentService === "like" && location.pathname === "/like" ? (
             <span className="nostalgic-nav-active">機能一覧</span>
           ) : (
-            <Link to="/like#features" className="nostalgic-old-link" onClick={() => onClose?.()}>
+            <Link to="/like" className="nostalgic-old-link" onClick={() => onClose?.()}>
               機能一覧
             </Link>
           )}
           <br />
           <span style={{ marginLeft: "1em" }}>└</span>
-          {currentService === "like" && currentPage === "usage" ? (
+          {currentService === "like" && location.pathname === "/like/usage" ? (
             <span className="nostalgic-nav-active">使い方</span>
           ) : (
-            <Link to="/like#usage" className="nostalgic-old-link" onClick={() => onClose?.()}>
+            <Link to="/like/usage" className="nostalgic-old-link" onClick={() => onClose?.()}>
               使い方
             </Link>
           )}
@@ -144,7 +144,7 @@ export default function NostalgicSidebar({
         </>
         <span>●</span>
         <Link
-          to="/ranking#features"
+          to="/ranking"
           className={
             currentService === "ranking" ? "nostalgic-old-link-visited" : "nostalgic-old-link"
           }
@@ -155,19 +155,19 @@ export default function NostalgicSidebar({
         <br />
         <>
           <span style={{ marginLeft: "1em" }}>├</span>
-          {currentService === "ranking" && currentPage === "features" ? (
+          {currentService === "ranking" && location.pathname === "/ranking" ? (
             <span className="nostalgic-nav-active">機能一覧</span>
           ) : (
-            <Link to="/ranking#features" className="nostalgic-old-link" onClick={() => onClose?.()}>
+            <Link to="/ranking" className="nostalgic-old-link" onClick={() => onClose?.()}>
               機能一覧
             </Link>
           )}
           <br />
           <span style={{ marginLeft: "1em" }}>└</span>
-          {currentService === "ranking" && currentPage === "usage" ? (
+          {currentService === "ranking" && location.pathname === "/ranking/usage" ? (
             <span className="nostalgic-nav-active">使い方</span>
           ) : (
-            <Link to="/ranking#usage" className="nostalgic-old-link" onClick={() => onClose?.()}>
+            <Link to="/ranking/usage" className="nostalgic-old-link" onClick={() => onClose?.()}>
               使い方
             </Link>
           )}
@@ -175,7 +175,7 @@ export default function NostalgicSidebar({
         </>
         <span>●</span>
         <Link
-          to="/bbs#features"
+          to="/bbs"
           className={currentService === "bbs" ? "nostalgic-old-link-visited" : "nostalgic-old-link"}
           onClick={() => onClose?.()}
         >
@@ -184,19 +184,19 @@ export default function NostalgicSidebar({
         <br />
         <>
           <span style={{ marginLeft: "1em" }}>├</span>
-          {currentService === "bbs" && currentPage === "features" ? (
+          {currentService === "bbs" && location.pathname === "/bbs" ? (
             <span className="nostalgic-nav-active">機能一覧</span>
           ) : (
-            <Link to="/bbs#features" className="nostalgic-old-link" onClick={() => onClose?.()}>
+            <Link to="/bbs" className="nostalgic-old-link" onClick={() => onClose?.()}>
               機能一覧
             </Link>
           )}
           <br />
           <span style={{ marginLeft: "1em" }}>└</span>
-          {currentService === "bbs" && currentPage === "usage" ? (
+          {currentService === "bbs" && location.pathname === "/bbs/usage" ? (
             <span className="nostalgic-nav-active">使い方</span>
           ) : (
-            <Link to="/bbs#usage" className="nostalgic-old-link" onClick={() => onClose?.()}>
+            <Link to="/bbs/usage" className="nostalgic-old-link" onClick={() => onClose?.()}>
               使い方
             </Link>
           )}
