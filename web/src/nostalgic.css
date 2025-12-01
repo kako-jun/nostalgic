@@ -45,6 +45,8 @@ body {
 /* メインコンテンツエリア */
 .nostalgic-content-area {
   flex: 1 !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
   background-color: #ffffff !important;
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200"><text x="50" y="100" font-family="MS Gothic, monospace" font-size="40" font-style="italic" fill="%23dddddd" fill-opacity="0.3" transform="rotate(-30 200 100)">Nostalgic</text></svg>') !important;
   background-size: 400px 200px !important;
