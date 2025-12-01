@@ -1,0 +1,19 @@
+{
+  "name": "@nostalgic/api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:local": "wrangler d1 execute nostalgic-db --local",
+    "db:remote": "wrangler d1 execute nostalgic-db --remote"
+  },
+  "dependencies": {
+    "hono": "^4.6.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241127.0",
+    "typescript": "^5.7.2",
+    "wrangler": "^4.51.0"
+  }
+}
