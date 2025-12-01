@@ -849,7 +849,10 @@ declare module 'react' {
                               const messageText =
                                 messages.length > 0
                                   ? messages
-                                      .map((msg: any) => `${msg.author}: ${msg.message}`)
+                                      .map(
+                                        (msg: { author: string; message: string }) =>
+                                          `${msg.author}: ${msg.message}`
+                                      )
                                       .join("\n")
                                   : "まだメッセージがありません";
                               alert(`BBS メッセージ:\n${messageText}`);
