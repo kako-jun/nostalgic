@@ -178,7 +178,7 @@ export const getCounterFormSections = (
       },
     ],
     buttonText: "値を設定",
-    buttonColor: "#FF9800",
+    buttonVariant: "warning" as const,
     onSubmit: handlers.handleSet,
     response: responses.setResponse,
     warningMessage: (
@@ -268,7 +268,7 @@ export const getCounterFormSections = (
       },
     ],
     buttonText: "削除",
-    buttonColor: "#F44336",
+    buttonVariant: "danger" as const,
     onSubmit: handlers.handleDelete,
     response: responses.deleteResponse,
     warningMessage: (

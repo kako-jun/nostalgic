@@ -313,7 +313,7 @@ export const getLikeFormSections = (
       },
     ],
     buttonText: "削除",
-    buttonColor: "#F44336",
+    buttonVariant: "danger" as const,
     onSubmit: handlers.handleDelete,
     response: responses.deleteResponse,
     warningMessage: (

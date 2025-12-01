@@ -253,7 +253,7 @@ export const getRankingFormSections = (
       },
     ],
     buttonText: "エントリ削除",
-    buttonColor: "#FF9800",
+    buttonVariant: "warning" as const,
     onSubmit: handlers.handleRemove,
     response: responses.removeResponse,
   },
@@ -290,7 +290,7 @@ export const getRankingFormSections = (
       },
     ],
     buttonText: "全エントリクリア",
-    buttonColor: "#FF9800",
+    buttonVariant: "warning" as const,
     onSubmit: handlers.handleClear,
     response: responses.clearResponse,
     warningMessage: (
@@ -428,7 +428,7 @@ export const getRankingFormSections = (
       },
     ],
     buttonText: "削除",
-    buttonColor: "#F44336",
+    buttonVariant: "danger" as const,
     onSubmit: handlers.handleDelete,
     response: responses.deleteResponse,
     warningMessage: (

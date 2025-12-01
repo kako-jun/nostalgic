@@ -39,7 +39,7 @@ export default function ApiUrlDisplay({ url, children }: ApiUrlDisplayProps) {
       }}
     >
       <div style={{ marginBottom: "8px" }}>{children}</div>
-      <NostalgicButton onClick={handleCopy} color="#c0c0c0">
+      <NostalgicButton onClick={handleCopy} variant="secondary">
         {copied ? "コピー済み" : "コピー"}
       </NostalgicButton>
     </div>
