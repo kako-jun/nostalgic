@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import ApiUrlDisplay from "./ApiUrlDisplay";
 import ResponseDisplay from "./ResponseDisplay";
-import NostalgicButton from "./NostalgicButton";
+import NostalgicButton, { type ButtonVariant } from "./NostalgicButton";
 import SectionDivider from "./common/SectionDivider";
 
 type FieldType = "text" | "url" | "number" | "select";
@@ -25,7 +25,7 @@ interface FormSectionProps {
   apiUrlDisplay: ReactNode;
   fields: FormFieldConfig[];
   buttonText: string;
-  buttonColor?: string;
+  buttonVariant?: ButtonVariant;
   onSubmit: (e: React.FormEvent) => void;
   response: string;
   responseType?: "json" | "text" | "svg";
@@ -40,7 +40,7 @@ export default function DataDrivenFormSection({
   apiUrlDisplay,
   fields,
   buttonText,
-  buttonColor = "#2196F3",
+  buttonVariant = "primary",
   onSubmit,
   response,
   responseType = "json",
@@ -107,7 +107,7 @@ export default function DataDrivenFormSection({
           </p>
         ))}
         <p>
-          <NostalgicButton onClick={onSubmit} color={buttonColor}>
+          <NostalgicButton onClick={onSubmit} variant={buttonVariant}>
             {buttonText}
           </NostalgicButton>
         </p>
