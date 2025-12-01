@@ -19,6 +19,12 @@ CREATE TABLE IF NOT EXISTS url_mappings (
   PRIMARY KEY (type, url)
 );
 
+-- オーナートークン（認証用）
+CREATE TABLE IF NOT EXISTS owner_tokens (
+  service_id TEXT PRIMARY KEY,
+  token_hash TEXT NOT NULL
+);
+
 -- カウンター: 累計カウント
 CREATE TABLE IF NOT EXISTS counters (
   service_id TEXT PRIMARY KEY,
