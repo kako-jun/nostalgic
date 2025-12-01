@@ -4,6 +4,8 @@ import ResponseDisplay from "../components/ResponseDisplay";
 import ApiUrlDisplay, { GreenParam } from "../components/ApiUrlDisplay";
 import TabNavigation from "../components/TabNavigation";
 import LikeFeaturesTab from "../components/like/LikeFeaturesTab";
+import CreateServiceSection from "../components/sections/CreateServiceSection";
+import ActionSection from "../components/sections/ActionSection";
 import useHashNavigation from "../hooks/useHashNavigation";
 import { callApi, callApiWithFormat } from "../utils/apiHelpers";
 
@@ -126,130 +128,20 @@ export default function LikePage() {
               使い方
             </div>
 
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆STEP 1: いいねボタン作成◆</b>
-                </span>
-              </p>
-              <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
-              <ApiUrlDisplay
-                url={`https://nostalgic.llll-ll.com/api/like?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`}
-              >
-                https://nostalgic.llll-ll.com/api/like?action=create&url=
-                <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-                &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
-                {webhookUrl && (
-                  <>
-                    &webhookUrl=<GreenParam>{encodeURIComponent(webhookUrl)}</GreenParam>
-                  </>
-                )}
-              </ApiUrlDisplay>
-              <p>
-                ※サイトURLには、いいねボタンを設置する予定のサイトを指定してください。「https://」から始まっている必要があります。
-                <br />
-                ※オーナートークンに、
-                <span style={{ color: "#ff0000" }}>
-                  ほかのサイトでのパスワードを使い回さないでください
-                </span>
-                。（8-16文字）
-              </p>
-              <p>
-                上記URLにアクセスすると、JSONで公開IDが返されます。この公開IDをSTEP
-                2で使用してください。
-              </p>
+            <CreateServiceSection
+              serviceName="いいねボタン"
+              apiEndpoint="/api/like"
+              sharedUrl={sharedUrl}
+              setSharedUrl={setSharedUrl}
+              sharedToken={sharedToken}
+              setSharedToken={setSharedToken}
+              webhookUrl={webhookUrl}
+              setWebhookUrl={setWebhookUrl}
+              onCreateSubmit={handleCreate}
+              createResponse={createResponse}
+            />
 
-              <hr style={{ margin: "20px 0", border: "1px dashed #ccc" }} />
-
-              <p style={{ marginTop: "20px" }}>または、以下のフォームで簡単に作成できます。</p>
-
-              <form style={{ marginTop: "10px" }}>
-                <p>
-                  <b>サイトURL：</b>
-                  <input
-                    value={sharedUrl}
-                    onChange={(e) => setSharedUrl(e.target.value)}
-                    type="url"
-                    placeholder="https://example.com"
-                    style={{
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>オーナートークン：</b>
-                  <input
-                    value={sharedToken}
-                    onChange={(e) => setSharedToken(e.target.value)}
-                    type="text"
-                    placeholder="8-16文字"
-                    style={{
-                      width: "30%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                    required
-                  />
-                </p>
-
-                <p>
-                  <b>Webhook URL（オプション）：</b>
-                  <input
-                    value={webhookUrl}
-                    onChange={(e) => setWebhookUrl(e.target.value)}
-                    type="url"
-                    placeholder="https://hooks.slack.com/services/..."
-                    style={{
-                      width: "60%",
-                      padding: "4px",
-                      border: "1px solid #666",
-                      fontFamily: "inherit",
-                      fontSize: "16px",
-                    }}
-                  />
-                </p>
-
-                <p>
-                  <button
-                    type="button"
-                    style={{
-                      padding: "4px 12px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "2px outset #2196F3",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                    }}
-                    onClick={handleCreate}
-                  >
-                    作成
-                  </button>
-                </p>
-              </form>
-
-              <ResponseDisplay
-                response={createResponse}
-                responseType={responseType}
-                show={!!createResponse}
-              />
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆STEP 2: いいね表示◆</b>
-                </span>
-              </p>
+            <ActionSection title="◆STEP 2: いいね表示◆">
               <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
               <ApiUrlDisplay
                 url={`https://nostalgic.llll-ll.com/api/like?action=display&id=${encodeURIComponent(publicId || "公開ID")}&format=${selectedFormat}`}
@@ -323,7 +215,7 @@ export default function LikePage() {
                 responseType={responseType}
                 show={!!displayResponse}
               />
-            </div>
+            </ActionSection>
 
             <div className="nostalgic-section">
               <p>
