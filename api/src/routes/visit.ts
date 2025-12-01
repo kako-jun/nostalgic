@@ -4,12 +4,11 @@
 
 import { Hono } from "hono";
 import { z } from "zod";
-import { Ok, Err, ValidationError, NotFoundError } from "../lib/core/result";
 import { hashToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
 import { generateUserHash } from "../lib/core/crypto";
 import { getTodayDateString, getYesterdayDateString, getDateRange } from "../lib/core/db";
-import { COUNTER, THEMES, DEFAULT_THEME, URL_CONST } from "../lib/core/constants";
+import { DEFAULT_THEME, URL_CONST } from "../lib/core/constants";
 
 type Bindings = {
   DB: D1Database;
@@ -18,7 +17,7 @@ type Bindings = {
 const app = new Hono<{ Bindings: Bindings }>();
 
 // === Schemas ===
-const CreateSchema = z.object({
+const _CreateSchema = z.object({
   url: z.string().url().startsWith(URL_CONST.REQUIRED_PROTOCOL),
   token: z.string().min(8).max(16),
   webhookUrl: z.string().url().optional(),

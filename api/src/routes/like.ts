@@ -7,7 +7,6 @@ import { hashToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
 import { generateUserHash } from "../lib/core/crypto";
 import { getTodayDateString } from "../lib/core/db";
-import { URL_CONST } from "../lib/core/constants";
 
 type Bindings = { DB: D1Database };
 

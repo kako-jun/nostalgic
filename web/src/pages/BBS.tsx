@@ -4,7 +4,10 @@ import ResponseDisplay from "../components/ResponseDisplay";
 import ApiUrlDisplay, { GreenParam } from "../components/ApiUrlDisplay";
 
 export default function BBSPage() {
-  const [currentPage, setCurrentPage] = useState("features");
+  const [currentPage, setCurrentPage] = useState(() => {
+    const hash = window.location.hash.slice(1);
+    return hash || "features";
+  });
   const [publicId, setPublicId] = useState("");
   const [responseType, setResponseType] = useState<"json" | "text" | "svg">("json");
 
@@ -53,13 +56,6 @@ export default function BBSPage() {
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
 
   useEffect(() => {
-    const hash = window.location.hash.slice(1);
-    if (hash) {
-      setCurrentPage(hash);
-    } else {
-      setCurrentPage("features");
-    }
-
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1);
       if (hash) {
@@ -107,7 +103,7 @@ export default function BBSPage() {
 
       setCreateResponse(responseText);
       setResponseType("json");
-    } catch (error) {
+    } catch (_error) {
       setCreateResponse(`エラー: ${error}`);
       setResponseType("json");
     }
@@ -131,7 +127,7 @@ export default function BBSPage() {
 
       setPostResponse(responseText);
       setResponseType("json");
-    } catch (error) {
+    } catch (_error) {
       setPostResponse(`エラー: ${error}`);
       setResponseType("json");
     }
@@ -150,7 +146,7 @@ export default function BBSPage() {
 
       setGetResponse(responseText);
       setResponseType("json");
-    } catch (error) {
+    } catch (_error) {
       setGetResponse(`エラー: ${error}`);
       setResponseType("json");
     }
@@ -175,7 +171,7 @@ export default function BBSPage() {
 
       setUpdateResponse(responseText);
       setResponseType("json");
-    } catch (error) {
+    } catch (_error) {
       setUpdateResponse(`エラー: ${error}`);
       setResponseType("json");
     }
@@ -194,7 +190,7 @@ export default function BBSPage() {
 
       setRemoveResponse(responseText);
       setResponseType("json");
-    } catch (error) {
+    } catch (_error) {
       setRemoveResponse(`エラー: ${error}`);
       setResponseType("json");
     }
@@ -213,7 +209,7 @@ export default function BBSPage() {
 
       setClearResponse(responseText);
       setResponseType("json");
-    } catch (error) {
+    } catch (_error) {
       setClearResponse(`エラー: ${error}`);
       setResponseType("json");
     }
@@ -232,7 +228,7 @@ export default function BBSPage() {
 
       setDeleteResponse(responseText);
       setResponseType("json");
-    } catch (error) {
+    } catch (_error) {
       setDeleteResponse(`エラー: ${error}`);
       setResponseType("json");
     }
@@ -264,7 +260,7 @@ export default function BBSPage() {
 
       setUpdateSettingsResponse(responseText);
       setResponseType("json");
-    } catch (error) {
+    } catch (_error) {
       setUpdateSettingsResponse(`エラー: ${error}`);
       setResponseType("json");
     }
@@ -290,7 +286,7 @@ export default function BBSPage() {
 
       setUpdateResponse(responseText);
       setResponseType("json");
-    } catch (error) {
+    } catch (_error) {
       setUpdateResponse(`エラー: ${error}`);
       setResponseType("json");
     }
@@ -309,7 +305,7 @@ export default function BBSPage() {
 
       setRemoveResponse(responseText);
       setResponseType("json");
-    } catch (error) {
+    } catch (_error) {
       setRemoveResponse(`エラー: ${error}`);
       setResponseType("json");
     }
@@ -857,7 +853,7 @@ declare module 'react' {
                                       .join("\n")
                                   : "まだメッセージがありません";
                               alert(`BBS メッセージ:\n${messageText}`);
-                            } catch (error) {
+                            } catch (_error) {
                               alert("エラーが発生しました");
                             }
                           }}
@@ -888,7 +884,7 @@ declare module 'react' {
                               alert(
                                 data.success ? "メッセージを投稿しました！" : "エラーが発生しました"
                               );
-                            } catch (error) {
+                            } catch (_error) {
                               alert("エラーが発生しました");
                             }
                           }}
