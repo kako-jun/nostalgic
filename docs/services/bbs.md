@@ -7,6 +7,7 @@ Message board service with customizable dropdown selections, icon support, and a
 ## Actions
 
 ### create
+
 Create a new BBS message board.
 
 ```
@@ -14,16 +15,18 @@ GET /api/bbs?action=create&url={URL}&token={TOKEN}&max={MAX_MESSAGES}&perPage={P
 ```
 
 **Parameters:**
+
 - `url` (required): Target URL for BBS
 - `token` (required): Owner token (8-16 characters)
 - `max` (optional): Maximum messages (1-10000, default: 1000)
 - `perPage` (optional): Messages per page (1-100, default: 10)
 - `icons` (optional): Available icons (comma-separated, max 20)
 - `select1Label`, `select1Values`, `select1Required`: First dropdown configuration
-- `select2Label`, `select2Values`, `select2Required`: Second dropdown configuration  
+- `select2Label`, `select2Values`, `select2Required`: Second dropdown configuration
 - `select3Label`, `select3Values`, `select3Required`: Third dropdown configuration
 
 **Response:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -45,6 +48,7 @@ GET /api/bbs?action=create&url={URL}&token={TOKEN}&max={MAX_MESSAGES}&perPage={P
 ```
 
 ### post
+
 Post a new message to the BBS.
 
 ```
@@ -52,6 +56,7 @@ GET /api/bbs?action=post&url={URL}&token={TOKEN}&author={AUTHOR}&message={MESSAG
 ```
 
 **Parameters:**
+
 - `url` (required): Target URL
 - `token` (required): Owner token
 - `author` (optional): Author name (default: "名無しさん", max 50 characters)
@@ -60,6 +65,7 @@ GET /api/bbs?action=post&url={URL}&token={TOKEN}&author={AUTHOR}&message={MESSAG
 - `select1`, `select2`, `select3` (optional): Dropdown selections
 
 **Response:**
+
 ```json
 {
   "message": "Message posted successfully",
@@ -77,6 +83,7 @@ GET /api/bbs?action=post&url={URL}&token={TOKEN}&author={AUTHOR}&message={MESSAG
 ```
 
 ### update
+
 Update your own message (author verification required).
 
 ```
@@ -84,11 +91,13 @@ GET /api/bbs?action=update&url={URL}&messageId={MESSAGE_ID}&message={NEW_MESSAGE
 ```
 
 **Parameters:**
+
 - `url` (required): Target URL
 - `messageId` (required): Message ID to update
 - `message` (required): New message content
 
 **Response:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -112,6 +121,7 @@ GET /api/bbs?action=update&url={URL}&messageId={MESSAGE_ID}&message={NEW_MESSAGE
 ```
 
 ### remove
+
 Remove a message (owner or author can remove).
 
 ```
@@ -119,11 +129,13 @@ GET /api/bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
 ```
 
 **Parameters:**
+
 - `url` (required): Target URL
 - `token` (optional): Owner token (if provided, owner can remove any message)
 - `messageId` (required): Message ID to remove
 
 **Response:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -136,6 +148,7 @@ GET /api/bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
 ```
 
 ### clear
+
 Clear all messages (owner only).
 
 ```
@@ -143,10 +156,12 @@ GET /api/bbs?action=clear&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
+
 - `url` (required): Target URL
 - `token` (required): Owner token
 
 **Response:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -159,6 +174,7 @@ GET /api/bbs?action=clear&url={URL}&token={TOKEN}
 ```
 
 ### get
+
 Get BBS messages (public access).
 
 ```
@@ -166,10 +182,12 @@ GET /api/bbs?action=get&id={ID}&page={PAGE}
 ```
 
 **Parameters:**
+
 - `id` (required): Public BBS ID
 - `page` (optional): Page number (default: 1)
 
 **Response:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -204,44 +222,56 @@ GET /api/bbs?action=get&id={ID}&page={PAGE}
 ## Usage Examples
 
 ### Basic BBS Setup
+
 ```javascript
 // 1. Create BBS with custom options
-const response = await fetch(`/api/bbs?action=create&url=https://mysite.com&token=my-secret&max=500&perPage=20&icons=😀,😎,😍,🤔,😢&select1Label=Country&select1Values=Japan,USA,UK&select2Label=Topic&select2Values=General,Tech,Gaming`)
+const response = await fetch(
+  `/api/bbs?action=create&url=https://mysite.com&token=my-secret&max=500&perPage=20&icons=😀,😎,😍,🤔,😢&select1Label=Country&select1Values=Japan,USA,UK&select2Label=Topic&select2Values=General,Tech,Gaming`
+);
 
-const data = await response.json()
-console.log('BBS ID:', data.id)
+const data = await response.json();
+console.log("BBS ID:", data.id);
 
 // 2. Post message
-await fetch('/api/bbs?action=post&url=https://mysite.com&token=my-secret&author=Alice&message=Hello everyone!&icon=😀&select1=Japan&select2=General')
+await fetch(
+  "/api/bbs?action=post&url=https://mysite.com&token=my-secret&author=Alice&message=Hello everyone!&icon=😀&select1=Japan&select2=General"
+);
 ```
 
 ### Message Management
+
 ```javascript
 // Update own message (requires same IP+UserAgent)
-await fetch('/api/bbs?action=update&url=https://mysite.com&messageId=abc123def456&message=Updated message!')
+await fetch(
+  "/api/bbs?action=update&url=https://mysite.com&messageId=abc123def456&message=Updated message!"
+);
 
 // Remove message (owner or author)
-await fetch('/api/bbs?action=remove&url=https://mysite.com&token=my-secret&messageId=abc123def456')
+await fetch("/api/bbs?action=remove&url=https://mysite.com&token=my-secret&messageId=abc123def456");
 
 // Clear all messages (owner only)
-await fetch('/api/bbs?action=clear&url=https://mysite.com&token=my-secret')
+await fetch("/api/bbs?action=clear&url=https://mysite.com&token=my-secret");
 ```
 
 ## Customization Options
 
 ### Icon Selection
+
 ```
 &icons=😀,😎,😍,🤔,😢,😊,😭,😡,😱,🤗
 ```
+
 - Up to 20 icons
 - Users can select when posting
 
 ### Dropdown Selections
+
 ```
 &select1Label=Country&select1Values=Japan,USA,UK,France,Germany&select1Required=true
 &select2Label=Category&select2Values=General,Tech,Gaming,Music
 &select3Label=Priority&select3Values=High,Medium,Low
 ```
+
 - Up to 3 configurable dropdowns
 - Each can have up to 50 options
 - Can be marked as required
@@ -258,6 +288,7 @@ await fetch('/api/bbs?action=clear&url=https://mysite.com&token=my-secret')
 ## Data Structure
 
 Messages are stored as JSON in Redis Lists:
+
 - Newest messages first (LPUSH)
 - Automatic trimming when max messages exceeded
 - Author verification via IP+UserAgent hash
@@ -275,6 +306,7 @@ Messages are stored as JSON in Redis Lists:
 ```
 
 **Attributes:**
+
 - `id`: BBS public ID
 - `theme`: Visual style (light, dark, retro, kawaii, mom, final)
 - `page`: Page number to display (default: last page for latest messages)
@@ -282,6 +314,7 @@ Messages are stored as JSON in Redis Lists:
 - `api-base`: Custom API base URL (optional)
 
 **Display Features:**
+
 - Fixed height of 400px regardless of message count
 - Pagination format: "2/3" (current/total pages)
 - Automatically shows latest messages on initial load
@@ -292,14 +325,14 @@ For TypeScript projects using Web Components, create a `types.d.ts` file in your
 
 ```typescript
 // types.d.ts
-import 'react'
+import "react";
 
-declare module 'react' {
+declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+      "nostalgic-bbs": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
+        theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
         page?: string;
       };
     }
@@ -310,6 +343,7 @@ declare module 'react' {
 This prevents TypeScript build errors when using Web Components in React/Next.js projects.
 
 ### updateSettings
+
 Update BBS settings (owner only).
 
 ```
@@ -317,6 +351,7 @@ GET /api/bbs?action=updateSettings&url={URL}&token={TOKEN}&title={TITLE}&message
 ```
 
 **Parameters:**
+
 - `url` (required): Target URL
 - `token` (required): Owner token
 - `title` (optional): BBS title
@@ -325,6 +360,7 @@ GET /api/bbs?action=updateSettings&url={URL}&token={TOKEN}&title={TITLE}&message
 - `webhookUrl` (optional): Webhook URL for notifications
 
 **Response:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",

@@ -1,21 +1,24 @@
 # BBSセレクトシステム拡張計画
 
 ## 概要
+
 現在の顔文字セレクト（配列対応）を廃止し、3種類のセレクト機能を新設。純正セレクトはOS標準UI、インクリメンタル検索・エモートは独自実装で差別化。
 
 ## 現状の問題
 
 ### 複雑な配列セレクト
+
 ```javascript
 // 現在：複雑な配列設定
 dropdowns: [
-  { id: 'face', options: ['(^_^)', '(>_<)', '(^o^)'] },
-  { id: 'mood', options: ['嬉しい', '悲しい', '怒り'] },
-  { id: 'action', options: ['歩く', '走る', '寝る'] }
-]
+  { id: "face", options: ["(^_^)", "(>_<)", "(^o^)"] },
+  { id: "mood", options: ["嬉しい", "悲しい", "怒り"] },
+  { id: "action", options: ["歩く", "走る", "寝る"] },
+];
 ```
 
 **問題点:**
+
 - 設定が複雑
 - UI実装の複雑さ
 - 用途が不明確
@@ -25,34 +28,40 @@ dropdowns: [
 ### 3種類のセレクト機能
 
 #### 1. 純正セレクト（Standard Select）
+
 ```javascript
 standardSelect: {
   label: 'カテゴリ',
   options: ['一般', '質問', '雑談', '報告', 'その他']
 }
 ```
+
 - **UI**: OS標準の `<select>` 要素
 - **用途**: カテゴリ、種別、優先度など
 - **特徴**: シンプル、高速、アクセシブル
 
 #### 2. インクリメンタル検索セレクト（Incremental Search Select）
+
 ```javascript
 incrementalSelect: {
   label: 'タグ',
   options: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js', 'HTML', 'CSS', 'Vue.js', 'Angular', 'Svelte', 'PHP', 'Python', 'Java', 'C#', 'Go', 'Rust']
 }
 ```
+
 - **UI**: 独自実装（入力フィールド + ドロップダウン）
 - **用途**: 大量の選択肢から絞り込み（タグ、言語、地域など）
 - **特徴**: タイプして絞り込み、大量データに対応
 
 #### 3. エモートセレクト（Emote Select）
+
 ```javascript
 emoteSelect: {
   label: 'エモート',
   options: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🤩', '🥳', '😏', '😒', '😞', '😔', '😟', '😕', '🙁', '☹️', '😣', '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', '🤬', '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓']
 }
 ```
+
 - **UI**: 独自実装（グリッド表示 + 検索）
 - **用途**: 絵文字、顔文字、感情表現
 - **特徴**: 視覚的、楽しい、直感的
@@ -62,14 +71,16 @@ emoteSelect: {
 ### BBS作成時の設定
 
 #### デフォルト（初期値）
+
 ```javascript
 // 全セレクトが空配列（初期状態）
 standardSelect: { label: '', options: [] },
-incrementalSelect: { label: '', options: [] }, 
+incrementalSelect: { label: '', options: [] },
 emoteSelect: { label: '', options: [] }
 ```
 
 #### ユーザー設定例
+
 ```javascript
 // /api/bbs?action=create （フォーム経由推奨）
 standardSelect: {
@@ -92,6 +103,7 @@ emoteSelect: {
 ```
 
 #### URL長の問題とフォーム対応
+
 ```javascript
 // GET URL例（設定が多いと非常に長くなる）
 /api/bbs?action=create&url=https://example.com&token=abc123&standardSelect.label=カテゴリ&standardSelect.options[0]=一般&standardSelect.options[1]=質問&incrementalSelect.label=言語&incrementalSelect.options[0]=JavaScript&incrementalSelect.options[1]=TypeScript&emoteSelect.label=感情&emoteSelect.options[0]=/images/happy.png
@@ -100,6 +112,7 @@ emoteSelect: {
 ```
 
 ### メッセージ投稿時
+
 ```javascript
 // /api/bbs?action=post
 {
@@ -114,6 +127,7 @@ emoteSelect: {
 ## UI実装設計
 
 ### 1. 純正セレクト（OS標準）
+
 ```html
 <div class="bbs-select-standard">
   <label for="standard-select">カテゴリ</label>
@@ -127,6 +141,7 @@ emoteSelect: {
 ```
 
 ### 2. インクリメンタル検索セレクト
+
 ```html
 <div class="bbs-select-incremental">
   <label for="incremental-input">タグ</label>
@@ -141,6 +156,7 @@ emoteSelect: {
 ```
 
 ### 3. エモートセレクト
+
 ```html
 <div class="bbs-select-emote">
   <label>エモート</label>
@@ -167,121 +183,121 @@ emoteSelect: {
 ## JavaScript実装
 
 ### インクリメンタル検索
+
 ```javascript
 class IncrementalSelect {
   constructor(element, options) {
-    this.element = element
-    this.options = options
-    this.filteredOptions = options
-    this.init()
+    this.element = element;
+    this.options = options;
+    this.filteredOptions = options;
+    this.init();
   }
-  
+
   init() {
-    this.input = this.element.querySelector('input[type="text"]')
-    this.hiddenInput = this.element.querySelector('input[type="hidden"]')
-    this.dropdown = this.element.querySelector('.incremental-dropdown')
-    
-    this.input.addEventListener('input', this.handleSearch.bind(this))
-    this.input.addEventListener('focus', this.showDropdown.bind(this))
-    document.addEventListener('click', this.hideDropdown.bind(this))
+    this.input = this.element.querySelector('input[type="text"]');
+    this.hiddenInput = this.element.querySelector('input[type="hidden"]');
+    this.dropdown = this.element.querySelector(".incremental-dropdown");
+
+    this.input.addEventListener("input", this.handleSearch.bind(this));
+    this.input.addEventListener("focus", this.showDropdown.bind(this));
+    document.addEventListener("click", this.hideDropdown.bind(this));
   }
-  
+
   handleSearch(e) {
-    const query = e.target.value.toLowerCase()
-    this.filteredOptions = this.options.filter(option => 
-      option.toLowerCase().includes(query)
-    )
-    this.renderDropdown()
+    const query = e.target.value.toLowerCase();
+    this.filteredOptions = this.options.filter((option) => option.toLowerCase().includes(query));
+    this.renderDropdown();
   }
-  
+
   renderDropdown() {
-    this.dropdown.innerHTML = ''
-    this.filteredOptions.forEach(option => {
-      const item = document.createElement('div')
-      item.className = 'incremental-item'
-      item.textContent = option
-      item.addEventListener('click', () => this.selectOption(option))
-      this.dropdown.appendChild(item)
-    })
+    this.dropdown.innerHTML = "";
+    this.filteredOptions.forEach((option) => {
+      const item = document.createElement("div");
+      item.className = "incremental-item";
+      item.textContent = option;
+      item.addEventListener("click", () => this.selectOption(option));
+      this.dropdown.appendChild(item);
+    });
   }
-  
+
   selectOption(option) {
-    this.input.value = option
-    this.hiddenInput.value = option
-    this.hideDropdown()
+    this.input.value = option;
+    this.hiddenInput.value = option;
+    this.hideDropdown();
   }
 }
 ```
 
 ### エモートセレクト（画像パス対応）
+
 ```javascript
 class EmoteSelect {
   constructor(element, options) {
-    this.element = element
-    this.options = options // 画像パスの配列
-    this.selectedEmote = options[0] || null
-    this.init()
+    this.element = element;
+    this.options = options; // 画像パスの配列
+    this.selectedEmote = options[0] || null;
+    this.init();
   }
-  
+
   init() {
-    this.trigger = this.element.querySelector('.emote-trigger')
-    this.hiddenInput = this.element.querySelector('input[type="hidden"]')
-    this.popup = this.element.querySelector('.emote-popup')
-    this.searchInput = this.popup.querySelector('input[type="text"]')
-    this.grid = this.popup.querySelector('.emote-grid')
-    
-    this.trigger.addEventListener('click', this.togglePopup.bind(this))
-    this.searchInput.addEventListener('input', this.handleSearch.bind(this))
-    
-    this.renderGrid()
+    this.trigger = this.element.querySelector(".emote-trigger");
+    this.hiddenInput = this.element.querySelector('input[type="hidden"]');
+    this.popup = this.element.querySelector(".emote-popup");
+    this.searchInput = this.popup.querySelector('input[type="text"]');
+    this.grid = this.popup.querySelector(".emote-grid");
+
+    this.trigger.addEventListener("click", this.togglePopup.bind(this));
+    this.searchInput.addEventListener("input", this.handleSearch.bind(this));
+
+    this.renderGrid();
   }
-  
+
   renderGrid() {
-    this.grid.innerHTML = ''
-    
+    this.grid.innerHTML = "";
+
     // 未選択オプション
-    const clearButton = document.createElement('button')
-    clearButton.type = 'button'
-    clearButton.className = 'emote-option emote-clear'
-    clearButton.textContent = '表情なし'
-    clearButton.addEventListener('click', () => this.selectEmote(null))
-    this.grid.appendChild(clearButton)
-    
+    const clearButton = document.createElement("button");
+    clearButton.type = "button";
+    clearButton.className = "emote-option emote-clear";
+    clearButton.textContent = "表情なし";
+    clearButton.addEventListener("click", () => this.selectEmote(null));
+    this.grid.appendChild(clearButton);
+
     // 画像オプション
     this.options.forEach((imagePath, index) => {
-      const button = document.createElement('button')
-      button.type = 'button'
-      button.className = 'emote-option'
-      button.dataset.emote = imagePath
-      button.addEventListener('click', () => this.selectEmote(imagePath))
-      
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "emote-option";
+      button.dataset.emote = imagePath;
+      button.addEventListener("click", () => this.selectEmote(imagePath));
+
       // 画像を表示
-      const img = document.createElement('img')
-      img.src = imagePath
-      img.alt = `Emote ${index + 1}`
+      const img = document.createElement("img");
+      img.src = imagePath;
+      img.alt = `Emote ${index + 1}`;
       img.onerror = () => {
         // 画像読み込み失敗時の代替表示
-        button.textContent = '❓'
-      }
-      button.appendChild(img)
-      
-      this.grid.appendChild(button)
-    })
+        button.textContent = "❓";
+      };
+      button.appendChild(img);
+
+      this.grid.appendChild(button);
+    });
   }
-  
+
   selectEmote(imagePath) {
-    this.selectedEmote = imagePath
-    this.hiddenInput.value = imagePath || ''
-    this.updateTrigger()
-    this.hidePopup()
+    this.selectedEmote = imagePath;
+    this.hiddenInput.value = imagePath || "";
+    this.updateTrigger();
+    this.hidePopup();
   }
-  
+
   updateTrigger() {
-    const selectedSpan = this.trigger.querySelector('.selected-emote')
+    const selectedSpan = this.trigger.querySelector(".selected-emote");
     if (this.selectedEmote) {
-      selectedSpan.innerHTML = `<img src="${this.selectedEmote}" alt="Selected" />`
+      selectedSpan.innerHTML = `<img src="${this.selectedEmote}" alt="Selected" />`;
     } else {
-      selectedSpan.textContent = '未選択'
+      selectedSpan.textContent = "未選択";
     }
   }
 }
@@ -290,6 +306,7 @@ class EmoteSelect {
 ## CSS設計
 
 ### インクリメンタル検索スタイル
+
 ```css
 .bbs-select-incremental {
   position: relative;
@@ -333,6 +350,7 @@ class EmoteSelect {
 ```
 
 ### エモートセレクトスタイル
+
 ```css
 .bbs-select-emote {
   position: relative;
@@ -408,82 +426,89 @@ class EmoteSelect {
 ## データベース設計
 
 ### BBSメタデータ拡張
+
 ```typescript
 interface BBSMetadata {
-  id: string
-  url: string
-  created: string
-  service: 'bbs'
-  
+  id: string;
+  url: string;
+  created: string;
+  service: "bbs";
+
   // 新規追加
   standardSelect?: {
-    label: string
-    options: string[]
-  }
+    label: string;
+    options: string[];
+  };
   incrementalSelect?: {
-    label: string
-    options: string[]
-  }
+    label: string;
+    options: string[];
+  };
   emoteSelect?: {
-    label: string
-    options: string[]
-  }
-  
+    label: string;
+    options: string[];
+  };
+
   // 既存設定は維持
   settings: {
-    theme: 'light' | 'dark' | 'kawaii'
-    maxMessages: number
-  }
+    theme: "light" | "dark" | "kawaii";
+    maxMessages: number;
+  };
 }
 ```
 
 ### メッセージデータ拡張
+
 ```typescript
 interface BBSMessage {
-  id: string
-  author: string
-  message: string
-  timestamp: string
-  
+  id: string;
+  author: string;
+  message: string;
+  timestamp: string;
+
   // 新規追加
-  standardValue?: string      // 純正セレクトの値
-  incrementalValue?: string   // インクリメンタル検索の値
-  emoteValue?: string         // エモートの値
+  standardValue?: string; // 純正セレクトの値
+  incrementalValue?: string; // インクリメンタル検索の値
+  emoteValue?: string; // エモートの値
 }
 ```
 
 ## Web Components対応
 
 ### BBS Web Component更新
+
 ```javascript
 class NostalgicBBS extends HTMLElement {
   // 既存プロパティ
   static get observedAttributes() {
     return [
-      'id', 'theme', 'max-messages',
+      "id",
+      "theme",
+      "max-messages",
       // 新規追加
-      'standard-select', 'incremental-select', 'emote-select'
-    ]
+      "standard-select",
+      "incremental-select",
+      "emote-select",
+    ];
   }
-  
+
   connectedCallback() {
-    this.render()
-    this.initializeSelects()
+    this.render();
+    this.initializeSelects();
   }
-  
+
   initializeSelects() {
     // 純正セレクトはそのまま（OS標準）
-    
+
     // インクリメンタル検索セレクト
-    const incrementalElement = this.querySelector('.bbs-select-incremental')
+    const incrementalElement = this.querySelector(".bbs-select-incremental");
     if (incrementalElement && this.incrementalOptions) {
-      new IncrementalSelect(incrementalElement, this.incrementalOptions)
+      new IncrementalSelect(incrementalElement, this.incrementalOptions);
     }
-    
+
     // エモートセレクト
-    const emoteElement = this.querySelector('.bbs-select-emote')
+    const emoteElement = this.querySelector(".bbs-select-emote");
     if (emoteElement && this.emoteOptions) {
-      new EmoteSelect(emoteElement, this.emoteOptions)
+      new EmoteSelect(emoteElement, this.emoteOptions);
     }
   }
 }
@@ -492,6 +517,7 @@ class NostalgicBBS extends HTMLElement {
 ## 実装フェーズ
 
 ### Phase 1: API・データベース拡張
+
 - [ ] BBSメタデータスキーマ拡張（デフォルト空配列対応）
 - [ ] メッセージスキーマ拡張
 - [ ] API エンドポイント更新（フォーム前提の長いURL対応）
@@ -499,17 +525,20 @@ class NostalgicBBS extends HTMLElement {
 - [ ] BBS作成フォームページの実装（複雑な設定用）
 
 ### Phase 2: UI基盤実装
+
 - [ ] 純正セレクトUI
 - [ ] インクリメンタル検索JavaScript実装
 - [ ] エモートセレクトJavaScript実装
 - [ ] CSS スタイリング
 
 ### Phase 3: Web Components統合
+
 - [ ] BBS Web Component更新
 - [ ] 属性パラメータ対応
 - [ ] 既存機能との互換性確保
 
 ### Phase 4: テーマ対応・テスト
+
 - [ ] 3テーマ全対応
 - [ ] 各セレクトの動作テスト
 - [ ] モバイル対応確認
@@ -517,16 +546,19 @@ class NostalgicBBS extends HTMLElement {
 ## メリット・効果
 
 ### ユーザー体験向上
+
 - **直感的操作**: 用途に応じた最適なUI
 - **大量データ対応**: インクリメンタル検索で快適
 - **楽しい体験**: エモートセレクトで感情表現
 
 ### 技術的メリット
+
 - **差別化**: 独自実装による他社との差別化
 - **拡張性**: 各セレクトの独立性
 - **パフォーマンス**: 必要な機能のみ実装
 
 ### 管理・運用
+
 - **シンプル設定**: 3種類の明確な役割分担
 - **メンテナンス性**: モジュール化された実装
 - **アクセシビリティ**: 純正セレクトによる標準対応
@@ -534,11 +566,13 @@ class NostalgicBBS extends HTMLElement {
 ## llll-ll.com 共通サポートBBS 具体仕様
 
 ### コンセプト
+
 全アプリ共通のサポートBBSを1つ設置。分散による過疎化を防ぎ、活発なコミュニティを形成。
 
 ### セレクト機能の具体的用途
 
 #### 1. 純正セレクト - サービス選択
+
 ```javascript
 standardSelect: {
   label: 'サービス',
@@ -547,6 +581,7 @@ standardSelect: {
 ```
 
 **表示位置**: 名前と本文の間（タイトル風）
+
 ```
 投稿者名 🇯🇵
 [Counter] ← ここに表示
@@ -556,6 +591,7 @@ standardSelect: {
 **未選択オプション**: 「選択なし」で未選択に戻せる
 
 #### 2. インクリメンタル検索セレクト - 国選択
+
 ```javascript
 incrementalSelect: {
   label: '国',
@@ -564,11 +600,13 @@ incrementalSelect: {
 ```
 
 **UI仕様**:
+
 - スマホ対応：全画面オーバーラップポップアップ
 - 検索例：「j」→「日本」が上位表示
 - 国旗アイコン付き選択肢
 
 **表示位置**: 名前の右側
+
 ```
 投稿者名 🇯🇵 ← ここに国旗表示
 [Counter]
@@ -576,30 +614,32 @@ incrementalSelect: {
 ```
 
 **国旗対応表**:
+
 ```javascript
 const countryFlags = {
-  '日本': '🇯🇵',
-  'アメリカ': '🇺🇸', 
-  'イギリス': '🇬🇧',
-  'フランス': '🇫🇷',
-  'ドイツ': '🇩🇪',
-  'カナダ': '🇨🇦',
-  'オーストラリア': '🇦🇺',
-  '韓国': '🇰🇷',
-  '中国': '🇨🇳',
+  日本: "🇯🇵",
+  アメリカ: "🇺🇸",
+  イギリス: "🇬🇧",
+  フランス: "🇫🇷",
+  ドイツ: "🇩🇪",
+  カナダ: "🇨🇦",
+  オーストラリア: "🇦🇺",
+  韓国: "🇰🇷",
+  中国: "🇨🇳",
   // ... 全国対応
-}
+};
 ```
 
 **未選択機能**: 「未選択」ボタンで国旗を非表示に
 
 #### 3. エモートセレクト - ユーザー画像指定
+
 ```javascript
 emoteSelect: {
   label: '感情',
   options: [
     '/emotes/happy.png',     // 嬉しい
-    '/emotes/sad.png',       // 悲しい  
+    '/emotes/sad.png',       // 悲しい
     '/emotes/angry.gif',     // 怒り
     '/emotes/worried.svg',   // 不安
     '/emotes/thinking.png',  // 考え中
@@ -611,11 +651,13 @@ emoteSelect: {
 ```
 
 **UI仕様**: ロックマン2ステージセレクト風
+
 - 2×4 グリッドレイアウト
 - 大きなボタン（タップしやすい）
 - 各感情に対応した専用イラスト使用予定
 
 **表示位置**: 本文の左端
+
 ```
 投稿者名 🇯🇵
 [Counter]
@@ -625,6 +667,7 @@ emoteSelect: {
 **未選択機能**: 「表情なし」ボタンで感情を非表示に
 
 ### 投稿表示例
+
 ```
 田中太郎 🇯🇵
 [Counter]
@@ -635,6 +678,7 @@ emoteSelect: {
 ### UI実装詳細
 
 #### 国選択ポップアップ（スマホ対応）
+
 ```css
 .country-search-overlay {
   position: fixed;
@@ -704,6 +748,7 @@ emoteSelect: {
 ```
 
 #### エモート8感情グリッド（ロックマン2風）
+
 ```css
 .emote-grid-8 {
   display: grid;
@@ -731,7 +776,7 @@ emoteSelect: {
 
 .emote-option-8:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   border-color: #ffd700;
 }
 
@@ -748,25 +793,26 @@ emoteSelect: {
 ```
 
 ### JavaScript実装
+
 ```javascript
 // 国選択の全画面ポップアップ
 class CountrySelectFullscreen {
   constructor(element, countries) {
-    this.element = element
-    this.countries = countries
-    this.filteredCountries = countries
-    this.init()
+    this.element = element;
+    this.countries = countries;
+    this.filteredCountries = countries;
+    this.init();
   }
-  
+
   showPopup() {
-    const overlay = document.createElement('div')
-    overlay.className = 'country-search-overlay'
-    overlay.innerHTML = this.getPopupHTML()
-    document.body.appendChild(overlay)
-    
-    this.bindPopupEvents(overlay)
+    const overlay = document.createElement("div");
+    overlay.className = "country-search-overlay";
+    overlay.innerHTML = this.getPopupHTML();
+    document.body.appendChild(overlay);
+
+    this.bindPopupEvents(overlay);
   }
-  
+
   getPopupHTML() {
     return `
       <div class="country-search-popup">
@@ -774,58 +820,57 @@ class CountrySelectFullscreen {
         <div class="country-results"></div>
         <button class="country-clear">未選択にする</button>
       </div>
-    `
+    `;
   }
-  
+
   filterCountries(query) {
-    return this.countries.filter(country => 
-      country.includes(query) || 
-      this.getCountryFlag(country) // 国旗での検索も対応
-    )
+    return this.countries.filter(
+      (country) => country.includes(query) || this.getCountryFlag(country) // 国旗での検索も対応
+    );
   }
-  
+
   getCountryFlag(country) {
     const flags = {
-      '日本': '🇯🇵',
-      'アメリカ': '🇺🇸',
+      日本: "🇯🇵",
+      アメリカ: "🇺🇸",
       // ... 全国対応
-    }
-    return flags[country] || '🏳️'
+    };
+    return flags[country] || "🏳️";
   }
 }
 
 // 8感情エモートセレクト（ロックマン2風）
 class EmoteSelect8Grid {
   constructor(element, emotes) {
-    this.element = element
-    this.emotes = emotes // 8個固定
-    this.init()
+    this.element = element;
+    this.emotes = emotes; // 8個固定
+    this.init();
   }
-  
+
   renderGrid() {
-    const grid = document.createElement('div')
-    grid.className = 'emote-grid-8'
-    
-    this.emotes.forEach(emote => {
-      const button = document.createElement('button')
-      button.className = 'emote-option-8'
-      button.textContent = emote
-      button.onclick = () => this.selectEmote(emote)
-      grid.appendChild(button)
-    })
-    
+    const grid = document.createElement("div");
+    grid.className = "emote-grid-8";
+
+    this.emotes.forEach((emote) => {
+      const button = document.createElement("button");
+      button.className = "emote-option-8";
+      button.textContent = emote;
+      button.onclick = () => this.selectEmote(emote);
+      grid.appendChild(button);
+    });
+
     // 未選択ボタン
-    const clearBtn = document.createElement('button')
-    clearBtn.className = 'emote-clear-btn'
-    clearBtn.textContent = '表情なし'
-    clearBtn.onclick = () => this.clearEmote()
-    grid.appendChild(clearBtn)
-    
-    return grid
+    const clearBtn = document.createElement("button");
+    clearBtn.className = "emote-clear-btn";
+    clearBtn.textContent = "表情なし";
+    clearBtn.onclick = () => this.clearEmote();
+    grid.appendChild(clearBtn);
+
+    return grid;
   }
 }
 ```
 
 ---
 
-*llll-ll.com共通サポートBBSにより、全サービスのユーザーが集まる活発なコミュニティが形成され、国際的な情報交換と感情豊かなコミュニケーションが実現される。*
+_llll-ll.com共通サポートBBSにより、全サービスのユーザーが集まる活発なコミュニティが形成され、国際的な情報交換と感情豊かなコミュニケーションが実現される。_

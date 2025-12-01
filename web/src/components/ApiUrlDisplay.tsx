@@ -12,16 +12,21 @@ export const GreenParam = ({ children }: { children: React.ReactNode }) => (
 
 export default function ApiUrlDisplay({ url, children }: ApiUrlDisplayProps) {
   const handleCopy = () => {
-    navigator.clipboard.writeText(url).then(() => {
-      const btn = document.activeElement as HTMLButtonElement;
-      if (btn) {
-        const originalText = btn.textContent;
-        btn.textContent = "コピー済み";
-        setTimeout(() => { btn.textContent = originalText; }, 1500);
-      }
-    }).catch(() => {
-      alert("クリップボードへのコピーに失敗しました");
-    });
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        const btn = document.activeElement as HTMLButtonElement;
+        if (btn) {
+          const originalText = btn.textContent;
+          btn.textContent = "コピー済み";
+          setTimeout(() => {
+            btn.textContent = originalText;
+          }, 1500);
+        }
+      })
+      .catch(() => {
+        alert("クリップボードへのコピーに失敗しました");
+      });
   };
 
   return (
@@ -34,9 +39,7 @@ export default function ApiUrlDisplay({ url, children }: ApiUrlDisplayProps) {
         wordBreak: "break-all",
       }}
     >
-      <div style={{ marginBottom: "8px" }}>
-        {children}
-      </div>
+      <div style={{ marginBottom: "8px" }}>{children}</div>
       <button
         type="button"
         onClick={handleCopy}
@@ -48,7 +51,7 @@ export default function ApiUrlDisplay({ url, children }: ApiUrlDisplayProps) {
           fontSize: "14px",
           fontWeight: "bold",
           cursor: "pointer",
-          fontFamily: "inherit"
+          fontFamily: "inherit",
         }}
       >
         コピー

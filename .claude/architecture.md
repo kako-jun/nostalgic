@@ -15,24 +15,24 @@ graph TB
         B[API Routes]
         C[Web Components]
     end
-    
+
     subgraph "Application Layer"
         D[API Handlers]
         E[Validation Framework]
     end
-    
+
     subgraph "Domain Layer"
         F[Domain Services]
         G[Domain Entities]
         H[Value Objects]
     end
-    
+
     subgraph "Infrastructure Layer"
         I[Repositories]
         J[Redis Client]
         K[Memory Store]
     end
-    
+
     A --> B
     B --> D
     C --> B
@@ -59,34 +59,34 @@ classDiagram
         +getById(id)
         +verifyOwnership(url, token)
     }
-    
+
     class CounterService {
         +incrementCounter(id, userHash)
         +getCounterData(id)
         +getDisplayData(id, type)
         +setCounterValue(url, token, total)
     }
-    
+
     class LikeService {
         +toggleLike(id, userHash)
         +getLikeData(id)
         +getUserLikeStatus(id, userHash)
     }
-    
+
     class RankingService {
         +submitScore(id, name, score)
         +updateScore(id, name, newScore)
         +removeEntry(id, name)
         +getRankingData(id, limit)
     }
-    
+
     class BBSService {
         +postMessage(id, message)
         +updateMessage(id, messageId, updates)
         +removeMessage(id, messageId)
         +getMessages(id, page)
     }
-    
+
     BaseService <|-- CounterService
     BaseService <|-- LikeService
     BaseService <|-- RankingService
@@ -150,16 +150,16 @@ src/
 エラーハンドリングには`Result<T, E>`型を使用し、例外を投げない設計です。
 
 ```typescript
-type Result<T, E = AppError> = Success<T> | Failure<E>
+type Result<T, E = AppError> = Success<T> | Failure<E>;
 
 interface Success<T> {
-  readonly success: true
-  readonly data: T
+  readonly success: true;
+  readonly data: T;
 }
 
 interface Failure<E> {
-  readonly success: false
-  readonly error: E
+  readonly success: false;
+  readonly error: E;
 }
 ```
 
@@ -167,21 +167,21 @@ interface Failure<E> {
 
 ```typescript
 async function incrementCounter(id: string): Result<CounterData, AppError> {
-  const counterResult = await this.entityRepository.get(id)
+  const counterResult = await this.entityRepository.get(id);
   if (!counterResult.success) {
-    return counterResult
+    return counterResult;
   }
-  
-  const incrementResult = await this.numberRepository.increment('total')
+
+  const incrementResult = await this.numberRepository.increment("total");
   if (!incrementResult.success) {
-    return incrementResult
+    return incrementResult;
   }
-  
+
   return Ok({
     id,
     total: incrementResult.data,
     // ...
-  })
+  });
 }
 ```
 
@@ -198,34 +198,34 @@ classDiagram
         +delete(id) Result~void~
         +exists(id) Result~boolean~
     }
-    
+
     class EntityRepository {
         -schema: ZodType
         -keyPrefix: string
         +get(id) Result~Entity~
         +set(id, entity) Result~void~
     }
-    
+
     class NumberRepository {
         -keyPrefix: string
         +get(key) Result~number~
         +increment(key) Result~number~
         +decrement(key) Result~number~
     }
-    
+
     class ListRepository {
         -itemSchema: ZodType
         -keyPrefix: string
         +push(key, items) Result~number~
         +range(key, start, end) Result~T[]~
     }
-    
+
     class SortedSetRepository {
         -keyPrefix: string
         +add(key, member, score) Result~void~
         +getRangeByScore(key, min, max) Result~Entry[]~
     }
-    
+
     BaseRepository <|.. EntityRepository
     BaseRepository <|.. NumberRepository
     BaseRepository <|.. ListRepository
@@ -242,7 +242,7 @@ counter:{id}:daily:{date}    # 日別カウント
 counter:{id}:owner           # オーナートークン（ハッシュ化）
 visit:counter:{id}:{hash}    # 重複防止（その日の23:59:59までTTL）
 
-# Like Service  
+# Like Service
 like:{id}                    # メタデータ
 like:{id}:total             # いいね総数
 like_users:{id}:user:{hash}  # ユーザー状態（その日の23:59:59までTTL）
@@ -276,9 +276,9 @@ const CounterEntitySchema = z.object({
   url: z.string().url(),
   created: z.date(),
   settings: z.object({
-    webhookUrl: z.string().url().optional()
-  })
-})
+    webhookUrl: z.string().url().optional(),
+  }),
+});
 
 const CounterDataSchema = z.object({
   id: z.string(),
@@ -289,8 +289,8 @@ const CounterDataSchema = z.object({
   week: z.number().int().min(0),
   month: z.number().int().min(0),
   created: z.string(),
-  lastUpdated: z.string()
-})
+  lastUpdated: z.string(),
+});
 ```
 
 ### LikeEntity
@@ -300,8 +300,8 @@ const LikeEntitySchema = z.object({
   id: z.string(),
   url: z.string().url(),
   created: z.date(),
-  lastLike: z.date()
-})
+  lastLike: z.date(),
+});
 
 const LikeDataSchema = z.object({
   id: z.string(),
@@ -309,8 +309,8 @@ const LikeDataSchema = z.object({
   total: z.number().int().min(0),
   userLiked: z.boolean(),
   created: z.string(),
-  lastLike: z.string()
-})
+  lastLike: z.string(),
+});
 ```
 
 ### RankingEntity
@@ -321,13 +321,13 @@ const RankingEntitySchema = z.object({
   url: z.string().url(),
   created: z.date(),
   maxEntries: z.number().int().min(1).max(100).default(10),
-  orderBy: z.enum(['desc', 'asc']).default('desc')
-})
+  orderBy: z.enum(["desc", "asc"]).default("desc"),
+});
 
 const RankingEntrySchema = z.object({
   name: z.string().min(1).max(50),
-  score: z.number().int()
-})
+  score: z.number().int(),
+});
 ```
 
 ### BBSEntity
@@ -339,8 +339,8 @@ const BBSEntitySchema = z.object({
   created: z.date(),
   messagesPerPage: z.number().int().min(1).max(50).default(10),
   maxMessages: z.number().int().min(1).max(1000).default(100),
-  settings: BBSSettingsSchema
-})
+  settings: BBSSettingsSchema,
+});
 
 const BBSMessageSchema = z.object({
   id: z.string(),
@@ -350,8 +350,8 @@ const BBSMessageSchema = z.object({
   selects: z.record(z.string()).optional(),
   ipHash: z.string().optional(),
   userAgent: z.string().optional(),
-  timestamp: z.string()
-})
+  timestamp: z.string(),
+});
 ```
 
 ## イベント駆動アーキテクチャ
@@ -362,7 +362,7 @@ graph LR
     B[Like Service] -->|like.toggled| E
     C[Ranking Service] -->|ranking.score_submitted| E
     D[BBS Service] -->|bbs.message_posted| E
-    
+
     E -->|user.visit| F[Statistics]
     E -->|performance.warning| G[Monitoring]
     E -->|error.occurred| H[Error Handler]
@@ -373,30 +373,30 @@ graph LR
 ```typescript
 const Events = {
   // Counter
-  COUNTER_CREATED: 'counter.created',
-  COUNTER_INCREMENTED: 'counter.incremented',
-  COUNTER_VALUE_SET: 'counter.value_set',
-  
+  COUNTER_CREATED: "counter.created",
+  COUNTER_INCREMENTED: "counter.incremented",
+  COUNTER_VALUE_SET: "counter.value_set",
+
   // Like
-  LIKE_CREATED: 'like.created',
-  LIKE_TOGGLED: 'like.toggled',
-  
+  LIKE_CREATED: "like.created",
+  LIKE_TOGGLED: "like.toggled",
+
   // Ranking
-  RANKING_CREATED: 'ranking.created',
-  RANKING_SCORE_SUBMITTED: 'ranking.score_submitted',
-  RANKING_SCORE_UPDATED: 'ranking.score_updated',
-  
+  RANKING_CREATED: "ranking.created",
+  RANKING_SCORE_SUBMITTED: "ranking.score_submitted",
+  RANKING_SCORE_UPDATED: "ranking.score_updated",
+
   // BBS
-  BBS_CREATED: 'bbs.created',
-  BBS_MESSAGE_POSTED: 'bbs.message_posted',
-  BBS_MESSAGE_UPDATED: 'bbs.message_updated',
-  BBS_MESSAGE_REMOVED: 'bbs.message_removed',
-  
+  BBS_CREATED: "bbs.created",
+  BBS_MESSAGE_POSTED: "bbs.message_posted",
+  BBS_MESSAGE_UPDATED: "bbs.message_updated",
+  BBS_MESSAGE_REMOVED: "bbs.message_removed",
+
   // System
-  USER_VISIT: 'user.visit',
-  PERFORMANCE_WARNING: 'system.performance_warning',
-  ERROR_OCCURRED: 'system.error'
-}
+  USER_VISIT: "user.visit",
+  PERFORMANCE_WARNING: "system.performance_warning",
+  ERROR_OCCURRED: "system.error",
+};
 ```
 
 ## 設定管理
@@ -406,23 +406,23 @@ const Events = {
 ```typescript
 interface Config {
   serviceLimits: {
-    counter: { maxTotal: number; maxDailyData: number }
-    like: { maxTotal: number; userStateTTL: number }
-    ranking: { maxEntries: number; maxNameLength: number }
-    bbs: { maxMessages: number; maxMessageLength: number }
-  }
+    counter: { maxTotal: number; maxDailyData: number };
+    like: { maxTotal: number; userStateTTL: number };
+    ranking: { maxEntries: number; maxNameLength: number };
+    bbs: { maxMessages: number; maxMessageLength: number };
+  };
   cache: {
-    enabled: boolean
-    ttl: { default: number; display: number; urlMapping: number }
-  }
+    enabled: boolean;
+    ttl: { default: number; display: number; urlMapping: number };
+  };
   redis: {
-    url: string
-    options: { maxRetriesPerRequest: number }
-  }
+    url: string;
+    options: { maxRetriesPerRequest: number };
+  };
   logging: {
-    level: 'error' | 'warn' | 'info' | 'debug'
-    enablePerformanceLogging: boolean
-  }
+    level: "error" | "warn" | "info" | "debug";
+    enablePerformanceLogging: boolean;
+  };
 }
 ```
 
@@ -437,7 +437,7 @@ sequenceDiagram
     participant Service
     participant Repository
     participant Redis
-    
+
     User->>API: POST /api/visit?action=create
     Note right of User: url + token
     API->>Service: create(url, token)
@@ -474,8 +474,8 @@ ApiHandler.createBatch<TParams, TResult>({
   resultSchema,
   handler: async (params) => {
     // 並列処理
-  }
-})
+  },
+});
 ```
 
 ## エラーハンドリング
@@ -491,32 +491,32 @@ classDiagram
         +message: string
         +context?: Record~string,unknown~
     }
-    
+
     class ValidationError {
         +code = "VALIDATION_ERROR"
         +statusCode = 400
     }
-    
+
     class NotFoundError {
         +code = "NOT_FOUND"
         +statusCode = 404
     }
-    
+
     class UnauthorizedError {
         +code = "UNAUTHORIZED"
         +statusCode = 403
     }
-    
+
     class StorageError {
         +code = "STORAGE_ERROR"
         +statusCode = 500
     }
-    
+
     class BusinessLogicError {
         +code = "BUSINESS_LOGIC_ERROR"
         +statusCode = 422
     }
-    
+
     AppError <|-- ValidationError
     AppError <|-- NotFoundError
     AppError <|-- UnauthorizedError

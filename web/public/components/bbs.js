@@ -1,6 +1,6 @@
 /**
  * Nostalgic BBS Web Component
- * 
+ *
  * 使用方法:
  * <script src="/components/bbs.js"></script>
  * <nostalgic-bbs id="your-bbs-id" page="1" theme="dark"></nostalgic-bbs>
@@ -13,23 +13,23 @@ class NostalgicBBS extends HTMLElement {
   static apiBaseUrl = (() => {
     const scripts = document.querySelectorAll('script[src*="bbs.js"]');
     for (const script of scripts) {
-      const src = script.getAttribute('src');
-      if (src && src.includes('bbs.js')) {
+      const src = script.getAttribute("src");
+      if (src && src.includes("bbs.js")) {
         try {
           const url = new URL(src, window.location.href);
           return url.origin;
         } catch (e) {
-          console.warn('Failed to parse script URL:', src);
+          console.warn("Failed to parse script URL:", src);
         }
       }
     }
     // フォールバック: 現在のドメインを使用
     return window.location.origin;
   })();
-  
+
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    this.attachShadow({ mode: "open" });
     this.bbsData = null;
     this.loading = false;
     this.currentPage = 1;
@@ -39,29 +39,29 @@ class NostalgicBBS extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['id', 'page', 'theme', 'format'];
+    return ["id", "page", "theme", "format"];
   }
 
   // 安全なアトリビュート処理
   safeGetAttribute(name) {
     const value = this.getAttribute(name);
-    
+
     switch (name) {
-      case 'page':
+      case "page":
         return value;
-        
-      case 'id':
-        if (!value || typeof value !== 'string' || value.trim() === '') {
+
+      case "id":
+        if (!value || typeof value !== "string" || value.trim() === "") {
           return null;
         }
         return value.trim();
-        
-      case 'theme':
+
+      case "theme":
         return value;
-        
-      case 'format':
+
+      case "format":
         return value;
-        
+
       default:
         return value;
     }
@@ -72,8 +72,8 @@ class NostalgicBBS extends HTMLElement {
     await this.loadBBSData();
     // 最終ページに設定（最新の投稿を表示）
     const lastPage = this.bbsData?.totalPages || 1;
-    this.currentPage = this.safeGetAttribute('page') || lastPage;
-    this.setAttribute('page', this.currentPage.toString());
+    this.currentPage = this.safeGetAttribute("page") || lastPage;
+    this.setAttribute("page", this.currentPage.toString());
     // 最終ページのデータを再読み込み
     if (this.currentPage !== 1) {
       await this.loadBBSData();
@@ -83,8 +83,8 @@ class NostalgicBBS extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     // 安全な値に変換
     const safeValue = this.safeGetAttribute(name);
-    
-    if (name === 'page') {
+
+    if (name === "page") {
       this.currentPage = safeValue || 1;
       this.loadBBSData();
     } else {
@@ -93,9 +93,9 @@ class NostalgicBBS extends HTMLElement {
   }
 
   async loadBBSData() {
-    const id = this.safeGetAttribute('id');
+    const id = this.safeGetAttribute("id");
     if (!id) {
-      this.renderError('ID attribute is required');
+      this.renderError("ID attribute is required");
       return;
     }
 
@@ -103,13 +103,15 @@ class NostalgicBBS extends HTMLElement {
       this.loading = true;
       this.render();
 
-      const response = await fetch(`${NostalgicBBS.apiBaseUrl}/api/bbs?action=display&id=${encodeURIComponent(id)}&page=${this.currentPage}`);
+      const response = await fetch(
+        `${NostalgicBBS.apiBaseUrl}/api/bbs?action=display&id=${encodeURIComponent(id)}&page=${this.currentPage}`
+      );
       const data = await response.json();
 
       if (data.success) {
         this.bbsData = data.data;
       } else {
-        this.renderError(data.error || 'Failed to load BBS data');
+        this.renderError(data.error || "Failed to load BBS data");
         return;
       }
     } catch (error) {
@@ -124,12 +126,12 @@ class NostalgicBBS extends HTMLElement {
 
   async changePage(newPage) {
     this.currentPage = newPage;
-    this.setAttribute('page', newPage.toString());
+    this.setAttribute("page", newPage.toString());
     await this.loadBBSData();
   }
 
   render() {
-    const theme = this.getAttribute('theme') || 'dark';
+    const theme = this.getAttribute("theme") || "dark";
 
     if (!this.bbsData) {
       this.shadowRoot.innerHTML = `
@@ -151,7 +153,7 @@ class NostalgicBBS extends HTMLElement {
           }
         </style>
         <div class="bbs-container">
-          <div class="loading">${this.loading ? '読み込み中...' : 'データがありません'}</div>
+          <div class="loading">${this.loading ? "読み込み中..." : "データがありません"}</div>
         </div>
       `;
       return;
@@ -160,78 +162,78 @@ class NostalgicBBS extends HTMLElement {
     // テーマ別のスタイル
     const themeStyles = {
       light: {
-        bgColor: '#ffffff',
-        borderColor: '#000000',
-        shadowColor: '#000000',
-        headerBg: '#e8e8e8',
-        headerColor: '#000000',
-        messageBg: '#ffffff',
-        textColor: '#000000',
-        scrollbarThumb: '#cccccc',
-        scrollbarHover: '#999999'
+        bgColor: "#ffffff",
+        borderColor: "#000000",
+        shadowColor: "#000000",
+        headerBg: "#e8e8e8",
+        headerColor: "#000000",
+        messageBg: "#ffffff",
+        textColor: "#000000",
+        scrollbarThumb: "#cccccc",
+        scrollbarHover: "#999999",
       },
       dark: {
-        bgColor: '#2a2a2a',
-        borderColor: '#ffffff',
-        shadowColor: '#ffffff',
-        headerBg: '#000000',
-        headerColor: '#ffffff',
-        messageBg: '#2a2a2a',
-        textColor: '#ffffff',
-        scrollbarThumb: '#555555',
-        scrollbarHover: '#777777'
+        bgColor: "#2a2a2a",
+        borderColor: "#ffffff",
+        shadowColor: "#ffffff",
+        headerBg: "#000000",
+        headerColor: "#ffffff",
+        messageBg: "#2a2a2a",
+        textColor: "#ffffff",
+        scrollbarThumb: "#555555",
+        scrollbarHover: "#777777",
       },
       kawaii: {
-        bgColor: '#e0f7fa',
-        borderColor: '#9c27b0',
-        shadowColor: '#9c27b0',
-        headerBg: '#b2ebf2',
-        headerColor: '#ff69b4',
-        messageBg: '#e0f7fa',
-        textColor: '#ff69b4',
-        scrollbarThumb: '#ff69b4',
-        scrollbarHover: '#e91e63'
+        bgColor: "#e0f7fa",
+        borderColor: "#9c27b0",
+        shadowColor: "#9c27b0",
+        headerBg: "#b2ebf2",
+        headerColor: "#ff69b4",
+        messageBg: "#e0f7fa",
+        textColor: "#ff69b4",
+        scrollbarThumb: "#ff69b4",
+        scrollbarHover: "#e91e63",
       },
       retro: {
-        bgColor: '#0d1117',
-        borderColor: '#00ff41',
-        shadowColor: '#00ff41',
-        headerBg: '#161b22',
-        headerColor: '#00ff41',
-        messageBg: '#0d1117',
-        textColor: '#00ff41',
-        scrollbarThumb: '#00ff41',
-        scrollbarHover: '#41ff00'
+        bgColor: "#0d1117",
+        borderColor: "#00ff41",
+        shadowColor: "#00ff41",
+        headerBg: "#161b22",
+        headerColor: "#00ff41",
+        messageBg: "#0d1117",
+        textColor: "#00ff41",
+        scrollbarThumb: "#00ff41",
+        scrollbarHover: "#41ff00",
       },
       mom: {
-        bgColor: '#d8f5d8',
-        borderColor: '#ff8c00',
-        shadowColor: '#ff8c00',
-        headerBg: '#98fb98',
-        headerColor: '#2d4a2b',
-        messageBg: '#d8f5d8',
-        textColor: '#2d4a2b',
-        scrollbarThumb: '#ff8c00',
-        scrollbarHover: '#ffad33'
+        bgColor: "#d8f5d8",
+        borderColor: "#ff8c00",
+        shadowColor: "#ff8c00",
+        headerBg: "#98fb98",
+        headerColor: "#2d4a2b",
+        messageBg: "#d8f5d8",
+        textColor: "#2d4a2b",
+        scrollbarThumb: "#ff8c00",
+        scrollbarHover: "#ffad33",
       },
       final: {
-        bgColor: '#0000ff',
-        borderColor: '#ffffff',
-        shadowColor: '#ffffff',
-        headerBg: 'transparent',
-        headerColor: '#ffffff',
-        messageBg: 'transparent',
-        textColor: '#f0f0f0',
-        scrollbarThumb: '#ffffff',
-        scrollbarHover: '#f0f0f0'
-      }
+        bgColor: "#0000ff",
+        borderColor: "#ffffff",
+        shadowColor: "#ffffff",
+        headerBg: "transparent",
+        headerColor: "#ffffff",
+        messageBg: "transparent",
+        textColor: "#f0f0f0",
+        scrollbarThumb: "#ffffff",
+        scrollbarHover: "#f0f0f0",
+      },
     };
 
     const style = themeStyles[theme] || themeStyles.dark;
     // サーバーから取得したメッセージを逆順にして表示（新しいものが下に表示される）
     const messages = (this.bbsData.messages || []).slice();
     const pagination = this.bbsData.pagination || {};
-    
+
     // 連番計算：現在のページの開始番号を計算
     const currentPage = pagination.page || 1;
     const perPage = pagination.perPage || 10;
@@ -725,14 +727,17 @@ class NostalgicBBS extends HTMLElement {
         }
       </style>
       <div class="bbs-container ${theme}">
-        ${theme === 'final' ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ''}
-        <div class="bbs-header ${theme}">${this.formatMixedText(this.bbsData.settings?.title || 'BBS')}</div>
+        ${theme === "final" ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ""}
+        <div class="bbs-header ${theme}">${this.formatMixedText(this.bbsData.settings?.title || "BBS")}</div>
         <div class="bbs-messages">
-          ${messages.length > 0 ? 
-            messages.map((message, index) => `
+          ${
+            messages.length > 0
+              ? messages
+                  .map(
+                    (message, index) => `
               <div class="message-item">
                 <div class="message-header">
-                  <span class="message-author"><span style="display:inline-block;min-width:2em;text-align:right;">${startNumber + index + 1}.</span> ${this.escapeHtml(message.author || 'Anonymous')}${this.formatSelectValues(message)}</span>
+                  <span class="message-author"><span style="display:inline-block;min-width:2em;text-align:right;">${startNumber + index + 1}.</span> ${this.escapeHtml(message.author || "Anonymous")}${this.formatSelectValues(message)}</span>
                   <div class="message-time-actions">
                     <span class="message-time">${this.formatDate(message.timestamp)}</span>
                     <div class="message-actions">
@@ -749,17 +754,23 @@ class NostalgicBBS extends HTMLElement {
                     </div>
                   </div>
                 </div>
-                <div class="message-content">${this.escapeHtml(message.message || '')}</div>
+                <div class="message-content">${this.escapeHtml(message.message || "")}</div>
               </div>
-            `).join('') 
-            : `<div class="empty-message">まだメッセージがありません</div>`
+            `
+                  )
+                  .join("")
+              : `<div class="empty-message">まだメッセージがありません</div>`
           }
         </div>
-        ${pagination.totalPages > 1 ? `
+        ${
+          pagination.totalPages > 1
+            ? `
           <div class="pagination">
             ${this.generatePageButtons(pagination)}
           </div>
-        ` : ''}
+        `
+            : ""
+        }
         <div class="post-form">
             <div class="form-header ${theme}">コメントを投稿</div>
             <div class="form-body">
@@ -801,49 +812,70 @@ class NostalgicBBS extends HTMLElement {
   }
 
   generateSelectDropdowns() {
-    let dropdowns = '';
-    
+    let dropdowns = "";
+
     // 設定されているセレクトオプションを生成
     if (this.bbsData?.settings) {
       const settings = this.bbsData.settings;
-      
+
       // 標準セレクト
-      if (settings.standardSelect && settings.standardSelect.options && settings.standardSelect.options.length > 0) {
+      if (
+        settings.standardSelect &&
+        settings.standardSelect.options &&
+        settings.standardSelect.options.length > 0
+      ) {
         dropdowns += `
           <select id="standard-select">
-            <option value="">${this.escapeHtml(settings.standardSelect.label || 'セレクト')}</option>
-            ${settings.standardSelect.options.map(option => 
-              `<option value="${this.escapeHtml(option)}">${this.escapeHtml(option)}</option>`
-            ).join('')}
+            <option value="">${this.escapeHtml(settings.standardSelect.label || "セレクト")}</option>
+            ${settings.standardSelect.options
+              .map(
+                (option) =>
+                  `<option value="${this.escapeHtml(option)}">${this.escapeHtml(option)}</option>`
+              )
+              .join("")}
           </select>
         `;
       }
-      
+
       // インクリメンタルセレクト
-      if (settings.incrementalSelect && settings.incrementalSelect.options && settings.incrementalSelect.options.length > 0) {
+      if (
+        settings.incrementalSelect &&
+        settings.incrementalSelect.options &&
+        settings.incrementalSelect.options.length > 0
+      ) {
         dropdowns += `
           <select id="incremental-select">
-            <option value="">${this.escapeHtml(settings.incrementalSelect.label || 'セレクト')}</option>
-            ${settings.incrementalSelect.options.map(option => 
-              `<option value="${this.escapeHtml(option)}">${this.escapeHtml(option)}</option>`
-            ).join('')}
+            <option value="">${this.escapeHtml(settings.incrementalSelect.label || "セレクト")}</option>
+            ${settings.incrementalSelect.options
+              .map(
+                (option) =>
+                  `<option value="${this.escapeHtml(option)}">${this.escapeHtml(option)}</option>`
+              )
+              .join("")}
           </select>
         `;
       }
-      
+
       // エモートセレクト
-      if (settings.emoteSelect && settings.emoteSelect.options && settings.emoteSelect.options.length > 0) {
+      if (
+        settings.emoteSelect &&
+        settings.emoteSelect.options &&
+        settings.emoteSelect.options.length > 0
+      ) {
         dropdowns += `
           <select id="emote-select">
-            <option value="">${this.escapeHtml(settings.emoteSelect.label || 'セレクト')}</option>
-            ${settings.emoteSelect.options.map(option => 
-              `<option value="${this.escapeHtml(option)}">${this.escapeHtml(option)}</option>`
-            ).join('')}
+            <option value="">${this.escapeHtml(settings.emoteSelect.label || "セレクト")}</option>
+            ${settings.emoteSelect.options
+              .map(
+                (option) =>
+                  `<option value="${this.escapeHtml(option)}">${this.escapeHtml(option)}</option>`
+              )
+              .join("")}
           </select>
         `;
       }
     }
-    
+
     return dropdowns;
   }
 
@@ -852,72 +884,79 @@ class NostalgicBBS extends HTMLElement {
     if (message.standardValue) values.push(`${message.standardValue}`);
     if (message.incrementalValue) values.push(`${message.incrementalValue}`);
     if (message.emoteValue) values.push(`${message.emoteValue}`);
-    return values.length > 0 ? ` [${values.join(', ')}]` : '';
+    return values.length > 0 ? ` [${values.join(", ")}]` : "";
   }
 
-  showMessage(text, type = 'error') {
-    const messageArea = this.shadowRoot.querySelector('#form-message');
+  showMessage(text, type = "error") {
+    const messageArea = this.shadowRoot.querySelector("#form-message");
     if (messageArea) {
       messageArea.textContent = text;
       messageArea.className = `message-area ${type}`;
-      messageArea.style.display = 'block';
-      
+      messageArea.style.display = "block";
+
       // 3秒後に自動で消去
       setTimeout(() => {
-        messageArea.style.display = 'none';
+        messageArea.style.display = "none";
       }, 3000);
     }
   }
 
   async postMessage() {
-    const id = this.safeGetAttribute('id');
-    
+    const id = this.safeGetAttribute("id");
+
     if (!id) {
-      this.showMessage('エラー: メッセージ投稿にid属性が必要です');
+      this.showMessage("エラー: メッセージ投稿にid属性が必要です");
       return;
     }
 
-    const authorInput = this.shadowRoot.querySelector('#message-author');
-    const messageInput = this.shadowRoot.querySelector('#message-content');
-    const standardSelect = this.shadowRoot.querySelector('#standard-select');
-    const incrementalSelect = this.shadowRoot.querySelector('#incremental-select');
-    const emoteSelect = this.shadowRoot.querySelector('#emote-select');
-    
+    const authorInput = this.shadowRoot.querySelector("#message-author");
+    const messageInput = this.shadowRoot.querySelector("#message-content");
+    const standardSelect = this.shadowRoot.querySelector("#standard-select");
+    const incrementalSelect = this.shadowRoot.querySelector("#incremental-select");
+    const emoteSelect = this.shadowRoot.querySelector("#emote-select");
+
     // 安全な入力値検証
     if (!authorInput || !messageInput) {
-      this.showMessage('エラー: フォーム要素が見つかりません');
+      this.showMessage("エラー: フォーム要素が見つかりません");
       return;
     }
 
-    let rawAuthor = '';
-    let rawMessage = '';
-    let rawStandardValue = '';
-    let rawIncrementalValue = '';
-    let rawEmoteValue = '';
+    let rawAuthor = "";
+    let rawMessage = "";
+    let rawStandardValue = "";
+    let rawIncrementalValue = "";
+    let rawEmoteValue = "";
 
     // 存在チェックと型チェック
     try {
-      rawAuthor = (typeof authorInput.value === 'string' ? authorInput.value : '').trim();
+      rawAuthor = (typeof authorInput.value === "string" ? authorInput.value : "").trim();
       // メッセージは前側のスペースを保持（アスキーアート調整のため）、後ろのみトリミング
-      rawMessage = (typeof messageInput.value === 'string' ? messageInput.value : '').replace(/\s+$/, '');
-      rawStandardValue = standardSelect && typeof standardSelect.value === 'string' ? standardSelect.value : '';
-      rawIncrementalValue = incrementalSelect && typeof incrementalSelect.value === 'string' ? incrementalSelect.value : '';
-      rawEmoteValue = emoteSelect && typeof emoteSelect.value === 'string' ? emoteSelect.value : '';
+      rawMessage = (typeof messageInput.value === "string" ? messageInput.value : "").replace(
+        /\s+$/,
+        ""
+      );
+      rawStandardValue =
+        standardSelect && typeof standardSelect.value === "string" ? standardSelect.value : "";
+      rawIncrementalValue =
+        incrementalSelect && typeof incrementalSelect.value === "string"
+          ? incrementalSelect.value
+          : "";
+      rawEmoteValue = emoteSelect && typeof emoteSelect.value === "string" ? emoteSelect.value : "";
     } catch (error) {
-      this.showMessage('エラー: 入力値の取得に失敗しました');
+      this.showMessage("エラー: 入力値の取得に失敗しました");
       return;
     }
 
     // 致命的エラー防止のみ（軽微なバリデーションはAPI側に任せる）
-    const author = typeof rawAuthor === 'string' ? rawAuthor || 'ああああ' : 'ああああ';
-    const message = typeof rawMessage === 'string' ? rawMessage : '';
-    const standardValue = typeof rawStandardValue === 'string' ? rawStandardValue : '';
-    const incrementalValue = typeof rawIncrementalValue === 'string' ? rawIncrementalValue : '';
-    const emoteValue = typeof rawEmoteValue === 'string' ? rawEmoteValue : '';
+    const author = typeof rawAuthor === "string" ? rawAuthor || "ああああ" : "ああああ";
+    const message = typeof rawMessage === "string" ? rawMessage : "";
+    const standardValue = typeof rawStandardValue === "string" ? rawStandardValue : "";
+    const incrementalValue = typeof rawIncrementalValue === "string" ? rawIncrementalValue : "";
+    const emoteValue = typeof rawEmoteValue === "string" ? rawEmoteValue : "";
 
     // 致命的な状態のみチェック
-    if (typeof author !== 'string' || typeof message !== 'string') {
-      console.error('Fatal: author or message is not a string');
+    if (typeof author !== "string" || typeof message !== "string") {
+      console.error("Fatal: author or message is not a string");
       return;
     }
 
@@ -925,66 +964,66 @@ class NostalgicBBS extends HTMLElement {
     this.updatePostButton();
 
     try {
-      const baseUrl = this.getAttribute('api-base') || NostalgicBBS.apiBaseUrl;
+      const baseUrl = this.getAttribute("api-base") || NostalgicBBS.apiBaseUrl;
       let apiUrl;
-      
+
       if (this.editMode && this.editingMessageId) {
         // 編集モード
-        const storageKey = `bbs_edit_${this.getAttribute('id')}`;
-        const tokens = JSON.parse(localStorage.getItem(storageKey) || '{}');
+        const storageKey = `bbs_edit_${this.getAttribute("id")}`;
+        const tokens = JSON.parse(localStorage.getItem(storageKey) || "{}");
         const editToken = tokens[this.editingMessageId];
-        
+
         if (!editToken) {
-          this.showMessage('編集権限がありません');
+          this.showMessage("編集権限がありません");
           return;
         }
-        
-        apiUrl = `${baseUrl}/api/bbs?action=editMessageById&id=${encodeURIComponent(id)}&messageId=${encodeURIComponent(this.editingMessageId)}&editToken=${encodeURIComponent(editToken)}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ''}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ''}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ''}`;
+
+        apiUrl = `${baseUrl}/api/bbs?action=editMessageById&id=${encodeURIComponent(id)}&messageId=${encodeURIComponent(this.editingMessageId)}&editToken=${encodeURIComponent(editToken)}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ""}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ""}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ""}`;
       } else {
         // 新規投稿モード
-        apiUrl = `${baseUrl}/api/bbs?action=post&id=${encodeURIComponent(id)}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ''}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ''}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ''}`;
+        apiUrl = `${baseUrl}/api/bbs?action=post&id=${encodeURIComponent(id)}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ""}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ""}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ""}`;
       }
-      
+
       const response = await fetch(apiUrl);
       const data = await response.json();
 
       if (data.success) {
         // editTokenをlocalStorageに保存（新規投稿の場合のみ）
         if (!this.editMode && data.data && data.data.editToken && data.data.messageId) {
-          const storageKey = `bbs_edit_${this.getAttribute('id')}`;
-          const existingTokens = JSON.parse(localStorage.getItem(storageKey) || '{}');
+          const storageKey = `bbs_edit_${this.getAttribute("id")}`;
+          const existingTokens = JSON.parse(localStorage.getItem(storageKey) || "{}");
           existingTokens[data.data.messageId] = data.data.editToken;
           localStorage.setItem(storageKey, JSON.stringify(existingTokens));
         }
-        
+
         // 成功: フォームをクリアして再読み込み
-        authorInput.value = '';
-        messageInput.value = '';
-        if (standardSelect) standardSelect.value = '';
-        if (incrementalSelect) incrementalSelect.value = '';
-        if (emoteSelect) emoteSelect.value = '';
-        
+        authorInput.value = "";
+        messageInput.value = "";
+        if (standardSelect) standardSelect.value = "";
+        if (incrementalSelect) incrementalSelect.value = "";
+        if (emoteSelect) emoteSelect.value = "";
+
         // 編集モードをクリア
         this.clearEditMode();
-        
+
         // 新しい投稿が表示される最後のページに移動して再読み込み
         await this.loadBBSData();
         const lastPage = this.bbsData.totalPages || 1;
         this.currentPage = lastPage;
-        this.setAttribute('page', lastPage.toString());
+        this.setAttribute("page", lastPage.toString());
         await this.loadBBSData();
-        
+
         // 成功メッセージ
         if (this.editMode) {
-          this.showMessage('メッセージを更新しました', 'success');
+          this.showMessage("メッセージを更新しました", "success");
         } else {
-          this.showMessage('メッセージを投稿しました', 'success');
+          this.showMessage("メッセージを投稿しました", "success");
         }
       } else {
-        throw new Error(data.error || 'Failed to post message');
+        throw new Error(data.error || "Failed to post message");
       }
     } catch (error) {
-      console.error('Post message failed:', error);
+      console.error("Post message failed:", error);
       this.showMessage(`メッセージの投稿に失敗しました: ${error.message}`);
     } finally {
       this.posting = false;
@@ -993,13 +1032,13 @@ class NostalgicBBS extends HTMLElement {
   }
 
   updatePostButton() {
-    const button = this.shadowRoot.querySelector('#post-button');
+    const button = this.shadowRoot.querySelector("#post-button");
     if (button) {
       button.disabled = this.posting;
       if (this.posting) {
-        button.textContent = this.editMode ? '更新中...' : '投稿中...';
+        button.textContent = this.editMode ? "更新中..." : "投稿中...";
       } else {
-        button.textContent = this.editMode ? '更新' : '投稿';
+        button.textContent = this.editMode ? "更新" : "投稿";
       }
     }
   }
@@ -1008,10 +1047,10 @@ class NostalgicBBS extends HTMLElement {
     try {
       const date = new Date(dateString);
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
       return `${year}-${month}-${day} ${hours}:${minutes}`;
     } catch (e) {
       return dateString;
@@ -1022,9 +1061,9 @@ class NostalgicBBS extends HTMLElement {
   clearEditMode() {
     this.editMode = false;
     this.editingMessageId = null;
-    const postButton = this.shadowRoot.querySelector('#post-button');
+    const postButton = this.shadowRoot.querySelector("#post-button");
     if (postButton) {
-      postButton.textContent = '投稿';
+      postButton.textContent = "投稿";
     }
   }
 
@@ -1033,13 +1072,13 @@ class NostalgicBBS extends HTMLElement {
     const messagesPerPage = this.bbsData.messagesPerPage || 10;
     const totalPages = pagination.totalPages;
     const currentPage = pagination.page;
-    
+
     let buttons = [];
-    
+
     for (let page = 1; page <= totalPages; page++) {
       const startNum = (page - 1) * messagesPerPage + 1;
       const endNum = Math.min(page * messagesPerPage, this.bbsData.totalMessages || 0);
-      
+
       let label;
       if (page === totalPages && endNum === startNum) {
         // 最終ページで1つだけの場合
@@ -1051,44 +1090,46 @@ class NostalgicBBS extends HTMLElement {
         // 通常のページ
         label = `${startNum}-${endNum}`;
       }
-      
+
       if (page === currentPage) {
         buttons.push(`<span class="current-page">${label}</span>`);
       } else {
-        buttons.push(`<button onclick="this.getRootNode().host.changePage(${page})">${label}</button>`);
+        buttons.push(
+          `<button onclick="this.getRootNode().host.changePage(${page})">${label}</button>`
+        );
       }
     }
-    
-    return buttons.join(' ');
+
+    return buttons.join(" ");
   }
 
   // メッセージ編集
   editMessage(messageId) {
     // localStorageからeditTokenを取得
-    const storageKey = `bbs_edit_${this.getAttribute('id')}`;
-    const tokens = JSON.parse(localStorage.getItem(storageKey) || '{}');
-    
+    const storageKey = `bbs_edit_${this.getAttribute("id")}`;
+    const tokens = JSON.parse(localStorage.getItem(storageKey) || "{}");
+
     if (!tokens[messageId]) {
-      this.showMessage('このメッセージを編集する権限がありません');
+      this.showMessage("このメッセージを編集する権限がありません");
       return;
     }
 
     // メッセージデータを取得
-    const message = this.bbsData.messages.find(m => m.id === messageId);
+    const message = this.bbsData.messages.find((m) => m.id === messageId);
     if (!message) {
-      this.showMessage('メッセージが見つかりません');
+      this.showMessage("メッセージが見つかりません");
       return;
     }
 
     // フォームに内容を読み込み
-    const authorInput = this.shadowRoot.querySelector('#message-author');
-    const messageInput = this.shadowRoot.querySelector('#message-content');
-    const standardSelect = this.shadowRoot.querySelector('#standard-select');
-    const incrementalSelect = this.shadowRoot.querySelector('#incremental-select');
-    const emoteSelect = this.shadowRoot.querySelector('#emote-select');
+    const authorInput = this.shadowRoot.querySelector("#message-author");
+    const messageInput = this.shadowRoot.querySelector("#message-content");
+    const standardSelect = this.shadowRoot.querySelector("#standard-select");
+    const incrementalSelect = this.shadowRoot.querySelector("#incremental-select");
+    const emoteSelect = this.shadowRoot.querySelector("#emote-select");
 
-    authorInput.value = message.author || '';
-    messageInput.value = message.message || '';
+    authorInput.value = message.author || "";
+    messageInput.value = message.message || "";
     if (standardSelect && message.standardValue) {
       standardSelect.value = message.standardValue;
     }
@@ -1102,38 +1143,38 @@ class NostalgicBBS extends HTMLElement {
     // 編集モードに変更
     this.editMode = true;
     this.editingMessageId = messageId;
-    
-    const postButton = this.shadowRoot.querySelector('#post-button');
+
+    const postButton = this.shadowRoot.querySelector("#post-button");
     if (postButton) {
-      postButton.textContent = '更新';
+      postButton.textContent = "更新";
     }
 
     // フォームまでスクロール
-    const postForm = this.shadowRoot.querySelector('.post-form');
+    const postForm = this.shadowRoot.querySelector(".post-form");
     if (postForm) {
-      postForm.scrollIntoView({ behavior: 'smooth' });
+      postForm.scrollIntoView({ behavior: "smooth" });
     }
   }
 
   // メッセージ削除
   async deleteMessage(messageId) {
     // localStorageからeditTokenを取得
-    const storageKey = `bbs_edit_${this.getAttribute('id')}`;
-    const tokens = JSON.parse(localStorage.getItem(storageKey) || '{}');
-    
+    const storageKey = `bbs_edit_${this.getAttribute("id")}`;
+    const tokens = JSON.parse(localStorage.getItem(storageKey) || "{}");
+
     if (!tokens[messageId]) {
-      this.showMessage('このメッセージを削除する権限がありません');
+      this.showMessage("このメッセージを削除する権限がありません");
       return;
     }
 
-    if (!confirm('このメッセージを削除しますか？')) {
+    if (!confirm("このメッセージを削除しますか？")) {
       return;
     }
 
     try {
-      const baseUrl = this.getAttribute('api-base') || NostalgicBBS.apiBaseUrl;
-      const deleteUrl = `${baseUrl}/api/bbs?action=deleteMessageById&id=${encodeURIComponent(this.getAttribute('id'))}&messageId=${encodeURIComponent(messageId)}&editToken=${encodeURIComponent(tokens[messageId])}`;
-      
+      const baseUrl = this.getAttribute("api-base") || NostalgicBBS.apiBaseUrl;
+      const deleteUrl = `${baseUrl}/api/bbs?action=deleteMessageById&id=${encodeURIComponent(this.getAttribute("id"))}&messageId=${encodeURIComponent(messageId)}&editToken=${encodeURIComponent(tokens[messageId])}`;
+
       const response = await fetch(deleteUrl);
       const data = await response.json();
 
@@ -1141,33 +1182,33 @@ class NostalgicBBS extends HTMLElement {
         // localStorageからトークンを削除
         delete tokens[messageId];
         localStorage.setItem(storageKey, JSON.stringify(tokens));
-        
+
         // BBSデータを再読み込み
         await this.loadBBSData();
-        this.showMessage('メッセージが削除されました', 'success');
+        this.showMessage("メッセージが削除されました", "success");
       } else {
-        throw new Error(data.error || 'Failed to delete message');
+        throw new Error(data.error || "Failed to delete message");
       }
     } catch (error) {
-      console.error('Delete message failed:', error);
+      console.error("Delete message failed:", error);
       this.showMessage(`メッセージの削除に失敗しました: ${error.message}`);
     }
   }
 
   escapeHtml(text) {
-    const div = document.createElement('div');
+    const div = document.createElement("div");
     div.textContent = text;
     // 全角スペースを半角スペース2つに変換
-    return div.innerHTML.replace(/　/g, '  ');
+    return div.innerHTML.replace(/　/g, "  ");
   }
 
   formatMixedText(text) {
     const escapedText = this.escapeHtml(text);
     // 日本語文字（ひらがな、カタカナ、漢字）を検出
     const japanesePattern = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/;
-    // 英数字を検出  
+    // 英数字を検出
     const englishPattern = /[a-zA-Z0-9]/;
-    
+
     return escapedText.replace(/(.)/g, (char) => {
       if (japanesePattern.test(char)) {
         return `<span class="jp-text">${char}</span>`;
@@ -1181,7 +1222,6 @@ class NostalgicBBS extends HTMLElement {
 }
 
 // Web Componentを登録
-if (!customElements.get('nostalgic-bbs')) {
-  customElements.define('nostalgic-bbs', NostalgicBBS);
+if (!customElements.get("nostalgic-bbs")) {
+  customElements.define("nostalgic-bbs", NostalgicBBS);
 }
-

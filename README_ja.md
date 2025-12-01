@@ -1,30 +1,34 @@
 # Nostalgic
 
-*[English version here](README.md)*
+_[English version here](README.md)_
 
 90年代のインターネット文化から懐かしいWebツール（カウンター・いいね・ランキング・BBS）を最新技術で復活させた総合プラットフォームです。昔の個人ホームページに必須だった4つのサービスを現代に蘇らせました。
 
 ## ✨ サービス
 
 ### 📊 カウンターサービス
+
 - 複数期間統計: 累計・今日・昨日・週間・月間の表示
 - 1日1回重複防止（0時リセット）
 - 3つの懐かしい表示スタイル: ライト・ダーク・カワイイ
 - Web Components による簡単埋め込み
 
 ### 💖 いいねサービス
+
 - トグル型いいね/取り消し機能
 - ユーザー状態管理（IP + UserAgent）
 - 1日1回制限（0時リセット）
 - 現在の状態で即座にフィードバック
 
-### 🏆 ランキングサービス  
+### 🏆 ランキングサービス
+
 - 自動ソート機能付きスコアリーダーボード
 - スコア管理（送信・更新・削除）
 - 設定可能なエントリー制限
 - フォーマット済みスコア表示付きリアルタイム更新
 
 ### 💬 BBSサービス
+
 - 固定高さ表示（400px）のメッセージボード
 - 最新メッセージから始まるページネーション
 - カスタマイズ可能なドロップダウン選択
@@ -44,11 +48,13 @@
 ### カウンターサービス
 
 1. **カウンター作成**:
+
 ```
 https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&token=your-secret-token
 ```
 
 2. **サイトに埋め込み**:
+
 ```html
 <script src="https://nostalgic.llll-ll.com/components/visit.js"></script>
 <nostalgic-counter id="yoursite-a7b9c3d4" type="total" theme="dark"></nostalgic-counter>
@@ -57,11 +63,13 @@ https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&t
 ### いいねサービス
 
 1. **いいねボタン作成**:
+
 ```
 https://nostalgic.llll-ll.com/api/like?action=create&url=https://yoursite.com&token=your-secret-token
 ```
 
 2. **いいねトグル**:
+
 ```
 https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.com&token=your-secret-token
 ```
@@ -69,11 +77,13 @@ https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.com&to
 ### ランキングサービス
 
 1. **ランキング作成**:
+
 ```
 https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret-token&max=100
 ```
 
 2. **スコア送信**:
+
 ```
 https://nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursite.com&token=your-secret-token&name=Player1&score=1000
 ```
@@ -81,11 +91,13 @@ https://nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursite.com
 ### BBSサービス
 
 1. **BBS作成**:
+
 ```
 https://nostalgic.llll-ll.com/api/bbs?action=create&url=https://yoursite.com&token=your-secret-token&max=1000
 ```
 
 2. **メッセージ投稿**（純粋なGET、1990年代スタイル）:
+
 ```
 https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com&token=your-secret-token&author=User&message=こんにちは！
 ```
@@ -95,7 +107,7 @@ https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com&token
 インタラクティブデモページで各サービスをテスト:
 
 - **[カウンターデモ](https://nostalgic.llll-ll.com/counter)** - カウンター作成と管理をテスト
-- **[いいねデモ](https://nostalgic.llll-ll.com/like)** - いいね/取り消し機能を試す  
+- **[いいねデモ](https://nostalgic.llll-ll.com/like)** - いいね/取り消し機能を試す
 - **[ランキングデモ](https://nostalgic.llll-ll.com/ranking)** - スコア送信と管理
 - **[BBSデモ](https://nostalgic.llll-ll.com/bbs)** - メッセージ投稿と編集
 
@@ -119,46 +131,53 @@ https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com&token
 
 ### サービス別利用可能アクション:
 
-| サービス | アクション | 説明 |
-|---------|---------|-------------|
-| **Counter** | `create`, `increment`, `display`, `set` | 従来の訪問者カウンター |
-| **Like** | `create`, `toggle`, `get` | いいね/取り消しボタン |
-| **Ranking** | `create`, `submit`, `update`, `remove`, `clear`, `get` | スコアリーダーボード |
-| **BBS** | `create`, `post`, `update`, `remove`, `clear`, `get` | メッセージボード |
+| サービス    | アクション                                             | 説明                   |
+| ----------- | ------------------------------------------------------ | ---------------------- |
+| **Counter** | `create`, `increment`, `display`, `set`                | 従来の訪問者カウンター |
+| **Like**    | `create`, `toggle`, `get`                              | いいね/取り消しボタン  |
+| **Ranking** | `create`, `submit`, `update`, `remove`, `clear`, `get` | スコアリーダーボード   |
+| **BBS**     | `create`, `post`, `update`, `remove`, `clear`, `get`   | メッセージボード       |
 
 ## 📖 ドキュメント
 
 ### APIドキュメント
+
 - **[完全APIリファレンス](docs/api_ja.md)** - 全サービスの完全なAPIドキュメント
 - **[English API Documentation](docs/api.md)** - Complete API documentation (English)
 
 ### サービス別ガイド
+
 - **[カウンターサービス](docs/services/counter_ja.md)** - 訪問者カウンターの実装
 - **[いいねサービス](docs/services/like_ja.md)** - いいね/取り消しボタン機能
 - **[ランキングサービス](docs/services/ranking_ja.md)** - リーダーボードとスコア管理
 - **[BBSサービス](docs/services/bbs_ja.md)** - メッセージボードシステム
 
 ### カスタマイズ
+
 - **[カスタマイズガイド](docs/customization.md)** - テーマ、スタイル、設定方法
 
 ### ライブデモ
+
 - **[インタラクティブデモ](https://nostalgic.llll-ll.com)** - 懐かしいホームページでお試しください
 
 ## 🛡️ セキュリティとプライバシー
 
 ### 収集・保存するデータ:
+
 - **サービスURL**（識別子のみ、追跡には使用しません）
 - **秘密トークン**（SHA256でハッシュ化）
 - **ユーザー識別**（IP + UserAgentハッシュ、重複防止と投稿者確認用）
 - **サービスデータ**（カウント、いいね、スコア、メッセージ - 個人情報なし）
 
 ### 収集しないデータ:
+
 - Cookieや追跡ピクセルなし
 - 個人情報（名前、メールなど）なし
 - 閲覧履歴やリファラーデータなし
 - IPアドレスはプライバシー保護のためハッシュ化
 
 ### セキュリティ対策:
+
 - 秘密トークンはハッシュ化して安全に保存
 - 公開IDは表示/操作のみ、変更不可
 - 一時的なIP+UserAgentハッシュによるユーザー識別
@@ -174,4 +193,4 @@ Issue や Pull Request を歓迎します！一緒に懐かしいWebを復活さ
 
 ---
 
-*懐かしいWebへの愛を込めて ❤️*
+_懐かしいWebへの愛を込めて ❤️_

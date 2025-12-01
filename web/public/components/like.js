@@ -1,6 +1,6 @@
 /**
  * Nostalgic Like Web Component
- * 
+ *
  * 使用方法:
  * <script src="/components/like.js"></script>
  * <nostalgic-like id="your-like-id" theme="dark" icon="heart" format="interactive"></nostalgic-like>
@@ -13,52 +13,51 @@ class NostalgicLike extends HTMLElement {
   static apiBaseUrl = (() => {
     const scripts = document.querySelectorAll('script[src*="like.js"]');
     for (const script of scripts) {
-      const src = script.getAttribute('src');
-      if (src && src.includes('like.js')) {
+      const src = script.getAttribute("src");
+      if (src && src.includes("like.js")) {
         try {
           const url = new URL(src, window.location.href);
           return url.origin;
         } catch (e) {
-          console.warn('Failed to parse script URL:', src);
+          console.warn("Failed to parse script URL:", src);
         }
       }
     }
     // フォールバック: 現在のドメインを使用
     return window.location.origin;
   })();
-  
+
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    this.attachShadow({ mode: "open" });
     this.likeData = null;
     this.isLoading = false;
   }
 
   static get observedAttributes() {
-    return ['id', 'theme', 'icon', 'format'];
+    return ["id", "theme", "icon", "format"];
   }
 
   // 安全なアトリビュート処理
   safeGetAttribute(name) {
     const value = this.getAttribute(name);
-    
+
     switch (name) {
-      case 'id':
-        if (!value || typeof value !== 'string' || value.trim() === '') {
+      case "id":
+        if (!value || typeof value !== "string" || value.trim() === "") {
           return null;
         }
         return value.trim();
-        
-      case 'theme':
+
+      case "theme":
         return value;
-        
-      case 'icon':
+
+      case "icon":
         return value;
-        
-      case 'format':
+
+      case "format":
         return value;
-        
-        
+
       default:
         return value;
     }
@@ -75,31 +74,31 @@ class NostalgicLike extends HTMLElement {
   }
 
   async loadLikeData() {
-    const id = this.safeGetAttribute('id');
+    const id = this.safeGetAttribute("id");
     if (!id) {
-      this.renderError('エラー: id属性が必要です');
+      this.renderError("エラー: id属性が必要です");
       return;
     }
 
     this.isLoading = true;
 
     try {
-      const baseUrl = this.safeGetAttribute('api-base') || NostalgicLike.apiBaseUrl;
+      const baseUrl = this.safeGetAttribute("api-base") || NostalgicLike.apiBaseUrl;
       const apiUrl = `${baseUrl}/api/like?action=get&id=${encodeURIComponent(id)}`;
-      
+
       const response = await fetch(apiUrl);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
-      
+
       const responseData = await response.json();
       if (responseData.success) {
         this.likeData = responseData.data;
       } else {
-        throw new Error(responseData.error || 'APIがエラーを返しました');
+        throw new Error(responseData.error || "APIがエラーを返しました");
       }
     } catch (error) {
-      console.error('nostalgic-like: Failed to load data:', error);
+      console.error("nostalgic-like: Failed to load data:", error);
       this.likeData = { total: 0, userLiked: false };
     }
 
@@ -108,29 +107,29 @@ class NostalgicLike extends HTMLElement {
   }
 
   async toggleLike() {
-    const id = this.safeGetAttribute('id');
+    const id = this.safeGetAttribute("id");
     if (!id || this.isLoading) return;
 
     this.isLoading = true;
 
     try {
-      const baseUrl = this.safeGetAttribute('api-base') || NostalgicLike.apiBaseUrl;
+      const baseUrl = this.safeGetAttribute("api-base") || NostalgicLike.apiBaseUrl;
       const toggleUrl = `${baseUrl}/api/like?action=toggle&id=${encodeURIComponent(id)}`;
-      
+
       const response = await fetch(toggleUrl);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
-      
+
       const responseData = await response.json();
       if (responseData.success) {
         this.likeData = responseData.data;
       } else {
-        throw new Error(responseData.error || 'APIがエラーを返しました');
+        throw new Error(responseData.error || "APIがエラーを返しました");
       }
     } catch (error) {
-      console.error('nostalgic-like: Toggle failed:', error);
+      console.error("nostalgic-like: Toggle failed:", error);
     }
 
     this.isLoading = false;
@@ -151,21 +150,21 @@ class NostalgicLike extends HTMLElement {
   }
 
   render() {
-    const theme = this.safeGetAttribute('theme');
-    const icon = this.safeGetAttribute('icon');
-    const format = this.safeGetAttribute('format');
-    
-    if (!this.safeGetAttribute('id')) {
-      this.renderError('エラー: id属性が必要です');
+    const theme = this.safeGetAttribute("theme");
+    const icon = this.safeGetAttribute("icon");
+    const format = this.safeGetAttribute("format");
+
+    if (!this.safeGetAttribute("id")) {
+      this.renderError("エラー: id属性が必要です");
       return;
     }
 
     // SVG画像形式の場合
-    if (format === 'image') {
-      const baseUrl = this.safeGetAttribute('api-base') || NostalgicLike.apiBaseUrl;
-      const id = this.safeGetAttribute('id');
-      const apiUrl = `${baseUrl}/api/like?action=display&id=${encodeURIComponent(id)}${theme ? `&theme=${theme}` : ''}&format=image`;
-      
+    if (format === "image") {
+      const baseUrl = this.safeGetAttribute("api-base") || NostalgicLike.apiBaseUrl;
+      const id = this.safeGetAttribute("id");
+      const apiUrl = `${baseUrl}/api/like?action=display&id=${encodeURIComponent(id)}${theme ? `&theme=${theme}` : ""}&format=image`;
+
       this.shadowRoot.innerHTML = `
         <style>
           :host {
@@ -183,44 +182,44 @@ class NostalgicLike extends HTMLElement {
     }
 
     // テキスト形式の場合（数字のみ）
-    if (format === 'text') {
+    if (format === "text") {
       const isLoading = this.isLoading;
       const total = this.likeData ? this.likeData.total : 0;
       const userLiked = this.likeData ? this.likeData.userLiked : false;
-      
+
       // テーマ別デフォルト色（ボタン版textColorと完全一致）
       const textThemes = {
         light: {
-          color: '#000000',
-          hoverColor: '#333333'
+          color: "#000000",
+          hoverColor: "#333333",
         },
         dark: {
-          color: '#ffffff',
-          hoverColor: '#cccccc'
+          color: "#ffffff",
+          hoverColor: "#cccccc",
         },
         retro: {
-          color: '#00ff41',
-          hoverColor: '#00cc33'
+          color: "#00ff41",
+          hoverColor: "#00cc33",
         },
         kawaii: {
-          color: '#ff69b4',
-          hoverColor: '#ff4081'
+          color: "#ff69b4",
+          hoverColor: "#ff4081",
         },
         mom: {
-          color: '#2d4a2b',
-          hoverColor: '#1a3319'
+          color: "#2d4a2b",
+          hoverColor: "#1a3319",
         },
         final: {
-          color: '#ffffff',
-          hoverColor: '#ffffff'
-        }
+          color: "#ffffff",
+          hoverColor: "#ffffff",
+        },
       };
-      
+
       // デフォルトテーマはdark
       const currentTheme = textThemes[theme] || textThemes.dark;
       const textStyle = currentTheme;
-      const likedClass = userLiked ? 'liked' : 'unliked';
-      
+      const likedClass = userLiked ? "liked" : "unliked";
+
       this.shadowRoot.innerHTML = `
         <style>
           :host {
@@ -234,7 +233,7 @@ class NostalgicLike extends HTMLElement {
             text-decoration: underline;
             font-family: inherit;
             font-size: inherit;
-            opacity: ${isLoading ? '0.6' : '1'};
+            opacity: ${isLoading ? "0.6" : "1"};
             transition: color 0.2s ease;
           }
           .like-text {
@@ -253,98 +252,98 @@ class NostalgicLike extends HTMLElement {
             text-shadow: 0 0 3px currentColor;
           }
         </style>
-        <span class="like-text ${isLoading ? 'loading' : ''} ${theme || ''}" onclick="this.getRootNode().host.toggleLike()">${total}</span>
+        <span class="like-text ${isLoading ? "loading" : ""} ${theme || ""}" onclick="this.getRootNode().host.toggleLike()">${total}</span>
       `;
       return;
     }
-    
+
     const isLoading = this.isLoading;
     const total = this.likeData ? this.likeData.total : 0;
     const userLiked = this.likeData ? this.likeData.userLiked : false;
-    
+
     // アイコンマッピング（幅を統一するため同じ文字を使用）
     const iconMapping = {
-      heart: '♥',
-      star: '★', 
-      thumb: '👍',
-      peta: '🐾'
+      heart: "♥",
+      star: "★",
+      thumb: "👍",
+      peta: "🐾",
     };
-    
+
     const displayIcon = iconMapping[icon] || iconMapping.heart;
-    
+
     // アイコンの色設定（テーマ別）
     const getIconColor = () => {
-      if (theme === 'light') {
-        return userLiked ? '#000000' : '#999999';
-      } else if (theme === 'dark') {
-        return userLiked ? '#ffffff' : '#666666';
-      } else if (theme === 'retro') {
-        return userLiked ? '#00ff41' : '#00cc33';
-      } else if (theme === 'kawaii') {
-        if (icon === 'heart') return userLiked ? '#ff69b4' : '#f06292';
-        if (icon === 'star') return userLiked ? '#ff69b4' : '#f06292';
-        if (icon === 'thumb') return userLiked ? '#ff69b4' : '#f06292';
-        if (icon === 'peta') return userLiked ? '#ff69b4' : '#f06292';
-      } else if (theme === 'mom') {
-        return userLiked ? '#2d4a2b' : '#4d6b4a';
-      } else if (theme === 'final') {
-        return userLiked ? '#ffffff' : '#e0e0e0';
+      if (theme === "light") {
+        return userLiked ? "#000000" : "#999999";
+      } else if (theme === "dark") {
+        return userLiked ? "#ffffff" : "#666666";
+      } else if (theme === "retro") {
+        return userLiked ? "#00ff41" : "#00cc33";
+      } else if (theme === "kawaii") {
+        if (icon === "heart") return userLiked ? "#ff69b4" : "#f06292";
+        if (icon === "star") return userLiked ? "#ff69b4" : "#f06292";
+        if (icon === "thumb") return userLiked ? "#ff69b4" : "#f06292";
+        if (icon === "peta") return userLiked ? "#ff69b4" : "#f06292";
+      } else if (theme === "mom") {
+        return userLiked ? "#2d4a2b" : "#4d6b4a";
+      } else if (theme === "final") {
+        return userLiked ? "#ffffff" : "#e0e0e0";
       }
       // デフォルト（dark）
-      return userLiked ? '#ffffff' : '#666666';
+      return userLiked ? "#ffffff" : "#666666";
     };
-    
+
     const currentIconColor = getIconColor();
-    
+
     // テーマ別のスタイル
     const themeStyles = {
       light: {
-        bgColor: '#ffffff',
-        hoverBgColor: '#f5f5f5',
-        textColor: '#000000',
-        borderColor: '#000000',
-        shadowColor: '#000000'
+        bgColor: "#ffffff",
+        hoverBgColor: "#f5f5f5",
+        textColor: "#000000",
+        borderColor: "#000000",
+        shadowColor: "#000000",
       },
       dark: {
-        bgColor: '#2a2a2a',
-        hoverBgColor: '#333333',
-        textColor: '#ffffff',
-        borderColor: '#ffffff',
-        shadowColor: '#ffffff'
+        bgColor: "#2a2a2a",
+        hoverBgColor: "#333333",
+        textColor: "#ffffff",
+        borderColor: "#ffffff",
+        shadowColor: "#ffffff",
       },
       retro: {
-        bgColor: '#0d1117',
-        hoverBgColor: '#161b22',
-        textColor: '#00ff41',
-        borderColor: '#00ff41',
-        shadowColor: '#00ff41'
+        bgColor: "#0d1117",
+        hoverBgColor: "#161b22",
+        textColor: "#00ff41",
+        borderColor: "#00ff41",
+        shadowColor: "#00ff41",
       },
       kawaii: {
-        bgColor: '#e0f7fa',
-        hoverBgColor: '#b2ebf2',
-        textColor: '#ff69b4',
-        borderColor: '#9c27b0',
-        shadowColor: '#9c27b0'
+        bgColor: "#e0f7fa",
+        hoverBgColor: "#b2ebf2",
+        textColor: "#ff69b4",
+        borderColor: "#9c27b0",
+        shadowColor: "#9c27b0",
       },
       mom: {
-        bgColor: '#98fb98',
-        hoverBgColor: '#a5d6a7',
-        textColor: '#2d4a2b',
-        borderColor: '#ff8c00',
-        shadowColor: '#ff8c00'
+        bgColor: "#98fb98",
+        hoverBgColor: "#a5d6a7",
+        textColor: "#2d4a2b",
+        borderColor: "#ff8c00",
+        shadowColor: "#ff8c00",
       },
       final: {
-        bgColor: '#0000ff',
-        hoverBgColor: '#3333ff',
-        textColor: '#ffffff',
-        borderColor: '#ffffff',
-        shadowColor: '#ffffff'
-      }
+        bgColor: "#0000ff",
+        hoverBgColor: "#3333ff",
+        textColor: "#ffffff",
+        borderColor: "#ffffff",
+        shadowColor: "#ffffff",
+      },
     };
-    
+
     // デフォルトテーマはdark
     const style = themeStyles[theme] || themeStyles.dark;
-    
+
     this.shadowRoot.innerHTML = `
       <style>
         :host {
@@ -426,7 +425,7 @@ class NostalgicLike extends HTMLElement {
           font-weight: bold;
           user-select: none;
           transition: all 0.2s ease;
-          opacity: ${isLoading ? '0.6' : '1'};
+          opacity: ${isLoading ? "0.6" : "1"};
           position: relative;
         }
         
@@ -571,16 +570,16 @@ class NostalgicLike extends HTMLElement {
         }
       </style>
       
-      <button class="like-button ${isLoading ? 'loading' : ''} ${theme || ''}" ${isLoading ? 'disabled' : ''}>
-        ${theme === 'final' ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ''}
+      <button class="like-button ${isLoading ? "loading" : ""} ${theme || ""}" ${isLoading ? "disabled" : ""}>
+        ${theme === "final" ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ""}
         <span class="heart-icon">${displayIcon}</span>
         <span class="like-count">${total}</span>
       </button>
     `;
-    
+
     // クリックイベントを追加
     if (!isLoading) {
-      this.shadowRoot.querySelector('.like-button').addEventListener('click', () => {
+      this.shadowRoot.querySelector(".like-button").addEventListener("click", () => {
         this.toggleLike();
       });
     }
@@ -588,8 +587,6 @@ class NostalgicLike extends HTMLElement {
 }
 
 // カスタム要素として登録
-if (!customElements.get('nostalgic-like')) {
-  customElements.define('nostalgic-like', NostalgicLike);
+if (!customElements.get("nostalgic-like")) {
+  customElements.define("nostalgic-like", NostalgicLike);
 }
-
-

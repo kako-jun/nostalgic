@@ -16,7 +16,7 @@ export default function NostalgicLayout({ children }: NostalgicLayoutProps) {
     const hash = window.location.hash.slice(1);
     if (hash) {
       setCurrentPage(hash);
-      setVisitedPages(prev => new Set([...prev, hash]));
+      setVisitedPages((prev) => new Set([...prev, hash]));
     } else {
       setCurrentPage("main");
     }
@@ -25,29 +25,34 @@ export default function NostalgicLayout({ children }: NostalgicLayoutProps) {
       const hash = window.location.hash.slice(1);
       if (hash) {
         setCurrentPage(hash);
-        setVisitedPages(prev => new Set([...prev, hash]));
+        setVisitedPages((prev) => new Set([...prev, hash]));
       } else {
         setCurrentPage("main");
       }
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-      const sidebar = document.querySelector('.nostalgic-sidebar-left');
-      const menuButton = document.querySelector('.nostalgic-mobile-menu-button');
+      const sidebar = document.querySelector(".nostalgic-sidebar-left");
+      const menuButton = document.querySelector(".nostalgic-mobile-menu-button");
 
-      if (isMobileSidebarOpen && sidebar && !sidebar.contains(target) && !menuButton?.contains(target)) {
+      if (
+        isMobileSidebarOpen &&
+        sidebar &&
+        !sidebar.contains(target) &&
+        !menuButton?.contains(target)
+      ) {
         setIsMobileSidebarOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isMobileSidebarOpen]);
 
   return (
@@ -61,7 +66,9 @@ export default function NostalgicLayout({ children }: NostalgicLayoutProps) {
           ☰
         </button>
 
-        {isMobileSidebarOpen && <div className="nostalgic-mobile-overlay" onClick={() => setIsMobileSidebarOpen(false)} />}
+        {isMobileSidebarOpen && (
+          <div className="nostalgic-mobile-overlay" onClick={() => setIsMobileSidebarOpen(false)} />
+        )}
 
         <NostalgicSidebar
           isOpen={isMobileSidebarOpen}
@@ -74,9 +81,7 @@ export default function NostalgicLayout({ children }: NostalgicLayoutProps) {
           }}
         />
 
-        <div className="nostalgic-content-area">
-          {children}
-        </div>
+        <div className="nostalgic-content-area">{children}</div>
 
         <div
           style={{

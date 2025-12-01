@@ -63,7 +63,7 @@ export default [
       "**/dist/**",
       "**/.wrangler/**",
       "**/build/**",
-      "**/.open-next/**",
+      "**/pnpm-lock.yaml",
     ],
   },
   prettier,

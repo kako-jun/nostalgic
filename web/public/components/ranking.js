@@ -1,6 +1,6 @@
 /**
  * Nostalgic Ranking Web Component (Read-only)
- * 
+ *
  * 使用方法:
  * <script src="/components/ranking.js"></script>
  * <nostalgic-ranking id="your-ranking-id" limit="10" theme="dark"></nostalgic-ranking>
@@ -13,52 +13,51 @@ class NostalgicRanking extends HTMLElement {
   static apiBaseUrl = (() => {
     const scripts = document.querySelectorAll('script[src*="ranking.js"]');
     for (const script of scripts) {
-      const src = script.getAttribute('src');
-      if (src && src.includes('ranking.js')) {
+      const src = script.getAttribute("src");
+      if (src && src.includes("ranking.js")) {
         try {
           const url = new URL(src, window.location.href);
           return url.origin;
         } catch (e) {
-          console.warn('Failed to parse script URL:', src);
+          console.warn("Failed to parse script URL:", src);
         }
       }
     }
     // フォールバック: 現在のドメインを使用
     return window.location.origin;
   })();
-  
+
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    this.attachShadow({ mode: "open" });
     this.rankingData = null;
     this.loading = false;
   }
 
   static get observedAttributes() {
-    return ['id', 'limit', 'theme', 'format'];
+    return ["id", "limit", "theme", "format"];
   }
 
   // 安全なアトリビュート処理
   safeGetAttribute(name) {
     const value = this.getAttribute(name);
-    
+
     switch (name) {
-      case 'id':
-        if (!value || typeof value !== 'string' || value.trim() === '') {
+      case "id":
+        if (!value || typeof value !== "string" || value.trim() === "") {
           return null;
         }
         return value.trim();
-        
-      case 'limit':
+
+      case "limit":
         return value;
-        
-      case 'theme':
+
+      case "theme":
         return value;
-        
-      case 'format':
+
+      case "format":
         return value;
-        
-        
+
       default:
         return value;
     }
@@ -73,13 +72,13 @@ class NostalgicRanking extends HTMLElement {
   }
 
   async loadRankingData() {
-    const id = this.safeGetAttribute('id');
+    const id = this.safeGetAttribute("id");
     if (!id) {
-      this.renderError('ID attribute is required');
+      this.renderError("ID attribute is required");
       return;
     }
 
-    const limit = this.getAttribute('limit');
+    const limit = this.getAttribute("limit");
 
     try {
       this.loading = true;
@@ -89,14 +88,14 @@ class NostalgicRanking extends HTMLElement {
       if (limit) {
         url += `&limit=${encodeURIComponent(limit)}`;
       }
-      
+
       const response = await fetch(url);
       const data = await response.json();
 
       if (data.success) {
         this.rankingData = data.data;
       } else {
-        this.renderError(data.error || 'Failed to load ranking data');
+        this.renderError(data.error || "Failed to load ranking data");
         return;
       }
     } catch (error) {
@@ -110,7 +109,7 @@ class NostalgicRanking extends HTMLElement {
   }
 
   render() {
-    const theme = this.safeGetAttribute('theme');
+    const theme = this.safeGetAttribute("theme");
 
     if (!this.rankingData) {
       this.shadowRoot.innerHTML = `
@@ -131,7 +130,7 @@ class NostalgicRanking extends HTMLElement {
           }
         </style>
         <div class="ranking-container">
-          <div class="loading">${this.loading ? '読み込み中...' : 'データがありません'}</div>
+          <div class="loading">${this.loading ? "読み込み中..." : "データがありません"}</div>
         </div>
       `;
       return;
@@ -140,47 +139,47 @@ class NostalgicRanking extends HTMLElement {
     // テーマ別のスタイル
     const themeStyles = {
       light: {
-        bgColor: '#ffffff',
-        borderColor: '#000000',
-        headerBg: '#e8e8e8',
-        headerColor: '#000000',
-        textColor: '#000000'
+        bgColor: "#ffffff",
+        borderColor: "#000000",
+        headerBg: "#e8e8e8",
+        headerColor: "#000000",
+        textColor: "#000000",
       },
       dark: {
-        bgColor: '#2a2a2a',
-        borderColor: '#ffffff',
-        headerBg: '#000000',
-        headerColor: '#ffffff',
-        textColor: '#ffffff'
+        bgColor: "#2a2a2a",
+        borderColor: "#ffffff",
+        headerBg: "#000000",
+        headerColor: "#ffffff",
+        textColor: "#ffffff",
       },
       retro: {
-        bgColor: '#0d1117',
-        borderColor: '#00ff41',
-        headerBg: '#161b22',
-        headerColor: '#00ff41',
-        textColor: '#00ff41'
+        bgColor: "#0d1117",
+        borderColor: "#00ff41",
+        headerBg: "#161b22",
+        headerColor: "#00ff41",
+        textColor: "#00ff41",
       },
       kawaii: {
-        bgColor: '#e0f7fa',
-        borderColor: '#9c27b0',
-        headerBg: '#b2ebf2',
-        headerColor: '#ff69b4',
-        textColor: '#ff69b4'
+        bgColor: "#e0f7fa",
+        borderColor: "#9c27b0",
+        headerBg: "#b2ebf2",
+        headerColor: "#ff69b4",
+        textColor: "#ff69b4",
       },
       mom: {
-        bgColor: '#d8f5d8',
-        borderColor: '#ff8c00',
-        headerBg: '#98fb98',
-        headerColor: '#2d4a2b',
-        textColor: '#2d4a2b'
+        bgColor: "#d8f5d8",
+        borderColor: "#ff8c00",
+        headerBg: "#98fb98",
+        headerColor: "#2d4a2b",
+        textColor: "#2d4a2b",
       },
       final: {
-        bgColor: '#0000ff',
-        borderColor: '#ffffff',
-        headerBg: 'transparent',
-        headerColor: '#ffffff',
-        textColor: '#ffffff'
-      }
+        bgColor: "#0000ff",
+        borderColor: "#ffffff",
+        headerBg: "transparent",
+        headerColor: "#ffffff",
+        textColor: "#ffffff",
+      },
     };
 
     const style = themeStyles[theme] || themeStyles.dark;
@@ -426,22 +425,30 @@ class NostalgicRanking extends HTMLElement {
           letter-spacing: -0.02em;
         }
       </style>
-      <div class="ranking-container ${theme || ''}">
-        ${theme === 'final' ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ''}
-        <div class="ranking-header ${theme || ''}">${this.escapeHtml(this.rankingData.settings?.title || 'RANKING')}</div>
-        ${entries.length > 0 ? `
+      <div class="ranking-container ${theme || ""}">
+        ${theme === "final" ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ""}
+        <div class="ranking-header ${theme || ""}">${this.escapeHtml(this.rankingData.settings?.title || "RANKING")}</div>
+        ${
+          entries.length > 0
+            ? `
           <ul class="ranking-list">
-            ${entries.map((entry, index) => `
+            ${entries
+              .map(
+                (entry, index) => `
               <li class="ranking-item">
-                <span class="rank">${entry.rank || (index + 1)}</span>
-                <span class="name">${this.escapeHtml(entry.name || 'Anonymous')}</span>
+                <span class="rank">${entry.rank || index + 1}</span>
+                <span class="name">${this.escapeHtml(entry.name || "Anonymous")}</span>
                 <span class="score">${entry.displayScore || entry.score || 0}</span>
               </li>
-            `).join('')}
+            `
+              )
+              .join("")}
           </ul>
-        ` : `
+        `
+            : `
           <div class="empty-message">まだランキングがありません</div>
-        `}
+        `
+        }
       </div>
     `;
   }
@@ -466,16 +473,14 @@ class NostalgicRanking extends HTMLElement {
     `;
   }
 
-
   escapeHtml(text) {
-    const div = document.createElement('div');
+    const div = document.createElement("div");
     div.textContent = text;
     return div.innerHTML;
   }
 }
 
 // Web Componentを登録
-if (!customElements.get('nostalgic-ranking')) {
-  customElements.define('nostalgic-ranking', NostalgicRanking);
+if (!customElements.get("nostalgic-ranking")) {
+  customElements.define("nostalgic-ranking", NostalgicRanking);
 }
-

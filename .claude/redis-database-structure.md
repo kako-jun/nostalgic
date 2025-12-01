@@ -1,42 +1,52 @@
 # Redis Database Structure - Nostalgic Platform
 
 ## 概要
+
 NostalgicプラットフォームのRedisデータベース構造の完全な仕様書。
 各サービス（Counter, Like, Ranking, BBS）のデータ構造とキーパターンを記載。
 
 ## キー構造の統一原則
+
 **すべてのサービスキーは `{service}:{id}:*` パターンに従う**
 
 この統一により：
+
 - 削除時は `{service}:{id}*` の1パターンで完全削除可能
 - 名前空間の明確な分離
 - サービス間の衝突防止
 - 一括操作の簡素化
 
 ## 重要：データ削除時の注意事項
+
 **サービスを削除する際は、必ず以下の2つを削除すること：**
+
 1. **URLマッピング** (`url:{service}:{encoded_url}`)
 2. **サービスデータ** (メタデータ、関連データ)
 
 ## 共通構造
 
 ### URLマッピング（全サービス共通）
+
 ```
 url:{service}:{encoded_url} → {service_id}
 ```
+
 - **例**: `url:counter:https%3A%2F%2Fexample.com` → `example-a1b2c3d4`
 - **重要**: URLはエンコードされて保存される
 - **削除時**: 必ずこのマッピングも削除すること
 
 ### インデックス
+
 ```
 {service}s:index → Sorted Set of service IDs
 ```
+
 - **例**: `counters:index` → Sorted Set
 
 ## Counter Service
 
 ### データ構造
+
 ```
 # URLマッピング
 url:counter:{encoded_url} → {counter_id}
@@ -66,14 +76,16 @@ counter:{id}:visit:{user_hash} → timestamp (expires at end of day)
 ```
 
 ### 削除時の処理
+
 1. `url:counter:{encoded_url}` を削除
 2. `counter:{id}:*` パターンの全キーを削除（メタデータ、カウント、訪問記録すべて含む）
 
 ## Like Service
 
 ### データ構造
+
 ```
-# URLマッピング  
+# URLマッピング
 url:like:{encoded_url} → {like_id}
 
 # メタデータ
@@ -98,6 +110,7 @@ like:{id}:owner → hashed_token
 ```
 
 ### 削除時の処理
+
 1. `url:like:{encoded_url}` を削除
 2. `like:{id}` を削除
 3. `like:{id}:total` を削除
@@ -108,6 +121,7 @@ like:{id}:owner → hashed_token
 ## Ranking Service
 
 ### データ構造
+
 ```
 # URLマッピング
 url:ranking:{encoded_url} → {ranking_id}
@@ -144,12 +158,14 @@ ranking:{id}:submit:{user_hash} → timestamp (expires after 60s)
 ```
 
 ### 削除時の処理
+
 1. `url:ranking:{encoded_url}` を削除
 2. `ranking:{id}:*` パターンの全キーを削除（メタデータ、スコア、送信クールダウンすべて含む）
 
 ## BBS Service
 
 ### データ構造
+
 ```
 # URLマッピング
 url:bbs:{encoded_url} → {bbs_id}
@@ -191,12 +207,14 @@ bbs:{id}:post:{user_hash} → timestamp (expires after 10s)
 ```
 
 ### 削除時の処理
+
 1. `url:bbs:{encoded_url}` を削除
 2. `bbs:{id}:*` パターンの全キーを削除（メタデータ、メッセージ、投稿クールダウンすべて含む）
 
 ## 削除スクリプトの使い方
 
 ### 個別サービス削除
+
 ```bash
 # サービス削除コマンド
 npm run db:delete {service} {id}
@@ -208,17 +226,19 @@ npm run db:delete ranking mysite-ghi789
 npm run db:delete bbs forum-jkl012
 ```
 
-
 ## トラブルシューティング
 
 ### Q: サービスを削除したのにURL Mappingsに残っている
+
 A: URLマッピング (`url:{service}:{encoded_url}`) の削除が漏れています。
-   完全削除スクリプトを使用してください。
+完全削除スクリプトを使用してください。
 
 ### Q: データの整合性を確認したい
+
 A: `npm run redis:show` で全データを確認できます。
 
 ### Q: 特定のサービスのデータのみ確認したい
+
 A: `npm run redis:service {service}` で確認できます。
 
 ## データ整合性チェックリスト
@@ -235,6 +255,7 @@ A: `npm run redis:service {service}` で確認できます。
 ## 参考：既存APIの削除処理
 
 各サービスのAPIには削除機能が実装されています：
+
 - `/api/visit?action=delete` (未実装だが構造は同じ)
 - `/api/like?action=delete` (未実装だが構造は同じ)
 - `/api/ranking?action=clear` (エントリークリア)

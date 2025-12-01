@@ -7,6 +7,7 @@ Toggle-based like/unlike button service with user state tracking. Users can like
 ## Actions
 
 ### create
+
 Create a new like button or get existing button ID.
 
 ```
@@ -14,10 +15,12 @@ GET /api/like?action=create&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
+
 - `url` (required): Target URL for like button
 - `token` (required): Owner token (8-16 characters)
 
 **Response:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -29,6 +32,7 @@ GET /api/like?action=create&url={URL}&token={TOKEN}
 ```
 
 ### toggle
+
 Toggle like/unlike state for current user.
 
 ```
@@ -36,10 +40,12 @@ GET /api/like?action=toggle&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
+
 - `url` (required): Target URL
 - `token` (required): Owner token
 
 **Response:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -51,6 +57,7 @@ GET /api/like?action=toggle&url={URL}&token={TOKEN}
 ```
 
 ### get
+
 Get current like data (public access).
 
 ```
@@ -58,9 +65,11 @@ GET /api/like?action=get&id={ID}
 ```
 
 **Parameters:**
+
 - `id` (required): Public like button ID
 
 **Response:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -71,6 +80,7 @@ GET /api/like?action=get&id={ID}
 ```
 
 ### updateSettings
+
 Update like button settings (owner only).
 
 ```
@@ -78,11 +88,13 @@ GET /api/like?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_
 ```
 
 **Parameters:**
+
 - `url` (required): Target URL
 - `token` (required): Owner token
 - `webhookUrl` (optional): Webhook URL for notifications
 
 **Response:**
+
 ```json
 {
   "id": "yoursite-a7b9c3d4",
@@ -108,6 +120,7 @@ GET /api/like?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_
 ```
 
 **Attributes:**
+
 - `id`: Like button public ID
 - `theme`: Visual style (light, dark, retro, kawaii, mom, final)
 - `icon`: Icon type (heart, star, thumb, peta) - interactive format only
@@ -120,15 +133,15 @@ For TypeScript projects using Web Components, create a `types.d.ts` file in your
 
 ```typescript
 // types.d.ts
-import 'react'
+import "react";
 
-declare module 'react' {
+declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      'nostalgic-like': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+      "nostalgic-like": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
-        icon?: 'heart' | 'star' | 'thumb' | 'peta';
+        theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
+        icon?: "heart" | "star" | "thumb" | "peta";
       };
     }
   }
@@ -140,20 +153,22 @@ This prevents TypeScript build errors when using Web Components in React/Next.js
 ## Usage Examples
 
 ### Basic Like Button Setup
+
 ```javascript
 // 1. Create like button
-const response = await fetch('/api/like?action=create&url=https://myblog.com&token=my-secret')
-const data = await response.json()
-console.log('Like Button ID:', data.id)
+const response = await fetch("/api/like?action=create&url=https://myblog.com&token=my-secret");
+const data = await response.json();
+console.log("Like Button ID:", data.id);
 
 // 2. Embed in HTML
 document.body.innerHTML += `
   <script src="/components/like.js"></script>
   <nostalgic-like id="${data.id}"></nostalgic-like>
-`
+`;
 ```
 
 ### Text Format Integration
+
 ```html
 <!-- Inline text likes for modern layouts -->
 <div class="post-stats">
@@ -163,27 +178,28 @@ document.body.innerHTML += `
 
 <!-- Custom styled text likes -->
 <style>
-nostalgic-like {
-  --like-text-color-unliked: #666;
-  --like-text-color-liked: #final4757;
-  --like-text-hover-color-unliked: #333;
-  --like-text-hover-color-liked: #final3838;
-}
+  nostalgic-like {
+    --like-text-color-unliked: #666;
+    --like-text-color-liked: #final4757;
+    --like-text-hover-color-unliked: #333;
+    --like-text-hover-color-liked: #final3838;
+  }
 </style>
 <nostalgic-like id="post-123" format="text"></nostalgic-like>
 ```
 
 ### Manual Like Control
+
 ```javascript
 // Toggle like manually
-const response = await fetch('/api/like?action=toggle&url=https://myblog.com&token=my-secret')
-const data = await response.json()
-console.log('User liked:', data.userLiked, 'Total:', data.total)
+const response = await fetch("/api/like?action=toggle&url=https://myblog.com&token=my-secret");
+const data = await response.json();
+console.log("User liked:", data.userLiked, "Total:", data.total);
 
 // Get current state
-const current = await fetch('/api/like?action=get&id=myblog-a7b9c3d4')
-const state = await current.json()
-console.log('Current likes:', state.total)
+const current = await fetch("/api/like?action=get&id=myblog-a7b9c3d4");
+const state = await current.json();
+console.log("Current likes:", state.total);
 ```
 
 ## Features

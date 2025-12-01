@@ -2,5 +2,4 @@ node_modules
 dist
 .wrangler
 build
-.open-next
 pnpm-lock.yaml
