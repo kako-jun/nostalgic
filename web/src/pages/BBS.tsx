@@ -1,7 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import NostalgicLayout from "../components/NostalgicLayout";
 import ResponseDisplay from "../components/ResponseDisplay";
 import ApiUrlDisplay, { GreenParam } from "../components/ApiUrlDisplay";
+import TabNavigation from "../components/TabNavigation";
+import BBSFeaturesTab from "../components/bbs/BBSFeaturesTab";
+import useHashNavigation from "../hooks/useHashNavigation";
+import { callApi } from "../utils/apiHelpers";
+
+const TABS = [
+  { id: "features", label: "機能" },
+  { id: "usage", label: "使い方" },
+];
 
 export default function BBSPage() {
   const [currentPage, setCurrentPage] = useState(() => {
@@ -9,7 +18,6 @@ export default function BBSPage() {
     return hash || "features";
   });
   const [publicId, setPublicId] = useState("");
-  const [responseType, setResponseType] = useState<"json" | "text" | "svg">("json");
 
   // 全フォーム共通のstate
   const [sharedUrl, setSharedUrl] = useState("");
@@ -55,19 +63,7 @@ export default function BBSPage() {
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
 
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.slice(1);
-      if (hash) {
-        setCurrentPage(hash);
-      } else {
-        setCurrentPage("features");
-      }
-    };
-
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
+  useHashNavigation(currentPage, setCurrentPage);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,21 +88,7 @@ export default function BBSPage() {
       apiUrl += `&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}`;
     }
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const data = await res.json();
-      const responseText = JSON.stringify(data, null, 2);
-
-      if (data.id) {
-        setPublicId(data.id);
-      }
-
-      setCreateResponse(responseText);
-      setResponseType("json");
-    } catch (_error) {
-      setCreateResponse(`エラー: ${error}`);
-      setResponseType("json");
-    }
+    await callApi(apiUrl, setCreateResponse, setPublicId);
   };
 
   const handlePost = async (e: React.FormEvent) => {
@@ -120,17 +102,7 @@ export default function BBSPage() {
     if (incrementalValue) apiUrl += `&incrementalValue=${encodeURIComponent(incrementalValue)}`;
     if (emoteValue) apiUrl += `&emoteValue=${encodeURIComponent(emoteValue)}`;
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const data = await res.json();
-      const responseText = JSON.stringify(data, null, 2);
-
-      setPostResponse(responseText);
-      setResponseType("json");
-    } catch (_error) {
-      setPostResponse(`エラー: ${error}`);
-      setResponseType("json");
-    }
+    await callApi(apiUrl, setPostResponse);
   };
 
   const handleGet = async (e: React.FormEvent) => {
@@ -139,17 +111,7 @@ export default function BBSPage() {
 
     const apiUrl = `/api/bbs?action=get&id=${encodeURIComponent(publicId)}`;
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const data = await res.json();
-      const responseText = JSON.stringify(data, null, 2);
-
-      setGetResponse(responseText);
-      setResponseType("json");
-    } catch (_error) {
-      setGetResponse(`エラー: ${error}`);
-      setResponseType("json");
-    }
+    await callApi(apiUrl, setGetResponse);
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -164,17 +126,7 @@ export default function BBSPage() {
       apiUrl += `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`;
     if (editEmoteValue) apiUrl += `&emoteValue=${encodeURIComponent(editEmoteValue)}`;
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const data = await res.json();
-      const responseText = JSON.stringify(data, null, 2);
-
-      setUpdateResponse(responseText);
-      setResponseType("json");
-    } catch (_error) {
-      setUpdateResponse(`エラー: ${error}`);
-      setResponseType("json");
-    }
+    await callApi(apiUrl, setUpdateResponse);
   };
 
   const handleRemove = async (e: React.FormEvent) => {
@@ -183,17 +135,7 @@ export default function BBSPage() {
 
     const apiUrl = `/api/bbs?action=deleteMessage&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}`;
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const data = await res.json();
-      const responseText = JSON.stringify(data, null, 2);
-
-      setRemoveResponse(responseText);
-      setResponseType("json");
-    } catch (_error) {
-      setRemoveResponse(`エラー: ${error}`);
-      setResponseType("json");
-    }
+    await callApi(apiUrl, setRemoveResponse);
   };
 
   const handleClear = async (e: React.FormEvent) => {
@@ -202,17 +144,7 @@ export default function BBSPage() {
 
     const apiUrl = `/api/bbs?action=clear&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const data = await res.json();
-      const responseText = JSON.stringify(data, null, 2);
-
-      setClearResponse(responseText);
-      setResponseType("json");
-    } catch (_error) {
-      setClearResponse(`エラー: ${error}`);
-      setResponseType("json");
-    }
+    await callApi(apiUrl, setClearResponse);
   };
 
   const handleDelete = async (e: React.FormEvent) => {
@@ -221,17 +153,7 @@ export default function BBSPage() {
 
     const apiUrl = `/api/bbs?action=delete&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const data = await res.json();
-      const responseText = JSON.stringify(data, null, 2);
-
-      setDeleteResponse(responseText);
-      setResponseType("json");
-    } catch (_error) {
-      setDeleteResponse(`エラー: ${error}`);
-      setResponseType("json");
-    }
+    await callApi(apiUrl, setDeleteResponse);
   };
 
   const handleUpdateSettings = async (e: React.FormEvent) => {
@@ -253,17 +175,7 @@ export default function BBSPage() {
     }
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const data = await res.json();
-      const responseText = JSON.stringify(data, null, 2);
-
-      setUpdateSettingsResponse(responseText);
-      setResponseType("json");
-    } catch (_error) {
-      setUpdateSettingsResponse(`エラー: ${error}`);
-      setResponseType("json");
-    }
+    await callApi(apiUrl, setUpdateSettingsResponse);
   };
 
   const handleEditMessageById = async (e: React.FormEvent) => {
@@ -279,17 +191,7 @@ export default function BBSPage() {
       apiUrl += `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`;
     if (editEmoteValue) apiUrl += `&emoteValue=${encodeURIComponent(editEmoteValue)}`;
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const data = await res.json();
-      const responseText = JSON.stringify(data, null, 2);
-
-      setUpdateResponse(responseText);
-      setResponseType("json");
-    } catch (_error) {
-      setUpdateResponse(`エラー: ${error}`);
-      setResponseType("json");
-    }
+    await callApi(apiUrl, setUpdateResponse);
   };
 
   const handleDeleteMessageById = async (e: React.FormEvent) => {
@@ -298,17 +200,7 @@ export default function BBSPage() {
 
     const apiUrl = `/api/bbs?action=deleteMessageById&id=${encodeURIComponent(publicId)}&messageId=${messageId}&editToken=${encodeURIComponent(editToken)}`;
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const data = await res.json();
-      const responseText = JSON.stringify(data, null, 2);
-
-      setRemoveResponse(responseText);
-      setResponseType("json");
-    } catch (_error) {
-      setRemoveResponse(`エラー: ${error}`);
-      setResponseType("json");
-    }
+    await callApi(apiUrl, setRemoveResponse);
   };
 
   const renderContent = () => {
@@ -637,7 +529,7 @@ export default function BBSPage() {
 
               <ResponseDisplay
                 response={createResponse}
-                responseType={responseType}
+                responseType="json"
                 show={!!createResponse}
               />
 
@@ -725,11 +617,7 @@ export default function BBSPage() {
                 </p>
               </form>
 
-              <ResponseDisplay
-                response={getResponse}
-                responseType={responseType}
-                show={!!getResponse}
-              />
+              <ResponseDisplay response={getResponse} responseType="json" show={!!getResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -1306,11 +1194,7 @@ declare module 'react' {
                 </p>
               </form>
 
-              <ResponseDisplay
-                response={postResponse}
-                responseType={responseType}
-                show={!!postResponse}
-              />
+              <ResponseDisplay response={postResponse} responseType="json" show={!!postResponse} />
             </div>
 
             <div className="nostalgic-section">
@@ -1536,7 +1420,7 @@ declare module 'react' {
 
               <ResponseDisplay
                 response={updateResponse}
-                responseType={responseType}
+                responseType="json"
                 show={!!updateResponse}
               />
             </div>
@@ -1673,7 +1557,7 @@ declare module 'react' {
 
               <ResponseDisplay
                 response={removeResponse}
-                responseType={responseType}
+                responseType="json"
                 show={!!removeResponse}
               />
             </div>
@@ -1883,7 +1767,7 @@ declare module 'react' {
 
               <ResponseDisplay
                 response={updateResponse}
-                responseType={responseType}
+                responseType="json"
                 show={!!updateResponse}
               />
             </div>
@@ -2002,7 +1886,7 @@ declare module 'react' {
 
               <ResponseDisplay
                 response={removeResponse}
-                responseType={responseType}
+                responseType="json"
                 show={!!removeResponse}
               />
             </div>
@@ -2087,7 +1971,7 @@ declare module 'react' {
 
               <ResponseDisplay
                 response={clearResponse}
-                responseType={responseType}
+                responseType="json"
                 show={!!clearResponse}
               />
             </div>
@@ -2393,7 +2277,7 @@ declare module 'react' {
 
               <ResponseDisplay
                 response={updateSettingsResponse}
-                responseType={responseType}
+                responseType="json"
                 show={!!updateSettingsResponse}
               />
             </div>
@@ -2478,7 +2362,7 @@ declare module 'react' {
 
               <ResponseDisplay
                 response={deleteResponse}
-                responseType={responseType}
+                responseType="json"
                 show={!!deleteResponse}
               />
             </div>
@@ -2499,79 +2383,7 @@ declare module 'react' {
         );
 
       case "features":
-        return (
-          <>
-            <div className="nostalgic-title-bar">
-              ★ Nostalgic BBS ★
-              <br />
-              機能一覧
-            </div>
-
-            <div className="nostalgic-marquee-box">
-              <div className="nostalgic-marquee-text">
-                💬
-                懐かしの掲示板！３種類のセレクト機能（純正・検索・エモート）・編集削除・ページネーション！昔の掲示板がここに復活！
-                💬
-              </div>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆基本機能◆</b>
-                </span>
-              </p>
-              <p>
-                <span>●</span> メッセージ投稿・取得
-                <br />
-                <span>●</span> ３種類のセレクト機能（純正・検索・エモート）
-                <br />
-                <span>●</span> ユーザーカスタム設定対応
-                <br />
-                <span>●</span> Web Componentsで簡単設置
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆管理機能◆</b>
-                </span>
-              </p>
-              <p>
-                <span>●</span> 投稿者による自分の投稿編集・削除
-                <br />
-                <span>●</span> ページネーション
-                <br />
-                <span>●</span> 最大メッセージ数制限
-                <br />
-                <span>●</span> 完全削除・クリア機能
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆技術仕様◆</b>
-                </span>
-              </p>
-              <p>
-                • Next.js + Vercel でホスティング
-                <br />
-                • Redis List でメッセージ保存
-                <br />
-                • 純粋なGET、1990年代スタイル
-                <br />• 必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
-              </p>
-            </div>
-
-            <p style={{ textAlign: "center", marginTop: "30px" }}>
-              <a href="#usage" className="nostalgic-old-link">
-                【使い方】へ
-              </a>
-            </p>
-          </>
-        );
+        return <BBSFeaturesTab />;
 
       default:
         return null;
@@ -2580,6 +2392,7 @@ declare module 'react' {
 
   return (
     <NostalgicLayout serviceName="BBS" serviceIcon="💬">
+      <TabNavigation tabs={TABS} currentTab={currentPage} onTabChange={setCurrentPage} />
       {renderContent()}
     </NostalgicLayout>
   );

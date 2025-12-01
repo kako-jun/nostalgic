@@ -1,7 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import NostalgicLayout from "../components/NostalgicLayout";
 import ResponseDisplay from "../components/ResponseDisplay";
 import ApiUrlDisplay, { GreenParam } from "../components/ApiUrlDisplay";
+import TabNavigation from "../components/TabNavigation";
+import RankingFeaturesTab from "../components/ranking/RankingFeaturesTab";
+import useHashNavigation from "../hooks/useHashNavigation";
+import { callApi } from "../utils/apiHelpers";
+
+const TABS = [
+  { id: "features", label: "機能" },
+  { id: "usage", label: "使い方" },
+];
 
 export default function RankingPage() {
   const [currentPage, setCurrentPage] = useState(() => {
@@ -50,57 +59,19 @@ export default function RankingPage() {
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
 
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.slice(1);
-      if (hash) {
-        setCurrentPage(hash);
-      } else {
-        setCurrentPage("features");
-      }
-    };
-
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
+  useHashNavigation(currentPage, setCurrentPage);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!sharedUrl || !sharedToken) return;
 
     let apiUrl = `/api/ranking?action=create&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
-    if (title) {
-      apiUrl += `&title=${encodeURIComponent(title)}`;
-    }
-    if (maxEntries) {
-      apiUrl += `&max=${maxEntries}`;
-    }
-    if (sortOrder) {
-      apiUrl += `&sortOrder=${sortOrder}`;
-    }
-    if (webhookUrl) {
-      apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
-    }
+    if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
+    if (maxEntries) apiUrl += `&max=${maxEntries}`;
+    if (sortOrder) apiUrl += `&sortOrder=${sortOrder}`;
+    if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-        if (jsonResponse.data?.id) {
-          setPublicId(jsonResponse.data.id);
-        }
-      } else {
-        responseText = await res.text();
-      }
-
-      setCreateResponse(responseText);
-    } catch (_error) {
-      setCreateResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setCreateResponse, setPublicId);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,26 +79,9 @@ export default function RankingPage() {
     if (!publicId || !submitName || !submitScore) return;
 
     let apiUrl = `/api/ranking?action=submit&id=${encodeURIComponent(publicId)}&name=${encodeURIComponent(submitName)}&score=${submitScore}`;
-    if (submitDisplayScore) {
-      apiUrl += `&displayScore=${encodeURIComponent(submitDisplayScore)}`;
-    }
+    if (submitDisplayScore) apiUrl += `&displayScore=${encodeURIComponent(submitDisplayScore)}`;
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setSubmitResponse(responseText);
-    } catch (_error) {
-      setSubmitResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setSubmitResponse);
   };
 
   const handleGet = async (e: React.FormEvent) => {
@@ -135,23 +89,7 @@ export default function RankingPage() {
     if (!publicId) return;
 
     const apiUrl = `/api/ranking?action=get&id=${encodeURIComponent(publicId)}`;
-
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setGetResponse(responseText);
-    } catch (_error) {
-      setGetResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setGetResponse);
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -159,26 +97,9 @@ export default function RankingPage() {
     if (!sharedUrl || !sharedToken || !updateName || !updateScore) return;
 
     let apiUrl = `/api/ranking?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&name=${encodeURIComponent(updateName)}&score=${updateScore}`;
-    if (updateDisplayScore) {
-      apiUrl += `&displayScore=${encodeURIComponent(updateDisplayScore)}`;
-    }
+    if (updateDisplayScore) apiUrl += `&displayScore=${encodeURIComponent(updateDisplayScore)}`;
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setUpdateResponse(responseText);
-    } catch (_error) {
-      setUpdateResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setUpdateResponse);
   };
 
   const handleRemove = async (e: React.FormEvent) => {
@@ -186,23 +107,7 @@ export default function RankingPage() {
     if (!sharedUrl || !sharedToken || !removeName) return;
 
     const apiUrl = `/api/ranking?action=remove&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&name=${encodeURIComponent(removeName)}`;
-
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setRemoveResponse(responseText);
-    } catch (_error) {
-      setRemoveResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setRemoveResponse);
   };
 
   const handleClear = async (e: React.FormEvent) => {
@@ -210,23 +115,7 @@ export default function RankingPage() {
     if (!sharedUrl || !sharedToken) return;
 
     const apiUrl = `/api/ranking?action=clear&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
-
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setClearResponse(responseText);
-    } catch (_error) {
-      setClearResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setClearResponse);
   };
 
   const handleDelete = async (e: React.FormEvent) => {
@@ -234,23 +123,7 @@ export default function RankingPage() {
     if (!sharedUrl || !sharedToken) return;
 
     const apiUrl = `/api/ranking?action=delete&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
-
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setDeleteResponse(responseText);
-    } catch (_error) {
-      setDeleteResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setDeleteResponse);
   };
 
   const handleUpdateSettings = async (e: React.FormEvent) => {
@@ -258,35 +131,12 @@ export default function RankingPage() {
     if (!sharedUrl || !sharedToken) return;
 
     let apiUrl = `/api/ranking?action=updateSettings&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
-    if (settingsTitle) {
-      apiUrl += `&title=${encodeURIComponent(settingsTitle)}`;
-    }
-    if (settingsMax) {
-      apiUrl += `&max=${settingsMax}`;
-    }
-    if (settingsSortOrder) {
-      apiUrl += `&sortOrder=${settingsSortOrder}`;
-    }
-    if (settingsWebhookUrl) {
-      apiUrl += `&webhookUrl=${encodeURIComponent(settingsWebhookUrl)}`;
-    }
+    if (settingsTitle) apiUrl += `&title=${encodeURIComponent(settingsTitle)}`;
+    if (settingsMax) apiUrl += `&max=${settingsMax}`;
+    if (settingsSortOrder) apiUrl += `&sortOrder=${settingsSortOrder}`;
+    if (settingsWebhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(settingsWebhookUrl)}`;
 
-    try {
-      const res = await fetch(apiUrl, { method: "GET" });
-      const contentType = res.headers.get("content-type");
-      let responseText = "";
-
-      if (contentType && contentType.includes("application/json")) {
-        const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
-      } else {
-        responseText = await res.text();
-      }
-
-      setUpdateSettingsResponse(responseText);
-    } catch (_error) {
-      setUpdateSettingsResponse(`エラー: ${error}`);
-    }
+    await callApi(apiUrl, setUpdateSettingsResponse);
   };
 
   const renderContent = () => {
@@ -1581,77 +1431,7 @@ declare module 'react' {
         );
 
       case "features":
-        return (
-          <>
-            <div className="nostalgic-title-bar">
-              ★ Nostalgic Ranking ★
-              <br />
-              機能一覧
-            </div>
-
-            <div className="nostalgic-marquee-box">
-              <div className="nostalgic-marquee-text">
-                🏆 究極のランキングシステム！ゲームスコア・人気投票・何でもランキング化できます！ 🏆
-              </div>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆基本機能◆</b>
-                </span>
-              </p>
-              <p>
-                <span>●</span> Redis Sorted Setによる自動ソート
-                <br />
-                <span>●</span> スコア管理（submit/update/remove/clear）
-                <br />
-                <span>●</span> 最大エントリー数制限
-                <br />
-                <span>●</span> Web Componentsで簡単設置
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆利用シーン◆</b>
-                </span>
-              </p>
-              <p>
-                <span>●</span> ゲームの高得点ランキング
-                <br />
-                <span>●</span> 人気投票システム
-                <br />
-                <span>●</span> クイズの成績表
-                <br />
-                <span>●</span> コンテストの順位表
-              </p>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆技術仕様◆</b>
-                </span>
-              </p>
-              <p>
-                • Next.js + Vercel でホスティング
-                <br />
-                • Redis Sorted Set で高速ソート
-                <br />
-                • 金・銀・銅メダル表示 🥇🥈🥉
-                <br />• 必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
-              </p>
-            </div>
-
-            <p style={{ textAlign: "center", marginTop: "30px" }}>
-              <a href="#usage" className="nostalgic-old-link">
-                【使い方】へ
-              </a>
-            </p>
-          </>
-        );
+        return <RankingFeaturesTab />;
 
       default:
         return null;
@@ -1660,6 +1440,7 @@ declare module 'react' {
 
   return (
     <NostalgicLayout serviceName="Ranking" serviceIcon="🏆">
+      <TabNavigation tabs={TABS} currentTab={currentPage} onTabChange={setCurrentPage} />
       {renderContent()}
     </NostalgicLayout>
   );
