@@ -1,6 +1,5 @@
-import { getRedis } from '@/lib/core/db'
+import { getDB } from '@/lib/core/db'
 import { hashToken } from '@/lib/core/auth'
-import { getRedisKeys } from '@/lib/utils/redis-keys'
 
 /**
  * Interface for service lookup function
@@ -19,8 +18,7 @@ export async function verifyServiceOwnership(
   token: string,
   getServiceByUrl: (url: string) => Promise<ServiceLookup | null>
 ): Promise<boolean> {
-  const redis = getRedis()
-  const keys = getRedisKeys(service)
+  const db = await getDB()
 
   // Get service by URL
   const serviceData = await getServiceByUrl(url)
@@ -28,15 +26,18 @@ export async function verifyServiceOwnership(
     return false
   }
 
-  // Get stored owner token hash
-  const storedHash = await redis.get(keys.owner(serviceData.id))
-  if (!storedHash) {
+  // Get stored owner token hash from services table
+  const result = await db.prepare(`
+    SELECT owner_hash FROM services WHERE id = ?
+  `).bind(serviceData.id).first<{ owner_hash: string | null }>()
+
+  if (!result?.owner_hash) {
     return false
   }
 
   // Verify token
-  const tokenHash = hashToken(token)
-  return tokenHash === storedHash
+  const tokenHash = await hashToken(token)
+  return tokenHash === result.owner_hash
 }
 
 /**
@@ -59,11 +60,12 @@ export async function setServiceOwnership(
   id: string,
   token: string
 ): Promise<void> {
-  const redis = getRedis()
-  const keys = getRedisKeys(service)
-  const tokenHash = hashToken(token)
-  
-  await redis.set(keys.owner(id), tokenHash)
+  const db = await getDB()
+  const tokenHash = await hashToken(token)
+
+  await db.prepare(`
+    UPDATE services SET owner_hash = ? WHERE id = ?
+  `).bind(tokenHash, id).run()
 }
 
 /**
@@ -73,10 +75,11 @@ export async function removeServiceOwnership(
   service: string,
   id: string
 ): Promise<void> {
-  const redis = getRedis()
-  const keys = getRedisKeys(service)
-  
-  await redis.del(keys.owner(id))
+  const db = await getDB()
+
+  await db.prepare(`
+    UPDATE services SET owner_hash = NULL WHERE id = ?
+  `).bind(id).run()
 }
 
 /**
@@ -86,11 +89,13 @@ export async function hasOwner(
   service: string,
   id: string
 ): Promise<boolean> {
-  const redis = getRedis()
-  const keys = getRedisKeys(service)
-  
-  const ownerHash = await redis.get(keys.owner(id))
-  return ownerHash !== null
+  const db = await getDB()
+
+  const result = await db.prepare(`
+    SELECT owner_hash FROM services WHERE id = ?
+  `).bind(id).first<{ owner_hash: string | null }>()
+
+  return result?.owner_hash !== null && result?.owner_hash !== undefined
 }
 
 /**
@@ -110,7 +115,7 @@ export async function updateServiceOwnership(
     currentToken,
     getServiceByUrl
   )
-  
+
   if (!isCurrentOwner) {
     return false
   }

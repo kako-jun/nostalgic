@@ -8,7 +8,7 @@ import { BaseNumericService } from '@/lib/core/base-service'
 import { ValidationFramework } from '@/lib/core/validation'
 import { LIKE } from '@/lib/validation/schema-constants'
 import { RepositoryFactory } from '@/lib/core/repository'
-import { createHash } from 'crypto'
+import { generateUserHash as generateUserHashAsync } from '@/lib/core/crypto'
 import {
   LikeEntity,
   LikeData,
@@ -457,12 +457,8 @@ export class LikeService extends BaseNumericService<LikeEntity, LikeData, LikeCr
   /**
    * ユーザーハッシュの生成
    */
-  generateUserHash(ip: string, userAgent: string): string {
-    const today = new Date().toISOString().split('T')[0]
-    return createHash('sha256')
-      .update(`${ip}:${userAgent}:${today}`)
-      .digest('hex')
-      .substring(0, 16)
+  async generateUserHash(ip: string, userAgent: string): Promise<string> {
+    return await generateUserHashAsync(ip, userAgent)
   }
 
 

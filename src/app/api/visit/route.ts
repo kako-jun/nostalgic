@@ -53,7 +53,7 @@ const incrementHandler = ApiHandler.create({
   handler: async ({ id }, request) => {
     const clientIP = getClientIP(request)
     const userAgent = getUserAgent(request)
-    const userHash = counterService.generateUserHash(clientIP, userAgent)
+    const userHash = await counterService.generateUserHash(clientIP, userAgent)
 
     const result = await counterService.incrementCounter(id, userHash)
     

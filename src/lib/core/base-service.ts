@@ -7,7 +7,7 @@ import { Result, Ok, Err, ValidationError, NotFoundError, UnauthorizedError } fr
 import { ValidationFramework } from '@/lib/core/validation'
 import { BaseRepository, UrlMappingRepository, NumberRepository, RepositoryFactory } from '@/lib/core/repository'
 import { generatePublicId } from '@/lib/core/id'
-import { createHash } from 'crypto'
+import { hashToken as hashTokenAsync } from '@/lib/core/crypto'
 
 /**
  * サービス共通の設定型
@@ -93,7 +93,7 @@ export abstract class BaseService<TEntity extends BaseEntity, TData, TCreatePara
     }
 
     // 新規作成
-    const id = generatePublicId(url)
+    const id = await generatePublicId(url)
     const entity = await this.createNewEntity(id, url, params)
     if (!entity.success) {
       return entity
@@ -205,7 +205,7 @@ export abstract class BaseService<TEntity extends BaseEntity, TData, TCreatePara
       return Ok({ isOwner: false, entity })
     }
 
-    const providedHash = this.hashToken(token)
+    const providedHash = await this.hashToken(token)
     const isOwner = storedHashResult.data === providedHash
 
     return Ok({ isOwner, entity })
@@ -279,8 +279,8 @@ export abstract class BaseService<TEntity extends BaseEntity, TData, TCreatePara
   /**
    * トークンのハッシュ化
    */
-  protected hashToken(token: string): string {
-    return createHash('sha256').update(token).digest('hex')
+  protected async hashToken(token: string): Promise<string> {
+    return await hashTokenAsync(token)
   }
 
   /**
@@ -288,8 +288,8 @@ export abstract class BaseService<TEntity extends BaseEntity, TData, TCreatePara
    */
   protected async saveOwnerToken(id: string, token: string): Promise<Result<void, ValidationError>> {
     const ownerRepo = RepositoryFactory.createEntity(z.string(), `${this.config.serviceName}`)
-    const hashedToken = this.hashToken(token)
-    
+    const hashedToken = await this.hashToken(token)
+
     const saveResult = await ownerRepo.save(`${id}:owner`, hashedToken)
     if (!saveResult.success) {
       return Err(new ValidationError('Failed to save owner token', { error: saveResult.error }))

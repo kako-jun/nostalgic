@@ -52,7 +52,7 @@ const postHandler = ApiHandler.create({
   handler: async ({ id, author, message, standardValue, incrementalValue, emoteValue }, request) => {
     const clientIP = getClientIP(request)
     const userAgent = getUserAgent(request)
-    const authorHash = bbsService.generateUserHash(clientIP, userAgent)
+    const authorHash = await bbsService.generateUserHash(clientIP, userAgent)
 
     const postResult = await bbsService.postMessageById(id, {
       author,
@@ -86,7 +86,7 @@ const editMessageHandler = ApiHandler.create({
   handler: async ({ url, token, messageId, author, message, standardValue, incrementalValue, emoteValue }, request) => {
     const clientIP = getClientIP(request)
     const userAgent = getUserAgent(request)
-    const authorHash = bbsService.generateUserHash(clientIP, userAgent)
+    const authorHash = await bbsService.generateUserHash(clientIP, userAgent)
 
     return await bbsService.updateMessage(url, token, {
       messageId,
@@ -137,8 +137,8 @@ const deleteMessageHandler = ApiHandler.create({
   handler: async ({ url, token, messageId }, request) => {
     const clientIP = getClientIP(request)
     const userAgent = getUserAgent(request)
-    const authorHash = bbsService.generateUserHash(clientIP, userAgent)
-    
+    const authorHash = await bbsService.generateUserHash(clientIP, userAgent)
+
     return await bbsService.removeMessage(url, token, {
       messageId,
       authorHash
@@ -221,7 +221,7 @@ const deleteHandler = ApiHandler.create({
   paramsSchema: BBSSchemas.delete,
   resultSchema: UnifiedAPISchemas.deleteSuccess,
   handler: async ({ url, token }) => {
-    const publicId = generatePublicId(url)
+    const publicId = await generatePublicId(url)
     const deleteResult = await bbsService.delete(url, token)
     
     if (!deleteResult.success) {

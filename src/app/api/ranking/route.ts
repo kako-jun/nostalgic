@@ -10,7 +10,6 @@ import { rankingService } from '@/domain/ranking/ranking.service'
 import { generatePublicId } from '@/lib/core/id'
 import { maybeRunAutoCleanup } from '@/lib/core/auto-cleanup'
 import { getClientIP } from '@/lib/utils/api'
-import { createHash } from 'crypto'
 import {
   RankingSchemas,
   UnifiedAPISchemas,
@@ -49,8 +48,8 @@ const submitHandler = ApiHandler.create({
   handler: async ({ id, name, score, displayScore }, request) => {
     const clientIP = getClientIP(request)
     const userAgent = request.headers.get('user-agent') || ''
-    const userHash = createHash('sha256').update(`${clientIP}:${userAgent}:${new Date().toDateString()}`).digest('hex').slice(0, 8)
-    
+    const userHash = await rankingService.generateUserHash(clientIP, userAgent)
+
     return await rankingService.submitScoreById(id, { name, score, displayScore }, userHash)
   }
 })
@@ -128,7 +127,7 @@ const deleteHandler = ApiHandler.create({
   paramsSchema: RankingSchemas.delete,
   resultSchema: UnifiedAPISchemas.deleteSuccess,
   handler: async ({ url, token }) => {
-    const publicId = generatePublicId(url)
+    const publicId = await generatePublicId(url)
     const deleteResult = await rankingService.delete(url, token)
     
     if (!deleteResult.success) {

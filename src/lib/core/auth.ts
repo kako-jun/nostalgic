@@ -1,10 +1,10 @@
-import { createHash } from 'crypto'
+import { hashToken as hashTokenAsync } from '@/lib/core/crypto'
 
 /**
- * トークンをハッシュ化（SHA256）
+ * トークンをハッシュ化（SHA256）- async version
  */
-export function hashToken(token: string): string {
-  return createHash('sha256').update(token).digest('hex')
+export async function hashToken(token: string): Promise<string> {
+  return await hashTokenAsync(token)
 }
 
 /**

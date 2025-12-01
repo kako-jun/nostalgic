@@ -1,11 +1,11 @@
-import { createHash } from 'crypto'
+import { sha256Short } from '@/lib/core/crypto'
 
 /**
- * 公開ID生成（ドメイン-ハッシュ8桁）
+ * 公開ID生成（ドメイン-ハッシュ8桁）- async version
  */
-export function generatePublicId(url: string): string {
+export async function generatePublicId(url: string): Promise<string> {
   const urlObject = new URL(url)
   const domain = urlObject.hostname.replace(/^www\./, '').split('.')[0]
-  const hash = createHash('sha256').update(url).digest('hex').substring(0, 8)
+  const hash = await sha256Short(url, 8)
   return `${domain}-${hash}`
 }

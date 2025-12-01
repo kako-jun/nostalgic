@@ -1,35 +1,46 @@
 /**
- * Repository パターン - Redis操作の完全抽象化
+ * Repository パターン - D1操作の完全抽象化
  */
 
 import { z } from 'zod'
 import { Result, Ok, Err, StorageError, NotFoundError, ValidationError } from '@/lib/core/result'
 import { ValidationFramework } from '@/lib/core/validation'
-import { getRedis } from '@/lib/core/db'
+import { getDB, getTodayDateString } from '@/lib/core/db'
 
 /**
- * Redis Repository の基底クラス
+ * D1 Repository の基底クラス（エンティティ用）
  */
 export abstract class BaseRepository<TEntity, TId = string> {
-  protected readonly redis = getRedis()
-  
   constructor(
     protected readonly entitySchema: z.ZodType<TEntity>,
     protected readonly keyPrefix: string
   ) {}
 
   /**
-   * エンティティの保存
+   * エンティティの保存（servicesテーブルに保存）
    */
   async save(id: TId, entity: TEntity): Promise<Result<void, StorageError | ValidationError>> {
     const serializationResult = ValidationFramework.storage(this.entitySchema, entity)
-    
+
     if (!serializationResult.success) {
       return serializationResult
     }
 
     try {
-      await this.redis.set(this.buildKey(id), serializationResult.data)
+      const db = await getDB()
+      const key = this.buildKey(id)
+
+      // UPSERT: INSERT OR REPLACE
+      await db.prepare(`
+        INSERT OR REPLACE INTO services (id, type, url, metadata, created_at)
+        VALUES (?, ?, ?, ?, datetime('now'))
+      `).bind(
+        key,
+        this.keyPrefix,
+        (entity as any).url || '',
+        serializationResult.data
+      ).run()
+
       return Ok(undefined)
     } catch (error) {
       return Err(new StorageError('save', error instanceof Error ? error.message : String(error)))
@@ -41,13 +52,18 @@ export abstract class BaseRepository<TEntity, TId = string> {
    */
   async get(id: TId): Promise<Result<TEntity, StorageError | ValidationError | NotFoundError>> {
     try {
-      const serialized = await this.redis.get(this.buildKey(id))
-      
-      if (serialized === null) {
+      const db = await getDB()
+      const key = this.buildKey(id)
+
+      const row = await db.prepare(`
+        SELECT metadata FROM services WHERE id = ?
+      `).bind(key).first<{ metadata: string }>()
+
+      if (!row) {
         return Err(new NotFoundError(this.keyPrefix, String(id)))
       }
 
-      return ValidationFramework.fromStorage(this.entitySchema, serialized)
+      return ValidationFramework.fromStorage(this.entitySchema, row.metadata)
     } catch (error) {
       return Err(new StorageError('get', error instanceof Error ? error.message : String(error)))
     }
@@ -58,9 +74,14 @@ export abstract class BaseRepository<TEntity, TId = string> {
    */
   async exists(id: TId): Promise<Result<boolean, StorageError>> {
     try {
+      const db = await getDB()
       const key = this.buildKey(id)
-      const result = await this.redis.exists(key)
-      return Ok(result === 1)
+
+      const row = await db.prepare(`
+        SELECT 1 FROM services WHERE id = ?
+      `).bind(key).first()
+
+      return Ok(row !== null)
     } catch (error) {
       return Err(new StorageError('exists', error instanceof Error ? error.message : String(error)))
     }
@@ -71,29 +92,50 @@ export abstract class BaseRepository<TEntity, TId = string> {
    */
   async delete(id: TId): Promise<Result<boolean, StorageError>> {
     try {
-      const result = await this.redis.del(this.buildKey(id))
-      return Ok(result === 1)
+      const db = await getDB()
+      const key = this.buildKey(id)
+
+      const result = await db.prepare(`
+        DELETE FROM services WHERE id = ?
+      `).bind(key).run()
+
+      return Ok(result.meta.changes > 0)
     } catch (error) {
       return Err(new StorageError('delete', error instanceof Error ? error.message : String(error)))
     }
   }
 
   /**
-   * TTL設定付き保存
+   * TTL設定付き保存（daily_actionsテーブルを使用）
    */
   async saveWithTTL(
-    id: TId, 
-    entity: TEntity, 
-    ttlSeconds: number
+    id: TId,
+    entity: TEntity,
+    _ttlSeconds: number
   ): Promise<Result<void, StorageError | ValidationError>> {
     const serializationResult = ValidationFramework.storage(this.entitySchema, entity)
-    
+
     if (!serializationResult.success) {
       return serializationResult
     }
 
     try {
-      await this.redis.setex(this.buildKey(id), ttlSeconds, serializationResult.data)
+      const db = await getDB()
+      const key = this.buildKey(id)
+      const today = getTodayDateString()
+
+      // daily_actionsテーブルを使用（日付ベースでクリーンアップ）
+      await db.prepare(`
+        INSERT OR REPLACE INTO daily_actions (service_id, user_hash, date, action_type, value)
+        VALUES (?, ?, ?, ?, ?)
+      `).bind(
+        key,
+        'default',
+        today,
+        'ttl_entity',
+        serializationResult.data
+      ).run()
+
       return Ok(undefined)
     } catch (error) {
       return Err(new StorageError('saveWithTTL', error instanceof Error ? error.message : String(error)))
@@ -104,34 +146,49 @@ export abstract class BaseRepository<TEntity, TId = string> {
    * アトミックな設定（キーが存在しない場合のみ）
    */
   async setIfNotExists(
-    id: TId, 
-    entity: TEntity, 
-    ttlSeconds: number
+    id: TId,
+    entity: TEntity,
+    _ttlSeconds: number
   ): Promise<Result<boolean, StorageError | ValidationError>> {
     const serializationResult = ValidationFramework.storage(this.entitySchema, entity)
-    
+
     if (!serializationResult.success) {
       return serializationResult
     }
 
     try {
-      // Redis SET key value NX EX ttl コマンド（ioredis形式）
-      const result = await this.redis.set(
-        this.buildKey(id), 
-        serializationResult.data, 
-        'NX',
-        'EX',
-        ttlSeconds
-      )
-      // 'OK' = 設定成功（新規）、null = キーが既に存在
-      return Ok(result === 'OK')
+      const db = await getDB()
+      const key = this.buildKey(id)
+      const today = getTodayDateString()
+
+      // まず存在確認
+      const existing = await db.prepare(`
+        SELECT 1 FROM daily_actions
+        WHERE service_id = ? AND date = ? AND action_type = 'visit'
+      `).bind(key, today).first()
+
+      if (existing) {
+        return Ok(false) // 既に存在
+      }
+
+      // 存在しない場合は挿入
+      await db.prepare(`
+        INSERT INTO daily_actions (service_id, user_hash, date, action_type, value)
+        VALUES (?, 'default', ?, 'visit', ?)
+      `).bind(key, today, serializationResult.data).run()
+
+      return Ok(true) // 新規作成
     } catch (error) {
+      // UNIQUE制約違反の場合は既に存在
+      if (String(error).includes('UNIQUE constraint failed')) {
+        return Ok(false)
+      }
       return Err(new StorageError('setIfNotExists', error instanceof Error ? error.message : String(error)))
     }
   }
 
   /**
-   * キーの構築（サブクラスでオーバーライド可能）
+   * キーの構築
    */
   protected buildKey(id: TId): string {
     return `${this.keyPrefix}:${String(id)}`
@@ -139,17 +196,21 @@ export abstract class BaseRepository<TEntity, TId = string> {
 }
 
 /**
- * 数値を扱うRedis Repository
+ * 数値を扱う D1 Repository
  */
 export class NumberRepository {
-  private readonly redis = getRedis()
-
   constructor(private readonly keyPrefix: string) {}
 
   async get(key: string): Promise<Result<number, StorageError | ValidationError>> {
     try {
-      const value = await this.redis.get(this.buildKey(key))
-      return ValidationFramework.parseNumber(value, 0)
+      const db = await getDB()
+      const fullKey = this.buildKey(key)
+
+      const row = await db.prepare(`
+        SELECT total FROM counters WHERE service_id = ?
+      `).bind(fullKey).first<{ total: number }>()
+
+      return Ok(row?.total ?? 0)
     } catch (error) {
       return Err(new StorageError('get number', error instanceof Error ? error.message : String(error)))
     }
@@ -157,7 +218,14 @@ export class NumberRepository {
 
   async set(key: string, value: number): Promise<Result<void, StorageError>> {
     try {
-      await this.redis.set(this.buildKey(key), value.toString())
+      const db = await getDB()
+      const fullKey = this.buildKey(key)
+
+      await db.prepare(`
+        INSERT OR REPLACE INTO counters (service_id, total)
+        VALUES (?, ?)
+      `).bind(fullKey, value).run()
+
       return Ok(undefined)
     } catch (error) {
       return Err(new StorageError('set number', error instanceof Error ? error.message : String(error)))
@@ -166,8 +234,22 @@ export class NumberRepository {
 
   async increment(key: string, by: number = 1): Promise<Result<number, StorageError>> {
     try {
-      const newValue = await this.redis.incrby(this.buildKey(key), by)
-      return Ok(newValue)
+      const db = await getDB()
+      const fullKey = this.buildKey(key)
+
+      // UPSERT with increment
+      await db.prepare(`
+        INSERT INTO counters (service_id, total)
+        VALUES (?, ?)
+        ON CONFLICT(service_id) DO UPDATE SET total = total + ?
+      `).bind(fullKey, by, by).run()
+
+      // Get new value
+      const row = await db.prepare(`
+        SELECT total FROM counters WHERE service_id = ?
+      `).bind(fullKey).first<{ total: number }>()
+
+      return Ok(row?.total ?? by)
     } catch (error) {
       return Err(new StorageError('increment', error instanceof Error ? error.message : String(error)))
     }
@@ -175,8 +257,21 @@ export class NumberRepository {
 
   async decrement(key: string, by: number = 1): Promise<Result<number, StorageError>> {
     try {
-      const newValue = await this.redis.decrby(this.buildKey(key), by)
-      return Ok(Math.max(0, newValue)) // 負の値を避ける
+      const db = await getDB()
+      const fullKey = this.buildKey(key)
+
+      // Decrement but don't go below 0
+      await db.prepare(`
+        UPDATE counters
+        SET total = MAX(0, total - ?)
+        WHERE service_id = ?
+      `).bind(by, fullKey).run()
+
+      const row = await db.prepare(`
+        SELECT total FROM counters WHERE service_id = ?
+      `).bind(fullKey).first<{ total: number }>()
+
+      return Ok(row?.total ?? 0)
     } catch (error) {
       return Err(new StorageError('decrement', error instanceof Error ? error.message : String(error)))
     }
@@ -188,45 +283,88 @@ export class NumberRepository {
 }
 
 /**
- * リストを扱うRedis Repository
+ * リストを扱う D1 Repository（BBS用）
  */
 export class ListRepository<T> {
-  private readonly redis = getRedis()
-
   constructor(
     private readonly itemSchema: z.ZodType<T>,
     private readonly keyPrefix: string
   ) {}
 
   async push(key: string, items: T[]): Promise<Result<number, StorageError | ValidationError>> {
-    const serializedItems: string[] = []
-    
-    // 全アイテムを事前にシリアライズして検証
-    for (const item of items) {
-      const serializationResult = ValidationFramework.storage(this.itemSchema, item)
-      if (!serializationResult.success) {
-        return serializationResult
-      }
-      serializedItems.push(serializationResult.data)
-    }
-
     try {
-      const length = await this.redis.lpush(this.buildKey(key), ...serializedItems)
-      return Ok(length)
+      const db = await getDB()
+      const serviceId = this.buildKey(key)
+
+      const statements = []
+      for (const item of items) {
+        const serializationResult = ValidationFramework.storage(this.itemSchema, item)
+        if (!serializationResult.success) {
+          return serializationResult
+        }
+
+        const itemData = item as any
+        statements.push(
+          db.prepare(`
+            INSERT INTO bbs_messages (id, service_id, author, message, icon, selects, user_hash, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
+          `).bind(
+            itemData.id || crypto.randomUUID(),
+            serviceId,
+            itemData.author || '',
+            itemData.message || '',
+            itemData.icon || null,
+            itemData.selects ? JSON.stringify(itemData.selects) : null,
+            itemData.userHash || ''
+          )
+        )
+      }
+
+      await db.batch(statements)
+
+      // Get total count
+      const countRow = await db.prepare(`
+        SELECT COUNT(*) as count FROM bbs_messages WHERE service_id = ?
+      `).bind(serviceId).first<{ count: number }>()
+
+      return Ok(countRow?.count ?? items.length)
     } catch (error) {
       return Err(new StorageError('list push', error instanceof Error ? error.message : String(error)))
     }
   }
 
-
   async range(
-    key: string, 
-    start: number = 0, 
+    key: string,
+    start: number = 0,
     end: number = -1
   ): Promise<Result<T[], StorageError | ValidationError>> {
     try {
-      const serializedItems = await this.redis.lrange(this.buildKey(key), start, end)
-      return ValidationFramework.fromStringArray(this.itemSchema, serializedItems)
+      const db = await getDB()
+      const serviceId = this.buildKey(key)
+
+      // Calculate limit
+      const limit = end === -1 ? 1000 : (end - start + 1)
+
+      const { results } = await db.prepare(`
+        SELECT id, author, message, icon, selects, user_hash as userHash, created_at as timestamp
+        FROM bbs_messages
+        WHERE service_id = ?
+        ORDER BY created_at DESC
+        LIMIT ? OFFSET ?
+      `).bind(serviceId, limit, start).all()
+
+      // Convert to expected format
+      const items = results.map((row: any) => ({
+        id: row.id,
+        author: row.author,
+        message: row.message,
+        icon: row.icon,
+        selects: row.selects ? JSON.parse(row.selects) : undefined,
+        userHash: row.userHash,
+        timestamp: row.timestamp
+      }))
+
+      return ValidationFramework.fromStringArray(this.itemSchema, items.map(i => JSON.stringify(i)))
     } catch (error) {
       return Err(new StorageError('list range', error instanceof Error ? error.message : String(error)))
     }
@@ -234,8 +372,14 @@ export class ListRepository<T> {
 
   async length(key: string): Promise<Result<number, StorageError>> {
     try {
-      const length = await this.redis.llen(this.buildKey(key))
-      return Ok(length)
+      const db = await getDB()
+      const serviceId = this.buildKey(key)
+
+      const row = await db.prepare(`
+        SELECT COUNT(*) as count FROM bbs_messages WHERE service_id = ?
+      `).bind(serviceId).first<{ count: number }>()
+
+      return Ok(row?.count ?? 0)
     } catch (error) {
       return Err(new StorageError('list length', error instanceof Error ? error.message : String(error)))
     }
@@ -243,7 +387,24 @@ export class ListRepository<T> {
 
   async trim(key: string, start: number, end: number): Promise<Result<void, StorageError>> {
     try {
-      await this.redis.ltrim(this.buildKey(key), start, end)
+      const db = await getDB()
+      const serviceId = this.buildKey(key)
+
+      // Keep only messages within range by deleting others
+      // Get IDs to keep
+      const keep = end - start + 1
+
+      await db.prepare(`
+        DELETE FROM bbs_messages
+        WHERE service_id = ?
+        AND id NOT IN (
+          SELECT id FROM bbs_messages
+          WHERE service_id = ?
+          ORDER BY created_at DESC
+          LIMIT ?
+        )
+      `).bind(serviceId, serviceId, keep).run()
+
       return Ok(undefined)
     } catch (error) {
       return Err(new StorageError('list trim', error instanceof Error ? error.message : String(error)))
@@ -252,7 +413,13 @@ export class ListRepository<T> {
 
   async clear(key: string): Promise<Result<void, StorageError>> {
     try {
-      await this.redis.del(this.buildKey(key))
+      const db = await getDB()
+      const serviceId = this.buildKey(key)
+
+      await db.prepare(`
+        DELETE FROM bbs_messages WHERE service_id = ?
+      `).bind(serviceId).run()
+
       return Ok(undefined)
     } catch (error) {
       return Err(new StorageError('list clear', error instanceof Error ? error.message : String(error)))
@@ -265,17 +432,27 @@ export class ListRepository<T> {
 }
 
 /**
- * ソートセットを扱うRedis Repository（ランキング用）
+ * ソートセットを扱う D1 Repository（ランキング用）
  */
 export class SortedSetRepository {
-  private readonly redis = getRedis()
-
   constructor(private readonly keyPrefix: string) {}
 
   async add(key: string, member: string, score: number): Promise<Result<boolean, StorageError>> {
     try {
-      const added = await this.redis.zadd(this.buildKey(key), score, member)
-      return Ok(added === 1)
+      const db = await getDB()
+      const serviceId = this.buildKey(key)
+
+      // Parse member to get name and unique_id
+      const [name, uniqueId] = member.includes(':')
+        ? [member.split(':')[0], member.split(':').slice(1).join(':')]
+        : [member, '']
+
+      await db.prepare(`
+        INSERT OR REPLACE INTO ranking_scores (service_id, name, score, unique_id, created_at)
+        VALUES (?, ?, ?, ?, datetime('now'))
+      `).bind(serviceId, name, score, uniqueId).run()
+
+      return Ok(true)
     } catch (error) {
       return Err(new StorageError('sorted set add', error instanceof Error ? error.message : String(error)))
     }
@@ -283,8 +460,19 @@ export class SortedSetRepository {
 
   async remove(key: string, member: string): Promise<Result<boolean, StorageError>> {
     try {
-      const removed = await this.redis.zrem(this.buildKey(key), member)
-      return Ok(removed === 1)
+      const db = await getDB()
+      const serviceId = this.buildKey(key)
+
+      const [name, uniqueId] = member.includes(':')
+        ? [member.split(':')[0], member.split(':').slice(1).join(':')]
+        : [member, '']
+
+      const result = await db.prepare(`
+        DELETE FROM ranking_scores
+        WHERE service_id = ? AND name = ? AND unique_id = ?
+      `).bind(serviceId, name, uniqueId).run()
+
+      return Ok(result.meta.changes > 0)
     } catch (error) {
       return Err(new StorageError('sorted set remove', error instanceof Error ? error.message : String(error)))
     }
@@ -292,50 +480,50 @@ export class SortedSetRepository {
 
   async getScore(key: string, member: string): Promise<Result<number | null, StorageError>> {
     try {
-      const score = await this.redis.zscore(this.buildKey(key), member)
-      return Ok(score ? parseFloat(score) : null)
+      const db = await getDB()
+      const serviceId = this.buildKey(key)
+
+      const [name, uniqueId] = member.includes(':')
+        ? [member.split(':')[0], member.split(':').slice(1).join(':')]
+        : [member, '']
+
+      const row = await db.prepare(`
+        SELECT score FROM ranking_scores
+        WHERE service_id = ? AND name = ? AND unique_id = ?
+      `).bind(serviceId, name, uniqueId).first<{ score: number }>()
+
+      return Ok(row?.score ?? null)
     } catch (error) {
       return Err(new StorageError('sorted set get score', error instanceof Error ? error.message : String(error)))
     }
   }
 
   async getRangeWithScores(
-    key: string, 
-    start: number = 0, 
+    key: string,
+    start: number = 0,
     end: number = -1,
     ascending: boolean = false
   ): Promise<Result<Array<{member: string, score: number}>, StorageError | ValidationError>> {
     try {
-      const rawEntries = ascending 
-        ? await this.redis.zrange(this.buildKey(key), start, end, 'WITHSCORES')
-        : await this.redis.zrevrange(this.buildKey(key), start, end, 'WITHSCORES')
-      
-      if (!Array.isArray(rawEntries)) {
-        return Err(new StorageError('sorted set range', 'Invalid response format'))
-      }
+      const db = await getDB()
+      const serviceId = this.buildKey(key)
 
-      if (rawEntries.length % 2 !== 0) {
-        return Err(new StorageError('sorted set range', 'Odd number of elements in response'))
-      }
+      const limit = end === -1 ? 1000 : (end - start + 1)
+      const order = ascending ? 'ASC' : 'DESC'
 
-      const entries: Array<{member: string, score: number}> = []
-      
-      for (let i = 0; i < rawEntries.length; i += 2) {
-        const member = rawEntries[i]
-        const scoreStr = rawEntries[i + 1]
-        
-        if (typeof member !== 'string') {
-          return Err(new ValidationError(`Invalid member at index ${i}: not a string`))
-        }
-        
-        const scoreResult = ValidationFramework.parseNumber(scoreStr)
-        if (!scoreResult.success) {
-          return scoreResult
-        }
-        
-        entries.push({ member, score: scoreResult.data })
-      }
-      
+      const { results } = await db.prepare(`
+        SELECT name, unique_id, score
+        FROM ranking_scores
+        WHERE service_id = ?
+        ORDER BY score ${order}
+        LIMIT ? OFFSET ?
+      `).bind(serviceId, limit, start).all()
+
+      const entries = (results as any[]).map(row => ({
+        member: row.unique_id ? `${row.name}:${row.unique_id}` : row.name,
+        score: row.score
+      }))
+
       return Ok(entries)
     } catch (error) {
       return Err(new StorageError('sorted set range', error instanceof Error ? error.message : String(error)))
@@ -344,8 +532,14 @@ export class SortedSetRepository {
 
   async count(key: string): Promise<Result<number, StorageError>> {
     try {
-      const count = await this.redis.zcard(this.buildKey(key))
-      return Ok(count)
+      const db = await getDB()
+      const serviceId = this.buildKey(key)
+
+      const row = await db.prepare(`
+        SELECT COUNT(*) as count FROM ranking_scores WHERE service_id = ?
+      `).bind(serviceId).first<{ count: number }>()
+
+      return Ok(row?.count ?? 0)
     } catch (error) {
       return Err(new StorageError('sorted set count', error instanceof Error ? error.message : String(error)))
     }
@@ -353,8 +547,24 @@ export class SortedSetRepository {
 
   async removeRange(key: string, start: number, end: number): Promise<Result<number, StorageError>> {
     try {
-      const removed = await this.redis.zremrangebyrank(this.buildKey(key), start, end)
-      return Ok(removed)
+      const db = await getDB()
+      const serviceId = this.buildKey(key)
+
+      // Remove entries by rank (lowest scores first)
+      const toRemove = end - start + 1
+
+      const result = await db.prepare(`
+        DELETE FROM ranking_scores
+        WHERE service_id = ?
+        AND rowid IN (
+          SELECT rowid FROM ranking_scores
+          WHERE service_id = ?
+          ORDER BY score ASC
+          LIMIT ? OFFSET ?
+        )
+      `).bind(serviceId, serviceId, toRemove, start).run()
+
+      return Ok(result.meta.changes)
     } catch (error) {
       return Err(new StorageError('sorted set remove range', error instanceof Error ? error.message : String(error)))
     }
@@ -362,7 +572,13 @@ export class SortedSetRepository {
 
   async clear(key: string): Promise<Result<void, StorageError>> {
     try {
-      await this.redis.del(this.buildKey(key))
+      const db = await getDB()
+      const serviceId = this.buildKey(key)
+
+      await db.prepare(`
+        DELETE FROM ranking_scores WHERE service_id = ?
+      `).bind(serviceId).run()
+
       return Ok(undefined)
     } catch (error) {
       return Err(new StorageError('sorted set clear', error instanceof Error ? error.message : String(error)))
@@ -378,13 +594,17 @@ export class SortedSetRepository {
  * URL → ID のマッピングを扱うRepository
  */
 export class UrlMappingRepository {
-  private readonly redis = getRedis()
-
   constructor(private readonly keyPrefix: string) {}
 
   async set(url: string, id: string): Promise<Result<void, StorageError>> {
     try {
-      await this.redis.set(this.buildKey(url), id)
+      const db = await getDB()
+
+      await db.prepare(`
+        INSERT OR REPLACE INTO url_mappings (type, url, service_id)
+        VALUES (?, ?, ?)
+      `).bind(this.keyPrefix, url, id).run()
+
       return Ok(undefined)
     } catch (error) {
       return Err(new StorageError('url mapping set', error instanceof Error ? error.message : String(error)))
@@ -393,8 +613,13 @@ export class UrlMappingRepository {
 
   async get(url: string): Promise<Result<string | null, StorageError>> {
     try {
-      const id = await this.redis.get(this.buildKey(url))
-      return Ok(id)
+      const db = await getDB()
+
+      const row = await db.prepare(`
+        SELECT service_id FROM url_mappings WHERE type = ? AND url = ?
+      `).bind(this.keyPrefix, url).first<{ service_id: string }>()
+
+      return Ok(row?.service_id ?? null)
     } catch (error) {
       return Err(new StorageError('url mapping get', error instanceof Error ? error.message : String(error)))
     }
@@ -402,15 +627,16 @@ export class UrlMappingRepository {
 
   async delete(url: string): Promise<Result<boolean, StorageError>> {
     try {
-      const deleted = await this.redis.del(this.buildKey(url))
-      return Ok(deleted === 1)
+      const db = await getDB()
+
+      const result = await db.prepare(`
+        DELETE FROM url_mappings WHERE type = ? AND url = ?
+      `).bind(this.keyPrefix, url).run()
+
+      return Ok(result.meta.changes > 0)
     } catch (error) {
       return Err(new StorageError('url mapping delete', error instanceof Error ? error.message : String(error)))
     }
-  }
-
-  private buildKey(url: string): string {
-    return `url:${this.keyPrefix}:${encodeURIComponent(url)}`
   }
 }
 
@@ -419,7 +645,7 @@ export class UrlMappingRepository {
  */
 export class RepositoryFactory {
   static createEntity<T>(
-    schema: z.ZodType<T>, 
+    schema: z.ZodType<T>,
     service: string
   ): BaseRepository<T> {
     return new (class extends BaseRepository<T> {

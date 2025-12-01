@@ -1,49 +1,66 @@
-import Redis from 'ioredis'
+/**
+ * D1 Database - Cloudflare D1 connection
+ */
 
-let redis: Redis | null = null
+import { getCloudflareContext } from '@opennextjs/cloudflare'
 
-// Redisインターフェース
-interface RedisLike {
-  get(key: string): Promise<string | null>
-  set(key: string, value: string, ...args: (string | number)[]): Promise<any>
-  setex(key: string, seconds: number, value: string): Promise<any>
-  incr(key: string): Promise<number>
-  incrby(key: string, increment: number): Promise<number>
-  decrby(key: string, decrement: number): Promise<number>
-  exists(key: string): Promise<number>
-  expire(key: string, seconds: number): Promise<any>
-  del(...keys: string[]): Promise<any>
-  keys(pattern: string): Promise<string[]>
-  // List operations
-  lpush(key: string, ...values: string[]): Promise<number>
-  lrange(key: string, start: number, end: number): Promise<string[]>
-  llen(key: string): Promise<number>
-  ltrim(key: string, start: number, end: number): Promise<any>
-  rpush(key: string, ...values: string[]): Promise<any>
-  // Sorted Set operations
-  zadd(key: string, score: number, member: string): Promise<any>
-  zrange(key: string, start: number, end: number, withScores?: string): Promise<string[]>
-  zrevrange(key: string, start: number, end: number, withScores?: string): Promise<string[]>
-  zcard(key: string): Promise<number>
-  zremrangebyrank(key: string, start: number, end: number): Promise<any>
-  zrem(key: string, member: string): Promise<number>
-  zscore(key: string, member: string): Promise<string | null>
-  // Hash operations
-  hset(key: string, field: string, value: string): Promise<any>
-  hget(key: string, field: string): Promise<string | null>
-  hgetall(key: string): Promise<Record<string, string>>
-  hdel(key: string, field: string): Promise<number>
+export interface D1Database {
+  prepare(query: string): D1PreparedStatement
+  batch<T = unknown>(statements: D1PreparedStatement[]): Promise<D1Result<T>[]>
+  exec(query: string): Promise<D1ExecResult>
 }
 
-export function getRedis(): RedisLike {
-  if (!redis) {
-    if (!process.env.REDIS_URL) {
-      throw new Error('REDIS_URL environment variable is required')
-    }
-    
-    redis = new Redis(process.env.REDIS_URL)
-    console.log('[DB] Redis connection established')
+export interface D1PreparedStatement {
+  bind(...values: unknown[]): D1PreparedStatement
+  first<T = unknown>(colName?: string): Promise<T | null>
+  run(): Promise<D1Result<unknown>>
+  all<T = unknown>(): Promise<D1Result<T>>
+  raw<T = unknown>(): Promise<T[]>
+}
+
+export interface D1Result<T> {
+  results: T[]
+  success: boolean
+  meta: {
+    duration: number
+    changes: number
+    last_row_id: number
+    rows_read: number
+    rows_written: number
   }
-  
-  return redis as unknown as RedisLike
+}
+
+export interface D1ExecResult {
+  count: number
+  duration: number
+}
+
+/**
+ * Get D1 database instance from Cloudflare context
+ */
+export async function getDB(): Promise<D1Database> {
+  const { env } = await getCloudflareContext() as { env: { DB?: D1Database } }
+
+  if (!env.DB) {
+    throw new Error('D1 database binding "DB" not found in environment')
+  }
+
+  return env.DB
+}
+
+/**
+ * Helper to get today's date string in YYYY-MM-DD format
+ */
+export function getTodayDateString(): string {
+  return new Date().toISOString().split('T')[0]
+}
+
+/**
+ * Helper to calculate seconds until end of day (for TTL-like behavior)
+ */
+export function getSecondsUntilEndOfDay(): number {
+  const now = new Date()
+  const endOfDay = new Date(now)
+  endOfDay.setHours(23, 59, 59, 999)
+  return Math.floor((endOfDay.getTime() - now.getTime()) / 1000)
 }
