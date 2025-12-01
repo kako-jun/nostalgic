@@ -1,17 +1,11 @@
 import { useState } from "react";
 import NostalgicLayout from "../components/NostalgicLayout";
-import TabNavigation from "../components/TabNavigation";
 import BBSFeaturesTab from "../components/bbs/BBSFeaturesTab";
 import CreateServiceSection from "../components/sections/CreateServiceSection";
 import DataDrivenFormSection from "../components/DataDrivenFormSection";
 import useHashNavigation from "../hooks/useHashNavigation";
 import { callApi } from "../utils/apiHelpers";
 import { getBBSFormSections } from "../config/bbsFormConfig";
-
-const TABS = [
-  { id: "features", label: "機能" },
-  { id: "usage", label: "使い方" },
-];
 
 export default function BBSPage() {
   const [currentPage, setCurrentPage] = useState(() => {
@@ -289,10 +283,7 @@ export default function BBSPage() {
 
   return (
     <>
-      <NostalgicLayout serviceIcon="💬">
-        <TabNavigation tabs={TABS} currentTab={currentPage} onTabChange={setCurrentPage} />
-        {renderContent()}
-      </NostalgicLayout>
+      <NostalgicLayout serviceIcon="💬">{renderContent()}</NostalgicLayout>
     </>
   );
 }

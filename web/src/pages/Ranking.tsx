@@ -1,17 +1,11 @@
 import { useState } from "react";
 import NostalgicLayout from "../components/NostalgicLayout";
-import TabNavigation from "../components/TabNavigation";
 import RankingFeaturesTab from "../components/ranking/RankingFeaturesTab";
 import CreateServiceSection from "../components/sections/CreateServiceSection";
 import DataDrivenFormSection from "../components/DataDrivenFormSection";
 import useHashNavigation from "../hooks/useHashNavigation";
 import { callApi } from "../utils/apiHelpers";
 import { getRankingFormSections } from "../config/rankingFormConfig";
-
-const TABS = [
-  { id: "features", label: "機能" },
-  { id: "usage", label: "使い方" },
-];
 
 export default function RankingPage() {
   const [currentPage, setCurrentPage] = useState(() => {
@@ -327,7 +321,6 @@ export default function RankingPage() {
 
   return (
     <NostalgicLayout serviceName="Ranking" serviceIcon="🏆">
-      <TabNavigation tabs={TABS} currentTab={currentPage} onTabChange={setCurrentPage} />
       {renderContent()}
     </NostalgicLayout>
   );
