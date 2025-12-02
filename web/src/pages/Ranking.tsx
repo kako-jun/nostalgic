@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import NostalgicLayout from "../components/NostalgicLayout";
+import ServicePageTemplate from "../components/ServicePageTemplate";
 import RankingFeaturesTab from "../components/ranking/RankingFeaturesTab";
-import CreateServiceSection from "../components/sections/CreateServiceSection";
-import DataDrivenFormSection from "../components/DataDrivenFormSection";
-import { PageFooter } from "../components/common";
 import { callApi } from "../utils/apiHelpers";
 import { getRankingFormSections } from "../config/rankingFormConfig";
+import { rankingEmbedConfig } from "../config/embedConfigs";
 
 export default function RankingPage() {
   const location = useLocation();
@@ -151,6 +149,7 @@ export default function RankingPage() {
     settingsWebhookUrl,
     setSettingsWebhookUrl,
     {
+      handleCreate,
       handleSubmit,
       handleGet,
       handleUpdate,
@@ -160,6 +159,7 @@ export default function RankingPage() {
       handleDelete,
     },
     {
+      createResponse,
       submitResponse,
       getResponse,
       updateResponse,
@@ -170,139 +170,82 @@ export default function RankingPage() {
     }
   );
 
-  const renderContent = () => {
-    switch (currentPage) {
-      case "usage":
-        return (
-          <>
-            <div className="nostalgic-title-bar">
-              ★ Nostalgic Ranking ★
-              <br />
-              使い方
-            </div>
-
-            <CreateServiceSection
-              serviceName="ランキング"
-              apiEndpoint="/api/ranking"
-              sharedUrl={sharedUrl}
-              setSharedUrl={setSharedUrl}
-              sharedToken={sharedToken}
-              setSharedToken={setSharedToken}
-              webhookUrl={webhookUrl}
-              setWebhookUrl={setWebhookUrl}
-              onCreateSubmit={handleCreate}
-              createResponse={createResponse}
-            >
-              <p>
-                <b>タイトル（オプション）：</b>
-                <input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  type="text"
-                  placeholder="ランキングのタイトル"
-                  style={{
-                    width: "60%",
-                    padding: "4px",
-                    border: "1px solid #666",
-                    fontFamily: "inherit",
-                    fontSize: "16px",
-                  }}
-                />
-              </p>
-              <p>
-                <b>最大エントリー数（オプション）：</b>
-                <input
-                  value={maxEntries}
-                  onChange={(e) => setMaxEntries(e.target.value)}
-                  type="number"
-                  min="1"
-                  placeholder="100"
-                  style={{
-                    width: "30%",
-                    padding: "4px",
-                    border: "1px solid #666",
-                    fontFamily: "inherit",
-                    fontSize: "16px",
-                  }}
-                />
-              </p>
-              <p>
-                <b>ソート順（オプション）：</b>
-                <select
-                  value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value)}
-                  style={{
-                    width: "30%",
-                    padding: "4px",
-                    border: "1px solid #666",
-                    fontFamily: "inherit",
-                    fontSize: "16px",
-                  }}
-                >
-                  <option value="desc">降順（高い順）</option>
-                  <option value="asc">昇順（低い順）</option>
-                </select>
-              </p>
-            </CreateServiceSection>
-
-            {formSections.map((section, index) => (
-              <DataDrivenFormSection key={index} {...section} />
-            ))}
-
-            {publicId && (
-              <div className="nostalgic-section">
-                <p>
-                  <span style={{ color: "#ff8c00" }}>
-                    <b>◆ランキング設置方法◆</b>
-                  </span>
-                </p>
-                <p>
-                  公開ID:{" "}
-                  <span
-                    style={{
-                      backgroundColor: "#ffff00",
-                      padding: "2px 4px",
-                      fontFamily: "monospace",
-                    }}
-                  >
-                    {publicId}
-                  </span>
-                </p>
-                <p
-                  style={{
-                    backgroundColor: "#f0f0f0",
-                    padding: "10px",
-                    fontFamily: "monospace",
-                    fontSize: "14px",
-                    wordBreak: "break-all",
-                  }}
-                >
-                  {`<script src="https://nostalgic.llll-ll.com/components/ranking.js"></script>
-<nostalgic-ranking id="${publicId}" theme="dark"></nostalgic-ranking>`}
-                </p>
-              </div>
-            )}
-
-            <PageFooter servicePath="ranking" currentPage="usage" />
-          </>
-        );
-
-      case "features":
-        return (
-          <>
-            <RankingFeaturesTab />
-            <PageFooter servicePath="ranking" currentPage="features" />
-          </>
-        );
-
-      default:
-        return null;
-    }
-  };
+  const createSectionChildren = (
+    <>
+      <p>
+        <b>タイトル（オプション）：</b>
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          type="text"
+          placeholder="ランキングのタイトル"
+          style={{
+            width: "60%",
+            padding: "4px",
+            border: "1px solid #666",
+            fontFamily: "inherit",
+            fontSize: "16px",
+          }}
+        />
+      </p>
+      <p>
+        <b>最大エントリー数（オプション）：</b>
+        <input
+          value={maxEntries}
+          onChange={(e) => setMaxEntries(e.target.value)}
+          type="number"
+          min="1"
+          placeholder="100"
+          style={{
+            width: "30%",
+            padding: "4px",
+            border: "1px solid #666",
+            fontFamily: "inherit",
+            fontSize: "16px",
+          }}
+        />
+      </p>
+      <p>
+        <b>ソート順（オプション）：</b>
+        <select
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+          style={{
+            width: "30%",
+            padding: "4px",
+            border: "1px solid #666",
+            fontFamily: "inherit",
+            fontSize: "16px",
+          }}
+        >
+          <option value="desc">降順（高い順）</option>
+          <option value="asc">昇順（低い順）</option>
+        </select>
+      </p>
+    </>
+  );
 
   return (
-    <NostalgicLayout serviceName="Ranking" serviceIcon="🏆">
-      {renderContent()}
-    </NostalgicLayout>
+    <ServicePageTemplate
+      serviceName="ランキング"
+      serviceDisplayName="Ranking"
+      serviceIcon="🏆"
+      servicePath="ranking"
+      apiEndpoint="/api/ranking"
+      currentPage={currentPage}
+      FeaturesTab={RankingFeaturesTab}
+      sharedUrl={sharedUrl}
+      setSharedUrl={setSharedUrl}
+      sharedToken={sharedToken}
+      setSharedToken={setSharedToken}
+      webhookUrl={webhookUrl}
+      setWebhookUrl={setWebhookUrl}
+      onCreateSubmit={handleCreate}
+      createResponse={createResponse}
+      createSectionChildren={createSectionChildren}
+      publicId={publicId}
+      formSections={formSections}
+      embedConfig={rankingEmbedConfig}
+    />
   );
 }

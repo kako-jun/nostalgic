@@ -73,6 +73,47 @@ export const getCounterFormSections = (
     response: responses.displayResponse,
     responseType,
   },
+  // Confirm Public ID
+  {
+    title: "◆公開IDを再確認したいときは？◆",
+    apiUrl: `https://nostalgic.llll-ll.com/api/visit?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`,
+    apiUrlDisplay: (
+      <>
+        https://nostalgic.llll-ll.com/api/visit?action=create&url=
+        <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+        &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+        {webhookUrl && (
+          <>
+            &webhookUrl=<GreenParam>{encodeURIComponent(webhookUrl)}</GreenParam>
+          </>
+        )}
+      </>
+    ),
+    fields: [
+      {
+        name: "url",
+        label: "サイトURL",
+        type: "url" as const,
+        placeholder: "https://example.com",
+        required: true,
+        value: sharedUrl,
+        onChange: setSharedUrl,
+      },
+      {
+        name: "token",
+        label: "オーナートークン",
+        type: "text" as const,
+        placeholder: "8-16文字",
+        required: true,
+        width: "30%",
+        value: sharedToken,
+        onChange: setSharedToken,
+      },
+    ],
+    buttonText: "公開ID確認",
+    onSubmit: handlers.handleCreate,
+    response: responses.createResponse,
+  },
   // Increment
   {
     title: "◆カウントを増やしたいときは？◆",

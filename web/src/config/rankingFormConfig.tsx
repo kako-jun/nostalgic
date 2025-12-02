@@ -32,6 +32,7 @@ export const getRankingFormSections = (
   settingsWebhookUrl: string,
   setSettingsWebhookUrl: (v: string) => void,
   handlers: {
+    handleCreate: (e: React.FormEvent) => void;
     handleSubmit: (e: React.FormEvent) => void;
     handleGet: (e: React.FormEvent) => void;
     handleUpdate: (e: React.FormEvent) => void;
@@ -41,6 +42,7 @@ export const getRankingFormSections = (
     handleDelete: (e: React.FormEvent) => void;
   },
   responses: {
+    createResponse: string;
     submitResponse: string;
     getResponse: string;
     updateResponse: string;
@@ -136,6 +138,42 @@ export const getRankingFormSections = (
     buttonText: "データ取得",
     onSubmit: handlers.handleGet,
     response: responses.getResponse,
+  },
+  // Confirm Public ID
+  {
+    title: "◆公開IDを再確認したいときは？◆",
+    apiUrl: `https://nostalgic.llll-ll.com/api/ranking?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
+    apiUrlDisplay: (
+      <>
+        https://nostalgic.llll-ll.com/api/ranking?action=create&url=
+        <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+        &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+      </>
+    ),
+    fields: [
+      {
+        name: "url",
+        label: "サイトURL",
+        type: "url" as const,
+        placeholder: "https://example.com",
+        required: true,
+        value: sharedUrl,
+        onChange: setSharedUrl,
+      },
+      {
+        name: "token",
+        label: "オーナートークン",
+        type: "text" as const,
+        placeholder: "8-16文字",
+        required: true,
+        width: "30%",
+        value: sharedToken,
+        onChange: setSharedToken,
+      },
+    ],
+    buttonText: "公開ID確認",
+    onSubmit: handlers.handleCreate,
+    response: responses.createResponse,
   },
   // Update
   {

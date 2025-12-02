@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import NostalgicLayout from "../components/NostalgicLayout";
+import ServicePageTemplate from "../components/ServicePageTemplate";
 import BBSFeaturesTab from "../components/bbs/BBSFeaturesTab";
-import CreateServiceSection from "../components/sections/CreateServiceSection";
-import DataDrivenFormSection from "../components/DataDrivenFormSection";
-import { PageFooter } from "../components/common";
 import { callApi } from "../utils/apiHelpers";
 import { getBBSFormSections } from "../config/bbsFormConfig";
+import { bbsEmbedConfig } from "../config/embedConfigs";
 
 export default function BBSPage() {
   const location = useLocation();
@@ -199,6 +197,7 @@ export default function BBSPage() {
     setEditStandardValue,
     setEditIncrementalValue,
     setEditEmoteValue,
+    handleCreate,
     handlePost,
     handleGet,
     handleUpdate,
@@ -208,6 +207,7 @@ export default function BBSPage() {
     handleUpdateSettings,
     handleEditMessageById,
     handleDeleteMessageById,
+    createResponse,
     postResponse,
     getResponse,
     updateResponse,
@@ -217,77 +217,26 @@ export default function BBSPage() {
     updateSettingsResponse,
   });
 
-  const renderContent = () => {
-    switch (currentPage) {
-      case "usage":
-        return (
-          <>
-            <div className="nostalgic-title-bar">
-              ★ Nostalgic BBS ★
-              <br />
-              使い方
-            </div>
-
-            <CreateServiceSection
-              serviceName="掲示板"
-              apiEndpoint="/api/bbs"
-              sharedUrl={sharedUrl}
-              setSharedUrl={setSharedUrl}
-              sharedToken={sharedToken}
-              setSharedToken={setSharedToken}
-              webhookUrl={webhookUrl}
-              setWebhookUrl={setWebhookUrl}
-              onCreateSubmit={handleCreate}
-              createResponse={createResponse}
-            />
-
-            {formSections.map((section, index) => (
-              <DataDrivenFormSection key={index} {...section} />
-            ))}
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆STEP 3: 掲示板埋め込み◆</b>
-                </span>
-              </p>
-              <p>あなたのサイトのHTMLに以下のコードを追加してください。</p>
-              <pre
-                style={{
-                  backgroundColor: "#f0f0f0",
-                  padding: "10px",
-                  overflow: "auto",
-                  fontSize: "14px",
-                  margin: "10px 0",
-                }}
-              >
-                {`<script src="https://nostalgic.llll-ll.com/components/bbs.js"></script>
-<nostalgic-bbs id="`}
-                <span style={{ color: "#008000" }}>公開ID</span>
-                {`" theme="`}
-                <span style={{ color: "#008000" }}>dark</span>
-                {`"></nostalgic-bbs>`}
-              </pre>
-            </div>
-
-            <PageFooter servicePath="bbs" currentPage="usage" />
-          </>
-        );
-
-      case "features":
-      default:
-        return (
-          <>
-            <BBSFeaturesTab />
-            <PageFooter servicePath="bbs" currentPage="features" />
-          </>
-        );
-    }
-  };
-
   return (
-    <>
-      <NostalgicLayout serviceIcon="💬">{renderContent()}</NostalgicLayout>
-    </>
+    <ServicePageTemplate
+      serviceName="掲示板"
+      serviceDisplayName="BBS"
+      serviceIcon="💬"
+      servicePath="bbs"
+      apiEndpoint="/api/bbs"
+      currentPage={currentPage}
+      FeaturesTab={BBSFeaturesTab}
+      sharedUrl={sharedUrl}
+      setSharedUrl={setSharedUrl}
+      sharedToken={sharedToken}
+      setSharedToken={setSharedToken}
+      webhookUrl={webhookUrl}
+      setWebhookUrl={setWebhookUrl}
+      onCreateSubmit={handleCreate}
+      createResponse={createResponse}
+      publicId={publicId}
+      formSections={formSections}
+      embedConfig={bbsEmbedConfig}
+    />
   );
 }

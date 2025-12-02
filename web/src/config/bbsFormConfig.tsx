@@ -47,6 +47,7 @@ interface BBSFormParams {
   setEditStandardValue: (value: string) => void;
   setEditIncrementalValue: (value: string) => void;
   setEditEmoteValue: (value: string) => void;
+  handleCreate: (e: React.FormEvent) => void;
   handlePost: (e: React.FormEvent) => void;
   handleGet: (e: React.FormEvent) => void;
   handleUpdate: (e: React.FormEvent) => void;
@@ -56,6 +57,7 @@ interface BBSFormParams {
   handleUpdateSettings: (e: React.FormEvent) => void;
   handleEditMessageById: (e: React.FormEvent) => void;
   handleDeleteMessageById: (e: React.FormEvent) => void;
+  createResponse: string;
   postResponse: string;
   getResponse: string;
   updateResponse: string;
@@ -94,6 +96,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
     setEditStandardValue,
     setEditIncrementalValue,
     setEditEmoteValue,
+    handleCreate,
     handlePost,
     handleGet,
     handleUpdate,
@@ -103,6 +106,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
     handleUpdateSettings,
     handleEditMessageById,
     handleDeleteMessageById,
+    createResponse,
     postResponse,
     getResponse,
     updateResponse,
@@ -202,6 +206,23 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       buttonText: "取得",
       onSubmit: handleGet,
       response: getResponse,
+    },
+
+    // 公開IDを再確認
+    {
+      title: "◆公開IDを再確認したいときは？◆",
+      apiUrl: `/api/bbs?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
+      apiUrlDisplay: (
+        <>
+          https://nostalgic.llll-ll.com/api/bbs?action=create&url=
+          <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
+          &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+        </>
+      ),
+      fields: [],
+      buttonText: "公開ID確認",
+      onSubmit: handleCreate,
+      response: createResponse,
     },
 
     // 3. メッセージ編集（URL/Token使用）
