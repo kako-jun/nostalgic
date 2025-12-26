@@ -159,9 +159,9 @@ await fetch("/api/bbs?action=clear&url=https://mysite.com&token=my-secret");
 
 ## データ構造
 
-メッセージはRedis ListにJSON形式で保存：
+メッセージはD1 (SQLite)データベースに保存：
 
-- 最新メッセージが先頭（LPUSH）
+- 最新メッセージが先頭（ORDER BY created_at DESC）
 - 最大メッセージ数を超えると自動トリム
 - IP+UserAgentハッシュによる投稿者確認
 

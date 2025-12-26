@@ -41,10 +41,6 @@ async function getBBSByUrl(db: D1Database, url: string) {
     .first();
 }
 
-async function _getBBSById(db: D1Database, id: string) {
-  return db.prepare("SELECT * FROM services WHERE id = ?").bind(`bbs:${id}`).first();
-}
-
 async function getMessages(db: D1Database, id: string, limit: number = 100) {
   const { results } = await db
     .prepare(
@@ -59,7 +55,7 @@ async function getMessages(db: D1Database, id: string, limit: number = 100) {
     .bind(`bbs:${id}:messages`, limit)
     .all();
 
-  return (results.results as BBSMessageRow[]).map((row) => ({
+  return (results as BBSMessageRow[]).map((row) => ({
     id: row.id,
     author: row.author,
     message: row.message,
@@ -215,7 +211,7 @@ app.get("/", async (c) => {
       return c.json({ error: "id is required" }, 400);
     }
 
-    const bbs = await getBBSByUrl(db, url);
+    const bbs = await db.prepare("SELECT * FROM services WHERE id = ?").bind(`bbs:${id}`).first();
     if (!bbs) {
       return c.json({ error: "BBS not found" }, 404);
     }

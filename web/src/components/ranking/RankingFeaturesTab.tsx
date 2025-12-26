@@ -20,7 +20,7 @@ export default function RankingFeaturesTab() {
           </span>
         </p>
         <p>
-          <span>●</span> Redis Sorted Setによる自動ソート
+          <span>●</span> SQLite ORDER BYによる自動ソート
           <br />
           <span>●</span> スコア管理（submit/update/remove/clear）
           <br />
@@ -54,9 +54,9 @@ export default function RankingFeaturesTab() {
           </span>
         </p>
         <p>
-          • Next.js + Vercel でホスティング
+          • Cloudflare Workers でホスティング
           <br />
-          • Redis Sorted Set で高速ソート
+          • D1 (SQLite) で高速ソート
           <br />
           • 金・銀・銅メダル表示 🥇🥈🥉
           <br />• 必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現

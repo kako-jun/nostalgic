@@ -40,7 +40,7 @@ A comprehensive nostalgic web tools platform that brings back the 90s internet c
 - 🚫 **No registration required**: Just provide a URL and secret token
 - 🔒 **Secure ownership**: SHA256 hashed tokens, public ID system
 - 🌐 **Easy integration**: RESTful APIs with action parameters
-- ⚡ **Fast & reliable**: Built on Next.js + Redis
+- ⚡ **Fast & reliable**: Built on Cloudflare Workers + D1
 - 🔗 **Pure GET APIs**: All operations via browser URL bar (1990s web culture revival)
 
 ## 🚀 Quick Start

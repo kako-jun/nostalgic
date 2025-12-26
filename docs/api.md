@@ -133,8 +133,8 @@ Use `https://nostalgic.llll-ll.com` - no setup required!
 ### Self-Hosting
 
 1. Fork this repository
-2. Deploy to Vercel
-3. Add Redis URL environment variable
+2. Deploy to Cloudflare Workers
+3. Create and configure D1 database
 4. Update Web Component URLs to your domain
 
 ---

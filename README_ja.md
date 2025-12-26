@@ -40,7 +40,7 @@ _[English version here](README.md)_
 - 🚫 **登録不要**: URLと秘密トークンだけで利用開始
 - 🔒 **安全な所有権管理**: SHA256ハッシュ化トークン、公開IDシステム
 - 🌐 **簡単統合**: アクションパラメータ付きRESTful API
-- ⚡ **高速・信頼性**: Next.js + Redis で構築
+- ⚡ **高速・信頼性**: Cloudflare Workers + D1 で構築
 - 🔗 **純粋なGET API**: すべての操作がブラウザのURL欄で実行可能（1990年代Web文化の復活）
 
 ## 🚀 クイックスタート

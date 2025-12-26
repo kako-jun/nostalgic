@@ -1287,11 +1287,11 @@ export default function HomePage() {
               </p>
               <p>見た目はレトロですが、中身は最新技術を使っています。</p>
               <p>
-                • Next.js 15 (App Router)
+                • Cloudflare Workers
                 <br />
-                • Vercel Edge Functions
+                • D1 (SQLite)
                 <br />
-                • Redis
+                • Hono
                 <br />
                 • Web Components
                 <br />• SVG Graphics

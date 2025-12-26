@@ -54,9 +54,9 @@ export default function LikeFeaturesTab() {
           </span>
         </p>
         <p>
-          • Next.js + Vercel でホスティング
+          • Cloudflare Workers でホスティング
           <br />
-          • Redis でデータ保存
+          • D1 (SQLite) でデータ保存
           <br />
           • インタラクティブボタンで即座のフィードバック
           <br />• 必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現

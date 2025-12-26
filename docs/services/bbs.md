@@ -287,9 +287,9 @@ await fetch("/api/bbs?action=clear&url=https://mysite.com&token=my-secret");
 
 ## Data Structure
 
-Messages are stored as JSON in Redis Lists:
+Messages are stored in D1 (SQLite) database:
 
-- Newest messages first (LPUSH)
+- Newest messages first (ORDER BY created_at DESC)
 - Automatic trimming when max messages exceeded
 - Author verification via IP+UserAgent hash
 

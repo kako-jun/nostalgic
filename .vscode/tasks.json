@@ -2,10 +2,10 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Next.js: Development Server",
+      "label": "Dev Server",
       "type": "shell",
-      "command": "npm",
-      "args": ["run", "dev"],
+      "command": "pnpm",
+      "args": ["dev"],
       "group": "build",
       "presentation": {
         "echo": true,
@@ -16,10 +16,17 @@
       "problemMatcher": []
     },
     {
-      "label": "Next.js: Build",
+      "label": "Build",
       "type": "shell",
-      "command": "npm",
-      "args": ["run", "build"],
+      "command": "pnpm",
+      "args": ["build"],
+      "group": "build"
+    },
+    {
+      "label": "Deploy API",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["-C", "api", "run", "deploy"],
       "group": "build"
     }
   ]

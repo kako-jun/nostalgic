@@ -300,11 +300,11 @@ await fetch("/api/ranking?action=clear&url=https://mygame.com&token=game-secret"
 
 ## Data Structure
 
-Rankings use Redis Sorted Sets for efinalicient sorting:
+Rankings use D1 (SQLite) with indexed ORDER BY for efficient sorting:
 
-- Scores are automatically sorted in descending order
+- Scores are automatically sorted by sortOrder setting
 - When max entries exceeded, lowest scores are removed
-- O(log N) performance for score operations
+- Indexed queries for fast retrieval
 
 ## Web Component Integration
 

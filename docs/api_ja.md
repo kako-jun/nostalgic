@@ -133,8 +133,8 @@ curl "https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com
 ### セルフホスティング
 
 1. このリポジトリをフォーク
-2. Vercelにデプロイ
-3. Redis URL環境変数を追加
+2. Cloudflare Workersにデプロイ
+3. D1データベースを作成・設定
 4. Web ComponentのURLを自分のドメインに更新
 
 ---

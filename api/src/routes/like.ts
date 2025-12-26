@@ -36,7 +36,7 @@ async function getLikeById(db: D1Database, id: string) {
 
 async function getTotalLikes(db: D1Database, id: string): Promise<number> {
   const row = await db
-    .prepare("SELECT total FROM counters WHERE service_id = ?")
+    .prepare("SELECT total FROM likes WHERE service_id = ?")
     .bind(`like:${id}:total`)
     .first<{ total: number }>();
   return row?.total ?? 0;
@@ -97,7 +97,7 @@ app.get("/", async (c) => {
         .prepare("INSERT INTO owner_tokens (service_id, token_hash) VALUES (?, ?)")
         .bind(`like:${publicId}`, hashedToken),
       db
-        .prepare("INSERT INTO counters (service_id, total) VALUES (?, 0)")
+        .prepare("INSERT INTO likes (service_id, total) VALUES (?, 0)")
         .bind(`like:${publicId}:total`),
     ]);
 
@@ -149,7 +149,7 @@ app.get("/", async (c) => {
           .bind(`like:${id}`, userHash, today, "like", "liked", "liked"),
         db
           .prepare(
-            "INSERT INTO counters (service_id, total) VALUES (?, 1) ON CONFLICT(service_id) DO UPDATE SET total = total + 1"
+            "INSERT INTO likes (service_id, total) VALUES (?, 1) ON CONFLICT(service_id) DO UPDATE SET total = total + 1"
           )
           .bind(`like:${id}:total`),
       ]);
@@ -162,7 +162,7 @@ app.get("/", async (c) => {
           )
           .bind(`like:${id}`, userHash, today, "like", "unliked", "unliked"),
         db
-          .prepare("UPDATE counters SET total = MAX(0, total - 1) WHERE service_id = ?")
+          .prepare("UPDATE likes SET total = MAX(0, total - 1) WHERE service_id = ?")
           .bind(`like:${id}:total`),
       ]);
     }
@@ -225,7 +225,7 @@ app.get("/", async (c) => {
       db.prepare("DELETE FROM services WHERE id = ?").bind(`like:${id}`),
       db.prepare("DELETE FROM url_mappings WHERE type = ? AND url = ?").bind("like", url),
       db.prepare("DELETE FROM owner_tokens WHERE service_id = ?").bind(`like:${id}`),
-      db.prepare("DELETE FROM counters WHERE service_id LIKE ?").bind(`like:${id}%`),
+      db.prepare("DELETE FROM likes WHERE service_id LIKE ?").bind(`like:${id}%`),
       db.prepare("DELETE FROM daily_actions WHERE service_id = ?").bind(`like:${id}`),
     ]);
 

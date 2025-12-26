@@ -175,11 +175,11 @@ await fetch("/api/ranking?action=clear&url=https://mygame.com&token=game-secret"
 
 ## データ構造
 
-ランキングは効率的なソートのためRedis Sorted Setを使用：
+ランキングは効率的なソートのためD1 (SQLite)のインデックス付きORDER BYを使用：
 
 - スコアはsortOrderに応じて自動ソート（desc=降順、asc=昇順）
 - 最大エントリー数を超えると下位スコアが削除
-- スコア操作はO(log N)性能
+- インデックスによる高速検索
 
 ### updateSettings
 

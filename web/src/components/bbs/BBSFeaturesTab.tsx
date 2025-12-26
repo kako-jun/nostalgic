@@ -56,9 +56,9 @@ export default function BBSFeaturesTab() {
           </span>
         </p>
         <p>
-          • Next.js + Vercel でホスティング
+          • Cloudflare Workers でホスティング
           <br />
-          • Redis List でメッセージ保存
+          • D1 (SQLite) でメッセージ保存
           <br />
           • 純粋なGET、1990年代スタイル
           <br />• 必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
