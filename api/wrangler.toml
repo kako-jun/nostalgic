@@ -1,7 +1,12 @@
-name = "nostalgic"
+name = "nostalgic-api"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
 main = "src/index.ts"
+
+# カスタムドメイン
+routes = [
+  { pattern = "api.nostalgic.llll-ll.com", custom_domain = true }
+]
 
 [[d1_databases]]
 binding = "DB"
