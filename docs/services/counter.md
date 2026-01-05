@@ -55,12 +55,12 @@ GET /api/visit?action=increment&id={ID}
 }
 ```
 
-### display
+### get
 
 Get counter data or image.
 
 ```
-GET /api/visit?action=display&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
+GET /api/visit?action=get&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 ```
 
 **Parameters:**
@@ -256,14 +256,14 @@ document.body.innerHTML += `
 const count = await fetch("/api/visit?action=increment&id=blog-a7b9c3d4");
 const data = await count.json();
 
-// Display as image
+// Get as image
 document.querySelector("#counter").src =
-  `/api/visit?action=display&id=blog-a7b9c3d4&type=total&theme=light`;
+  `/api/visit?action=get&id=blog-a7b9c3d4&type=total&theme=light`;
 ```
 
 ## Security Notes
 
 - Owner tokens are stored as SHA256 hashes
-- Public IDs are safe to expose (display/count only)
+- Public IDs are safe to expose (get/increment only)
 - Daily duplicate prevention per IP+UserAgent (resets at midnight)
 - Tokens should not be reused across sites

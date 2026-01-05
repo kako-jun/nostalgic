@@ -46,12 +46,12 @@ GET /api/visit?action=increment&id={ID}
 
 - `id` (必須): 公開カウンターID
 
-### display
+### get
 
 カウンターデータまたは画像を取得。
 
 ```
-GET /api/visit?action=display&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
+GET /api/visit?action=get&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 ```
 
 **パラメータ:**

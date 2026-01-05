@@ -52,13 +52,12 @@ GET /api/bbs?action=create&url={URL}&token={TOKEN}&max={MAX_MESSAGES}&perPage={P
 Post a new message to the BBS.
 
 ```
-GET /api/bbs?action=post&url={URL}&token={TOKEN}&author={AUTHOR}&message={MESSAGE}&icon={ICON}&select1={VALUE1}
+GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&icon={ICON}&select1={VALUE1}
 ```
 
 **Parameters:**
 
-- `url` (required): Target URL
-- `token` (required): Owner token
+- `id` (required): Public BBS ID
 - `author` (optional): Author name (default: "名無しさん", max 50 characters)
 - `message` (required): Message content (max 1000 characters)
 - `icon` (optional): Selected icon
@@ -84,15 +83,24 @@ GET /api/bbs?action=post&url={URL}&token={TOKEN}&author={AUTHOR}&message={MESSAG
 
 ### update
 
-Update your own message (author verification required).
+Update a message.
+
+**User mode (author):**
 
 ```
-GET /api/bbs?action=update&url={URL}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
+GET /api/bbs?action=update&id={ID}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
+```
+
+**Owner mode (admin):**
+
+```
+GET /api/bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
 ```
 
 **Parameters:**
 
-- `url` (required): Target URL
+- `id` (user mode): Public BBS ID
+- `url` + `token` (owner mode): Target URL and owner token
 - `messageId` (required): Message ID to update
 - `message` (required): New message content
 
@@ -122,7 +130,15 @@ GET /api/bbs?action=update&url={URL}&messageId={MESSAGE_ID}&message={NEW_MESSAGE
 
 ### remove
 
-Remove a message (owner or author can remove).
+Remove a message.
+
+**User mode (author):**
+
+```
+GET /api/bbs?action=remove&id={ID}&messageId={MESSAGE_ID}
+```
+
+**Owner mode (admin):**
 
 ```
 GET /api/bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
@@ -130,8 +146,8 @@ GET /api/bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
 
 **Parameters:**
 
-- `url` (required): Target URL
-- `token` (optional): Owner token (if provided, owner can remove any message)
+- `id` (user mode): Public BBS ID
+- `url` + `token` (owner mode): Target URL and owner token
 - `messageId` (required): Message ID to remove
 
 **Response:**
@@ -234,7 +250,9 @@ console.log("BBS ID:", data.id);
 
 // 2. Post message
 await fetch(
-  "/api/bbs?action=post&url=https://mysite.com&token=my-secret&author=Alice&message=Hello everyone!&icon=😀&select1=Japan&select2=General"
+  "/api/bbs?action=post&id=" +
+    data.id +
+    "&author=Alice&message=Hello everyone!&icon=😀&select1=Japan&select2=General"
 );
 ```
 
@@ -243,11 +261,11 @@ await fetch(
 ```javascript
 // Update own message (requires same IP+UserAgent)
 await fetch(
-  "/api/bbs?action=update&url=https://mysite.com&messageId=abc123def456&message=Updated message!"
+  "/api/bbs?action=update&id=mysite-a7b9c3d4&messageId=abc123def456&message=Updated message!"
 );
 
-// Remove message (owner or author)
-await fetch("/api/bbs?action=remove&url=https://mysite.com&token=my-secret&messageId=abc123def456");
+// Remove own message (requires same IP+UserAgent)
+await fetch("/api/bbs?action=remove&id=mysite-a7b9c3d4&messageId=abc123def456");
 
 // Clear all messages (owner only)
 await fetch("/api/bbs?action=clear&url=https://mysite.com&token=my-secret");

@@ -36,13 +36,12 @@ GET /api/like?action=create&url={URL}&token={TOKEN}
 現在のユーザーのいいね/取り消し状態をトグル。
 
 ```
-GET /api/like?action=toggle&url={URL}&token={TOKEN}
+GET /api/like?action=toggle&id={ID}
 ```
 
 **パラメータ:**
 
-- `url` (必須): 対象URL
-- `token` (必須): オーナートークン
+- `id` (必須): 公開いいねボタンID
 
 **レスポンス:**
 
@@ -169,7 +168,7 @@ document.body.innerHTML += `
 
 ```javascript
 // 手動でいいねトグル
-const response = await fetch("/api/like?action=toggle&url=https://myblog.com&token=my-secret");
+const response = await fetch("/api/like?action=toggle&id=myblog-a7b9c3d4");
 const data = await response.json();
 console.log("ユーザーがいいね:", data.userLiked, "合計:", data.total);
 

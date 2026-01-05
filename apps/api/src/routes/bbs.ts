@@ -225,23 +225,46 @@ app.get("/", async (c) => {
 
   // UPDATE (user mode: id + messageId, owner mode: url + token + messageId)
   if (action === "update") {
-    const id = c.req.query("id");
+    const url = c.req.query("url");
+    const token = c.req.query("token");
+    const idParam = c.req.query("id");
     const messageId = c.req.query("messageId");
     const newMessage = c.req.query("message");
 
-    if (!id || !messageId || !newMessage) {
-      return c.json({ error: "id, messageId, and message are required" }, 400);
+    if (!messageId || !newMessage) {
+      return c.json({ error: "messageId and message are required" }, 400);
     }
 
-    const bbs = await db.prepare("SELECT * FROM services WHERE id = ?").bind(`bbs:${id}`).first();
-    if (!bbs) {
-      return c.json({ error: "BBS not found" }, 404);
-    }
+    let id: string;
+    let isOwner = false;
 
-    // Check if message exists and belongs to user
-    const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
-    const userAgent = c.req.header("User-Agent") || "";
-    const userHash = await generateUserHash(ip, userAgent);
+    // Owner mode: url + token
+    if (url && token) {
+      const bbs = await getBBSByUrl(db, url);
+      if (!bbs) {
+        return c.json({ error: "BBS not found" }, 404);
+      }
+      id = (bbs as BBSRecord).id.replace("bbs:", "");
+      const hashedToken = await hashToken(token);
+      const owner = await db
+        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
+        .bind(`bbs:${id}`, hashedToken)
+        .first();
+      if (!owner) {
+        return c.json({ error: "Invalid token" }, 403);
+      }
+      isOwner = true;
+    }
+    // User mode: id
+    else if (idParam) {
+      id = idParam;
+      const bbs = await db.prepare("SELECT * FROM services WHERE id = ?").bind(`bbs:${id}`).first();
+      if (!bbs) {
+        return c.json({ error: "BBS not found" }, 404);
+      }
+    } else {
+      return c.json({ error: "id or (url + token) is required" }, 400);
+    }
 
     const msg = await db
       .prepare("SELECT user_hash FROM bbs_messages WHERE id = ? AND service_id = ?")
@@ -252,8 +275,14 @@ app.get("/", async (c) => {
       return c.json({ error: "Message not found" }, 404);
     }
 
-    if (msg.user_hash !== userHash) {
-      return c.json({ error: "You can only edit your own messages" }, 403);
+    // User mode: check ownership
+    if (!isOwner) {
+      const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
+      const userAgent = c.req.header("User-Agent") || "";
+      const userHash = await generateUserHash(ip, userAgent);
+      if (msg.user_hash !== userHash) {
+        return c.json({ error: "You can only edit your own messages" }, 403);
+      }
     }
 
     await db
@@ -265,23 +294,47 @@ app.get("/", async (c) => {
     return c.json({ success: true, data: { id, messages, updated: messageId } });
   }
 
-  // REMOVE (single message, user mode: id + messageId)
+  // REMOVE (user mode: id + messageId, owner mode: url + token + messageId)
   if (action === "remove") {
-    const id = c.req.query("id");
+    const url = c.req.query("url");
+    const token = c.req.query("token");
+    const idParam = c.req.query("id");
     const messageId = c.req.query("messageId");
 
-    if (!id || !messageId) {
-      return c.json({ error: "id and messageId are required" }, 400);
+    if (!messageId) {
+      return c.json({ error: "messageId is required" }, 400);
     }
 
-    const bbs = await db.prepare("SELECT * FROM services WHERE id = ?").bind(`bbs:${id}`).first();
-    if (!bbs) {
-      return c.json({ error: "BBS not found" }, 404);
-    }
+    let id: string;
+    let isOwner = false;
 
-    const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
-    const userAgent = c.req.header("User-Agent") || "";
-    const userHash = await generateUserHash(ip, userAgent);
+    // Owner mode: url + token
+    if (url && token) {
+      const bbs = await getBBSByUrl(db, url);
+      if (!bbs) {
+        return c.json({ error: "BBS not found" }, 404);
+      }
+      id = (bbs as BBSRecord).id.replace("bbs:", "");
+      const hashedToken = await hashToken(token);
+      const owner = await db
+        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
+        .bind(`bbs:${id}`, hashedToken)
+        .first();
+      if (!owner) {
+        return c.json({ error: "Invalid token" }, 403);
+      }
+      isOwner = true;
+    }
+    // User mode: id
+    else if (idParam) {
+      id = idParam;
+      const bbs = await db.prepare("SELECT * FROM services WHERE id = ?").bind(`bbs:${id}`).first();
+      if (!bbs) {
+        return c.json({ error: "BBS not found" }, 404);
+      }
+    } else {
+      return c.json({ error: "id or (url + token) is required" }, 400);
+    }
 
     const msg = await db
       .prepare("SELECT user_hash FROM bbs_messages WHERE id = ? AND service_id = ?")
@@ -292,8 +345,14 @@ app.get("/", async (c) => {
       return c.json({ error: "Message not found" }, 404);
     }
 
-    if (msg.user_hash !== userHash) {
-      return c.json({ error: "You can only delete your own messages" }, 403);
+    // User mode: check ownership
+    if (!isOwner) {
+      const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
+      const userAgent = c.req.header("User-Agent") || "";
+      const userHash = await generateUserHash(ip, userAgent);
+      if (msg.user_hash !== userHash) {
+        return c.json({ error: "You can only delete your own messages" }, 403);
+      }
     }
 
     await db.prepare("DELETE FROM bbs_messages WHERE id = ?").bind(messageId).run();

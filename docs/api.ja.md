@@ -24,19 +24,19 @@ Nostalgicは90年代のインターネット文化から懐かしいWebツール
 
 ## サービス
 
-### 📊 [カウンターサービス](services/counter_ja.md)
+### 📊 [カウンターサービス](services/counter.ja.md)
 
 複数期間統計と懐かしい表示スタイルを持つ従来の訪問者カウンター。
 
-### 💖 [いいねサービス](services/like_ja.md)
+### 💖 [いいねサービス](services/like.ja.md)
 
 ユーザー状態追跡機能付きのトグル型いいね/取り消しボタン。
 
-### 🏆 [ランキングサービス](services/ranking_ja.md)
+### 🏆 [ランキングサービス](services/ranking.ja.md)
 
 自動ソートと管理機能を持つスコアリーダーボードシステム。
 
-### 💬 [BBSサービス](services/bbs_ja.md)
+### 💬 [BBSサービス](services/bbs.ja.md)
 
 カスタマイズ可能なオプションと投稿者による編集機能を持つメッセージボード。
 
@@ -78,8 +78,8 @@ Nostalgicは90年代のインターネット文化から懐かしいWebツール
 # カウンター作成（Webhook付き）
 curl "https://api.nostalgic.llll-ll.com/visit?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
-# カウンター表示
-curl "https://api.nostalgic.llll-ll.com/visit?action=display&id=yoursite-a7b9c3d4&type=total&theme=light"
+# カウンター取得
+curl "https://api.nostalgic.llll-ll.com/visit?action=get&id=yoursite-a7b9c3d4&type=total&theme=light"
 ```
 
 ### いいね
@@ -89,7 +89,7 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=display&id=yoursite-a7b9c3d
 curl "https://api.nostalgic.llll-ll.com/like?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # いいねトグル
-curl "https://api.nostalgic.llll-ll.com/like?action=toggle&url=https://yoursite.com&token=your-secret"
+curl "https://api.nostalgic.llll-ll.com/like?action=toggle&id=yoursite-a7b9c3d4"
 ```
 
 ### ランキング
@@ -102,7 +102,7 @@ curl "https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursi
 curl "https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=asc"
 
 # スコア送信
-curl "https://api.nostalgic.llll-ll.com/ranking?action=submit&url=https://yoursite.com&token=your-secret&name=Player1&score=1000"
+curl "https://api.nostalgic.llll-ll.com/ranking?action=submit&id=yoursite-a7b9c3d4&name=Player1&score=1000"
 ```
 
 ### BBS
@@ -112,7 +112,7 @@ curl "https://api.nostalgic.llll-ll.com/ranking?action=submit&url=https://yoursi
 curl "https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://yoursite.com&token=your-secret&max=1000&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # メッセージ投稿
-curl "https://api.nostalgic.llll-ll.com/bbs?action=post&url=https://yoursite.com&token=your-secret&author=User&message=こんにちは！"
+curl "https://api.nostalgic.llll-ll.com/bbs?action=post&id=yoursite-a7b9c3d4&author=User&message=こんにちは！"
 ```
 
 ## デモページ

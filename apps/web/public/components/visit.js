@@ -162,7 +162,7 @@ class NostalgicCounter extends HTMLElement {
     }
 
     const baseUrl = this.getAttribute("api-base") || NostalgicCounter.apiBaseUrl;
-    const apiUrl = `${baseUrl}/visit?action=display&id=${encodeURIComponent(id)}${type ? `&type=${type}` : ""}${theme ? `&theme=${theme}` : ""}${digits ? `&digits=${digits}` : ""}${format ? `&format=${format}` : ""}`;
+    const apiUrl = `${baseUrl}/visit?action=get&id=${encodeURIComponent(id)}${type ? `&type=${type}` : ""}${theme ? `&theme=${theme}` : ""}${digits ? `&digits=${digits}` : ""}${format ? `&format=${format}` : ""}`;
 
     // カウントアップ後の最新データがあれば使用
     const latestData = NostalgicCounter.latestCounts.get(id);
@@ -185,9 +185,9 @@ class NostalgicCounter extends HTMLElement {
         // ローディング中は0を桁数分表示
         this.shadowRoot.innerHTML = formatValue(0);
 
-        // 値を非同期で取得（action=display&format=textを使用）
+        // 値を非同期で取得（action=get&format=textを使用）
         fetch(
-          `${baseUrl}/visit?action=display&id=${encodeURIComponent(id)}&type=${type}&format=text${digits ? `&digits=${digits}` : ""}`
+          `${baseUrl}/visit?action=get&id=${encodeURIComponent(id)}&type=${type}&format=text${digits ? `&digits=${digits}` : ""}`
         )
           .then((response) => {
             if (!response.ok) {

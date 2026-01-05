@@ -145,12 +145,12 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=increment&id=example-a7b9c3
 
 カウンターの値を取得します（SVG画像、JSON、テキスト形式）。
 
-**Endpoint**: `GET /visit?action=display`
+**Endpoint**: `GET /visit?action=get`
 
 **Parameters**:
 | Name | Type | Required | Default | Description |
 |------|------|----------|---------|-------------|
-| `action` | string | Yes | - | `"display"` |
+| `action` | string | Yes | - | `"get"` |
 | `id` | string | Yes | - | カウンターID |
 | `type` | string | No | `"total"` | 表示タイプ: `total`, `today`, `yesterday`, `week`, `month` |
 | `format` | string | No | `"image"` | 出力形式: `image`, `json`, `text` |
@@ -162,13 +162,13 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=increment&id=example-a7b9c3
 SVG画像取得:
 
 ```bash
-curl "https://api.nostalgic.llll-ll.com/visit?action=display&id=example-a7b9c3d4&format=image&theme=kawaii"
+curl "https://api.nostalgic.llll-ll.com/visit?action=get&id=example-a7b9c3d4&format=image&theme=kawaii"
 ```
 
 JSON取得:
 
 ```bash
-curl "https://api.nostalgic.llll-ll.com/visit?action=display&id=example-a7b9c3d4&format=json"
+curl "https://api.nostalgic.llll-ll.com/visit?action=get&id=example-a7b9c3d4&format=json"
 ```
 
 ### 4. カウンター値設定
@@ -436,34 +436,28 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=set&url=https://example.com
 
 #### 投稿者による編集
 
-**Endpoint**: `GET /bbs?action=editMessage`
+**Endpoint**: `GET /bbs?action=update`
 
 **Parameters**:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `action` | string | Yes | `"editMessage"` |
+| `action` | string | Yes | `"update"` |
 | `id` | string | Yes | 掲示板ID |
 | `messageId` | string | Yes | メッセージID |
-| `message` | string | No | 新しいメッセージ（1-200文字） |
-| `standardValue` | string | No | 新しい標準セレクト値 |
-| `incrementalValue` | string | No | 新しいインクリメンタル検索セレクト値 |
-| `emoteValue` | string | No | 新しいエモートセレクト値 |
+| `message` | string | Yes | 新しいメッセージ（1-200文字） |
 
 #### オーナーによる編集
 
-**Endpoint**: `GET /bbs?action=editMessage`
+**Endpoint**: `GET /bbs?action=update`
 
 **Parameters**:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `action` | string | Yes | `"editMessage"` |
+| `action` | string | Yes | `"update"` |
 | `url` | string | Yes | サイトのURL |
 | `token` | string | Yes | オーナートークン（8-16文字） |
 | `messageId` | string | Yes | メッセージID |
-| `message` | string | No | 新しいメッセージ（1-200文字） |
-| `standardValue` | string | No | 新しい標準セレクト値 |
-| `incrementalValue` | string | No | 新しいインクリメンタル検索セレクト値 |
-| `emoteValue` | string | No | 新しいエモートセレクト値 |
+| `message` | string | Yes | 新しいメッセージ（1-200文字） |
 
 ### 4. メッセージ削除
 
@@ -471,23 +465,23 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=set&url=https://example.com
 
 #### 投稿者による削除
 
-**Endpoint**: `GET /bbs?action=deleteMessage`
+**Endpoint**: `GET /bbs?action=remove`
 
 **Parameters**:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `action` | string | Yes | `"deleteMessage"` |
+| `action` | string | Yes | `"remove"` |
 | `id` | string | Yes | 掲示板ID |
 | `messageId` | string | Yes | メッセージID |
 
 #### オーナーによる削除
 
-**Endpoint**: `GET /bbs?action=deleteMessage`
+**Endpoint**: `GET /bbs?action=remove`
 
 **Parameters**:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `action` | string | Yes | `"deleteMessage"` |
+| `action` | string | Yes | `"remove"` |
 | `url` | string | Yes | サイトのURL |
 | `token` | string | Yes | オーナートークン |
 | `messageId` | string | Yes | メッセージID |

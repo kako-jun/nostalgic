@@ -36,13 +36,12 @@ GET /api/like?action=create&url={URL}&token={TOKEN}
 Toggle like/unlike state for current user.
 
 ```
-GET /api/like?action=toggle&url={URL}&token={TOKEN}
+GET /api/like?action=toggle&id={ID}
 ```
 
 **Parameters:**
 
-- `url` (required): Target URL
-- `token` (required): Owner token
+- `id` (required): Public like button ID
 
 **Response:**
 
@@ -192,7 +191,7 @@ document.body.innerHTML += `
 
 ```javascript
 // Toggle like manually
-const response = await fetch("/api/like?action=toggle&url=https://myblog.com&token=my-secret");
+const response = await fetch("/api/like?action=toggle&id=myblog-a7b9c3d4");
 const data = await response.json();
 console.log("User liked:", data.userLiked, "Total:", data.total);
 

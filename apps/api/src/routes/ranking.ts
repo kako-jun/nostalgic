@@ -182,6 +182,42 @@ app.get("/", async (c) => {
     return c.json({ success: true, data: { id, entries } });
   }
 
+  // UPDATE (alias for submit - updates existing score)
+  if (action === "update") {
+    const id = c.req.query("id");
+    const name = c.req.query("name");
+    const scoreStr = c.req.query("score");
+    const displayScore = c.req.query("displayScore");
+
+    if (!id || !name || !scoreStr) {
+      return c.json({ error: "id, name, and score are required" }, 400);
+    }
+
+    const score = Number(scoreStr);
+    if (isNaN(score)) {
+      return c.json({ error: "score must be a number" }, 400);
+    }
+
+    const ranking = await getRankingById(db, id);
+    if (!ranking) {
+      return c.json({ error: "Ranking not found" }, 404);
+    }
+
+    const metadata = JSON.parse((ranking as RankingRecord).metadata || "{}");
+    const sortOrder = metadata.sortOrder || "desc";
+
+    // Update existing score
+    await db
+      .prepare(
+        `UPDATE ranking_scores SET score = ?, display_score = ? WHERE service_id = ? AND name = ?`
+      )
+      .bind(score, displayScore || null, `ranking:${id}:scores`, name)
+      .run();
+
+    const entries = await getTopEntries(db, id, RANKING.LIMIT.DEFAULT, sortOrder);
+    return c.json({ success: true, data: { id, entries } });
+  }
+
   // GET
   if (action === "get") {
     const id = c.req.query("id");
@@ -309,7 +345,10 @@ app.get("/", async (c) => {
     return c.json({ success: true, message: "Ranking deleted" });
   }
 
-  return c.json({ error: "Invalid action. Use: create, submit, get, remove, clear, delete" }, 400);
+  return c.json(
+    { error: "Invalid action. Use: create, submit, update, get, remove, clear, delete" },
+    400
+  );
 });
 
 export default app;

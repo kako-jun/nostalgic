@@ -197,8 +197,8 @@ app.get("/", async (c) => {
     return c.json({ success: true, data });
   }
 
-  // DISPLAY (GET)
-  if (action === "display" || action === "get") {
+  // GET
+  if (action === "get") {
     const id = c.req.query("id");
     const type = (c.req.query("type") || "total") as keyof ReturnType<
       typeof getCounterData
@@ -318,7 +318,7 @@ app.get("/", async (c) => {
     return c.json({ success: true, message: "Counter deleted" });
   }
 
-  return c.json({ error: "Invalid action. Use: create, increment, display, set, delete" }, 400);
+  return c.json({ error: "Invalid action. Use: create, increment, get, set, delete" }, 400);
 });
 
 // === SVG Generator ===

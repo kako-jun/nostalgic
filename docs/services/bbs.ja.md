@@ -30,13 +30,12 @@ GET /api/bbs?action=create&url={URL}&token={TOKEN}&max={MAX_MESSAGES}&perPage={P
 BBSに新しいメッセージを投稿。
 
 ```
-GET /api/bbs?action=post&url={URL}&token={TOKEN}&author={AUTHOR}&message={MESSAGE}&icon={ICON}&select1={VALUE1}
+GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&icon={ICON}&select1={VALUE1}
 ```
 
 **パラメータ:**
 
-- `url` (必須): 対象URL
-- `token` (必須): オーナートークン
+- `id` (必須): 公開BBS ID
 - `author` (オプション): 投稿者名（デフォルト: "名無しさん"、最大50文字）
 - `message` (必須): メッセージ内容（最大1000文字）
 - `icon` (オプション): 選択されたアイコン
@@ -44,21 +43,38 @@ GET /api/bbs?action=post&url={URL}&token={TOKEN}&author={AUTHOR}&message={MESSAG
 
 ### update
 
-自分のメッセージを更新（投稿者確認が必要）。
+自分のメッセージを更新。
+
+**ユーザーモード（投稿者本人）:**
 
 ```
-GET /api/bbs?action=update&url={URL}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
+GET /api/bbs?action=update&id={ID}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
+```
+
+**オーナーモード（管理者）:**
+
+```
+GET /api/bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
 ```
 
 **パラメータ:**
 
-- `url` (必須): 対象URL
+- `id` (ユーザーモード): 公開BBS ID
+- `url` + `token` (オーナーモード): 対象URLとオーナートークン
 - `messageId` (必須): 更新するメッセージID
 - `message` (必須): 新しいメッセージ内容
 
 ### remove
 
-メッセージを削除（オーナーまたは投稿者が削除可能）。
+メッセージを削除。
+
+**ユーザーモード（投稿者本人）:**
+
+```
+GET /api/bbs?action=remove&id={ID}&messageId={MESSAGE_ID}
+```
+
+**オーナーモード（管理者）:**
 
 ```
 GET /api/bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
@@ -66,8 +82,8 @@ GET /api/bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
 
 **パラメータ:**
 
-- `url` (必須): 対象URL
-- `token` (オプション): オーナートークン（提供されればオーナーは任意のメッセージを削除可能）
+- `id` (ユーザーモード): 公開BBS ID
+- `url` + `token` (オーナーモード): 対象URLとオーナートークン
 - `messageId` (必須): 削除するメッセージID
 
 ### clear
@@ -106,7 +122,9 @@ console.log("BBS ID:", data.id);
 
 // 2. メッセージ投稿
 await fetch(
-  "/api/bbs?action=post&url=https://mysite.com&token=my-secret&author=太郎&message=みなさんこんにちは！&icon=😀&select1=日本&select2=一般"
+  "/api/bbs?action=post&id=" +
+    data.id +
+    "&author=太郎&message=みなさんこんにちは！&icon=😀&select1=日本&select2=一般"
 );
 ```
 
@@ -115,11 +133,11 @@ await fetch(
 ```javascript
 // 自分のメッセージ更新（同じIP+UserAgentが必要）
 await fetch(
-  "/api/bbs?action=update&url=https://mysite.com&messageId=abc123def456&message=更新されたメッセージ！"
+  "/api/bbs?action=update&id=mysite-a7b9c3d4&messageId=abc123def456&message=更新されたメッセージ！"
 );
 
-// メッセージ削除（オーナーまたは投稿者）
-await fetch("/api/bbs?action=remove&url=https://mysite.com&token=my-secret&messageId=abc123def456");
+// 自分のメッセージ削除（同じIP+UserAgentが必要）
+await fetch("/api/bbs?action=remove&id=mysite-a7b9c3d4&messageId=abc123def456");
 
 // 全メッセージクリア（オーナーのみ）
 await fetch("/api/bbs?action=clear&url=https://mysite.com&token=my-secret");
