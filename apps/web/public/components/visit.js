@@ -162,13 +162,14 @@ class NostalgicCounter extends HTMLElement {
     }
 
     const baseUrl = this.getAttribute("api-base") || NostalgicCounter.apiBaseUrl;
-    const apiUrl = `${baseUrl}/visit?action=get&id=${encodeURIComponent(id)}${type ? `&type=${type}` : ""}${theme ? `&theme=${theme}` : ""}${digits ? `&digits=${digits}` : ""}${format ? `&format=${format}` : ""}`;
+    const effectiveFormat = format || "text";
+    const apiUrl = `${baseUrl}/visit?action=get&id=${encodeURIComponent(id)}${type ? `&type=${type}` : ""}${theme ? `&theme=${theme}` : ""}${digits ? `&digits=${digits}` : ""}&format=${effectiveFormat}`;
 
     // カウントアップ後の最新データがあれば使用
     const latestData = NostalgicCounter.latestCounts.get(id);
     const hasLatestData = latestData && latestData[type] !== undefined;
 
-    if (format === "text") {
+    if (effectiveFormat === "text") {
       // プレーンテキスト形式の場合
       const formatValue = (value) => {
         if (digits && !isNaN(digits) && digits > 0) {
