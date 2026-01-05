@@ -36,7 +36,7 @@ importers:
         specifier: ^3.7.3
         version: 3.7.3
 
-  api:
+  apps/api:
     dependencies:
       hono:
         specifier: ^4.6.0
@@ -55,7 +55,7 @@ importers:
         specifier: ^4.51.0
         version: 4.51.0(@cloudflare/workers-types@4.20251128.0)
 
-  web:
+  apps/web:
     dependencies:
       react:
         specifier: ^18.3.1

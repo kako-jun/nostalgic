@@ -3,7 +3,7 @@
 ## Base URL
 
 ```
-https://api.nostalgic.llll-ll.com/api
+https://api.nostalgic.llll-ll.com
 ```
 
 ## 共通仕様
@@ -77,7 +77,7 @@ https://api.nostalgic.llll-ll.com/api
 
 サイトのカウンターを新規作成します。
 
-**Endpoint**: `GET /api/visit?action=create`
+**Endpoint**: `GET /visit?action=create`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -89,7 +89,7 @@ https://api.nostalgic.llll-ll.com/api
 **Example Request**:
 
 ```bash
-curl "https://api.nostalgic.llll-ll.com/api/visit?action=create&url=https://example.com&token=mysecret123"
+curl "https://api.nostalgic.llll-ll.com/visit?action=create&url=https://example.com&token=mysecret123"
 ```
 
 **Example Response**:
@@ -108,7 +108,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=create&url=https://exam
 
 カウンターを1増やします（1日1回、毎日0時リセット）。
 
-**Endpoint**: `GET /api/visit?action=increment`
+**Endpoint**: `GET /visit?action=increment`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -119,7 +119,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=create&url=https://exam
 **Example Request**:
 
 ```bash
-curl "https://api.nostalgic.llll-ll.com/api/visit?action=increment&id=example-a7b9c3d4"
+curl "https://api.nostalgic.llll-ll.com/visit?action=increment&id=example-a7b9c3d4"
 ```
 
 **Example Response**:
@@ -145,7 +145,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=increment&id=example-a7
 
 カウンターの値を取得します（SVG画像、JSON、テキスト形式）。
 
-**Endpoint**: `GET /api/visit?action=display`
+**Endpoint**: `GET /visit?action=display`
 
 **Parameters**:
 | Name | Type | Required | Default | Description |
@@ -162,20 +162,20 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=increment&id=example-a7
 SVG画像取得:
 
 ```bash
-curl "https://api.nostalgic.llll-ll.com/api/visit?action=display&id=example-a7b9c3d4&format=image&theme=kawaii"
+curl "https://api.nostalgic.llll-ll.com/visit?action=display&id=example-a7b9c3d4&format=image&theme=kawaii"
 ```
 
 JSON取得:
 
 ```bash
-curl "https://api.nostalgic.llll-ll.com/api/visit?action=display&id=example-a7b9c3d4&format=json"
+curl "https://api.nostalgic.llll-ll.com/visit?action=display&id=example-a7b9c3d4&format=json"
 ```
 
 ### 4. カウンター値設定
 
 カウンターの値を指定値に設定します（オーナー権限必要）。
 
-**Endpoint**: `GET /api/visit?action=set`
+**Endpoint**: `GET /visit?action=set`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -188,7 +188,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=display&id=example-a7b9
 **Example Request**:
 
 ```bash
-curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example.com&token=mysecret123&total=1000"
+curl "https://api.nostalgic.llll-ll.com/visit?action=set&url=https://example.com&token=mysecret123&total=1000"
 ```
 
 ---
@@ -199,7 +199,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 サイトのいいねボタンを新規作成します。
 
-**Endpoint**: `GET /api/like?action=create`
+**Endpoint**: `GET /like?action=create`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -224,7 +224,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 いいねの状態を切り替えます（いいね/取り消し）。
 
-**Endpoint**: `GET /api/like?action=toggle`
+**Endpoint**: `GET /like?action=toggle`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -252,7 +252,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 現在のいいね数とユーザーの状態を取得します。
 
-**Endpoint**: `GET /api/like?action=get`
+**Endpoint**: `GET /like?action=get`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -268,7 +268,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 新しいランキングを作成します。
 
-**Endpoint**: `GET /api/ranking?action=create`
+**Endpoint**: `GET /ranking?action=create`
 
 **Parameters**:
 | Name | Type | Required | Default | Description |
@@ -283,7 +283,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 ランキングに新しいスコアを送信します。
 
-**Endpoint**: `GET /api/ranking?action=submit`
+**Endpoint**: `GET /ranking?action=submit`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -317,7 +317,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 既存エントリーのスコアを更新します（オーナー権限必要）。
 
-**Endpoint**: `GET /api/ranking?action=update`
+**Endpoint**: `GET /ranking?action=update`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -332,7 +332,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 ランキングからエントリーを削除します（オーナー権限必要）。
 
-**Endpoint**: `GET /api/ranking?action=remove`
+**Endpoint**: `GET /ranking?action=remove`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -346,7 +346,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 ランキングデータを取得します。
 
-**Endpoint**: `GET /api/ranking?action=get`
+**Endpoint**: `GET /ranking?action=get`
 
 **Parameters**:
 | Name | Type | Required | Default | Description |
@@ -359,7 +359,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 全エントリーを削除します（オーナー権限必要）。
 
-**Endpoint**: `GET /api/ranking?action=clear`
+**Endpoint**: `GET /ranking?action=clear`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -376,7 +376,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 新しい掲示板を作成します。
 
-**Endpoint**: `GET /api/bbs?action=create`
+**Endpoint**: `GET /bbs?action=create`
 
 **Parameters**:
 | Name | Type | Required | Default | Description |
@@ -399,7 +399,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 掲示板にメッセージを投稿します。IPアドレス制限により1分間に5投稿まで。
 
-**Endpoint**: `GET /api/bbs?action=post`
+**Endpoint**: `GET /bbs?action=post`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -436,7 +436,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 #### 投稿者による編集
 
-**Endpoint**: `GET /api/bbs?action=editMessage`
+**Endpoint**: `GET /bbs?action=editMessage`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -451,7 +451,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 #### オーナーによる編集
 
-**Endpoint**: `GET /api/bbs?action=editMessage`
+**Endpoint**: `GET /bbs?action=editMessage`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -471,7 +471,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 #### 投稿者による削除
 
-**Endpoint**: `GET /api/bbs?action=deleteMessage`
+**Endpoint**: `GET /bbs?action=deleteMessage`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -482,7 +482,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 #### オーナーによる削除
 
-**Endpoint**: `GET /api/bbs?action=deleteMessage`
+**Endpoint**: `GET /bbs?action=deleteMessage`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -496,7 +496,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 掲示板のメッセージ一覧を取得します。
 
-**Endpoint**: `GET /api/bbs?action=get`
+**Endpoint**: `GET /bbs?action=get`
 
 **Parameters**:
 | Name | Type | Required | Default | Description |
@@ -557,7 +557,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 掲示板の全メッセージを削除します（オーナー権限必要）。
 
-**Endpoint**: `GET /api/bbs?action=clear`
+**Endpoint**: `GET /bbs?action=clear`
 
 **Parameters**:
 | Name | Type | Required | Description |
@@ -613,7 +613,7 @@ curl "https://api.nostalgic.llll-ll.com/api/visit?action=set&url=https://example
 
 ```javascript
 // カウンターをインクリメント
-fetch("https://api.nostalgic.llll-ll.com/api/visit?action=increment&id=blog-a7b9c3d4")
+fetch("https://api.nostalgic.llll-ll.com/visit?action=increment&id=blog-a7b9c3d4")
   .then((res) => res.json())
   .then((data) => {
     if (data.success) {
@@ -622,7 +622,7 @@ fetch("https://api.nostalgic.llll-ll.com/api/visit?action=increment&id=blog-a7b9
   });
 
 // いいねトグル
-fetch("https://api.nostalgic.llll-ll.com/api/like?action=toggle&id=blog-b8c2d5e9")
+fetch("https://api.nostalgic.llll-ll.com/like?action=toggle&id=blog-b8c2d5e9")
   .then((res) => res.json())
   .then((data) => {
     if (data.success) {
@@ -636,16 +636,16 @@ fetch("https://api.nostalgic.llll-ll.com/api/like?action=toggle&id=blog-b8c2d5e9
 
 ```bash
 # ランキング作成
-curl "https://api.nostalgic.llll-ll.com/api/ranking?action=create&url=https://mygame.com&token=mysecret123&maxEntries=20"
+curl "https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://mygame.com&token=mysecret123&maxEntries=20"
 
 # スコア送信
-curl "https://api.nostalgic.llll-ll.com/api/ranking?action=submit&id=mygame-c9d3e6f0&name=Player1&score=12345"
+curl "https://api.nostalgic.llll-ll.com/ranking?action=submit&id=mygame-c9d3e6f0&name=Player1&score=12345"
 
 # BBS作成（3つのセレクト機能付き）
-curl "https://api.nostalgic.llll-ll.com/api/bbs?action=create&url=https://myblog.com&token=mytoken123&title=私のBBS&standardSelectLabel=地域&standardSelectOptions=東京,大阪,名古屋&incrementalSelectLabel=天気&incrementalSelectOptions=晴れ,曇り,雨&emoteSelectLabel=気分&emoteSelectOptions=😊,😢,😡,😴"
+curl "https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://myblog.com&token=mytoken123&title=私のBBS&standardSelectLabel=地域&standardSelectOptions=東京,大阪,名古屋&incrementalSelectLabel=天気&incrementalSelectOptions=晴れ,曇り,雨&emoteSelectLabel=気分&emoteSelectOptions=😊,😢,😡,😴"
 
 # BBSメッセージ投稿（セレクト値含む）
-curl "https://api.nostalgic.llll-ll.com/api/bbs?action=post&id=myblog-a1b2c3d4&author=太郎&message=今日はいい天気ですね！&standardValue=東京&incrementalValue=晴れ&emoteValue=😊"
+curl "https://api.nostalgic.llll-ll.com/bbs?action=post&id=myblog-a1b2c3d4&author=太郎&message=今日はいい天気ですね！&standardValue=東京&incrementalValue=晴れ&emoteValue=😊"
 ```
 
 ---

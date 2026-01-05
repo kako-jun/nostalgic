@@ -76,43 +76,43 @@ Nostalgicは90年代のインターネット文化から懐かしいWebツール
 
 ```bash
 # カウンター作成（Webhook付き）
-curl "https://api.nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+curl "https://api.nostalgic.llll-ll.com/visit?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # カウンター表示
-curl "https://api.nostalgic.llll-ll.com/api/visit?action=display&id=yoursite-a7b9c3d4&type=total&theme=light"
+curl "https://api.nostalgic.llll-ll.com/visit?action=display&id=yoursite-a7b9c3d4&type=total&theme=light"
 ```
 
 ### いいね
 
 ```bash
 # いいねボタン作成（Webhook付き）
-curl "https://api.nostalgic.llll-ll.com/api/like?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+curl "https://api.nostalgic.llll-ll.com/like?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # いいねトグル
-curl "https://api.nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.com&token=your-secret"
+curl "https://api.nostalgic.llll-ll.com/like?action=toggle&url=https://yoursite.com&token=your-secret"
 ```
 
 ### ランキング
 
 ```bash
 # スコア系ゲーム用ランキング作成（高スコア優先、Webhook付き）
-curl "https://api.nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=desc&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+curl "https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=desc&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # タイム系ゲーム用ランキング作成（低タイム優先）
-curl "https://api.nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=asc"
+curl "https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=asc"
 
 # スコア送信
-curl "https://api.nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursite.com&token=your-secret&name=Player1&score=1000"
+curl "https://api.nostalgic.llll-ll.com/ranking?action=submit&url=https://yoursite.com&token=your-secret&name=Player1&score=1000"
 ```
 
 ### BBS
 
 ```bash
 # BBS作成（Webhook付き）
-curl "https://api.nostalgic.llll-ll.com/api/bbs?action=create&url=https://yoursite.com&token=your-secret&max=1000&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+curl "https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://yoursite.com&token=your-secret&max=1000&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # メッセージ投稿
-curl "https://api.nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com&token=your-secret&author=User&message=こんにちは！"
+curl "https://api.nostalgic.llll-ll.com/bbs?action=post&url=https://yoursite.com&token=your-secret&author=User&message=こんにちは！"
 ```
 
 ## デモページ

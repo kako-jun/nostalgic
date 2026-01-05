@@ -19,9 +19,9 @@ app.use("*", cors());
 app.get("/", (c) => c.json({ status: "ok", service: "nostalgic-api" }));
 
 // API Routes
-app.route("/api/visit", visitRoute);
-app.route("/api/like", likeRoute);
-app.route("/api/ranking", rankingRoute);
-app.route("/api/bbs", bbsRoute);
+app.route("/visit", visitRoute);
+app.route("/like", likeRoute);
+app.route("/ranking", rankingRoute);
+app.route("/bbs", bbsRoute);
 
 export default app;

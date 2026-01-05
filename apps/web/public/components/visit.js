@@ -105,7 +105,7 @@ class NostalgicCounter extends HTMLElement {
 
     try {
       const baseUrl = this.getAttribute("api-base") || NostalgicCounter.apiBaseUrl;
-      const countUrl = `${baseUrl}/api/visit?action=increment&id=${encodeURIComponent(id)}`;
+      const countUrl = `${baseUrl}/visit?action=increment&id=${encodeURIComponent(id)}`;
       const response = await fetch(countUrl);
       if (!response.ok) {
         console.error(
@@ -158,7 +158,7 @@ class NostalgicCounter extends HTMLElement {
     }
 
     const baseUrl = this.getAttribute("api-base") || NostalgicCounter.apiBaseUrl;
-    const apiUrl = `${baseUrl}/api/visit?action=display&id=${encodeURIComponent(id)}${type ? `&type=${type}` : ""}${theme ? `&theme=${theme}` : ""}${digits ? `&digits=${digits}` : ""}${format ? `&format=${format}` : ""}`;
+    const apiUrl = `${baseUrl}/visit?action=display&id=${encodeURIComponent(id)}${type ? `&type=${type}` : ""}${theme ? `&theme=${theme}` : ""}${digits ? `&digits=${digits}` : ""}${format ? `&format=${format}` : ""}`;
 
     // カウントアップ後の最新データがあれば使用
     const latestData = NostalgicCounter.latestCounts.get(id);
@@ -183,7 +183,7 @@ class NostalgicCounter extends HTMLElement {
 
         // 値を非同期で取得（action=display&format=textを使用）
         fetch(
-          `${baseUrl}/api/visit?action=display&id=${encodeURIComponent(id)}&type=${type}&format=text${digits ? `&digits=${digits}` : ""}`
+          `${baseUrl}/visit?action=display&id=${encodeURIComponent(id)}&type=${type}&format=text${digits ? `&digits=${digits}` : ""}`
         )
           .then((response) => {
             if (!response.ok) {

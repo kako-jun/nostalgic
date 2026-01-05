@@ -69,7 +69,7 @@ class NostalgicLike extends HTMLElement {
 
     try {
       const baseUrl = this.safeGetAttribute("api-base") || NostalgicLike.apiBaseUrl;
-      const apiUrl = `${baseUrl}/api/like?action=get&id=${encodeURIComponent(id)}`;
+      const apiUrl = `${baseUrl}/like?action=get&id=${encodeURIComponent(id)}`;
 
       const response = await fetch(apiUrl);
       if (!response.ok) {
@@ -99,7 +99,7 @@ class NostalgicLike extends HTMLElement {
 
     try {
       const baseUrl = this.safeGetAttribute("api-base") || NostalgicLike.apiBaseUrl;
-      const toggleUrl = `${baseUrl}/api/like?action=toggle&id=${encodeURIComponent(id)}`;
+      const toggleUrl = `${baseUrl}/like?action=toggle&id=${encodeURIComponent(id)}`;
 
       const response = await fetch(toggleUrl);
 
@@ -148,7 +148,7 @@ class NostalgicLike extends HTMLElement {
     if (format === "image") {
       const baseUrl = this.safeGetAttribute("api-base") || NostalgicLike.apiBaseUrl;
       const id = this.safeGetAttribute("id");
-      const apiUrl = `${baseUrl}/api/like?action=display&id=${encodeURIComponent(id)}${theme ? `&theme=${theme}` : ""}&format=image`;
+      const apiUrl = `${baseUrl}/like?action=display&id=${encodeURIComponent(id)}${theme ? `&theme=${theme}` : ""}&format=image`;
 
       this.shadowRoot.innerHTML = `
         <style>

@@ -1,6 +1,6 @@
 # Nostalgic
 
-_[日本語版はこちら](README_ja.md)_
+_[日本語版はこちら](README.ja.md)_
 
 A comprehensive nostalgic web tools platform that brings back the 90s internet culture with modern technology. Four essential services that used to be on every personal homepage: Counter, Like, Ranking, and BBS.
 
@@ -50,7 +50,7 @@ A comprehensive nostalgic web tools platform that brings back the 90s internet c
 1. **Create your counter**:
 
 ```
-https://api.nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&token=your-secret-token
+https://api.nostalgic.llll-ll.com/visit?action=create&url=https://yoursite.com&token=your-secret-token
 ```
 
 2. **Embed in your site**:
@@ -65,13 +65,13 @@ https://api.nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.c
 1. **Create like button**:
 
 ```
-https://api.nostalgic.llll-ll.com/api/like?action=create&url=https://yoursite.com&token=your-secret-token
+https://api.nostalgic.llll-ll.com/like?action=create&url=https://yoursite.com&token=your-secret-token
 ```
 
 2. **Toggle like**:
 
 ```
-https://api.nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.com&token=your-secret-token
+https://api.nostalgic.llll-ll.com/like?action=toggle&url=https://yoursite.com&token=your-secret-token
 ```
 
 ### Ranking Service
@@ -79,13 +79,13 @@ https://api.nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.co
 1. **Create ranking**:
 
 ```
-https://api.nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret-token&max=100
+https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret-token&max=100
 ```
 
 2. **Submit scores**:
 
 ```
-https://api.nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursite.com&token=your-secret-token&name=Player1&score=1000
+https://api.nostalgic.llll-ll.com/ranking?action=submit&url=https://yoursite.com&token=your-secret-token&name=Player1&score=1000
 ```
 
 ### BBS Service
@@ -93,13 +93,13 @@ https://api.nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursite
 1. **Create BBS**:
 
 ```
-https://api.nostalgic.llll-ll.com/api/bbs?action=create&url=https://yoursite.com&token=your-secret-token&max=1000
+https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://yoursite.com&token=your-secret-token&max=1000
 ```
 
 2. **Post messages** (pure GET, 1990s style):
 
 ```
-https://api.nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com&token=your-secret-token&author=User&message=Hello!
+https://api.nostalgic.llll-ll.com/bbs?action=post&url=https://yoursite.com&token=your-secret-token&author=User&message=Hello!
 ```
 
 ## 🎮 Try the Demos

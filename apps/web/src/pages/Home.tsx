@@ -34,7 +34,7 @@ export default function HomePage() {
     try {
       const rankingId = "nostalgic-5e577b5b";
       const response = await fetch(
-        `https://api.nostalgic.llll-ll.com/api/ranking?action=get&id=${rankingId}&limit=4`
+        `https://api.nostalgic.llll-ll.com/ranking?action=get&id=${rankingId}&limit=4`
       );
       if (response.ok) {
         const data = await response.json();
@@ -56,7 +56,7 @@ export default function HomePage() {
 
       // 現在の票数を取得
       const getCurrentResponse = await fetch(
-        `https://api.nostalgic.llll-ll.com/api/ranking?action=get&id=${rankingId}`
+        `https://api.nostalgic.llll-ll.com/ranking?action=get&id=${rankingId}`
       );
       let currentScore = 1;
 
@@ -72,7 +72,7 @@ export default function HomePage() {
 
       // 投票を送信
       const voteResponse = await fetch(
-        `https://api.nostalgic.llll-ll.com/api/ranking?action=submit&id=${rankingId}&name=${encodeURIComponent(serviceName)}&score=${currentScore}`
+        `https://api.nostalgic.llll-ll.com/ranking?action=submit&id=${rankingId}&name=${encodeURIComponent(serviceName)}&score=${currentScore}`
       );
 
       if (voteResponse.ok) {
