@@ -119,14 +119,13 @@ app.get("/", async (c) => {
 
   // SUBMIT
   if (action === "submit") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
+    const id = c.req.query("id");
     const name = c.req.query("name");
     const scoreStr = c.req.query("score");
     const displayScore = c.req.query("displayScore");
 
-    if (!url || !token || !name || !scoreStr) {
-      return c.json({ error: "url, token, name, and score are required" }, 400);
+    if (!id || !name || !scoreStr) {
+      return c.json({ error: "id, name, and score are required" }, 400);
     }
 
     const score = Number(scoreStr);
@@ -134,20 +133,9 @@ app.get("/", async (c) => {
       return c.json({ error: "score must be a number" }, 400);
     }
 
-    const ranking = await getRankingByUrl(db, url);
+    const ranking = await getRankingById(db, id);
     if (!ranking) {
       return c.json({ error: "Ranking not found" }, 404);
-    }
-
-    const id = (ranking as RankingRecord).id.replace("ranking:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`ranking:${id}`, hashedToken)
-      .first();
-
-    if (!owner) {
-      return c.json({ error: "Invalid token" }, 403);
     }
 
     const metadata = JSON.parse((ranking as RankingRecord).metadata || "{}");
@@ -250,7 +238,7 @@ app.get("/", async (c) => {
       .run();
 
     const entries = await getTopEntries(db, id, RANKING.LIMIT.DEFAULT);
-    return c.json({ id, entries, removed: name });
+    return c.json({ success: true, data: { id, entries, removed: name } });
   }
 
   // CLEAR
@@ -283,7 +271,7 @@ app.get("/", async (c) => {
       .bind(`ranking:${id}:scores`)
       .run();
 
-    return c.json({ id, entries: [], cleared: true });
+    return c.json({ success: true, data: { id, entries: [], cleared: true } });
   }
 
   // DELETE

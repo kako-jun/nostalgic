@@ -106,29 +106,15 @@ app.get("/", async (c) => {
 
   // TOGGLE
   if (action === "toggle") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
+    const id = c.req.query("id");
 
-    if (!url || !token) {
-      return c.json({ error: "url and token are required" }, 400);
+    if (!id) {
+      return c.json({ error: "id is required" }, 400);
     }
 
-    const like = await getLikeByUrl(db, url);
+    const like = await getLikeById(db, id);
     if (!like) {
       return c.json({ error: "Like service not found" }, 404);
-    }
-
-    const id = (like as LikeRecord).id.replace("like:", "");
-
-    // Verify ownership
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`like:${id}`, hashedToken)
-      .first();
-
-    if (!owner) {
-      return c.json({ error: "Invalid token" }, 403);
     }
 
     const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";

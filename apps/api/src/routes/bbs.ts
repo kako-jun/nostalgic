@@ -115,8 +115,7 @@ app.get("/", async (c) => {
 
   // POST
   if (action === "post") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
+    const id = c.req.query("id");
     const author = c.req.query("author") || BBS.AUTHOR.DEFAULT_VALUE;
     const message = c.req.query("message");
     const icon = c.req.query("icon");
@@ -124,28 +123,17 @@ app.get("/", async (c) => {
     const select2 = c.req.query("select2");
     const select3 = c.req.query("select3");
 
-    if (!url || !token || !message) {
-      return c.json({ error: "url, token, and message are required" }, 400);
+    if (!id || !message) {
+      return c.json({ error: "id and message are required" }, 400);
     }
 
     if (message.length > BBS.MESSAGE.MAX_LENGTH) {
       return c.json({ error: `Message must be ${BBS.MESSAGE.MAX_LENGTH} characters or less` }, 400);
     }
 
-    const bbs = await getBBSByUrl(db, url);
+    const bbs = await db.prepare("SELECT * FROM services WHERE id = ?").bind(`bbs:${id}`).first();
     if (!bbs) {
       return c.json({ error: "BBS not found" }, 404);
-    }
-
-    const id = (bbs as BBSRecord).id.replace("bbs:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`bbs:${id}`, hashedToken)
-      .first();
-
-    if (!owner) {
-      return c.json({ error: "Invalid token" }, 403);
     }
 
     const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
@@ -235,31 +223,19 @@ app.get("/", async (c) => {
     });
   }
 
-  // UPDATE
+  // UPDATE (user mode: id + messageId, owner mode: url + token + messageId)
   if (action === "update") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
+    const id = c.req.query("id");
     const messageId = c.req.query("messageId");
     const newMessage = c.req.query("message");
 
-    if (!url || !token || !messageId || !newMessage) {
-      return c.json({ error: "url, token, messageId, and message are required" }, 400);
+    if (!id || !messageId || !newMessage) {
+      return c.json({ error: "id, messageId, and message are required" }, 400);
     }
 
-    const bbs = await getBBSByUrl(db, url);
+    const bbs = await db.prepare("SELECT * FROM services WHERE id = ?").bind(`bbs:${id}`).first();
     if (!bbs) {
       return c.json({ error: "BBS not found" }, 404);
-    }
-
-    const id = (bbs as BBSRecord).id.replace("bbs:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`bbs:${id}`, hashedToken)
-      .first();
-
-    if (!owner) {
-      return c.json({ error: "Invalid token" }, 403);
     }
 
     // Check if message exists and belongs to user
@@ -289,30 +265,18 @@ app.get("/", async (c) => {
     return c.json({ success: true, data: { id, messages, updated: messageId } });
   }
 
-  // REMOVE (single message)
+  // REMOVE (single message, user mode: id + messageId)
   if (action === "remove") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
+    const id = c.req.query("id");
     const messageId = c.req.query("messageId");
 
-    if (!url || !token || !messageId) {
-      return c.json({ error: "url, token, and messageId are required" }, 400);
+    if (!id || !messageId) {
+      return c.json({ error: "id and messageId are required" }, 400);
     }
 
-    const bbs = await getBBSByUrl(db, url);
+    const bbs = await db.prepare("SELECT * FROM services WHERE id = ?").bind(`bbs:${id}`).first();
     if (!bbs) {
       return c.json({ error: "BBS not found" }, 404);
-    }
-
-    const id = (bbs as BBSRecord).id.replace("bbs:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`bbs:${id}`, hashedToken)
-      .first();
-
-    if (!owner) {
-      return c.json({ error: "Invalid token" }, 403);
     }
 
     const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
