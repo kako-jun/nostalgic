@@ -234,7 +234,12 @@ export default function HomePage() {
                         gap: "4px",
                       }}
                     >
-                      <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="light" />
+                      <nostalgic-counter
+                        id="nostalgic-b89803bb"
+                        type="total"
+                        theme="light"
+                        format="image"
+                      />
                       回も閲覧されました！
                     </span>
                   </p>
@@ -248,6 +253,7 @@ export default function HomePage() {
                       type="today"
                       theme="dark"
                       digits="3"
+                      format="image"
                     />
                   </div>
                 </div>
@@ -260,6 +266,7 @@ export default function HomePage() {
                       type="yesterday"
                       theme="dark"
                       digits="3"
+                      format="image"
                     />
                   </div>
                 </div>
@@ -272,6 +279,7 @@ export default function HomePage() {
                       type="week"
                       theme="retro"
                       digits="4"
+                      format="image"
                     />
                   </div>
                 </div>
@@ -284,6 +292,7 @@ export default function HomePage() {
                       type="month"
                       theme="retro"
                       digits="4"
+                      format="image"
                     />
                   </div>
                 </div>
@@ -307,13 +316,20 @@ export default function HomePage() {
                     type="total"
                     theme="kawaii"
                     digits="5"
+                    format="image"
                   />
                 </div>
                 <div style={{ textAlign: "center" }}>
                   <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>
                     Mother味
                   </p>
-                  <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="mom" digits="5" />
+                  <nostalgic-counter
+                    id="nostalgic-b89803bb"
+                    type="total"
+                    theme="mom"
+                    digits="5"
+                    format="image"
+                  />
                 </div>
                 <div style={{ textAlign: "center" }}>
                   <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>FF味</p>
@@ -322,6 +338,7 @@ export default function HomePage() {
                     type="total"
                     theme="final"
                     digits="5"
+                    format="image"
                   />
                 </div>
               </div>
