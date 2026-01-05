@@ -13,23 +13,8 @@ class NostalgicCounter extends HTMLElement {
   static counted = new Set();
   // カウントアップ後の最新データを保存
   static latestCounts = new Map();
-  // スクリプトが読み込まれたドメインを自動検出
-  static apiBaseUrl = (() => {
-    const scripts = document.querySelectorAll('script[src*="visit.js"]');
-    for (const script of scripts) {
-      const src = script.getAttribute("src");
-      if (src && src.includes("visit.js")) {
-        try {
-          const url = new URL(src, window.location.href);
-          return url.origin;
-        } catch (e) {
-          console.warn("Failed to parse script URL:", src);
-        }
-      }
-    }
-    // フォールバック: 現在のドメインを使用
-    return window.location.origin;
-  })();
+  // APIのベースURL
+  static apiBaseUrl = "https://api.nostalgic.llll-ll.com";
 
   constructor() {
     super();

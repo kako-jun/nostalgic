@@ -9,23 +9,8 @@
 // バリデーション定数は不要になりました（API側でデフォルト値処理）
 
 class NostalgicRanking extends HTMLElement {
-  // スクリプトが読み込まれたドメインを自動検出
-  static apiBaseUrl = (() => {
-    const scripts = document.querySelectorAll('script[src*="ranking.js"]');
-    for (const script of scripts) {
-      const src = script.getAttribute("src");
-      if (src && src.includes("ranking.js")) {
-        try {
-          const url = new URL(src, window.location.href);
-          return url.origin;
-        } catch (e) {
-          console.warn("Failed to parse script URL:", src);
-        }
-      }
-    }
-    // フォールバック: 現在のドメインを使用
-    return window.location.origin;
-  })();
+  // APIのベースURL
+  static apiBaseUrl = "https://api.nostalgic.llll-ll.com";
 
   constructor() {
     super();
