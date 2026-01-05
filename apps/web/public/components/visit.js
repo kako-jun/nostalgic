@@ -59,6 +59,10 @@ class NostalgicCounter extends HTMLElement {
   }
 
   attributeChangedCallback() {
+    // 初回接続前は何もしない（connectedCallbackで処理）
+    if (!this.isConnected) {
+      return;
+    }
     this.render();
   }
 
