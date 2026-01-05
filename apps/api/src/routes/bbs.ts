@@ -199,7 +199,7 @@ app.get("/", async (c) => {
     }
 
     const messages = await getMessages(db, id);
-    return c.json({ id, messages });
+    return c.json({ success: true, data: { id, messages } });
   }
 
   // GET
@@ -225,10 +225,13 @@ app.get("/", async (c) => {
     const currentUserHash = await generateUserHash(ip, userAgent);
 
     return c.json({
-      id,
-      title: metadata.title,
-      messages,
-      currentUserHash,
+      success: true,
+      data: {
+        id,
+        title: metadata.title,
+        messages,
+        currentUserHash,
+      },
     });
   }
 
@@ -283,7 +286,7 @@ app.get("/", async (c) => {
       .run();
 
     const messages = await getMessages(db, id);
-    return c.json({ id, messages, updated: messageId });
+    return c.json({ success: true, data: { id, messages, updated: messageId } });
   }
 
   // REMOVE (single message)
@@ -332,7 +335,7 @@ app.get("/", async (c) => {
     await db.prepare("DELETE FROM bbs_messages WHERE id = ?").bind(messageId).run();
 
     const messages = await getMessages(db, id);
-    return c.json({ id, messages, removed: messageId });
+    return c.json({ success: true, data: { id, messages, removed: messageId } });
   }
 
   // CLEAR
@@ -365,7 +368,7 @@ app.get("/", async (c) => {
       .bind(`bbs:${id}:messages`)
       .run();
 
-    return c.json({ id, messages: [], cleared: true });
+    return c.json({ success: true, data: { id, messages: [], cleared: true } });
   }
 
   // DELETE

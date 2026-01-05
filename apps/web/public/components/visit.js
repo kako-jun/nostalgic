@@ -118,7 +118,11 @@ class NostalgicCounter extends HTMLElement {
       } else {
         const result = await response.json();
         // カウントアップ後の値で表示を更新
-        NostalgicCounter.latestCounts.set(id, result);
+        if (result.success && result.data) {
+          NostalgicCounter.latestCounts.set(id, result.data);
+        } else {
+          NostalgicCounter.latestCounts.set(id, result);
+        }
       }
     } catch (error) {
       console.error("nostalgic-counter: Count failed:", error);

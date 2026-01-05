@@ -168,7 +168,7 @@ app.get("/", async (c) => {
     }
 
     const total = await getTotalLikes(db, id);
-    return c.json({ id, total, liked: newState });
+    return c.json({ success: true, data: { id, total, liked: newState } });
   }
 
   // GET
@@ -193,7 +193,7 @@ app.get("/", async (c) => {
       getUserLikeState(db, id, userHash, today),
     ]);
 
-    return c.json({ id, total, liked: isLiked });
+    return c.json({ success: true, data: { id, total, liked: isLiked } });
   }
 
   // DELETE

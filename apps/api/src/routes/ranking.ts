@@ -191,7 +191,7 @@ app.get("/", async (c) => {
     }
 
     const entries = await getTopEntries(db, id, RANKING.LIMIT.DEFAULT, sortOrder);
-    return c.json({ id, entries });
+    return c.json({ success: true, data: { id, entries } });
   }
 
   // GET
@@ -215,7 +215,7 @@ app.get("/", async (c) => {
     const sortOrder = metadata.sortOrder || "desc";
 
     const entries = await getTopEntries(db, id, limit, sortOrder);
-    return c.json({ id, entries, sortOrder });
+    return c.json({ success: true, data: { id, entries, sortOrder } });
   }
 
   // REMOVE

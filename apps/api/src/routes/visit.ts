@@ -171,7 +171,7 @@ app.get("/", async (c) => {
     if (visited) {
       // Already visited, return current counts
       const data = await getCounterData(db, id);
-      return c.json({ ...data, duplicate: true });
+      return c.json({ success: true, data: { ...data, duplicate: true } });
     }
 
     // Mark visit and increment
@@ -194,7 +194,7 @@ app.get("/", async (c) => {
     ]);
 
     const data = await getCounterData(db, id);
-    return c.json(data);
+    return c.json({ success: true, data });
   }
 
   // DISPLAY (GET)
@@ -235,7 +235,7 @@ app.get("/", async (c) => {
       });
     }
 
-    return c.json(data);
+    return c.json({ success: true, data });
   }
 
   // SET (owner only)
@@ -278,7 +278,7 @@ app.get("/", async (c) => {
       .run();
 
     const data = await getCounterData(db, id);
-    return c.json(data);
+    return c.json({ success: true, data });
   }
 
   // DELETE (owner only)
