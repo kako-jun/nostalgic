@@ -69,7 +69,7 @@ class NostalgicRanking extends HTMLElement {
       this.loading = true;
       this.render();
 
-      let url = `${NostalgicRanking.apiBaseUrl}/ranking?action=display&id=${encodeURIComponent(id)}`;
+      let url = `${NostalgicRanking.apiBaseUrl}/ranking?action=get&id=${encodeURIComponent(id)}`;
       if (limit) {
         url += `&limit=${encodeURIComponent(limit)}`;
       }

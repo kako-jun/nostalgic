@@ -148,7 +148,7 @@ class NostalgicLike extends HTMLElement {
     if (format === "image") {
       const baseUrl = this.safeGetAttribute("api-base") || NostalgicLike.apiBaseUrl;
       const id = this.safeGetAttribute("id");
-      const apiUrl = `${baseUrl}/like?action=display&id=${encodeURIComponent(id)}${theme ? `&theme=${theme}` : ""}&format=image`;
+      const apiUrl = `${baseUrl}/like?action=get&id=${encodeURIComponent(id)}${theme ? `&theme=${theme}` : ""}&format=image`;
 
       this.shadowRoot.innerHTML = `
         <style>
