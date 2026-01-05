@@ -36,10 +36,10 @@ export const getLikeFormSections = (
   // STEP 2: Display
   {
     title: "◆STEP 2: いいね表示◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/like?action=display&id=${encodeURIComponent(publicId || "公開ID")}&format=${selectedFormat}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/like?action=display&id=${encodeURIComponent(publicId || "公開ID")}&format=${selectedFormat}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/like?action=display&id=
+        https://api.nostalgic.llll-ll.com/api/like?action=display&id=
         <GreenParam>{publicId || "公開ID"}</GreenParam>
         &format=<GreenParam>{selectedFormat}</GreenParam>
       </>
@@ -76,10 +76,10 @@ export const getLikeFormSections = (
   // Toggle
   {
     title: "◆公開IDを再確認したいときは？◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/like?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/like?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/like?action=create&url=
+        https://api.nostalgic.llll-ll.com/api/like?action=create&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
         {webhookUrl && (
@@ -117,10 +117,10 @@ export const getLikeFormSections = (
   // Toggle Like
   {
     title: "◆いいねをトグルしたいときは？◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/like?action=toggle&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/like?action=toggle&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/like?action=toggle&url=
+        https://api.nostalgic.llll-ll.com/api/like?action=toggle&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
       </>
@@ -153,10 +153,10 @@ export const getLikeFormSections = (
   // Get Like Data
   {
     title: "◆いいねデータを取得したいときは？◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/like?action=get&id=${encodeURIComponent(publicId || "公開ID")}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/like?action=get&id=${encodeURIComponent(publicId || "公開ID")}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/like?action=get&id=
+        https://api.nostalgic.llll-ll.com/api/like?action=get&id=
         <GreenParam>{publicId || "公開ID"}</GreenParam>
       </>
     ),
@@ -178,10 +178,10 @@ export const getLikeFormSections = (
   // Set Value
   {
     title: "◆いいね数を設定したいときは？◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/like?action=set&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&value=${setValue || "数値"}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/like?action=set&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&value=${setValue || "数値"}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/like?action=set&url=
+        https://api.nostalgic.llll-ll.com/api/like?action=set&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&value=
         <GreenParam>{setValue || "数値"}</GreenParam>
@@ -234,10 +234,10 @@ export const getLikeFormSections = (
   {
     title: "◆設定更新◆",
     description: "いいねボタンの設定を更新します。",
-    apiUrl: `https://nostalgic.llll-ll.com/api/like?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/like?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/like?action=updateSettings&url=
+        https://api.nostalgic.llll-ll.com/api/like?action=updateSettings&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
         {webhookUrl && (
@@ -283,10 +283,10 @@ export const getLikeFormSections = (
   // Delete
   {
     title: "◆いいねを削除したいときは？◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/like?action=delete&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/like?action=delete&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/like?action=delete&url=
+        https://api.nostalgic.llll-ll.com/api/like?action=delete&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
       </>

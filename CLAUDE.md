@@ -156,10 +156,10 @@ cd api && pnpm db:remote "SELECT * FROM services"
 
 ```bash
 # API経由削除（トークンが分かる場合）
-curl "https://nostalgic.llll-ll.com/api/visit?action=delete&url={URL}&token={TOKEN}"
-curl "https://nostalgic.llll-ll.com/api/like?action=delete&url={URL}&token={TOKEN}"
-curl "https://nostalgic.llll-ll.com/api/ranking?action=delete&url={URL}&token={TOKEN}"
-curl "https://nostalgic.llll-ll.com/api/bbs?action=delete&url={URL}&token={TOKEN}"
+curl "https://api.nostalgic.llll-ll.com/api/visit?action=delete&url={URL}&token={TOKEN}"
+curl "https://api.nostalgic.llll-ll.com/api/like?action=delete&url={URL}&token={TOKEN}"
+curl "https://api.nostalgic.llll-ll.com/api/ranking?action=delete&url={URL}&token={TOKEN}"
+curl "https://api.nostalgic.llll-ll.com/api/bbs?action=delete&url={URL}&token={TOKEN}"
 ```
 
 ## 使用方法
@@ -169,23 +169,23 @@ curl "https://nostalgic.llll-ll.com/api/bbs?action=delete&url={URL}&token={TOKEN
 ブラウザのアドレスバーに直接入力：
 
 ```
-https://nostalgic.llll-ll.com/api/{service}?action=create&url=https://example.com&token=your-secret
+https://api.nostalgic.llll-ll.com/api/{service}?action=create&url=https://example.com&token=your-secret
 ```
 
 ### 2. 操作
 
 ```
 # カウントアップ
-https://nostalgic.llll-ll.com/api/visit?action=increment&id=your-id
+https://api.nostalgic.llll-ll.com/api/visit?action=increment&id=your-id
 
 # いいねトグル
-https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://example.com&token=your-secret
+https://api.nostalgic.llll-ll.com/api/like?action=toggle&url=https://example.com&token=your-secret
 
 # スコア送信
-https://nostalgic.llll-ll.com/api/ranking?action=submit&url=https://example.com&token=your-secret&name=Player&score=1000
+https://api.nostalgic.llll-ll.com/api/ranking?action=submit&url=https://example.com&token=your-secret&name=Player&score=1000
 
 # メッセージ投稿（純粋なGET、1990年代スタイル）
-https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://example.com&token=your-secret&author=User&message=Hello
+https://api.nostalgic.llll-ll.com/api/bbs?action=post&url=https://example.com&token=your-secret&author=User&message=Hello
 ```
 
 ### 3. 埋め込み（Counter例）

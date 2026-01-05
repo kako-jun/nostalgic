@@ -50,7 +50,7 @@ _[English version here](README.md)_
 1. **カウンター作成**:
 
 ```
-https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&token=your-secret-token
+https://api.nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&token=your-secret-token
 ```
 
 2. **サイトに埋め込み**:
@@ -65,13 +65,13 @@ https://nostalgic.llll-ll.com/api/visit?action=create&url=https://yoursite.com&t
 1. **いいねボタン作成**:
 
 ```
-https://nostalgic.llll-ll.com/api/like?action=create&url=https://yoursite.com&token=your-secret-token
+https://api.nostalgic.llll-ll.com/api/like?action=create&url=https://yoursite.com&token=your-secret-token
 ```
 
 2. **いいねトグル**:
 
 ```
-https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.com&token=your-secret-token
+https://api.nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.com&token=your-secret-token
 ```
 
 ### ランキングサービス
@@ -79,13 +79,13 @@ https://nostalgic.llll-ll.com/api/like?action=toggle&url=https://yoursite.com&to
 1. **ランキング作成**:
 
 ```
-https://nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret-token&max=100
+https://api.nostalgic.llll-ll.com/api/ranking?action=create&url=https://yoursite.com&token=your-secret-token&max=100
 ```
 
 2. **スコア送信**:
 
 ```
-https://nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursite.com&token=your-secret-token&name=Player1&score=1000
+https://api.nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursite.com&token=your-secret-token&name=Player1&score=1000
 ```
 
 ### BBSサービス
@@ -93,13 +93,13 @@ https://nostalgic.llll-ll.com/api/ranking?action=submit&url=https://yoursite.com
 1. **BBS作成**:
 
 ```
-https://nostalgic.llll-ll.com/api/bbs?action=create&url=https://yoursite.com&token=your-secret-token&max=1000
+https://api.nostalgic.llll-ll.com/api/bbs?action=create&url=https://yoursite.com&token=your-secret-token&max=1000
 ```
 
 2. **メッセージ投稿**（純粋なGET、1990年代スタイル）:
 
 ```
-https://nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com&token=your-secret-token&author=User&message=こんにちは！
+https://api.nostalgic.llll-ll.com/api/bbs?action=post&url=https://yoursite.com&token=your-secret-token&author=User&message=こんにちは！
 ```
 
 ## 🎮 デモを試す

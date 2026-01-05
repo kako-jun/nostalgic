@@ -123,7 +123,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       apiUrl: `/api/bbs?action=post&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&author=${encodeURIComponent(postAuthor || "投稿者名")}&message=${encodeURIComponent(postMessage || "メッセージ")}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ""}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ""}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ""}`,
       apiUrlDisplay: (
         <>
-          https://nostalgic.llll-ll.com/api/bbs?action=post&url=
+          https://api.nostalgic.llll-ll.com/api/bbs?action=post&url=
           <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
           &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
           &author=<GreenParam>{postAuthor || "投稿者名"}</GreenParam>
@@ -198,7 +198,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       apiUrl: `/api/bbs?action=get&id=${encodeURIComponent(publicId || "パブリックID")}`,
       apiUrlDisplay: (
         <>
-          https://nostalgic.llll-ll.com/api/bbs?action=get&id=
+          https://api.nostalgic.llll-ll.com/api/bbs?action=get&id=
           <GreenParam>{publicId || "パブリックID"}</GreenParam>
         </>
       ),
@@ -214,7 +214,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       apiUrl: `/api/bbs?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
       apiUrlDisplay: (
         <>
-          https://nostalgic.llll-ll.com/api/bbs?action=create&url=
+          https://api.nostalgic.llll-ll.com/api/bbs?action=create&url=
           <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
           &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
         </>
@@ -231,7 +231,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       apiUrl: `/api/bbs?action=editMessage&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&messageId=${messageId || "メッセージID"}&author=${encodeURIComponent(editAuthor || "投稿者名")}&message=${encodeURIComponent(editMessage || "新しいメッセージ")}${editStandardValue ? `&standardValue=${encodeURIComponent(editStandardValue)}` : ""}${editIncrementalValue ? `&incrementalValue=${encodeURIComponent(editIncrementalValue)}` : ""}${editEmoteValue ? `&emoteValue=${encodeURIComponent(editEmoteValue)}` : ""}`,
       apiUrlDisplay: (
         <>
-          https://nostalgic.llll-ll.com/api/bbs?action=editMessage&url=
+          https://api.nostalgic.llll-ll.com/api/bbs?action=editMessage&url=
           <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
           &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
           &messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>
@@ -315,7 +315,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       apiUrl: `/api/bbs?action=deleteMessage&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&messageId=${messageId || "メッセージID"}`,
       apiUrlDisplay: (
         <>
-          https://nostalgic.llll-ll.com/api/bbs?action=deleteMessage&url=
+          https://api.nostalgic.llll-ll.com/api/bbs?action=deleteMessage&url=
           <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
           &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
           &messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>
@@ -342,7 +342,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       apiUrl: `/api/bbs?action=editMessageById&id=${encodeURIComponent(publicId || "パブリックID")}&messageId=${messageId || "メッセージID"}&author=${encodeURIComponent(editAuthor || "投稿者名")}&message=${encodeURIComponent(editMessage || "新しいメッセージ")}&editToken=${encodeURIComponent(editToken || "編集トークン")}${editStandardValue ? `&standardValue=${encodeURIComponent(editStandardValue)}` : ""}${editIncrementalValue ? `&incrementalValue=${encodeURIComponent(editIncrementalValue)}` : ""}${editEmoteValue ? `&emoteValue=${encodeURIComponent(editEmoteValue)}` : ""}`,
       apiUrlDisplay: (
         <>
-          https://nostalgic.llll-ll.com/api/bbs?action=editMessageById&id=
+          https://api.nostalgic.llll-ll.com/api/bbs?action=editMessageById&id=
           <GreenParam>{publicId || "パブリックID"}</GreenParam>
           &messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>
           &author=<GreenParam>{editAuthor || "投稿者名"}</GreenParam>
@@ -434,7 +434,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       apiUrl: `/api/bbs?action=deleteMessageById&id=${encodeURIComponent(publicId || "パブリックID")}&messageId=${messageId || "メッセージID"}&editToken=${encodeURIComponent(editToken || "編集トークン")}`,
       apiUrlDisplay: (
         <>
-          https://nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&id=
+          https://api.nostalgic.llll-ll.com/api/bbs?action=deleteMessageById&id=
           <GreenParam>{publicId || "パブリックID"}</GreenParam>
           &messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>
           &editToken=<GreenParam>{editToken || "編集トークン"}</GreenParam>
@@ -469,7 +469,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       apiUrl: `/api/bbs?action=clear&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
       apiUrlDisplay: (
         <>
-          https://nostalgic.llll-ll.com/api/bbs?action=clear&url=
+          https://api.nostalgic.llll-ll.com/api/bbs?action=clear&url=
           <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
           &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
         </>
@@ -486,7 +486,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       apiUrl: `/api/bbs?action=delete&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
       apiUrlDisplay: (
         <>
-          https://nostalgic.llll-ll.com/api/bbs?action=delete&url=
+          https://api.nostalgic.llll-ll.com/api/bbs?action=delete&url=
           <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
           &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
         </>
@@ -503,7 +503,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       apiUrl: `/api/bbs?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
       apiUrlDisplay: (
         <>
-          https://nostalgic.llll-ll.com/api/bbs?action=updateSettings&url=
+          https://api.nostalgic.llll-ll.com/api/bbs?action=updateSettings&url=
           <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
           &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
         </>

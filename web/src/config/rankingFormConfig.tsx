@@ -55,10 +55,10 @@ export const getRankingFormSections = (
   // Submit
   {
     title: "◆STEP 2: スコア登録◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/ranking?action=submit&id=${encodeURIComponent(publicId || "公開ID")}&name=${encodeURIComponent(submitName || "名前")}&score=${submitScore || "スコア"}${submitDisplayScore ? `&displayScore=${encodeURIComponent(submitDisplayScore)}` : ""}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/ranking?action=submit&id=${encodeURIComponent(publicId || "公開ID")}&name=${encodeURIComponent(submitName || "名前")}&score=${submitScore || "スコア"}${submitDisplayScore ? `&displayScore=${encodeURIComponent(submitDisplayScore)}` : ""}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/ranking?action=submit&id=
+        https://api.nostalgic.llll-ll.com/api/ranking?action=submit&id=
         <GreenParam>{publicId || "公開ID"}</GreenParam>
         &name=<GreenParam>{submitName || "名前"}</GreenParam>&score=
         <GreenParam>{submitScore || "スコア"}</GreenParam>
@@ -117,10 +117,10 @@ export const getRankingFormSections = (
   // Get
   {
     title: "◆ランキングデータを取得したいときは？◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/ranking?action=get&id=${encodeURIComponent(publicId || "公開ID")}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/ranking?action=get&id=${encodeURIComponent(publicId || "公開ID")}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/ranking?action=get&id=
+        https://api.nostalgic.llll-ll.com/api/ranking?action=get&id=
         <GreenParam>{publicId || "公開ID"}</GreenParam>
       </>
     ),
@@ -142,10 +142,10 @@ export const getRankingFormSections = (
   // Confirm Public ID
   {
     title: "◆公開IDを再確認したいときは？◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/ranking?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/ranking?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/ranking?action=create&url=
+        https://api.nostalgic.llll-ll.com/api/ranking?action=create&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
       </>
@@ -178,10 +178,10 @@ export const getRankingFormSections = (
   // Update
   {
     title: "◆スコアを更新したいときは？◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/ranking?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&name=${encodeURIComponent(updateName || "名前")}&score=${updateScore || "スコア"}${updateDisplayScore ? `&displayScore=${encodeURIComponent(updateDisplayScore)}` : ""}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/ranking?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&name=${encodeURIComponent(updateName || "名前")}&score=${updateScore || "スコア"}${updateDisplayScore ? `&displayScore=${encodeURIComponent(updateDisplayScore)}` : ""}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/ranking?action=update&url=
+        https://api.nostalgic.llll-ll.com/api/ranking?action=update&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&name=
         <GreenParam>{updateName || "名前"}</GreenParam>&score=
@@ -250,10 +250,10 @@ export const getRankingFormSections = (
   // Remove
   {
     title: "◆エントリを削除したいときは？◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/ranking?action=remove&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&name=${encodeURIComponent(removeName || "名前")}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/ranking?action=remove&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&name=${encodeURIComponent(removeName || "名前")}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/ranking?action=remove&url=
+        https://api.nostalgic.llll-ll.com/api/ranking?action=remove&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&name=
         <GreenParam>{removeName || "名前"}</GreenParam>
@@ -298,10 +298,10 @@ export const getRankingFormSections = (
   // Clear
   {
     title: "◆全エントリをクリアしたいときは？◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/ranking?action=clear&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/ranking?action=clear&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/ranking?action=clear&url=
+        https://api.nostalgic.llll-ll.com/api/ranking?action=clear&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
       </>
@@ -341,10 +341,10 @@ export const getRankingFormSections = (
   {
     title: "◆設定更新◆",
     description: "ランキングの設定を更新します。",
-    apiUrl: `https://nostalgic.llll-ll.com/api/ranking?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${settingsTitle ? `&title=${encodeURIComponent(settingsTitle)}` : ""}${settingsMax ? `&max=${settingsMax}` : ""}${settingsSortOrder ? `&sortOrder=${settingsSortOrder}` : ""}${settingsWebhookUrl ? `&webhookUrl=${encodeURIComponent(settingsWebhookUrl)}` : ""}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/ranking?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${settingsTitle ? `&title=${encodeURIComponent(settingsTitle)}` : ""}${settingsMax ? `&max=${settingsMax}` : ""}${settingsSortOrder ? `&sortOrder=${settingsSortOrder}` : ""}${settingsWebhookUrl ? `&webhookUrl=${encodeURIComponent(settingsWebhookUrl)}` : ""}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/ranking?action=updateSettings&url=
+        https://api.nostalgic.llll-ll.com/api/ranking?action=updateSettings&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
         {settingsTitle && (
@@ -436,10 +436,10 @@ export const getRankingFormSections = (
   // Delete
   {
     title: "◆ランキングを削除したいときは？◆",
-    apiUrl: `https://nostalgic.llll-ll.com/api/ranking?action=delete&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/api/ranking?action=delete&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
     apiUrlDisplay: (
       <>
-        https://nostalgic.llll-ll.com/api/ranking?action=delete&url=
+        https://api.nostalgic.llll-ll.com/api/ranking?action=delete&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
       </>
