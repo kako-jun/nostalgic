@@ -234,7 +234,7 @@ export default function HomePage() {
                         gap: "4px",
                       }}
                     >
-                      <nostalgic-counter id="nostalgic-89b5ee98" type="total" theme="light" />
+                      <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="light" />
                       回も閲覧されました！
                     </span>
                   </p>
@@ -244,7 +244,7 @@ export default function HomePage() {
                   <br />
                   <div style={{ marginTop: "10px" }}>
                     <nostalgic-counter
-                      id="nostalgic-89b5ee98"
+                      id="nostalgic-b89803bb"
                       type="today"
                       theme="dark"
                       digits="3"
@@ -256,7 +256,7 @@ export default function HomePage() {
                   <br />
                   <div style={{ marginTop: "10px" }}>
                     <nostalgic-counter
-                      id="nostalgic-89b5ee98"
+                      id="nostalgic-b89803bb"
                       type="yesterday"
                       theme="dark"
                       digits="3"
@@ -268,7 +268,7 @@ export default function HomePage() {
                   <br />
                   <div style={{ marginTop: "10px" }}>
                     <nostalgic-counter
-                      id="nostalgic-89b5ee98"
+                      id="nostalgic-b89803bb"
                       type="week"
                       theme="retro"
                       digits="4"
@@ -280,7 +280,7 @@ export default function HomePage() {
                   <br />
                   <div style={{ marginTop: "10px" }}>
                     <nostalgic-counter
-                      id="nostalgic-89b5ee98"
+                      id="nostalgic-b89803bb"
                       type="month"
                       theme="retro"
                       digits="4"
@@ -303,7 +303,7 @@ export default function HomePage() {
                     Kawaii
                   </p>
                   <nostalgic-counter
-                    id="nostalgic-89b5ee98"
+                    id="nostalgic-b89803bb"
                     type="total"
                     theme="kawaii"
                     digits="5"
@@ -313,12 +313,12 @@ export default function HomePage() {
                   <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>
                     Mother味
                   </p>
-                  <nostalgic-counter id="nostalgic-89b5ee98" type="total" theme="mom" digits="5" />
+                  <nostalgic-counter id="nostalgic-b89803bb" type="total" theme="mom" digits="5" />
                 </div>
                 <div style={{ textAlign: "center" }}>
                   <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>FF味</p>
                   <nostalgic-counter
-                    id="nostalgic-89b5ee98"
+                    id="nostalgic-b89803bb"
                     type="total"
                     theme="final"
                     digits="5"
@@ -338,11 +338,11 @@ export default function HomePage() {
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <span>総アクセス数:</span>
-                    <nostalgic-counter id="nostalgic-89b5ee98" type="total" format="text" />
+                    <nostalgic-counter id="nostalgic-b89803bb" type="total" format="text" />
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <span>今日:</span>
-                    <nostalgic-counter id="nostalgic-89b5ee98" type="today" format="text" />
+                    <nostalgic-counter id="nostalgic-b89803bb" type="today" format="text" />
                   </div>
                 </div>
               </div>
@@ -398,7 +398,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="light" icon="heart" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="light" icon="heart" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -413,7 +413,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="light" icon="star" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="light" icon="star" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -428,7 +428,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="light" icon="thumb" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="light" icon="thumb" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -443,7 +443,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="light" icon="peta" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="light" icon="peta" />
                         </div>
                       </div>
                     </div>
@@ -482,7 +482,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="dark" icon="heart" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="heart" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -498,7 +498,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="dark" icon="star" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="star" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -514,7 +514,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="dark" icon="thumb" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="thumb" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -530,7 +530,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="dark" icon="peta" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="dark" icon="peta" />
                         </div>
                       </div>
                     </div>
@@ -569,7 +569,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="retro" icon="heart" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="retro" icon="heart" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -585,7 +585,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="retro" icon="star" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="retro" icon="star" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -601,7 +601,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="retro" icon="thumb" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="retro" icon="thumb" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -617,7 +617,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="retro" icon="peta" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="retro" icon="peta" />
                         </div>
                       </div>
                     </div>
@@ -655,7 +655,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="kawaii" icon="heart" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" icon="heart" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -670,7 +670,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="kawaii" icon="star" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" icon="star" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -685,7 +685,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="kawaii" icon="thumb" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" icon="thumb" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -700,7 +700,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="kawaii" icon="peta" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="kawaii" icon="peta" />
                         </div>
                       </div>
                     </div>
@@ -738,7 +738,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="mom" icon="heart" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="mom" icon="heart" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -753,7 +753,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="mom" icon="star" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="mom" icon="star" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -768,7 +768,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="mom" icon="thumb" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="mom" icon="thumb" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -783,7 +783,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="mom" icon="peta" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="mom" icon="peta" />
                         </div>
                       </div>
                     </div>
@@ -822,7 +822,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="final" icon="heart" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="final" icon="heart" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -838,7 +838,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="final" icon="star" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="final" icon="star" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -854,7 +854,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="final" icon="thumb" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="final" icon="thumb" />
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -870,7 +870,7 @@ export default function HomePage() {
                             justifyContent: "center",
                           }}
                         >
-                          <nostalgic-like id="nostalgic-89b5ee98" theme="final" icon="peta" />
+                          <nostalgic-like id="nostalgic-b89803bb" theme="final" icon="peta" />
                         </div>
                       </div>
                     </div>
@@ -890,7 +890,7 @@ export default function HomePage() {
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <span>いいね数:</span>
-                    <nostalgic-like id="nostalgic-89b5ee98" format="text" theme="kawaii" />
+                    <nostalgic-like id="nostalgic-b89803bb" format="text" theme="kawaii" />
                     <span>（クリックでトグル）</span>
                   </div>
                 </div>
@@ -1116,7 +1116,7 @@ export default function HomePage() {
               {/* Kawaii Theme */}
               <div style={{ margin: "20px 0", textAlign: "center" }}>
                 <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>Kawaii</p>
-                <nostalgic-ranking id="nostalgic-89b5ee98" theme="kawaii" limit="5" />
+                <nostalgic-ranking id="nostalgic-b89803bb" theme="kawaii" limit="5" />
               </div>
 
               {/* Mother Theme */}
@@ -1124,7 +1124,7 @@ export default function HomePage() {
                 <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>
                   Mother味
                 </p>
-                <nostalgic-ranking id="nostalgic-89b5ee98" theme="mom" limit="5" />
+                <nostalgic-ranking id="nostalgic-b89803bb" theme="mom" limit="5" />
               </div>
 
               {/* FF Theme */}
@@ -1140,7 +1140,7 @@ export default function HomePage() {
                     maxWidth: "100%",
                   }}
                 >
-                  <nostalgic-ranking id="nostalgic-89b5ee98" theme="final" limit="5" />
+                  <nostalgic-ranking id="nostalgic-b89803bb" theme="final" limit="5" />
                 </div>
               </div>
             </div>
@@ -1202,7 +1202,7 @@ export default function HomePage() {
                     maxWidth: "100%",
                   }}
                 >
-                  <nostalgic-bbs id="nostalgic-89b5ee98" theme="retro" />
+                  <nostalgic-bbs id="nostalgic-b89803bb" theme="retro" />
                 </div>
               </div>
             </div>
@@ -1225,7 +1225,7 @@ export default function HomePage() {
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <nostalgic-bbs id="nostalgic-89b5ee98" theme="mom" />
+                <nostalgic-bbs id="nostalgic-b89803bb" theme="mom" />
               </div>
             </div>
 
@@ -1246,7 +1246,7 @@ export default function HomePage() {
                     maxWidth: "100%",
                   }}
                 >
-                  <nostalgic-bbs id="nostalgic-89b5ee98" theme="final" />
+                  <nostalgic-bbs id="nostalgic-b89803bb" theme="final" />
                 </div>
               </div>
             </div>
