@@ -206,7 +206,7 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=get&url=https://example.com
 | `value` | number | No | 設定する値（0以上） |
 | `webhookUrl` | string | No | Webhook URL（空文字で削除） |
 
-※ `value`と`webhookUrl`は両方同時に指定可能。どちらか1つ以上必須。
+※ 変更したいパラメータのみ指定。何も指定しない場合は何も変更されません。
 
 **Example Request**:
 
@@ -319,6 +319,8 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=update&url=https://example.
 | `token` | string | Yes | オーナートークン |
 | `webhookUrl` | string | No | Webhook URL（空文字で削除） |
 
+※ 変更したいパラメータのみ指定。何も指定しない場合は何も変更されません。
+
 ---
 
 ## Ranking Service API
@@ -414,6 +416,8 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=update&url=https://example.
 | `maxEntries` | number | No | 最大エントリー数（1-100） |
 | `sortOrder` | string | No | 並び順: `desc`, `asc` |
 | `webhookUrl` | string | No | Webhook URL（空文字で削除） |
+
+※ 変更したいパラメータのみ指定。何も指定しない場合は何も変更されません。
 
 ### 5. エントリー削除
 
@@ -548,6 +552,7 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=update&url=https://example.
 | `webhookUrl` | string | No | Webhook URL（空文字で削除） |
 
 ※ `messageId`パラメータがない場合、設定更新として処理されます。
+※ 変更したいパラメータのみ指定。何も指定しない場合は何も変更されません。
 
 ### 4. メッセージ削除
 
