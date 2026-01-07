@@ -40,7 +40,7 @@ export default function CounterPage() {
     e.preventDefault();
     if (!publicId) return;
 
-    const apiUrl = `/api/visit?action=display&id=${encodeURIComponent(publicId)}&type=${selectedFormat.replace("json", "total").replace("text", "total").replace("svg", "total")}&format=${selectedFormat}`;
+    const apiUrl = `/api/visit?action=get&id=${encodeURIComponent(publicId)}&type=total&format=${selectedFormat}`;
     await callApiWithFormat(
       apiUrl,
       selectedFormat as "json" | "text" | "svg",
@@ -51,9 +51,9 @@ export default function CounterPage() {
 
   const handleIncrement = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sharedUrl || !sharedToken) return;
+    if (!publicId) return;
 
-    const apiUrl = `/api/visit?action=increment&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    const apiUrl = `/api/visit?action=increment&id=${encodeURIComponent(publicId)}`;
     await callApi(apiUrl, setIncrementResponse);
   };
 
@@ -69,7 +69,7 @@ export default function CounterPage() {
     e.preventDefault();
     if (!sharedUrl || !sharedToken || !setValue) return;
 
-    const apiUrl = `/api/visit?action=set&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&value=${setValue}`;
+    const apiUrl = `/api/visit?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&value=${setValue}`;
     await callApi(apiUrl, setSetResponse);
   };
 
@@ -85,7 +85,7 @@ export default function CounterPage() {
     e.preventDefault();
     if (!sharedUrl || !sharedToken) return;
 
-    let apiUrl = `/api/visit?action=updateSettings&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    let apiUrl = `/api/visit?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setUpdateSettingsResponse);

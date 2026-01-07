@@ -85,6 +85,7 @@ https://api.nostalgic.llll-ll.com
 | `action` | string | Yes | `"create"` |
 | `url` | string | Yes | サイトのURL |
 | `token` | string | Yes | オーナートークン（8-16文字） |
+| `webhookUrl` | string | No | Webhook URL（イベント通知用） |
 
 **Example Request**:
 
@@ -141,11 +142,13 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=increment&id=example-a7b9c3
 }
 ```
 
-### 3. カウンター表示
+### 3. カウンター取得
 
 カウンターの値を取得します（SVG画像、JSON、テキスト形式）。
 
 **Endpoint**: `GET /visit?action=get`
+
+#### 公開モード（idで取得）
 
 **Parameters**:
 | Name | Type | Required | Default | Description |
@@ -157,6 +160,17 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=increment&id=example-a7b9c3
 | `theme` | string | No | `"dark"` | テーマ: `light`, `dark`, `kawaii` (image形式のみ) |
 | `digits` | number | No | `6` | 表示桁数: 1-10 (image形式のみ) |
 
+#### オーナーモード（url+tokenで取得）
+
+全設定情報（webhookUrl等）を含むレスポンスを返します。
+
+**Parameters**:
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | string | Yes | `"get"` |
+| `url` | string | Yes | サイトのURL |
+| `token` | string | Yes | オーナートークン |
+
 **Example Requests**:
 
 SVG画像取得:
@@ -165,30 +179,47 @@ SVG画像取得:
 curl "https://api.nostalgic.llll-ll.com/visit?action=get&id=example-a7b9c3d4&format=image&theme=kawaii"
 ```
 
-JSON取得:
+JSON取得（公開モード）:
 
 ```bash
 curl "https://api.nostalgic.llll-ll.com/visit?action=get&id=example-a7b9c3d4&format=json"
 ```
 
-### 4. カウンター値設定
+JSON取得（オーナーモード - 全設定含む）:
 
-カウンターの値を指定値に設定します（オーナー権限必要）。
+```bash
+curl "https://api.nostalgic.llll-ll.com/visit?action=get&url=https://example.com&token=mysecret123"
+```
 
-**Endpoint**: `GET /visit?action=set`
+### 4. カウンター更新
+
+カウンターの値や設定を更新します（オーナー権限必要）。
+
+**Endpoint**: `GET /visit?action=update`
 
 **Parameters**:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `action` | string | Yes | `"set"` |
+| `action` | string | Yes | `"update"` |
 | `url` | string | Yes | サイトのURL |
 | `token` | string | Yes | オーナートークン |
-| `total` | number | Yes | 設定する値（0以上） |
+| `value` | number | No | 設定する値（0以上） |
+| `webhookUrl` | string | No | Webhook URL（空文字で削除） |
+
+※ `value`と`webhookUrl`は両方同時に指定可能。どちらか1つ以上必須。
 
 **Example Request**:
 
+値を変更:
+
 ```bash
-curl "https://api.nostalgic.llll-ll.com/visit?action=set&url=https://example.com&token=mysecret123&total=1000"
+curl "https://api.nostalgic.llll-ll.com/visit?action=update&url=https://example.com&token=mysecret123&value=1000"
+```
+
+設定を変更:
+
+```bash
+curl "https://api.nostalgic.llll-ll.com/visit?action=update&url=https://example.com&token=mysecret123&webhookUrl=https://hooks.example.com/notify"
 ```
 
 ---
@@ -207,6 +238,7 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=set&url=https://example.com
 | `action` | string | Yes | `"create"` |
 | `url` | string | Yes | サイトのURL |
 | `token` | string | Yes | オーナートークン（8-16文字） |
+| `webhookUrl` | string | No | Webhook URL（イベント通知用） |
 
 **Example Response**:
 
@@ -254,11 +286,38 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=set&url=https://example.com
 
 **Endpoint**: `GET /like?action=get`
 
+#### 公開モード（idで取得）
+
 **Parameters**:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `action` | string | Yes | `"get"` |
 | `id` | string | Yes | いいねボタンID |
+
+#### オーナーモード（url+tokenで取得）
+
+全設定情報（webhookUrl等）を含むレスポンスを返します。
+
+**Parameters**:
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | string | Yes | `"get"` |
+| `url` | string | Yes | サイトのURL |
+| `token` | string | Yes | オーナートークン |
+
+### 4. いいね設定更新
+
+設定を更新します（オーナー権限必要）。
+
+**Endpoint**: `GET /like?action=update`
+
+**Parameters**:
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | string | Yes | `"update"` |
+| `url` | string | Yes | サイトのURL |
+| `token` | string | Yes | オーナートークン |
+| `webhookUrl` | string | No | Webhook URL（空文字で削除） |
 
 ---
 
@@ -276,12 +335,13 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=set&url=https://example.com
 | `action` | string | Yes | - | `"create"` |
 | `url` | string | Yes | - | サイトのURL |
 | `token` | string | Yes | - | オーナートークン |
-| `maxEntries` | number | No | `10` | 最大エントリー数（1-100） |
-| `orderBy` | string | No | `"desc"` | 並び順: `desc`, `asc` |
+| `maxEntries` | number | No | `100` | 最大エントリー数（1-100） |
+| `sortOrder` | string | No | `"desc"` | 並び順: `desc`, `asc` |
+| `webhookUrl` | string | No | - | Webhook URL（イベント通知用） |
 
 ### 2. スコア送信
 
-ランキングに新しいスコアを送信します。
+ランキングにスコアを送信します。同名のエントリーが存在する場合は上書き（UPSERT）。
 
 **Endpoint**: `GET /ranking?action=submit`
 
@@ -307,15 +367,41 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=set&url=https://example.com
       { "rank": 3, "name": "Charlie", "score": 7200 }
     ],
     "totalEntries": 3,
-    "maxEntries": 10,
+    "maxEntries": 100,
     "created": "2025-08-01T10:00:00.000Z"
   }
 }
 ```
 
-### 3. スコア更新
+### 3. ランキング取得
 
-既存エントリーのスコアを更新します（オーナー権限必要）。
+ランキングデータを取得します。
+
+**Endpoint**: `GET /ranking?action=get`
+
+#### 公開モード（idで取得）
+
+**Parameters**:
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `action` | string | Yes | - | `"get"` |
+| `id` | string | Yes | - | ランキングID |
+| `limit` | number | No | `10` | 取得件数（1-100） |
+
+#### オーナーモード（url+tokenで取得）
+
+全設定情報（webhookUrl等）を含むレスポンスを返します。
+
+**Parameters**:
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | string | Yes | `"get"` |
+| `url` | string | Yes | サイトのURL |
+| `token` | string | Yes | オーナートークン |
+
+### 4. ランキング設定更新
+
+設定を更新します（オーナー権限必要）。
 
 **Endpoint**: `GET /ranking?action=update`
 
@@ -325,10 +411,11 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=set&url=https://example.com
 | `action` | string | Yes | `"update"` |
 | `url` | string | Yes | サイトのURL |
 | `token` | string | Yes | オーナートークン |
-| `name` | string | Yes | プレイヤー名 |
-| `score` | number | Yes | 新しいスコア |
+| `maxEntries` | number | No | 最大エントリー数（1-100） |
+| `sortOrder` | string | No | 並び順: `desc`, `asc` |
+| `webhookUrl` | string | No | Webhook URL（空文字で削除） |
 
-### 4. エントリー削除
+### 5. エントリー削除
 
 ランキングからエントリーを削除します（オーナー権限必要）。
 
@@ -341,19 +428,6 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=set&url=https://example.com
 | `url` | string | Yes | サイトのURL |
 | `token` | string | Yes | オーナートークン |
 | `name` | string | Yes | 削除するプレイヤー名 |
-
-### 5. ランキング取得
-
-ランキングデータを取得します。
-
-**Endpoint**: `GET /ranking?action=get`
-
-**Parameters**:
-| Name | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `action` | string | Yes | - | `"get"` |
-| `id` | string | Yes | - | ランキングID |
-| `limit` | number | No | `10` | 取得件数（1-100） |
 
 ### 6. ランキングクリア
 
@@ -459,6 +533,22 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=set&url=https://example.com
 | `messageId` | string | Yes | メッセージID |
 | `message` | string | Yes | 新しいメッセージ（1-200文字） |
 
+#### 設定更新（messageIdなし）
+
+**Endpoint**: `GET /bbs?action=update`
+
+**Parameters**:
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | string | Yes | `"update"` |
+| `url` | string | Yes | サイトのURL |
+| `token` | string | Yes | オーナートークン |
+| `messagesPerPage` | number | No | 1ページの表示件数（1-50） |
+| `max` | number | No | 最大メッセージ数（1-1000） |
+| `webhookUrl` | string | No | Webhook URL（空文字で削除） |
+
+※ `messageId`パラメータがない場合、設定更新として処理されます。
+
 ### 4. メッセージ削除
 
 メッセージを削除します（投稿者またはオーナー権限必要）。
@@ -492,12 +582,26 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=set&url=https://example.com
 
 **Endpoint**: `GET /bbs?action=get`
 
+#### 公開モード（idで取得）
+
 **Parameters**:
 | Name | Type | Required | Default | Description |
 |------|------|----------|---------|-------------|
 | `action` | string | Yes | - | `"get"` |
 | `id` | string | Yes | - | 掲示板ID |
 | `page` | number | No | `1` | ページ番号 |
+
+#### オーナーモード（url+tokenで取得）
+
+全設定情報（webhookUrl等）を含むレスポンスを返します。
+
+**Parameters**:
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | string | Yes | `"get"` |
+| `url` | string | Yes | サイトのURL |
+| `token` | string | Yes | オーナートークン |
+| `page` | number | No | ページ番号 |
 
 **Example Response**:
 

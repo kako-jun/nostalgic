@@ -72,9 +72,10 @@ export default function RankingPage() {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sharedUrl || !sharedToken || !updateName || !updateScore) return;
+    if (!publicId || !updateName || !updateScore) return;
 
-    let apiUrl = `/api/ranking?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&name=${encodeURIComponent(updateName)}&score=${updateScore}`;
+    // Use submit action for UPSERT (update is now settings-only)
+    let apiUrl = `/api/ranking?action=submit&id=${encodeURIComponent(publicId)}&name=${encodeURIComponent(updateName)}&score=${updateScore}`;
     if (updateDisplayScore) apiUrl += `&displayScore=${encodeURIComponent(updateDisplayScore)}`;
 
     await callApi(apiUrl, setUpdateResponse);
@@ -108,9 +109,8 @@ export default function RankingPage() {
     e.preventDefault();
     if (!sharedUrl || !sharedToken) return;
 
-    let apiUrl = `/api/ranking?action=updateSettings&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
-    if (settingsTitle) apiUrl += `&title=${encodeURIComponent(settingsTitle)}`;
-    if (settingsMax) apiUrl += `&max=${settingsMax}`;
+    let apiUrl = `/api/ranking?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    if (settingsMax) apiUrl += `&maxEntries=${settingsMax}`;
     if (settingsSortOrder) apiUrl += `&sortOrder=${settingsSortOrder}`;
     if (settingsWebhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(settingsWebhookUrl)}`;
 

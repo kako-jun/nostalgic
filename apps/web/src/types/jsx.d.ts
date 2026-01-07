@@ -14,6 +14,8 @@ declare namespace JSX {
       url?: string;
       token?: string;
       theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
+      icon?: "heart" | "star" | "thumb" | "peta";
+      format?: "interactive" | "text" | "image";
       "api-base"?: string;
     };
     "nostalgic-ranking": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {

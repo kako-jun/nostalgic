@@ -82,6 +82,7 @@ app.get("/", async (c) => {
     const token = c.req.query("token");
     const sortOrder = c.req.query("sortOrder") || RANKING.SORT_ORDER.DEFAULT;
     const maxEntries = Number(c.req.query("maxEntries")) || 100;
+    const webhookUrl = c.req.query("webhookUrl");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -98,7 +99,7 @@ app.get("/", async (c) => {
 
     const publicId = await generatePublicId(url);
     const hashedToken = await hashToken(token);
-    const metadata = JSON.stringify({ sortOrder, maxEntries });
+    const metadata = JSON.stringify({ sortOrder, maxEntries, webhookUrl: webhookUrl || null });
 
     await db.batch([
       db
@@ -182,50 +183,114 @@ app.get("/", async (c) => {
     return c.json({ success: true, data: { id, entries } });
   }
 
-  // UPDATE (alias for submit - updates existing score)
+  // UPDATE (settings only - owner)
   if (action === "update") {
-    const id = c.req.query("id");
-    const name = c.req.query("name");
-    const scoreStr = c.req.query("score");
-    const displayScore = c.req.query("displayScore");
+    const url = c.req.query("url");
+    const token = c.req.query("token");
+    const newMaxEntries = c.req.query("maxEntries");
+    const newSortOrder = c.req.query("sortOrder");
+    const webhookUrl = c.req.query("webhookUrl");
 
-    if (!id || !name || !scoreStr) {
-      return c.json({ error: "id, name, and score are required" }, 400);
+    if (!url || !token) {
+      return c.json({ error: "url and token are required" }, 400);
     }
 
-    const score = Number(scoreStr);
-    if (isNaN(score)) {
-      return c.json({ error: "score must be a number" }, 400);
+    if (newMaxEntries === undefined && newSortOrder === undefined && webhookUrl === undefined) {
+      return c.json(
+        { error: "At least one of maxEntries, sortOrder, or webhookUrl is required" },
+        400
+      );
     }
 
-    const ranking = await getRankingById(db, id);
+    const ranking = await getRankingByUrl(db, url);
     if (!ranking) {
       return c.json({ error: "Ranking not found" }, 404);
     }
 
-    const metadata = JSON.parse((ranking as RankingRecord).metadata || "{}");
-    const sortOrder = metadata.sortOrder || "desc";
+    const id = (ranking as RankingRecord).id.replace("ranking:", "");
+    const hashedToken = await hashToken(token);
+    const owner = await db
+      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
+      .bind(`ranking:${id}`, hashedToken)
+      .first();
 
-    // Update existing score
+    if (!owner) {
+      return c.json({ error: "Invalid token" }, 403);
+    }
+
+    const currentMetadata = JSON.parse((ranking as RankingRecord).metadata || "{}");
+    const newMetadata = {
+      ...currentMetadata,
+      ...(newMaxEntries !== undefined && { maxEntries: Number(newMaxEntries) }),
+      ...(newSortOrder !== undefined && { sortOrder: newSortOrder }),
+      ...(webhookUrl !== undefined && { webhookUrl: webhookUrl === "" ? null : webhookUrl }),
+    };
+
     await db
-      .prepare(
-        `UPDATE ranking_scores SET score = ?, display_score = ? WHERE service_id = ? AND name = ?`
-      )
-      .bind(score, displayScore || null, `ranking:${id}:scores`, name)
+      .prepare("UPDATE services SET metadata = ? WHERE id = ?")
+      .bind(JSON.stringify(newMetadata), `ranking:${id}`)
       .run();
 
-    const entries = await getTopEntries(db, id, RANKING.LIMIT.DEFAULT, sortOrder);
-    return c.json({ success: true, data: { id, entries } });
+    const entries = await getTopEntries(
+      db,
+      id,
+      RANKING.LIMIT.DEFAULT,
+      newMetadata.sortOrder || "desc"
+    );
+    return c.json({
+      success: true,
+      data: { id, entries, maxEntries: newMetadata.maxEntries, sortOrder: newMetadata.sortOrder },
+    });
   }
 
   // GET
   if (action === "get") {
     const id = c.req.query("id");
+    const url = c.req.query("url");
+    const token = c.req.query("token");
     const limit = Math.min(
       Number(c.req.query("limit")) || RANKING.LIMIT.DEFAULT,
       RANKING.LIMIT.MAX
     );
 
+    // Owner mode (url + token) - returns settings including webhookUrl
+    if (url && token) {
+      const ranking = await getRankingByUrl(db, url);
+      if (!ranking) {
+        return c.json({ error: "Ranking not found" }, 404);
+      }
+
+      const rankingId = (ranking as RankingRecord).id.replace("ranking:", "");
+      const hashedToken = await hashToken(token);
+      const owner = await db
+        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
+        .bind(`ranking:${rankingId}`, hashedToken)
+        .first();
+
+      if (!owner) {
+        return c.json({ error: "Invalid token" }, 403);
+      }
+
+      const metadata = JSON.parse((ranking as RankingRecord).metadata || "{}");
+      const sortOrder = metadata.sortOrder || "desc";
+      const entries = await getTopEntries(db, rankingId, limit, sortOrder);
+
+      return c.json({
+        success: true,
+        data: {
+          id: rankingId,
+          url,
+          entries,
+          sortOrder,
+          maxEntries: metadata.maxEntries,
+          settings: {
+            webhookUrl: metadata.webhookUrl || null,
+          },
+        },
+      });
+    }
+
+    // Public mode (by id)
     if (!id) {
       return c.json({ error: "id is required" }, 400);
     }
@@ -239,7 +304,10 @@ app.get("/", async (c) => {
     const sortOrder = metadata.sortOrder || "desc";
 
     const entries = await getTopEntries(db, id, limit, sortOrder);
-    return c.json({ success: true, data: { id, entries, sortOrder } });
+    return c.json({
+      success: true,
+      data: { id, entries, sortOrder, maxEntries: metadata.maxEntries },
+    });
   }
 
   // REMOVE

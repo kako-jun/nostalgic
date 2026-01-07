@@ -40,7 +40,7 @@ export default function LikePage() {
     e.preventDefault();
     if (!publicId) return;
 
-    const apiUrl = `/api/like?action=display&id=${encodeURIComponent(publicId)}&format=${selectedFormat}`;
+    const apiUrl = `/api/like?action=get&id=${encodeURIComponent(publicId)}`;
     await callApiWithFormat(
       apiUrl,
       selectedFormat as "json" | "text" | "svg",
@@ -51,9 +51,9 @@ export default function LikePage() {
 
   const handleToggle = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sharedUrl || !sharedToken) return;
+    if (!publicId) return;
 
-    const apiUrl = `/api/like?action=toggle&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    const apiUrl = `/api/like?action=toggle&id=${encodeURIComponent(publicId)}`;
     await callApi(apiUrl, setToggleResponse);
   };
 
@@ -85,7 +85,7 @@ export default function LikePage() {
     e.preventDefault();
     if (!sharedUrl || !sharedToken) return;
 
-    let apiUrl = `/api/like?action=updateSettings&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    let apiUrl = `/api/like?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setUpdateSettingsResponse);

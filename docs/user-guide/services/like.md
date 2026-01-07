@@ -8,16 +8,17 @@ Toggle-based like/unlike button service with user state tracking. Users can like
 
 ### create
 
-Create a new like button or get existing button ID.
+Create a new like button.
 
 ```
-GET /api/like?action=create&url={URL}&token={TOKEN}
+GET /api/like?action=create&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL for like button
 - `token` (required): Owner token (8-16 characters)
+- `webhookUrl` (optional): Webhook URL for event notifications
 
 **Response:**
 
@@ -57,7 +58,9 @@ GET /api/like?action=toggle&id={ID}
 
 ### get
 
-Get current like data (public access).
+Get current like data.
+
+#### Public Mode (by ID)
 
 ```
 GET /api/like?action=get&id={ID}
@@ -78,19 +81,46 @@ GET /api/like?action=get&id={ID}
 }
 ```
 
-### updateSettings
+#### Owner Mode (by URL + Token)
 
-Update like button settings (owner only).
+Get full settings including webhookUrl.
 
 ```
-GET /api/like?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
+GET /api/like?action=get&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL
 - `token` (required): Owner token
-- `webhookUrl` (optional): Webhook URL for notifications
+
+**Response:**
+
+```json
+{
+  "id": "yoursite-a7b9c3d4",
+  "url": "https://yoursite.com",
+  "total": 5,
+  "userLiked": false,
+  "settings": {
+    "webhookUrl": "https://hooks.example.com/notify"
+  }
+}
+```
+
+### update
+
+Update settings (owner only).
+
+```
+GET /api/like?action=update&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
+```
+
+**Parameters:**
+
+- `url` (required): Target URL
+- `token` (required): Owner token
+- `webhookUrl` (optional): Webhook URL (empty string to remove)
 
 **Response:**
 

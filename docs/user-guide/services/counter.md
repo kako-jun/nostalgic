@@ -8,16 +8,17 @@ Traditional visitor counter that tracks visits across multiple time periods with
 
 ### create
 
-Create a new counter or get existing counter ID.
+Create a new counter.
 
 ```
-GET /api/visit?action=create&url={URL}&token={TOKEN}
+GET /api/visit?action=create&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL for counting
 - `token` (required): Owner token (8-16 characters)
+- `webhookUrl` (optional): Webhook URL for event notifications
 
 **Response:**
 
@@ -59,6 +60,8 @@ GET /api/visit?action=increment&id={ID}
 
 Get counter data or image.
 
+#### Public Mode (by ID)
+
 ```
 GET /api/visit?action=get&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 ```
@@ -75,63 +78,34 @@ GET /api/visit?action=get&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 - `theme` (optional): Visual style (for image format)
   - `light`: Green on black (90s terminal style)
   - `dark` (default): White on gray (2000s clean style)
-  - `retro`: Old computer terminal (black background, green text, scanlines, CRT efinalects)
+  - `retro`: Old computer terminal (black background, green text, scanlines, CRT effects)
   - `kawaii`: Yellow on purple (80s neon style)
   - `mom`: MOTHER2/EarthBound style (green stripes, orange border)
   - `final`: Final Fantasy style (blue gradients)
 - `format` (optional): Response format
   - `image` (default): SVG image
   - `text`: Plain text number (no styling)
+  - `json`: JSON data
 - `digits` (optional): Zero-padding digits (only when specified, for both image and text formats)
 
 **Response:**
 
 - `format=image`: SVG image
 - `format=text`: Plain text number
+- `format=json`: JSON with counter data
 
-### set
+#### Owner Mode (by URL + Token)
 
-Set counter value (owner only).
-
-```
-GET /api/visit?action=set&url={URL}&token={TOKEN}&total={VALUE}
-```
-
-**Parameters:**
-
-- `url` (required): Target URL
-- `token` (required): Owner token
-- `total` (required): New total value
-
-**Note:** For settings changes (webhookUrl, etc.), use the `updateSettings` action.
-
-**Response:**
-
-```json
-{
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "total": 12345,
-  "today": 0,
-  "yesterday": 0,
-  "week": 0,
-  "month": 0
-}
-```
-
-### updateSettings
-
-Update counter settings (owner only).
+Get full settings including webhookUrl.
 
 ```
-GET /api/visit?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
+GET /api/visit?action=get&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL
 - `token` (required): Owner token
-- `webhookUrl` (optional): Webhook URL for notifications
 
 **Response:**
 
@@ -144,7 +118,40 @@ GET /api/visit?action=updateSettings&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK
   "yesterday": 10,
   "week": 42,
   "month": 100,
-  "lastVisit": "2025-07-30T12:05:00Z"
+  "settings": {
+    "webhookUrl": "https://hooks.example.com/notify"
+  }
+}
+```
+
+### update
+
+Update counter value and/or settings (owner only).
+
+```
+GET /api/visit?action=update&url={URL}&token={TOKEN}&value={VALUE}&webhookUrl={WEBHOOK_URL}
+```
+
+**Parameters:**
+
+- `url` (required): Target URL
+- `token` (required): Owner token
+- `value` (optional): New total value (0 or positive number)
+- `webhookUrl` (optional): Webhook URL (empty string to remove)
+
+At least one of `value` or `webhookUrl` must be specified.
+
+**Response:**
+
+```json
+{
+  "id": "yoursite-a7b9c3d4",
+  "url": "https://yoursite.com",
+  "total": 12345,
+  "today": 0,
+  "yesterday": 0,
+  "week": 0,
+  "month": 0
 }
 ```
 

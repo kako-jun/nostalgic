@@ -78,6 +78,7 @@ app.get("/", async (c) => {
     const token = c.req.query("token");
     const title = c.req.query("title") || "BBS";
     const maxMessages = Number(c.req.query("maxMessages")) || 100;
+    const webhookUrl = c.req.query("webhookUrl");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -94,7 +95,7 @@ app.get("/", async (c) => {
 
     const publicId = await generatePublicId(url);
     const hashedToken = await hashToken(token);
-    const metadata = JSON.stringify({ title, maxMessages });
+    const metadata = JSON.stringify({ title, maxMessages, webhookUrl: webhookUrl || null });
 
     await db.batch([
       db
@@ -193,8 +194,52 @@ app.get("/", async (c) => {
   // GET
   if (action === "get") {
     const id = c.req.query("id");
+    const url = c.req.query("url");
+    const token = c.req.query("token");
     const limit = Math.min(Number(c.req.query("limit")) || 100, 1000);
 
+    // Owner mode (url + token) - returns settings including webhookUrl
+    if (url && token) {
+      const bbs = await getBBSByUrl(db, url);
+      if (!bbs) {
+        return c.json({ error: "BBS not found" }, 404);
+      }
+
+      const bbsId = (bbs as BBSRecord).id.replace("bbs:", "");
+      const hashedToken = await hashToken(token);
+      const owner = await db
+        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
+        .bind(`bbs:${bbsId}`, hashedToken)
+        .first();
+
+      if (!owner) {
+        return c.json({ error: "Invalid token" }, 403);
+      }
+
+      const metadata = JSON.parse((bbs as BBSRecord).metadata || "{}");
+      const messages = await getMessages(db, bbsId, limit);
+
+      const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
+      const userAgent = c.req.header("User-Agent") || "";
+      const currentUserHash = await generateUserHash(ip, userAgent);
+
+      return c.json({
+        success: true,
+        data: {
+          id: bbsId,
+          url,
+          title: metadata.title,
+          maxMessages: metadata.maxMessages,
+          messages,
+          currentUserHash,
+          settings: {
+            webhookUrl: metadata.webhookUrl || null,
+          },
+        },
+      });
+    }
+
+    // Public mode (by id)
     if (!id) {
       return c.json({ error: "id is required" }, 400);
     }
@@ -217,20 +262,67 @@ app.get("/", async (c) => {
       data: {
         id,
         title: metadata.title,
+        maxMessages: metadata.maxMessages,
         messages,
         currentUserHash,
       },
     });
   }
 
-  // UPDATE (user mode: id + messageId, owner mode: url + token + messageId)
+  // UPDATE
+  // - Message update: user mode (id + messageId) or owner mode (url + token + messageId)
+  // - Settings update: owner mode (url + token) without messageId
   if (action === "update") {
     const url = c.req.query("url");
     const token = c.req.query("token");
     const idParam = c.req.query("id");
     const messageId = c.req.query("messageId");
     const newMessage = c.req.query("message");
+    const newMaxMessages = c.req.query("maxMessages");
+    const webhookUrl = c.req.query("webhookUrl");
 
+    // Settings update mode (url + token, no messageId)
+    if (url && token && !messageId) {
+      const bbs = await getBBSByUrl(db, url);
+      if (!bbs) {
+        return c.json({ error: "BBS not found" }, 404);
+      }
+
+      const id = (bbs as BBSRecord).id.replace("bbs:", "");
+      const hashedToken = await hashToken(token);
+      const owner = await db
+        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
+        .bind(`bbs:${id}`, hashedToken)
+        .first();
+
+      if (!owner) {
+        return c.json({ error: "Invalid token" }, 403);
+      }
+
+      if (newMaxMessages === undefined && webhookUrl === undefined) {
+        return c.json({ error: "At least one of maxMessages or webhookUrl is required" }, 400);
+      }
+
+      const currentMetadata = JSON.parse((bbs as BBSRecord).metadata || "{}");
+      const newMetadata = {
+        ...currentMetadata,
+        ...(newMaxMessages !== undefined && { maxMessages: Number(newMaxMessages) }),
+        ...(webhookUrl !== undefined && { webhookUrl: webhookUrl === "" ? null : webhookUrl }),
+      };
+
+      await db
+        .prepare("UPDATE services SET metadata = ? WHERE id = ?")
+        .bind(JSON.stringify(newMetadata), `bbs:${id}`)
+        .run();
+
+      const messages = await getMessages(db, id);
+      return c.json({
+        success: true,
+        data: { id, messages, maxMessages: newMetadata.maxMessages },
+      });
+    }
+
+    // Message update mode
     if (!messageId || !newMessage) {
       return c.json({ error: "messageId and message are required" }, 400);
     }

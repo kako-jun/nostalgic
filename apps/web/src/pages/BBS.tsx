@@ -14,7 +14,7 @@ export default function BBSPage() {
   const [sharedToken, setSharedToken] = useState("");
   const [webhookUrl, setWebhookUrl] = useState("");
 
-  const [title, _setTitle] = useState("");
+  const [_title, _setTitle] = useState("");
   const [maxMessages, _setMaxMessages] = useState("");
   const [messagesPerPage, _setMessagesPerPage] = useState("");
 
@@ -71,12 +71,13 @@ export default function BBSPage() {
 
   const handlePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sharedUrl || !sharedToken || !postAuthor || !postMessage) return;
+    if (!publicId || !postMessage) return;
 
-    let apiUrl = `/api/bbs?action=post&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&author=${encodeURIComponent(postAuthor)}&message=${encodeURIComponent(postMessage)}`;
-    if (standardValue) apiUrl += `&standardValue=${encodeURIComponent(standardValue)}`;
-    if (incrementalValue) apiUrl += `&incrementalValue=${encodeURIComponent(incrementalValue)}`;
-    if (emoteValue) apiUrl += `&emoteValue=${encodeURIComponent(emoteValue)}`;
+    let apiUrl = `/api/bbs?action=post&id=${encodeURIComponent(publicId)}&message=${encodeURIComponent(postMessage)}`;
+    if (postAuthor) apiUrl += `&author=${encodeURIComponent(postAuthor)}`;
+    if (standardValue) apiUrl += `&select1=${encodeURIComponent(standardValue)}`;
+    if (incrementalValue) apiUrl += `&select2=${encodeURIComponent(incrementalValue)}`;
+    if (emoteValue) apiUrl += `&icon=${encodeURIComponent(emoteValue)}`;
 
     await callApi(apiUrl, setPostResponse);
   };
@@ -91,14 +92,9 @@ export default function BBSPage() {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sharedUrl || !sharedToken || !messageId || !editAuthor || !editMessage) return;
+    if (!sharedUrl || !sharedToken || !messageId || !editMessage) return;
 
-    let apiUrl = `/api/bbs?action=editMessage&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}&message=${encodeURIComponent(editMessage)}`;
-    if (editStandardValue) apiUrl += `&standardValue=${encodeURIComponent(editStandardValue)}`;
-    if (editIncrementalValue)
-      apiUrl += `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`;
-    if (editEmoteValue) apiUrl += `&emoteValue=${encodeURIComponent(editEmoteValue)}`;
-
+    const apiUrl = `/api/bbs?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}&message=${encodeURIComponent(editMessage)}`;
     await callApi(apiUrl, setUpdateResponse);
   };
 
@@ -106,7 +102,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!sharedUrl || !sharedToken || !messageId) return;
 
-    const apiUrl = `/api/bbs?action=deleteMessage&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}`;
+    const apiUrl = `/api/bbs?action=remove&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&messageId=${messageId}`;
     await callApi(apiUrl, setRemoveResponse);
   };
 
@@ -130,19 +126,8 @@ export default function BBSPage() {
     e.preventDefault();
     if (!sharedUrl || !sharedToken) return;
 
-    let apiUrl = `/api/bbs?action=updateSettings&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
-    if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
+    let apiUrl = `/api/bbs?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
     if (maxMessages) apiUrl += `&maxMessages=${maxMessages}`;
-    if (messagesPerPage) apiUrl += `&messagesPerPage=${messagesPerPage}`;
-    if (standardSelectLabel && standardSelectOptions) {
-      apiUrl += `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}`;
-    }
-    if (incrementalSelectLabel && incrementalSelectOptions) {
-      apiUrl += `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}`;
-    }
-    if (emoteSelectLabel && emoteSelectOptions) {
-      apiUrl += `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}`;
-    }
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setUpdateSettingsResponse);
@@ -150,22 +135,17 @@ export default function BBSPage() {
 
   const handleEditMessageById = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!publicId || !messageId || !editAuthor || !editMessage || !editToken) return;
+    if (!publicId || !messageId || !editMessage) return;
 
-    let apiUrl = `/api/bbs?action=editMessageById&id=${encodeURIComponent(publicId)}&messageId=${messageId}&author=${encodeURIComponent(editAuthor)}&message=${encodeURIComponent(editMessage)}&editToken=${encodeURIComponent(editToken)}`;
-    if (editStandardValue) apiUrl += `&standardValue=${encodeURIComponent(editStandardValue)}`;
-    if (editIncrementalValue)
-      apiUrl += `&incrementalValue=${encodeURIComponent(editIncrementalValue)}`;
-    if (editEmoteValue) apiUrl += `&emoteValue=${encodeURIComponent(editEmoteValue)}`;
-
+    const apiUrl = `/api/bbs?action=update&id=${encodeURIComponent(publicId)}&messageId=${messageId}&message=${encodeURIComponent(editMessage)}`;
     await callApi(apiUrl, setUpdateResponse);
   };
 
   const handleDeleteMessageById = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!publicId || !messageId || !editToken) return;
+    if (!publicId || !messageId) return;
 
-    const apiUrl = `/api/bbs?action=deleteMessageById&id=${encodeURIComponent(publicId)}&messageId=${messageId}&editToken=${encodeURIComponent(editToken)}`;
+    const apiUrl = `/api/bbs?action=remove&id=${encodeURIComponent(publicId)}&messageId=${messageId}`;
     await callApi(apiUrl, setRemoveResponse);
   };
 

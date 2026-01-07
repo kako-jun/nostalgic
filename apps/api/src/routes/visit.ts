@@ -200,6 +200,8 @@ app.get("/", async (c) => {
   // GET
   if (action === "get") {
     const id = c.req.query("id");
+    const url = c.req.query("url");
+    const token = c.req.query("token");
     const type = (c.req.query("type") || "total") as keyof ReturnType<
       typeof getCounterData
     > extends Promise<infer T>
@@ -209,6 +211,39 @@ app.get("/", async (c) => {
     const theme = c.req.query("theme") || DEFAULT_THEME;
     const digits = c.req.query("digits");
 
+    // Owner mode (url + token) - returns settings including webhookUrl
+    if (url && token) {
+      const counter = await getCounterByUrl(db, url);
+      if (!counter) {
+        return c.json({ error: "Counter not found" }, 404);
+      }
+
+      const counterId = (counter as CounterRecord).id.replace("counter:", "");
+      const hashedToken = await hashToken(token);
+      const owner = await db
+        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
+        .bind(`counter:${counterId}`, hashedToken)
+        .first();
+
+      if (!owner) {
+        return c.json({ error: "Invalid token" }, 403);
+      }
+
+      const data = await getCounterData(db, counterId);
+      const metadata = JSON.parse((counter as { metadata: string }).metadata || "{}");
+      return c.json({
+        success: true,
+        data: {
+          ...data,
+          url,
+          settings: {
+            webhookUrl: metadata.webhookUrl || null,
+          },
+        },
+      });
+    }
+
+    // Public mode (by id)
     if (!id) {
       return c.json({ error: "id is required" }, 400);
     }
@@ -238,7 +273,77 @@ app.get("/", async (c) => {
     return c.json({ success: true, data });
   }
 
-  // SET (owner only)
+  // UPDATE (owner only) - update value and/or settings
+  if (action === "update") {
+    const url = c.req.query("url");
+    const token = c.req.query("token");
+    const value = c.req.query("value");
+    const webhookUrl = c.req.query("webhookUrl");
+
+    if (!url || !token) {
+      return c.json({ error: "url and token are required" }, 400);
+    }
+
+    if (value === undefined && webhookUrl === undefined) {
+      return c.json({ error: "At least one of value or webhookUrl is required" }, 400);
+    }
+
+    const counter = await getCounterByUrl(db, url);
+    if (!counter) {
+      return c.json({ error: "Counter not found" }, 404);
+    }
+
+    const id = (counter as CounterRecord).id.replace("counter:", "");
+    const hashedToken = await hashToken(token);
+    const owner = await db
+      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
+      .bind(`counter:${id}`, hashedToken)
+      .first();
+
+    if (!owner) {
+      return c.json({ error: "Invalid token" }, 403);
+    }
+
+    const statements: D1PreparedStatement[] = [];
+
+    // Update value if provided
+    if (value !== undefined) {
+      const numValue = Number(value);
+      if (isNaN(numValue) || numValue < 0) {
+        return c.json({ error: "Value must be a non-negative number" }, 400);
+      }
+      statements.push(
+        db
+          .prepare(
+            "INSERT INTO counters (service_id, total) VALUES (?, ?) ON CONFLICT(service_id) DO UPDATE SET total = ?"
+          )
+          .bind(`counter:${id}:total`, numValue, numValue)
+      );
+    }
+
+    // Update webhookUrl if provided
+    if (webhookUrl !== undefined) {
+      const currentMetadata = JSON.parse((counter as { metadata: string }).metadata || "{}");
+      const newMetadata = {
+        ...currentMetadata,
+        webhookUrl: webhookUrl === "" ? null : webhookUrl,
+      };
+      statements.push(
+        db
+          .prepare("UPDATE services SET metadata = ? WHERE id = ?")
+          .bind(JSON.stringify(newMetadata), `counter:${id}`)
+      );
+    }
+
+    if (statements.length > 0) {
+      await db.batch(statements);
+    }
+
+    const data = await getCounterData(db, id);
+    return c.json({ success: true, data });
+  }
+
+  // SET (owner only) - deprecated, use update instead
   if (action === "set") {
     const url = c.req.query("url");
     const token = c.req.query("token");
@@ -318,7 +423,7 @@ app.get("/", async (c) => {
     return c.json({ success: true, message: "Counter deleted" });
   }
 
-  return c.json({ error: "Invalid action. Use: create, increment, get, set, delete" }, 400);
+  return c.json({ error: "Invalid action. Use: create, increment, get, update, delete" }, 400);
 });
 
 // === SVG Generator ===

@@ -6,23 +6,23 @@
 
 ## 📚 重要ドキュメント
 
-- [**統一スキーマアーキテクチャ**](.claude/unified-schema-architecture.md) - スキーマ設計原則（新機能追加時は必読）
+- [**統一スキーマアーキテクチャ**](docs/development/unified-schema-architecture.md) - スキーマ設計原則（新機能追加時は必読）
 
 ## 🎨 デザイン・UX設計
 
-- [**Design Philosophy**](.claude/design-philosophy.md) - デザイン哲学（機能はレトロ、見た目は現代ポップ）
+- [**Design Philosophy**](docs/development/design-philosophy.md) - デザイン哲学（機能はレトロ、見た目は現代ポップ）
 
 ## 🚀 将来機能計画
 
-- [**6テーマシステム拡張**](.claude/six-theme-expansion.md) - 6テーマシステム完了（light/dark/retro/kawaii/mom/final）
-- [**カウンター画像化システム**](.claude/counter-image-system.md) - SVG数字画像ベースカウンター計画
-- [**BBSセレクト機能拡張**](.claude/bbs-select-system-expansion.md) - 3種類セレクト機能の詳細設計
+- [**6テーマシステム拡張**](docs/development/six-theme-expansion.md) - 6テーマシステム完了（light/dark/retro/kawaii/mom/final）
+- [**カウンター画像化システム**](docs/development/counter-image-system.md) - SVG数字画像ベースカウンター計画
+- [**BBSセレクト機能拡張**](docs/development/bbs-select-system-expansion.md) - 3種類セレクト機能の詳細設計
 
 ## 🛠️ 設計ドキュメント（開発用）
 
-- [**API Specification**](.claude/api-specification.md) - APIの完全仕様書
-- [**BBS Design**](.claude/bbs-design.md) - BBS機能の設計書
-- [**WebComponents Design**](.claude/webcomponents-defensive-programming.md) - WebComponentsの設計方針
+- [**API Specification**](docs/development/api-specification.md) - APIの完全仕様書
+- [**BBS Design**](docs/development/bbs-design.md) - BBS機能の設計書
+- [**WebComponents Design**](docs/development/webcomponents-defensive-programming.md) - WebComponentsの設計方針
 
 ## 実装済み機能（4サービス）
 

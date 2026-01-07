@@ -11,7 +11,7 @@ Message board service with customizable dropdown selections, icon support, and a
 Create a new BBS message board.
 
 ```
-GET /api/bbs?action=create&url={URL}&token={TOKEN}&max={MAX_MESSAGES}&perPage={PER_PAGE}&icons={ICONS}&select1Label={LABEL}&select1Values={VALUES}
+GET /api/bbs?action=create&url={URL}&token={TOKEN}&max={MAX_MESSAGES}&perPage={PER_PAGE}&icons={ICONS}&select1Label={LABEL}&select1Values={VALUES}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
@@ -24,6 +24,7 @@ GET /api/bbs?action=create&url={URL}&token={TOKEN}&max={MAX_MESSAGES}&perPage={P
 - `select1Label`, `select1Values`, `select1Required`: First dropdown configuration
 - `select2Label`, `select2Values`, `select2Required`: Second dropdown configuration
 - `select3Label`, `select3Values`, `select3Required`: Third dropdown configuration
+- `webhookUrl` (optional): Webhook URL for event notifications
 
 **Response:**
 
@@ -83,15 +84,15 @@ GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&icon={ICON}&s
 
 ### update
 
-Update a message.
+Update a message or BBS settings.
 
-**User mode (author):**
+#### Message Update - User mode (author)
 
 ```
 GET /api/bbs?action=update&id={ID}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
 ```
 
-**Owner mode (admin):**
+#### Message Update - Owner mode (admin)
 
 ```
 GET /api/bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
@@ -110,21 +111,39 @@ GET /api/bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&messag
 {
   "id": "yoursite-a7b9c3d4",
   "url": "https://yoursite.com",
-  "messages": [
-    {
-      "id": "msg_123456789",
-      "author": "User",
-      "message": "Updated message content",
-      "timestamp": "2024-01-15T10:30:00.000Z",
-      "dropdown1": "Option A",
-      "dropdown2": "Option B",
-      "dropdown3": "Option C",
-      "icon": "smile"
-    }
-  ],
+  "messages": [...],
   "page": 1,
   "hasMore": false,
   "totalMessages": 1
+}
+```
+
+#### Settings Update (owner only)
+
+Update BBS settings without messageId parameter.
+
+```
+GET /api/bbs?action=update&url={URL}&token={TOKEN}&perPage={PER_PAGE}&max={MAX}&webhookUrl={WEBHOOK_URL}
+```
+
+**Parameters:**
+
+- `url` (required): Target URL
+- `token` (required): Owner token
+- `perPage` (optional): Messages per page (1-100)
+- `max` (optional): Maximum total messages (1-10000)
+- `webhookUrl` (optional): Webhook URL (empty string to remove)
+
+**Response:**
+
+```json
+{
+  "id": "yoursite-a7b9c3d4",
+  "url": "https://yoursite.com",
+  "messages": [...],
+  "totalMessages": 5,
+  "currentPage": 1,
+  "messagesPerPage": 20
 }
 ```
 
@@ -191,7 +210,9 @@ GET /api/bbs?action=clear&url={URL}&token={TOKEN}
 
 ### get
 
-Get BBS messages (public access).
+Get BBS messages.
+
+#### Public Mode (by ID)
 
 ```
 GET /api/bbs?action=get&id={ID}&page={PAGE}
@@ -231,6 +252,40 @@ GET /api/bbs?action=get&id={ID}&page={PAGE}
       "values": ["Japan", "USA", "UK"],
       "required": false
     }
+  }
+}
+```
+
+#### Owner Mode (by URL + Token)
+
+Get full settings including webhookUrl.
+
+```
+GET /api/bbs?action=get&url={URL}&token={TOKEN}&page={PAGE}
+```
+
+**Parameters:**
+
+- `url` (required): Target URL
+- `token` (required): Owner token
+- `page` (optional): Page number (default: 1)
+
+**Response:**
+
+```json
+{
+  "id": "yoursite-a7b9c3d4",
+  "url": "https://yoursite.com",
+  "messages": [...],
+  "totalMessages": 1,
+  "currentPage": 1,
+  "messagesPerPage": 10,
+  "options": {
+    "availableIcons": ["😀", "😎", "😍"],
+    "select1": { ... }
+  },
+  "settings": {
+    "webhookUrl": "https://hooks.example.com/notify"
   }
 }
 ```
@@ -359,44 +414,6 @@ declare module "react" {
 ```
 
 This prevents TypeScript build errors when using Web Components in React/Next.js projects.
-
-### updateSettings
-
-Update BBS settings (owner only).
-
-```
-GET /api/bbs?action=updateSettings&url={URL}&token={TOKEN}&title={TITLE}&messagesPerPage={PER_PAGE}&maxMessages={MAX}&webhookUrl={WEBHOOK_URL}
-```
-
-**Parameters:**
-
-- `url` (required): Target URL
-- `token` (required): Owner token
-- `title` (optional): BBS title
-- `messagesPerPage` (optional): Messages per page (1-100)
-- `maxMessages` (optional): Maximum total messages (1-10000)
-- `webhookUrl` (optional): Webhook URL for notifications
-
-**Response:**
-
-```json
-{
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "title": "Updated BBS Title",
-  "messages": [...],
-  "totalMessages": 5,
-  "currentPage": 1,
-  "totalPages": 1,
-  "settings": {
-    "title": "Updated BBS Title",
-    "maxMessages": 500,
-    "messagesPerPage": 20,
-    "icons": ["😀", "😎", "😍"],
-    "selects": [...]
-  }
-}
-```
 
 ## Security Notes
 

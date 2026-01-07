@@ -67,6 +67,7 @@ app.get("/", async (c) => {
   if (action === "create") {
     const url = c.req.query("url");
     const token = c.req.query("token");
+    const webhookUrl = c.req.query("webhookUrl");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -83,13 +84,14 @@ app.get("/", async (c) => {
 
     const publicId = await generatePublicId(url);
     const hashedToken = await hashToken(token);
+    const metadata = JSON.stringify({ webhookUrl: webhookUrl || null });
 
     await db.batch([
       db
         .prepare(
           'INSERT INTO services (id, type, url, metadata, created_at) VALUES (?, ?, ?, ?, datetime("now"))'
         )
-        .bind(`like:${publicId}`, "like", url, "{}"),
+        .bind(`like:${publicId}`, "like", url, metadata),
       db
         .prepare("INSERT INTO url_mappings (type, url, service_id) VALUES (?, ?, ?)")
         .bind("like", url, publicId),
@@ -160,6 +162,53 @@ app.get("/", async (c) => {
   // GET
   if (action === "get") {
     const id = c.req.query("id");
+    const url = c.req.query("url");
+    const token = c.req.query("token");
+
+    // Owner mode (url + token) - returns settings including webhookUrl
+    if (url && token) {
+      const like = await getLikeByUrl(db, url);
+      if (!like) {
+        return c.json({ error: "Like service not found" }, 404);
+      }
+
+      const likeId = (like as LikeRecord).id.replace("like:", "");
+      const hashedToken = await hashToken(token);
+      const owner = await db
+        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
+        .bind(`like:${likeId}`, hashedToken)
+        .first();
+
+      if (!owner) {
+        return c.json({ error: "Invalid token" }, 403);
+      }
+
+      const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
+      const userAgent = c.req.header("User-Agent") || "";
+      const userHash = await generateUserHash(ip, userAgent);
+      const today = getTodayDateString();
+
+      const [total, isLiked] = await Promise.all([
+        getTotalLikes(db, likeId),
+        getUserLikeState(db, likeId, userHash, today),
+      ]);
+
+      const metadata = JSON.parse((like as { metadata: string }).metadata || "{}");
+      return c.json({
+        success: true,
+        data: {
+          id: likeId,
+          url,
+          total,
+          liked: isLiked,
+          settings: {
+            webhookUrl: metadata.webhookUrl || null,
+          },
+        },
+      });
+    }
+
+    // Public mode (by id)
     if (!id) {
       return c.json({ error: "id is required" }, 400);
     }
@@ -180,6 +229,51 @@ app.get("/", async (c) => {
     ]);
 
     return c.json({ success: true, data: { id, total, liked: isLiked } });
+  }
+
+  // UPDATE (owner only) - update settings
+  if (action === "update") {
+    const url = c.req.query("url");
+    const token = c.req.query("token");
+    const webhookUrl = c.req.query("webhookUrl");
+
+    if (!url || !token) {
+      return c.json({ error: "url and token are required" }, 400);
+    }
+
+    if (webhookUrl === undefined) {
+      return c.json({ error: "webhookUrl is required" }, 400);
+    }
+
+    const like = await getLikeByUrl(db, url);
+    if (!like) {
+      return c.json({ error: "Like service not found" }, 404);
+    }
+
+    const id = (like as LikeRecord).id.replace("like:", "");
+    const hashedToken = await hashToken(token);
+    const owner = await db
+      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
+      .bind(`like:${id}`, hashedToken)
+      .first();
+
+    if (!owner) {
+      return c.json({ error: "Invalid token" }, 403);
+    }
+
+    const currentMetadata = JSON.parse((like as { metadata: string }).metadata || "{}");
+    const newMetadata = {
+      ...currentMetadata,
+      webhookUrl: webhookUrl === "" ? null : webhookUrl,
+    };
+
+    await db
+      .prepare("UPDATE services SET metadata = ? WHERE id = ?")
+      .bind(JSON.stringify(newMetadata), `like:${id}`)
+      .run();
+
+    const total = await getTotalLikes(db, id);
+    return c.json({ success: true, data: { id, url, total } });
   }
 
   // DELETE
@@ -218,7 +312,7 @@ app.get("/", async (c) => {
     return c.json({ success: true, message: "Like service deleted" });
   }
 
-  return c.json({ error: "Invalid action. Use: create, toggle, get, delete" }, 400);
+  return c.json({ error: "Invalid action. Use: create, toggle, get, update, delete" }, 400);
 });
 
 export default app;

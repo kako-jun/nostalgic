@@ -11,7 +11,7 @@ Score leaderboard system with automatic sorting, score management, and configura
 Create a new ranking leaderboard.
 
 ```
-GET /api/ranking?action=create&url={URL}&token={TOKEN}&max={MAX_ENTRIES}&sortOrder={SORT_ORDER}
+GET /api/ranking?action=create&url={URL}&token={TOKEN}&max={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
@@ -20,6 +20,7 @@ GET /api/ranking?action=create&url={URL}&token={TOKEN}&max={MAX_ENTRIES}&sortOrd
 - `token` (required): Owner token (8-16 characters)
 - `max` (optional): Maximum entries (1-1000, default: 100)
 - `sortOrder` (optional): Sort order - "desc" for high scores first, "asc" for low times first (default: "desc")
+- `webhookUrl` (optional): Webhook URL for event notifications
 
 **Response:**
 
@@ -73,20 +74,21 @@ GET /api/ranking?action=submit&id={ID}&name={PLAYER_NAME}&score={SCORE}
 
 ### update
 
-Update an existing player's score.
+Update ranking settings (owner only).
 
 ```
-GET /api/ranking?action=update&url={URL}&token={TOKEN}&name={PLAYER_NAME}&score={NEW_SCORE}
+GET /api/ranking?action=update&url={URL}&token={TOKEN}&max={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL
 - `token` (required): Owner token
-- `name` (required): Player name to update
-- `score` (required): New score value
+- `max` (optional): Maximum entries (1-1000)
+- `sortOrder` (optional): Sort order ("desc" for high scores, "asc" for low times)
+- `webhookUrl` (optional): Webhook URL (empty string to remove)
 
-**Note:** For settings changes (webhookUrl, etc.), use the `updateSettings` action.
+**Note:** To update player scores, use the `submit` action which handles UPSERT (insert or update).
 
 **Response:**
 
@@ -94,12 +96,10 @@ GET /api/ranking?action=update&url={URL}&token={TOKEN}&name={PLAYER_NAME}&score=
 {
   "id": "yoursite-a7b9c3d4",
   "url": "https://yoursite.com",
-  "rankings": [
-    { "name": "Player1", "score": 1500 },
-    { "name": "Player2", "score": 900 },
-    { "name": "Player3", "score": 500 }
-  ],
-  "maxEntries": 100
+  "entries": [...],
+  "totalEntries": 3,
+  "maxEntries": 50,
+  "sortOrder": "desc"
 }
 ```
 
@@ -157,7 +157,9 @@ GET /api/ranking?action=clear&url={URL}&token={TOKEN}
 
 ### get
 
-Get ranking data (public access).
+Get ranking data.
+
+#### Public Mode (by ID)
 
 ```
 GET /api/ranking?action=get&id={ID}&limit={LIMIT}
@@ -190,26 +192,25 @@ GET /api/ranking?action=get&id={ID}&limit={LIMIT}
       "timestamp": "2025-08-13T09:30:00Z"
     }
   ],
-  "totalEntries": 2
+  "totalEntries": 2,
+  "maxEntries": 100,
+  "sortOrder": "desc"
 }
 ```
 
-### updateSettings
+#### Owner Mode (by URL + Token)
 
-Update ranking settings (owner only).
+Get full settings including webhookUrl.
 
 ```
-GET /api/ranking?action=updateSettings&url={URL}&token={TOKEN}&title={TITLE}&max={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
+GET /api/ranking?action=get&url={URL}&token={TOKEN}&limit={LIMIT}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL
 - `token` (required): Owner token
-- `title` (optional): Ranking title
-- `max` (optional): Maximum entries (1-1000)
-- `sortOrder` (optional): Sort order ("desc" for high scores, "asc" for low times)
-- `webhookUrl` (optional): Webhook URL for notifications
+- `limit` (optional): Number of entries to return (1-100, default: 10)
 
 **Response:**
 
@@ -217,17 +218,13 @@ GET /api/ranking?action=updateSettings&url={URL}&token={TOKEN}&title={TITLE}&max
 {
   "id": "yoursite-a7b9c3d4",
   "url": "https://yoursite.com",
-  "title": "High Score Leaderboard",
-  "entries": [
-    {
-      "name": "Player1",
-      "score": 1500,
-      "displayScore": "1,500",
-      "rank": 1
-    }
-  ],
-  "maxEntries": 50,
-  "sortOrder": "desc"
+  "entries": [...],
+  "totalEntries": 2,
+  "maxEntries": 100,
+  "sortOrder": "desc",
+  "settings": {
+    "webhookUrl": "https://hooks.example.com/notify"
+  }
 }
 ```
 
@@ -277,16 +274,19 @@ await fetch(
 ### Score Management
 
 ```javascript
-// Update player score
-await fetch(
-  "/api/ranking?action=update&url=https://mygame.com&token=game-secret&name=Alice&score=1500"
-);
+// Update player score (submit handles UPSERT - inserts new or updates existing)
+await fetch("/api/ranking?action=submit&id=mygame-a7b9c3d4&name=Alice&score=1500");
 
 // Remove cheating player
 await fetch("/api/ranking?action=remove&url=https://mygame.com&token=game-secret&name=Cheater");
 
 // Clear all scores (reset season)
 await fetch("/api/ranking?action=clear&url=https://mygame.com&token=game-secret");
+
+// Update settings
+await fetch(
+  "/api/ranking?action=update&url=https://mygame.com&token=game-secret&max=50&sortOrder=asc"
+);
 ```
 
 ## Features
@@ -354,7 +354,8 @@ This prevents TypeScript build errors when using Web Components in React/Next.js
 
 ## Security Notes
 
-- Only ranking owners can submit/modify scores
+- Anyone can submit scores using the public ID
+- Owner token required for remove, clear, update, and delete actions
 - Public ID allows read-only access to leaderboard
 - Player names limited to 20 characters
 - Score values are integers only
