@@ -69,7 +69,7 @@ export default function CounterPage() {
     e.preventDefault();
     if (!sharedUrl || !sharedToken || !setValue) return;
 
-    const apiUrl = `/api/visit?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&value=${setValue}`;
+    const apiUrl = `/api/visit?action=set&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&value=${setValue}`;
     await callApi(apiUrl, setSetResponse);
   };
 
