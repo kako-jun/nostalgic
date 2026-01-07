@@ -88,6 +88,8 @@ GET /api/ranking?action=update&url={URL}&token={TOKEN}&max={MAX_ENTRIES}&sortOrd
 - `sortOrder` (optional): Sort order ("desc" for high scores, "asc" for low times)
 - `webhookUrl` (optional): Webhook URL (empty string to remove)
 
+Only specify the parameters you want to change.
+
 **Note:** To update player scores, use the `submit` action which handles UPSERT (insert or update).
 
 **Response:**

@@ -12,16 +12,13 @@
 
 - [**Design Philosophy**](docs/development/design-philosophy.md) - デザイン哲学（機能はレトロ、見た目は現代ポップ）
 
-## 🚀 将来機能計画
+## 🚀 将来機能計画（開発用）
 
-- [**6テーマシステム拡張**](docs/development/six-theme-expansion.md) - 6テーマシステム完了（light/dark/retro/kawaii/mom/final）
 - [**カウンター画像化システム**](docs/development/counter-image-system.md) - SVG数字画像ベースカウンター計画
 - [**BBSセレクト機能拡張**](docs/development/bbs-select-system-expansion.md) - 3種類セレクト機能の詳細設計
 
-## 🛠️ 設計ドキュメント（開発用）
+## 🛠️ 開発者向け設計指針
 
-- [**API Specification**](docs/development/api-specification.md) - APIの完全仕様書
-- [**BBS Design**](docs/development/bbs-design.md) - BBS機能の設計書
 - [**WebComponents Design**](docs/development/webcomponents-defensive-programming.md) - WebComponentsの設計方針
 
 ## 実装済み機能（4サービス）
@@ -136,9 +133,8 @@ apps/web/
 
 ### Documentation
 
-- `docs/api.md` - 総合API仕様
-- `docs/services/` - サービス別詳細文書（英語・日本語）
-- `.claude/` - 開発用設計ドキュメント
+- `docs/user-guide/` - ユーザー向けAPI仕様（正）
+- `docs/development/` - 開発用（将来計画・設計指針）
 
 ## メンテナンス・管理
 

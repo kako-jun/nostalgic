@@ -139,7 +139,7 @@ GET /api/visit?action=update&url={URL}&token={TOKEN}&value={VALUE}&webhookUrl={W
 - `value` (optional): New total value (0 or positive number)
 - `webhookUrl` (optional): Webhook URL (empty string to remove)
 
-At least one of `value` or `webhookUrl` must be specified.
+Only specify the parameters you want to change.
 
 **Response:**
 

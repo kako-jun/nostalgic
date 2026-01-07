@@ -122,6 +122,8 @@ GET /api/like?action=update&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 - `token` (required): Owner token
 - `webhookUrl` (optional): Webhook URL (empty string to remove)
 
+Only specify the parameters you want to change.
+
 **Response:**
 
 ```json

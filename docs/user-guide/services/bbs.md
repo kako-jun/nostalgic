@@ -134,6 +134,8 @@ GET /api/bbs?action=update&url={URL}&token={TOKEN}&perPage={PER_PAGE}&max={MAX}&
 - `max` (optional): Maximum total messages (1-10000)
 - `webhookUrl` (optional): Webhook URL (empty string to remove)
 
+Only specify the parameters you want to change.
+
 **Response:**
 
 ```json
