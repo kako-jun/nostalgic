@@ -18,13 +18,14 @@ export async function callApi(
       const jsonResponse = await res.json();
       responseText = JSON.stringify(jsonResponse, null, 2);
 
-      // Extract public ID if available
-      if (setPublicId && jsonResponse.data?.id) {
-        setPublicId(jsonResponse.data.id);
+      // Extract public ID if available (support both jsonResponse.id and jsonResponse.data.id)
+      const publicId = jsonResponse.id || jsonResponse.data?.id;
+      if (setPublicId && publicId) {
+        setPublicId(publicId);
       }
 
       if (options?.onSuccess) {
-        options.onSuccess(jsonResponse, jsonResponse.data?.id);
+        options.onSuccess(jsonResponse, publicId);
       }
     } else {
       responseText = await res.text();

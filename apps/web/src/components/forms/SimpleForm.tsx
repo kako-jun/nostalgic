@@ -19,10 +19,10 @@ export default function SimpleForm({
 }: SimpleFormProps) {
   return (
     <>
-      <form style={{ marginTop: "10px" }}>
+      <form style={{ marginTop: "10px" }} onSubmit={onSubmit}>
         {children}
         <p>
-          <NostalgicButton onClick={onSubmit}>{buttonText}</NostalgicButton>
+          <NostalgicButton type="submit">{buttonText}</NostalgicButton>
         </p>
       </form>
 

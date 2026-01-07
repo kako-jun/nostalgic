@@ -65,7 +65,7 @@ export default function DataDrivenFormSection({
       <p>または、以下のフォームで実行できます。</p>
       {warningMessage && warningMessage}
 
-      <form style={{ marginTop: "10px" }}>
+      <form style={{ marginTop: "10px" }} onSubmit={onSubmit}>
         {fields.map((field) => (
           <p key={field.name}>
             <b>{field.label}：</b>
@@ -107,7 +107,7 @@ export default function DataDrivenFormSection({
           </p>
         ))}
         <p>
-          <NostalgicButton onClick={onSubmit} variant={buttonVariant}>
+          <NostalgicButton type="submit" variant={buttonVariant}>
             {buttonText}
           </NostalgicButton>
         </p>
