@@ -255,9 +255,10 @@ export const getCounterFormSections = (
       },
       {
         name: "webhook",
-        label: "Webhook URL（オプション）",
+        label: "Webhook URL（必須）",
         type: "url" as const,
         placeholder: "https://example.com/webhook",
+        required: true,
         value: webhookUrl,
         onChange: setWebhookUrl,
       },

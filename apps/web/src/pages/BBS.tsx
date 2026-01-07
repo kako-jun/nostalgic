@@ -15,7 +15,7 @@ export default function BBSPage() {
   const [webhookUrl, setWebhookUrl] = useState("");
 
   const [_title, _setTitle] = useState("");
-  const [maxMessages, _setMaxMessages] = useState("");
+  const [maxMessages, setMaxMessages] = useState("");
   const [messagesPerPage, _setMessagesPerPage] = useState("");
 
   const [standardSelectLabel, _setStandardSelectLabel] = useState("");
@@ -153,6 +153,10 @@ export default function BBSPage() {
     publicId,
     sharedUrl,
     sharedToken,
+    maxMessages,
+    setMaxMessages,
+    webhookUrl,
+    setWebhookUrl,
     postAuthor,
     postMessage,
     standardValue,

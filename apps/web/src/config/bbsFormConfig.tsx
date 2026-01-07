@@ -23,6 +23,10 @@ interface BBSFormParams {
   publicId: string;
   sharedUrl: string;
   sharedToken: string;
+  maxMessages: string;
+  setMaxMessages: (value: string) => void;
+  webhookUrl: string;
+  setWebhookUrl: (value: string) => void;
   postAuthor: string;
   postMessage: string;
   standardValue: string;
@@ -72,6 +76,10 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
     publicId,
     sharedUrl,
     sharedToken,
+    maxMessages,
+    setMaxMessages,
+    webhookUrl,
+    setWebhookUrl,
     postAuthor,
     postMessage,
     standardValue,
@@ -499,15 +507,42 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
     // 9. 設定更新
     {
       title: "◆ 設定更新 ◆",
-      apiUrl: `/bbs?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
+      apiUrl: `/bbs?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${maxMessages ? `&maxMessages=${maxMessages}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`,
       apiUrlDisplay: (
         <>
           https://api.nostalgic.llll-ll.com/bbs?action=update&url=
           <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
           &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+          {maxMessages && (
+            <>
+              &maxMessages=<GreenParam>{maxMessages}</GreenParam>
+            </>
+          )}
+          {webhookUrl && (
+            <>
+              &webhookUrl=<GreenParam>{webhookUrl}</GreenParam>
+            </>
+          )}
         </>
       ),
-      fields: [],
+      fields: [
+        {
+          name: "maxMessages",
+          label: "最大メッセージ数",
+          type: "number" as const,
+          placeholder: "100",
+          value: maxMessages,
+          onChange: setMaxMessages,
+        },
+        {
+          name: "webhookUrl",
+          label: "Webhook URL",
+          type: "url" as const,
+          placeholder: "https://hooks.slack.com/...",
+          value: webhookUrl,
+          onChange: setWebhookUrl,
+        },
+      ],
       buttonText: "更新",
       onSubmit: handleUpdateSettings,
       response: updateSettingsResponse,
