@@ -36,12 +36,12 @@ export const getCounterFormSections = (
   // Display
   {
     title: "◆STEP 2: 表示プレビュー◆",
-    apiUrl: `https://api.nostalgic.llll-ll.com/visit?action=display&id=${encodeURIComponent(publicId || "公開ID")}&format=${selectedFormat}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/visit?action=get&id=${encodeURIComponent(publicId || "公開ID")}&type=total&format=${selectedFormat}`,
     apiUrlDisplay: (
       <>
-        https://api.nostalgic.llll-ll.com/visit?action=display&id=
+        https://api.nostalgic.llll-ll.com/visit?action=get&id=
         <GreenParam>{publicId || "公開ID"}</GreenParam>
-        &format=<GreenParam>{selectedFormat}</GreenParam>
+        &type=total&format=<GreenParam>{selectedFormat}</GreenParam>
       </>
     ),
     fields: [
@@ -117,33 +117,23 @@ export const getCounterFormSections = (
   // Increment
   {
     title: "◆カウントを増やしたいときは？◆",
-    apiUrl: `https://api.nostalgic.llll-ll.com/visit?action=increment&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/visit?action=increment&id=${encodeURIComponent(publicId || "公開ID")}`,
     apiUrlDisplay: (
       <>
-        https://api.nostalgic.llll-ll.com/visit?action=increment&url=
-        <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-        &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+        https://api.nostalgic.llll-ll.com/visit?action=increment&id=
+        <GreenParam>{publicId || "公開ID"}</GreenParam>
       </>
     ),
     fields: [
       {
-        name: "url",
-        label: "サイトURL",
-        type: "url" as const,
-        placeholder: "https://example.com",
-        required: true,
-        value: sharedUrl,
-        onChange: setSharedUrl,
-      },
-      {
-        name: "token",
-        label: "オーナートークン",
+        name: "publicId",
+        label: "公開ID",
         type: "text" as const,
-        placeholder: "8-16文字",
+        placeholder: "STEP 1で作成後に表示されます",
+        width: "40%",
         required: true,
-        width: "30%",
-        value: sharedToken,
-        onChange: setSharedToken,
+        value: publicId,
+        onChange: setPublicId,
       },
     ],
     buttonText: "カウント+1",
@@ -230,10 +220,10 @@ export const getCounterFormSections = (
   {
     title: "◆設定更新◆",
     description: "カウンターの設定を更新します。",
-    apiUrl: `https://api.nostalgic.llll-ll.com/visit?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/visit?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`,
     apiUrlDisplay: (
       <>
-        https://api.nostalgic.llll-ll.com/visit?action=updateSettings&url=
+        https://api.nostalgic.llll-ll.com/visit?action=update&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
         {webhookUrl && (

@@ -16,13 +16,11 @@ export default function LikePage() {
   const [sharedToken, setSharedToken] = useState("");
   const [webhookUrl, setWebhookUrl] = useState("");
   const [selectedFormat, setSelectedFormat] = useState("json");
-  const [setValue, setSetValue] = useState("");
 
   const [createResponse, setCreateResponse] = useState("");
   const [displayResponse, setDisplayResponse] = useState("");
   const [toggleResponse, setToggleResponse] = useState("");
   const [getResponse, setGetResponse] = useState("");
-  const [setValueResponse, setSetValueResponse] = useState("");
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
 
@@ -65,14 +63,6 @@ export default function LikePage() {
     await callApi(apiUrl, setGetResponse);
   };
 
-  const handleSet = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!sharedUrl || !sharedToken || !setValue) return;
-
-    const apiUrl = `/api/like?action=set&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&value=${setValue}`;
-    await callApi(apiUrl, setSetValueResponse);
-  };
-
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!sharedUrl || !sharedToken) return;
@@ -102,14 +92,11 @@ export default function LikePage() {
     setWebhookUrl,
     selectedFormat,
     setSelectedFormat,
-    setValue,
-    setSetValue,
     {
       handleCreate,
       handleDisplay,
       handleToggle,
       handleGet,
-      handleSet,
       handleUpdateSettings,
       handleDelete,
     },
@@ -118,7 +105,6 @@ export default function LikePage() {
       displayResponse,
       toggleResponse,
       getResponse,
-      setValueResponse,
       updateSettingsResponse,
       deleteResponse,
     },

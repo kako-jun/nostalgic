@@ -11,14 +11,11 @@ export const getLikeFormSections = (
   setWebhookUrl: (v: string) => void,
   selectedFormat: string,
   setSelectedFormat: (v: string) => void,
-  setValue: string,
-  setSetValue: (v: string) => void,
   handlers: {
     handleCreate: (e: React.FormEvent) => void;
     handleDisplay: (e: React.FormEvent) => void;
     handleToggle: (e: React.FormEvent) => void;
     handleGet: (e: React.FormEvent) => void;
-    handleSet: (e: React.FormEvent) => void;
     handleUpdateSettings: (e: React.FormEvent) => void;
     handleDelete: (e: React.FormEvent) => void;
   },
@@ -27,7 +24,6 @@ export const getLikeFormSections = (
     displayResponse: string;
     toggleResponse: string;
     getResponse: string;
-    setValueResponse: string;
     updateSettingsResponse: string;
     deleteResponse: string;
   },
@@ -36,10 +32,10 @@ export const getLikeFormSections = (
   // STEP 2: Display
   {
     title: "◆STEP 2: いいね表示◆",
-    apiUrl: `https://api.nostalgic.llll-ll.com/like?action=display&id=${encodeURIComponent(publicId || "公開ID")}&format=${selectedFormat}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/like?action=get&id=${encodeURIComponent(publicId || "公開ID")}&format=${selectedFormat}`,
     apiUrlDisplay: (
       <>
-        https://api.nostalgic.llll-ll.com/like?action=display&id=
+        https://api.nostalgic.llll-ll.com/like?action=get&id=
         <GreenParam>{publicId || "公開ID"}</GreenParam>
         &format=<GreenParam>{selectedFormat}</GreenParam>
       </>
@@ -117,33 +113,23 @@ export const getLikeFormSections = (
   // Toggle Like
   {
     title: "◆いいねをトグルしたいときは？◆",
-    apiUrl: `https://api.nostalgic.llll-ll.com/like?action=toggle&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/like?action=toggle&id=${encodeURIComponent(publicId || "公開ID")}`,
     apiUrlDisplay: (
       <>
-        https://api.nostalgic.llll-ll.com/like?action=toggle&url=
-        <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-        &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+        https://api.nostalgic.llll-ll.com/like?action=toggle&id=
+        <GreenParam>{publicId || "公開ID"}</GreenParam>
       </>
     ),
     fields: [
       {
-        name: "url",
-        label: "サイトURL",
-        type: "url" as const,
-        placeholder: "https://example.com",
-        required: true,
-        value: sharedUrl,
-        onChange: setSharedUrl,
-      },
-      {
-        name: "token",
-        label: "オーナートークン",
+        name: "publicId",
+        label: "公開ID",
         type: "text" as const,
-        placeholder: "8-16文字",
+        placeholder: "STEP 1で作成後に表示されます",
+        width: "40%",
         required: true,
-        width: "30%",
-        value: sharedToken,
-        onChange: setSharedToken,
+        value: publicId,
+        onChange: setPublicId,
       },
     ],
     buttonText: "いいねトグル",
@@ -175,69 +161,14 @@ export const getLikeFormSections = (
     onSubmit: handlers.handleGet,
     response: responses.getResponse,
   },
-  // Set Value
-  {
-    title: "◆いいね数を設定したいときは？◆",
-    apiUrl: `https://api.nostalgic.llll-ll.com/like?action=set&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&value=${setValue || "数値"}`,
-    apiUrlDisplay: (
-      <>
-        https://api.nostalgic.llll-ll.com/like?action=set&url=
-        <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
-        &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>&value=
-        <GreenParam>{setValue || "数値"}</GreenParam>
-      </>
-    ),
-    fields: [
-      {
-        name: "url",
-        label: "サイトURL",
-        type: "url" as const,
-        placeholder: "https://example.com",
-        required: true,
-        value: sharedUrl,
-        onChange: setSharedUrl,
-      },
-      {
-        name: "token",
-        label: "オーナートークン",
-        type: "text" as const,
-        placeholder: "8-16文字",
-        required: true,
-        width: "30%",
-        value: sharedToken,
-        onChange: setSharedToken,
-      },
-      {
-        name: "value",
-        label: "設定値",
-        type: "number" as const,
-        placeholder: "0",
-        required: true,
-        width: "30%",
-        value: setValue,
-        onChange: setSetValue,
-      },
-      {
-        name: "webhook",
-        label: "Webhook URL（オプション）",
-        type: "url" as const,
-        placeholder: "https://hooks.slack.com/services/...",
-        value: webhookUrl,
-        onChange: setWebhookUrl,
-      },
-    ],
-    buttonText: "いいね数設定",
-    onSubmit: handlers.handleSet,
-    response: responses.setValueResponse,
-  },
   // Update Settings
   {
     title: "◆設定更新◆",
     description: "いいねボタンの設定を更新します。",
-    apiUrl: `https://api.nostalgic.llll-ll.com/like?action=updateSettings&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/like?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`,
     apiUrlDisplay: (
       <>
-        https://api.nostalgic.llll-ll.com/like?action=updateSettings&url=
+        https://api.nostalgic.llll-ll.com/like?action=update&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
         {webhookUrl && (
