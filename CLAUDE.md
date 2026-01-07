@@ -4,10 +4,6 @@
 
 昔のWebツールを最新技術で復活させた総合プラットフォーム。Cloudflare Workers + D1 + Hono で実装。
 
-## 📚 重要ドキュメント
-
-- [**統一スキーマアーキテクチャ**](docs/development/unified-schema-architecture.md) - スキーマ設計原則（新機能追加時は必読）
-
 ## 🎨 デザイン・UX設計
 
 - [**Design Philosophy**](docs/development/design-philosophy.md) - デザイン哲学（機能はレトロ、見た目は現代ポップ）
