@@ -200,10 +200,9 @@ export const getLikeFormSections = (
       },
       {
         name: "webhook",
-        label: "Webhook URL（必須）",
+        label: "Webhook URL",
         type: "url" as const,
         placeholder: "https://example.com/webhook",
-        required: true,
         value: webhookUrl,
         onChange: setWebhookUrl,
       },

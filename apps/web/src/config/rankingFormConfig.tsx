@@ -102,7 +102,7 @@ export const getRankingFormSections = (
       },
       {
         name: "displayScore",
-        label: "表示スコア（オプション）",
+        label: "表示スコア",
         type: "text" as const,
         placeholder: "123,456点",
         width: "40%",
@@ -226,7 +226,7 @@ export const getRankingFormSections = (
       },
       {
         name: "displayScore",
-        label: "表示スコア（オプション）",
+        label: "表示スコア",
         type: "text" as const,
         placeholder: "123,456点",
         width: "40%",
@@ -377,7 +377,7 @@ export const getRankingFormSections = (
       },
       {
         name: "title",
-        label: "タイトル（オプション）",
+        label: "タイトル",
         type: "text" as const,
         placeholder: "ハイスコアランキング",
         width: "60%",
@@ -386,7 +386,7 @@ export const getRankingFormSections = (
       },
       {
         name: "max",
-        label: "最大表示数（オプション）",
+        label: "最大表示数",
         type: "number" as const,
         placeholder: "10",
         width: "30%",
@@ -395,7 +395,7 @@ export const getRankingFormSections = (
       },
       {
         name: "sortOrder",
-        label: "ソート順（オプション）",
+        label: "ソート順",
         type: "select" as const,
         width: "30%",
         value: settingsSortOrder,
@@ -408,7 +408,7 @@ export const getRankingFormSections = (
       },
       {
         name: "webhook",
-        label: "Webhook URL（オプション）",
+        label: "Webhook URL",
         type: "url" as const,
         placeholder: "https://example.com/webhook",
         value: settingsWebhookUrl,
