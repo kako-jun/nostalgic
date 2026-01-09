@@ -1,138 +1,132 @@
-# カウンター画像化システム実装計画
+# カウンター画像テーマシステム
 
 ## 概要
 
-現在のSVGテキストベースカウンターを、数字画像ベースのシステムに拡張する。
+カウンターの `theme` パラメータを拡張し、テキストベースのカラーテーマに加えて、数字画像ベースの画像テーマを追加する。
 
-## 新しい表示形式
+## テーマ一覧
 
-- **現在**: `format="svg"` (テキストベースSVG)
-- **追加1**: `format="image"` (数字画像ベースSVG)
-- **追加2**: `format="text"` (プレーンテキスト)
+### カラーテーマ（テキストベース）
 
-## 属性設計
+既存の6テーマ。SVGテキストと背景色で表現。
 
-```html
-<!-- 画像ベース -->
-<nostalgic-counter id="xxx" format="image" theme="light" font="final" />
-<nostalgic-counter id="xxx" format="image" theme="dark" font="dot" />
+| テーマ   | 背景色   | 文字色   | 説明            |
+| -------- | -------- | -------- | --------------- |
+| `light`  | 白       | 黒       | シンプル        |
+| `dark`   | 暗い紫   | 白       | デフォルト      |
+| `retro`  | 黒       | 緑       | ターミナル風    |
+| `kawaii` | ピンク   | マゼンタ | かわいい系      |
+| `mom`    | ベージュ | 茶       | MOTHER2風       |
+| `final`  | 黒       | 金       | Final Fantasy風 |
 
-<!-- プレーンテキスト -->
-<nostalgic-counter id="xxx" format="text" />
+### 画像テーマ（数字画像）
 
-<!-- 従来のSVG（後方互換） -->
-<nostalgic-counter id="xxx" format="svg" theme="light" />
+新規追加の4テーマ。各数字をSVGパスで描画。
+
+| テーマ    | 説明                                      |
+| --------- | ----------------------------------------- |
+| `mahjong` | 麻雀牌（萬子）- 零萬〜九萬                |
+| `segment` | 7セグメントLED - 発光感のあるデジタル表示 |
+| `nixie`   | ニキシー管 - オレンジグロー、ガラス管表現 |
+| `dot_f`   | ドット絵 - FF5風レトロRPGスタイル         |
+
+## API仕様
+
+```
+GET /api/visit?action=get&id={ID}&format=image&theme={THEME}
 ```
 
-## ディレクトリ構造
+### format パラメータ
 
-```
-public/assets/numbers/
-├── light/
-│   ├── final/        # Final Fantasy風フォント
-│   │   ├── 0.svg
-│   │   ├── 1.svg
-│   │   └── ...9.svg
-│   └── dot/       # 8bitドット風フォント
-│       ├── 0.svg
-│       └── ...9.svg
-├── dark/
-│   ├── final/
-│   └── dot/
-└── kawaii/
-    ├── final/
-    └── dot/
-```
+| 値      | 説明                               |
+| ------- | ---------------------------------- |
+| `json`  | JSONデータ                         |
+| `text`  | プレーンテキスト（theme無視）      |
+| `image` | SVG画像（themeで表示スタイル決定） |
 
-## 実装ステップ
+※ `format=svg` は廃止
 
-### Phase 1: 基盤準備
+## 実装方針
 
-- [ ] 数字素材作成（0-9.svg × 3テーマ × 2フォント = 60ファイル）
-- [ ] ディレクトリ構造作成
+### 数字データの埋め込み
 
-### Phase 2: API実装
-
-- [ ] SVG生成関数の実装
+外部ファイルではなく、コード内にSVGパスとして埋め込む。
 
 ```typescript
-function generateImageCounterSVG(count: string, theme: string, font: string): string;
-function generateTextCounter(count: string): string;
+const IMAGE_THEMES = {
+  mahjong: {
+    width: 32,
+    height: 40,
+    digits: {
+      "0": `<svg>...</svg>`,
+      "1": `<svg>...</svg>`,
+      // ...
+    }
+  },
+  segment: { ... },
+  nixie: { ... },
+  dot_f: { ... },
+};
 ```
 
-- [ ] `/api/visit` の `format=image`, `format=text` 対応
+### 判定ロジック
 
-### Phase 3: Web Component更新
+```typescript
+const IMAGE_THEME_NAMES = ["mahjong", "segment", "nixie", "dot_f"];
 
-- [ ] `visit.js` に `format`, `font` 属性対応追加
-- [ ] 後方互換性の確保
-
-### Phase 4: UI更新
-
-- [ ] ホームページにサンプル表示追加
-- [ ] デモページの更新
-
-## 数字素材仕様
-
-- **形式**: SVG
-- **サイズ**: 30px × 40px（統一）
-- **背景**: 透明
-- **色**: テーマカラーで統一
-
-### テーマカラー
-
-- **light**: `#333333` (ダークグレー)
-- **dark**: `#ffffff` (ホワイト)
-- **kawaii**: `#e91e63` (ピンク)
-
-### フォントスタイル
-
-- **final**: Final Fantasy風角ばったフォント
-- **dot**: 8bitドット絵風フォント
-
-## API仕様拡張
-
-```
-GET /api/visit?action=display&format=image&theme=light&font=final&id=xxx&type=total
-GET /api/visit?action=display&format=text&id=xxx&type=total
+if (IMAGE_THEME_NAMES.includes(theme)) {
+  return generateImageCounterSVG(value, theme);
+} else {
+  return generateCounterSVG(value, theme); // 既存のテキストベース
+}
 ```
 
-## レスポンス例
+## 各テーマの詳細仕様
 
-```xml
-<!-- format=image -->
-<svg width="120" height="40" xmlns="http://www.w3.org/2000/svg">
-  <image x="0" y="0" width="30" height="40" href="/assets/numbers/light/final/1.svg" />
-  <image x="30" y="0" width="30" height="40" href="/assets/numbers/light/final/2.svg" />
-  <image x="60" y="0" width="30" height="40" href="/assets/numbers/light/final/3.svg" />
-  <image x="90" y="0" width="30" height="40" href="/assets/numbers/light/final/4.svg" />
-</svg>
-```
+### mahjong（麻雀牌）
 
-```
-<!-- format=text -->
-1234
+- 萬子（マンズ）をベースに零萬を追加
+- 牌の背景: 白〜アイボリー
+- 文字: 赤（数字）+ 黒（萬の字）
+- サイズ: 32x40px
+
+### segment（7セグメントLED）
+
+- 発光感のある赤色LED
+- 消灯セグメントも薄く表示
+- 背景: 暗いグレー
+- サイズ: 24x40px
+
+### nixie（ニキシー管）
+
+- オレンジ色のグロー効果
+- ガラス管の反射表現
+- メッシュ/グリッドの背景
+- サイズ: 28x40px
+
+### dot_f（ドット絵）
+
+- FF5のダメージ数字風
+- 白文字 + 黒縁取り
+- 8x8または16x16ピクセルベース
+- サイズ: 16x24px
+
+## Web Component
+
+```html
+<!-- カラーテーマ -->
+<nostalgic-counter id="xxx" theme="dark"></nostalgic-counter>
+
+<!-- 画像テーマ -->
+<nostalgic-counter id="xxx" theme="mahjong"></nostalgic-counter>
+<nostalgic-counter id="xxx" theme="segment"></nostalgic-counter>
+<nostalgic-counter id="xxx" theme="nixie"></nostalgic-counter>
+<nostalgic-counter id="xxx" theme="dot_f"></nostalgic-counter>
 ```
 
 ## 利点
 
-- **透明背景**: サイトデザインに自然に溶け込む
+- **統一されたAPI**: `theme` パラメータのみで全スタイル切り替え
+- **外部依存なし**: SVGパスをコード内に埋め込み
 - **高品質**: ベクター画像で拡縮しても美しい
-- **軽量**: 背景・枠描画処理が不要
-- **カスタマイズ性**: テーマ×フォントの豊富な組み合わせ
-- **アクセシビリティ**: プレーンテキスト形式で対応
-
-## ホームページ表示予定
-
-```html
-<!-- カウンターサンプルセクション -->
-<div>画像ベース（FF風）</div>
-<nostalgic-counter format="image" theme="light" font="final" />
-
-<div>画像ベース（ドット風）</div>
-<nostalgic-counter format="image" theme="kawaii" font="dot" />
-
-<div>プレーンテキスト</div>
-<nostalgic-counter format="text" />
-</div>
-```
+- **軽量**: 追加のHTTPリクエスト不要

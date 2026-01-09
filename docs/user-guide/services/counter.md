@@ -79,12 +79,18 @@ GET /api/visit?action=get&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
   - `week`: Last 7 days
   - `month`: Last 30 days
 - `theme` (optional): Visual style (for image format)
-  - `light`: Green on black (90s terminal style)
-  - `dark` (default): White on gray (2000s clean style)
-  - `retro`: Old computer terminal (black background, green text, scanlines, CRT effects)
-  - `kawaii`: Yellow on purple (80s neon style)
-  - `mom`: MOTHER2/EarthBound style (green stripes, orange border)
-  - `final`: Final Fantasy style (blue gradients)
+  - **Color themes (text-based):**
+    - `light`: White background, dark text
+    - `dark` (default): Dark background, light text
+    - `retro`: Black background, green text (terminal style)
+    - `kawaii`: Pink background, magenta text
+    - `mom`: Beige background, brown text (MOTHER2 style)
+    - `final`: Black background, gold text (Final Fantasy style)
+  - **Image themes (digit graphics):**
+    - `mahjong`: Mahjong tile style (Chinese numerals)
+    - `segment`: 7-segment LED display
+    - `nixie`: Nixie tube style (orange glow)
+    - `dot_f`: Pixel art style (FF5-like)
 - `format` (optional): Response format
   - `image` (default): SVG image
   - `text`: Plain text number (no styling)
@@ -201,7 +207,9 @@ GET /api/visit?action=delete&url={URL}&token={TOKEN}
 
 - `id`: Counter public ID
 - `type`: Display type (total, today, yesterday, week, month)
-- `theme`: Visual style (light, dark, retro, kawaii, mom, final) - only for image format
+- `theme`: Visual style - only for image format
+  - Color themes: light, dark, retro, kawaii, mom, final
+  - Image themes: mahjong, segment, nixie, dot_f
 - `format`: Output format (image, text) - default: image
 - `digits`: Zero-padding digits (only when specified)
 - `api-base`: Custom API base URL (optional)
@@ -223,7 +231,17 @@ declare module "react" {
       > & {
         id?: string;
         type?: "total" | "today" | "yesterday" | "week" | "month";
-        theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
+        theme?:
+          | "light"
+          | "dark"
+          | "retro"
+          | "kawaii"
+          | "mom"
+          | "final"
+          | "mahjong"
+          | "segment"
+          | "nixie"
+          | "dot_f";
         digits?: string;
         format?: "image" | "text";
       };

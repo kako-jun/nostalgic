@@ -274,9 +274,11 @@ app.get("/", async (c) => {
       return c.text(displayValue);
     }
 
-    if (format === "svg" || format === "image") {
+    if (format === "image") {
       const displayValue = digits ? String(value).padStart(Number(digits), "0") : String(value);
-      const svg = generateCounterSVG(displayValue, theme as string);
+      const svg = isImageTheme(theme as string)
+        ? generateImageCounterSVG(displayValue, theme as string)
+        : generateCounterSVG(displayValue, theme as string);
       return c.body(svg, 200, {
         "Content-Type": "image/svg+xml",
         "Cache-Control": "no-cache",
@@ -457,6 +459,111 @@ function generateCounterSVG(value: string, theme: string): string {
   <rect width="100%" height="100%" fill="${t.bg}" stroke="${t.border}" stroke-width="1" rx="4"/>
   <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
         fill="${t.text}" font-family="monospace" font-size="14" font-weight="bold">${value}</text>
+</svg>`;
+}
+
+// === Image Theme Definitions ===
+// Each theme contains SVG content for digits 0-9
+// Placeholder: replace with actual SVG paths/content
+type ImageThemeConfig = {
+  width: number;
+  height: number;
+  digits: Record<string, string>;
+};
+
+const IMAGE_THEMES: Record<string, ImageThemeConfig> = {
+  mahjong: {
+    width: 32,
+    height: 40,
+    digits: {
+      "0": `<!-- mahjong 0 -->`,
+      "1": `<!-- mahjong 1 -->`,
+      "2": `<!-- mahjong 2 -->`,
+      "3": `<!-- mahjong 3 -->`,
+      "4": `<!-- mahjong 4 -->`,
+      "5": `<!-- mahjong 5 -->`,
+      "6": `<!-- mahjong 6 -->`,
+      "7": `<!-- mahjong 7 -->`,
+      "8": `<!-- mahjong 8 -->`,
+      "9": `<!-- mahjong 9 -->`,
+    },
+  },
+  segment: {
+    width: 24,
+    height: 40,
+    digits: {
+      "0": `<!-- segment 0 -->`,
+      "1": `<!-- segment 1 -->`,
+      "2": `<!-- segment 2 -->`,
+      "3": `<!-- segment 3 -->`,
+      "4": `<!-- segment 4 -->`,
+      "5": `<!-- segment 5 -->`,
+      "6": `<!-- segment 6 -->`,
+      "7": `<!-- segment 7 -->`,
+      "8": `<!-- segment 8 -->`,
+      "9": `<!-- segment 9 -->`,
+    },
+  },
+  nixie: {
+    width: 28,
+    height: 40,
+    digits: {
+      "0": `<!-- nixie 0 -->`,
+      "1": `<!-- nixie 1 -->`,
+      "2": `<!-- nixie 2 -->`,
+      "3": `<!-- nixie 3 -->`,
+      "4": `<!-- nixie 4 -->`,
+      "5": `<!-- nixie 5 -->`,
+      "6": `<!-- nixie 6 -->`,
+      "7": `<!-- nixie 7 -->`,
+      "8": `<!-- nixie 8 -->`,
+      "9": `<!-- nixie 9 -->`,
+    },
+  },
+  dot_f: {
+    width: 16,
+    height: 24,
+    digits: {
+      "0": `<!-- dot_f 0 -->`,
+      "1": `<!-- dot_f 1 -->`,
+      "2": `<!-- dot_f 2 -->`,
+      "3": `<!-- dot_f 3 -->`,
+      "4": `<!-- dot_f 4 -->`,
+      "5": `<!-- dot_f 5 -->`,
+      "6": `<!-- dot_f 6 -->`,
+      "7": `<!-- dot_f 7 -->`,
+      "8": `<!-- dot_f 8 -->`,
+      "9": `<!-- dot_f 9 -->`,
+    },
+  },
+};
+
+const IMAGE_THEME_NAMES = Object.keys(IMAGE_THEMES);
+
+function isImageTheme(theme: string): boolean {
+  return IMAGE_THEME_NAMES.includes(theme);
+}
+
+function generateImageCounterSVG(value: string, theme: string): string {
+  const config = IMAGE_THEMES[theme];
+  if (!config) {
+    return generateCounterSVG(value, "dark");
+  }
+
+  const { width: digitWidth, height, digits } = config;
+  const totalWidth = value.length * digitWidth;
+
+  const digitSvgs = value
+    .split("")
+    .map((char, index) => {
+      const digitContent = digits[char] || "";
+      const x = index * digitWidth;
+      return `<g transform="translate(${x}, 0)">${digitContent}</g>`;
+    })
+    .join("\n");
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${height}">
+${digitSvgs}
 </svg>`;
 }
 

@@ -17,15 +17,18 @@
 
 ## 未実装
 
-### カウンター画像化
+### カウンター画像テーマ
 
-- **状態**: 設計のみ、実装なし
-- **設計ドキュメント**: [counter-image-system.md](./counter-image-system.md)
-- **未実装**:
-  - 数字素材（0-9.svg × テーマ × フォント）
-  - `format="image"` + `font` パラメータの処理
-  - `generateImageCounterSVG()` 関数
-- **実装箇所**: `apps/api/src/routes/visit.ts`, `apps/web/public/components/visit.js`
+- **状態**: 実装中
+- **変更点**:
+  - `format=svg` を廃止、`format=image` に統一 ✅
+  - `theme` パラメータに画像テーマを追加
+- **画像テーマ**:
+  - `mahjong`: 麻雀牌（萬子）- 一萬〜九萬 + 零萬
+  - `segment`: 7セグメントLED - 発光感のあるデジタル表示
+  - `nixie`: ニキシー管 - オレンジグロー、ガラス管
+  - `dot_f`: ドット絵 - FF5風レトロRPGスタイル
+- **実装箇所**: `apps/api/src/routes/visit.ts`
 
 ---
 

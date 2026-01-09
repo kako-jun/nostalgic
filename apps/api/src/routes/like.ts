@@ -256,7 +256,7 @@ app.get("/", async (c) => {
       return c.text(String(total));
     }
 
-    if (format === "svg" || format === "image") {
+    if (format === "image") {
       const svg = generateLikeSVG(String(total), isLiked);
       return c.body(svg, 200, {
         "Content-Type": "image/svg+xml",
