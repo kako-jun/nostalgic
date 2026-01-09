@@ -375,8 +375,8 @@ function generateLikeSVG(count: string, liked: boolean): string {
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="28">
   <rect width="100%" height="100%" fill="${bg}" stroke="#ddd" stroke-width="1" rx="4"/>
-  <text x="8" y="50%" dominant-baseline="middle" font-size="14">${heart}</text>
-  <text x="28" y="50%" dominant-baseline="middle"
+  <text x="8" y="50%" dy="0.35em" font-size="14">${heart}</text>
+  <text x="28" y="50%" dy="0.35em"
         fill="${textColor}" font-family="sans-serif" font-size="14" font-weight="bold">${count}</text>
 </svg>`;
 }
