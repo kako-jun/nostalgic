@@ -24,15 +24,6 @@
   - `generateImageCounterSVG()` 関数
 - **実装箇所**: `apps/api/src/routes/visit.ts`, `apps/web/public/components/visit.js`
 
-## オプション（機能強化）
-
-### インクリメンタル検索セレクトの検索UI
-
-- **状態**: 単純な `<select>` として実装済み
-- **設計ドキュメント**: [bbs-select-system-expansion.md](./bbs-select-system-expansion.md)
-- **未実装**: 入力フィールド + ドロップダウンによる絞り込み検索
-- **実装箇所**: `apps/web/public/components/bbs.js`
-
 ---
 
 _最終更新: 2025-01-09_
