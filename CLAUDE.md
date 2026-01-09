@@ -12,6 +12,7 @@
 
 - [ユーザーガイド](docs/user-guide/index.md) - API仕様、使い方
 - [開発ドキュメント](docs/development/) - 設計思想、将来計画
+- [未実装機能](docs/development/TODO.md) - 実装待ちの機能一覧
 
 ## 開発
 
