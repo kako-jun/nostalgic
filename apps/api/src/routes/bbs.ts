@@ -7,6 +7,7 @@ import { hashToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
 import { generateUserHash } from "../lib/core/crypto";
 import { BBS } from "../lib/core/constants";
+import { sendWebHook, WebHookMessages } from "../lib/core/webhook";
 
 type Bindings = { DB: D1Database };
 
@@ -232,6 +233,16 @@ app.get("/", async (c) => {
     }
 
     const messages = await getMessages(db, id);
+
+    // WebHook送信（非同期、エラーは無視）
+    if (metadata.webhookUrl) {
+      sendWebHook(metadata.webhookUrl, "bbs.post", WebHookMessages.bbs.post(author, message), {
+        id,
+        author,
+        message,
+      });
+    }
+
     return c.json({ success: true, data: { id, messages } });
   }
 

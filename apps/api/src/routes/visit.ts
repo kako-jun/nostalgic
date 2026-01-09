@@ -9,6 +9,7 @@ import { generatePublicId } from "../lib/core/id";
 import { generateUserHash } from "../lib/core/crypto";
 import { getTodayDateString, getYesterdayDateString, getDateRange } from "../lib/core/db";
 import { DEFAULT_THEME, URL_CONST } from "../lib/core/constants";
+import { sendWebHook, WebHookMessages } from "../lib/core/webhook";
 
 type Bindings = {
   DB: D1Database;
@@ -194,6 +195,18 @@ app.get("/", async (c) => {
     ]);
 
     const data = await getCounterData(db, id);
+
+    // WebHook送信（非同期、エラーは無視）
+    const metadata = JSON.parse((counter as { metadata: string }).metadata || "{}");
+    if (metadata.webhookUrl) {
+      sendWebHook(
+        metadata.webhookUrl,
+        "counter.increment",
+        WebHookMessages.counter.increment(data.total),
+        { id, ...data }
+      );
+    }
+
     return c.json({ success: true, data });
   }
 

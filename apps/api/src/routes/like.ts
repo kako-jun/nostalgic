@@ -7,6 +7,7 @@ import { hashToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
 import { generateUserHash } from "../lib/core/crypto";
 import { getTodayDateString } from "../lib/core/db";
+import { sendWebHook, WebHookMessages } from "../lib/core/webhook";
 
 type Bindings = { DB: D1Database };
 
@@ -166,6 +167,16 @@ app.get("/", async (c) => {
     }
 
     const total = await getTotalLikes(db, id);
+
+    // WebHook送信（非同期、エラーは無視）
+    const metadata = JSON.parse((like as { metadata: string }).metadata || "{}");
+    if (metadata.webhookUrl) {
+      const message = newState
+        ? WebHookMessages.like.liked(total)
+        : WebHookMessages.like.unliked(total);
+      sendWebHook(metadata.webhookUrl, "like.toggle", message, { id, total, liked: newState });
+    }
+
     return c.json({ success: true, data: { id, total, liked: newState } });
   }
 

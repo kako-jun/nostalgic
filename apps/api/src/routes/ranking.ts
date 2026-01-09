@@ -6,6 +6,7 @@ import { Hono } from "hono";
 import { hashToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
 import { RANKING } from "../lib/core/constants";
+import { sendWebHook, WebHookMessages } from "../lib/core/webhook";
 
 type Bindings = { DB: D1Database };
 
@@ -186,6 +187,17 @@ app.get("/", async (c) => {
     }
 
     const entries = await getTopEntries(db, id, RANKING.LIMIT.DEFAULT, sortOrder);
+
+    // WebHook送信（非同期、エラーは無視）
+    if (metadata.webhookUrl) {
+      sendWebHook(
+        metadata.webhookUrl,
+        "ranking.submit",
+        WebHookMessages.ranking.submit(name, displayScore || score),
+        { id, name, score, displayScore, entries }
+      );
+    }
+
     return c.json({ success: true, data: { id, entries } });
   }
 
