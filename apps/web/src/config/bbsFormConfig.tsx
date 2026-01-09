@@ -140,7 +140,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
     // 1. メッセージ投稿
     {
       title: "◆ メッセージ投稿 ◆",
-      apiUrl: `/bbs?action=post&id=${encodeURIComponent(publicId || "公開ID")}&author=${encodeURIComponent(postAuthor || "投稿者名")}&message=${encodeURIComponent(postMessage || "メッセージ")}${standardValue ? `&select1=${encodeURIComponent(standardValue)}` : ""}${incrementalValue ? `&select2=${encodeURIComponent(incrementalValue)}` : ""}${emoteValue ? `&icon=${encodeURIComponent(emoteValue)}` : ""}`,
+      apiUrl: `/bbs?action=post&id=${encodeURIComponent(publicId || "公開ID")}&author=${encodeURIComponent(postAuthor || "投稿者名")}&message=${encodeURIComponent(postMessage || "メッセージ")}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ""}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ""}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ""}`,
       apiUrlDisplay: (
         <>
           https://api.nostalgic.llll-ll.com/bbs?action=post&id=
@@ -149,17 +149,17 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
           &message=<GreenParam>{postMessage || "メッセージ"}</GreenParam>
           {standardValue && (
             <>
-              &select1=<GreenParam>{standardValue}</GreenParam>
+              &standardValue=<GreenParam>{standardValue}</GreenParam>
             </>
           )}
           {incrementalValue && (
             <>
-              &select2=<GreenParam>{incrementalValue}</GreenParam>
+              &incrementalValue=<GreenParam>{incrementalValue}</GreenParam>
             </>
           )}
           {emoteValue && (
             <>
-              &icon=<GreenParam>{emoteValue}</GreenParam>
+              &emoteValue=<GreenParam>{emoteValue}</GreenParam>
             </>
           )}
         </>

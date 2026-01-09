@@ -55,15 +55,20 @@ async function getMessages(db: D1Database, id: string, limit: number = 100) {
     .bind(`bbs:${id}:messages`, limit)
     .all();
 
-  return (results as BBSMessageRow[]).map((row) => ({
-    id: row.id,
-    author: row.author,
-    message: row.message,
-    icon: row.icon,
-    selects: row.selects ? JSON.parse(row.selects) : undefined,
-    userHash: row.user_hash,
-    timestamp: row.created_at,
-  }));
+  return (results as BBSMessageRow[]).map((row) => {
+    const selects = row.selects ? JSON.parse(row.selects) : {};
+    return {
+      id: row.id,
+      author: row.author,
+      message: row.message,
+      icon: row.icon,
+      standardValue: selects.standardValue,
+      incrementalValue: selects.incrementalValue,
+      emoteValue: selects.emoteValue,
+      userHash: row.user_hash,
+      timestamp: row.created_at,
+    };
+  });
 }
 
 // === Routes ===
@@ -152,9 +157,9 @@ app.get("/", async (c) => {
     const author = c.req.query("author") || BBS.AUTHOR.DEFAULT_VALUE;
     const message = c.req.query("message");
     const icon = c.req.query("icon");
-    const select1 = c.req.query("select1");
-    const select2 = c.req.query("select2");
-    const select3 = c.req.query("select3");
+    const standardValue = c.req.query("standardValue");
+    const incrementalValue = c.req.query("incrementalValue");
+    const emoteValue = c.req.query("emoteValue");
 
     if (!id || !message) {
       return c.json({ error: "id and message are required" }, 400);
@@ -173,7 +178,10 @@ app.get("/", async (c) => {
     const userAgent = c.req.header("User-Agent") || "";
     const userHash = await generateUserHash(ip, userAgent);
     const messageId = crypto.randomUUID();
-    const selects = select1 || select2 || select3 ? { select1, select2, select3 } : null;
+    const selects =
+      standardValue || incrementalValue || emoteValue
+        ? { standardValue, incrementalValue, emoteValue }
+        : null;
 
     await db
       .prepare(

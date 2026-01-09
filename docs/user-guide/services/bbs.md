@@ -47,7 +47,7 @@ GET /api/bbs?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MA
 Post a new message to the BBS.
 
 ```
-GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&icon={ICON}&select1={VALUE1}&select2={VALUE2}&select3={VALUE3}
+GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&icon={ICON}&standardValue={VALUE}&incrementalValue={VALUE}&emoteValue={VALUE}
 ```
 
 **Parameters:**
@@ -56,7 +56,9 @@ GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&icon={ICON}&s
 - `author` (optional): Author name (default: "名無しさん", max 50 characters)
 - `message` (required): Message content (max 1000 characters)
 - `icon` (optional): Icon for the message
-- `select1`, `select2`, `select3` (optional): Custom selections
+- `standardValue` (optional): Value from standard select dropdown
+- `incrementalValue` (optional): Value from incremental select dropdown
+- `emoteValue` (optional): Value from emote select dropdown
 
 **Response:**
 
@@ -71,7 +73,7 @@ GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&icon={ICON}&s
         "author": "User",
         "message": "Hello world!",
         "icon": "😀",
-        "selects": { "select1": "Japan" },
+        "standardValue": "Japan",
         "userHash": "a1b2c3d4",
         "timestamp": "2025-08-13T10:00:00Z"
       }
@@ -246,7 +248,7 @@ GET /api/bbs?action=get&id={ID}&limit={LIMIT}
         "author": "User",
         "message": "Hello world!",
         "icon": "😀",
-        "selects": { "select1": "Japan" },
+        "standardValue": "Japan",
         "userHash": "a1b2c3d4",
         "timestamp": "2025-08-13T10:00:00Z"
       }
@@ -337,7 +339,7 @@ console.log("BBS ID:", data.id);
 await fetch(
   "/api/bbs?action=post&id=" +
     data.id +
-    "&author=Alice&message=Hello everyone!&icon=😀&select1=Japan&select2=General"
+    "&author=Alice&message=Hello everyone!&icon=😀&standardValue=Japan&incrementalValue=General"
 );
 ```
 
@@ -360,7 +362,7 @@ await fetch("/api/bbs?action=clear&url=https://mysite.com&token=my-secret");
 
 - **Author Verification**: Users can edit/remove their own posts (via IP+UserAgent hash)
 - **Owner Management**: BBS owners can manage any message
-- **Optional Fields**: Icon and custom selections (select1-3) on posts
+- **Optional Fields**: Icon and dropdown selections (standardValue, incrementalValue, emoteValue) on posts
 - **Message History**: Tracks post creation and update times
 - **Privacy Protection**: IP addresses are hashed
 

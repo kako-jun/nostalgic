@@ -71,9 +71,9 @@ export default function BBSPage() {
 
     let apiUrl = `/api/bbs?action=post&id=${encodeURIComponent(publicId)}&message=${encodeURIComponent(postMessage)}`;
     if (postAuthor) apiUrl += `&author=${encodeURIComponent(postAuthor)}`;
-    if (standardValue) apiUrl += `&select1=${encodeURIComponent(standardValue)}`;
-    if (incrementalValue) apiUrl += `&select2=${encodeURIComponent(incrementalValue)}`;
-    if (emoteValue) apiUrl += `&icon=${encodeURIComponent(emoteValue)}`;
+    if (standardValue) apiUrl += `&standardValue=${encodeURIComponent(standardValue)}`;
+    if (incrementalValue) apiUrl += `&incrementalValue=${encodeURIComponent(incrementalValue)}`;
+    if (emoteValue) apiUrl += `&emoteValue=${encodeURIComponent(emoteValue)}`;
 
     await callApi(apiUrl, setPostResponse);
   };
