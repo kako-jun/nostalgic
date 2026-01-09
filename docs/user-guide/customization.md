@@ -12,8 +12,7 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
 <style>
   nostalgic-ranking {
     /* サイズ調整 */
-    --ranking-min-width: 250px;
-    --ranking-max-width: 500px;
+    --ranking-width: 480px;
     --ranking-padding: 15px;
 
     /* 色調整 */
@@ -29,10 +28,11 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
     /* アイテム間隔調整 */
     --ranking-item-padding: 10px 15px;
     --ranking-header-padding: 12px;
+    --ranking-border-radius: 4px;
   }
 </style>
 
-<nostalgic-ranking id="game-abc123" theme="custom"></nostalgic-ranking>
+<nostalgic-ranking id="game-abc123" theme="light"></nostalgic-ranking>
 ```
 
 ### BBS Component
@@ -41,9 +41,8 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
 <style>
   nostalgic-bbs {
     /* サイズ調整 */
-    --bbs-min-width: 400px;
-    --bbs-max-width: 800px;
-    --bbs-max-height: 500px;
+    --bbs-width: 480px;
+    --bbs-max-height: 400px;
 
     /* メッセージ調整 */
     --bbs-message-padding: 12px;
@@ -60,6 +59,7 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
 
     /* フォント調整 */
     --bbs-font-family: "Helvetica", sans-serif;
+    --bbs-border-radius: 4px;
   }
 </style>
 
@@ -68,17 +68,10 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
 
 ### Counter Component
 
-```html
-<style>
-  nostalgic-counter {
-    /* カスタム色 */
-    --counter-bg-color: #e9ecef;
-    --counter-text-color: #495057;
-    --counter-border-color: #6c757d;
-  }
-</style>
+Counterコンポーネントは`theme`属性でスタイルを切り替えます。CSS変数によるカスタマイズは現在サポートされていません。
 
-<nostalgic-counter id="blog-ghi789"></nostalgic-counter>
+```html
+<nostalgic-counter id="blog-ghi789" theme="dark"></nostalgic-counter>
 ```
 
 ### Like Component
@@ -87,9 +80,11 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
 <style>
   nostalgic-like {
     /* カスタム色 */
-    --like-bg-color: #ffeaa7;
-    --like-text-color: #2d3436;
-    --like-border-color: #fdcb6e;
+    --like-bg: #ffeaa7;
+    --like-text: #2d3436;
+    --like-border: #fdcb6e;
+    --like-radius: 8px;
+    --like-font: "Arial", sans-serif;
   }
 </style>
 
@@ -234,8 +229,7 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
 - `--ranking-font-family`: フォント
 - `--ranking-padding`: 内部余白
 - `--ranking-border-radius`: 角丸
-- `--ranking-min-width`: 最小幅
-- `--ranking-max-width`: 最大幅
+- `--ranking-width`: 幅
 - `--ranking-item-padding`: 項目内余白
 - `--ranking-header-padding`: ヘッダー内余白
 
@@ -249,13 +243,29 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
 - `--bbs-text-color`: 文字色
 - `--bbs-font-family`: フォント
 - `--bbs-border-radius`: 角丸
-- `--bbs-min-width`: 最小幅
-- `--bbs-max-width`: 最大幅
+- `--bbs-width`: 幅
 - `--bbs-message-padding`: メッセージ内余白
 - `--bbs-message-margin`: メッセージ間隔
 - `--bbs-message-border-radius`: メッセージ角丸
 - `--bbs-max-height`: 最大高さ
 - `--bbs-header-padding`: ヘッダー内余白
+
+### Like Component
+
+- `--like-bg`: 背景色
+- `--like-text`: 文字色
+- `--like-border`: 枠線色
+- `--like-radius`: 角丸
+- `--like-shadow`: 影色
+- `--like-font`: フォント
+- `--like-font-size`: フォントサイズ
+- `--like-hover-bg`: ホバー時背景色
+- `--like-icon-size`: アイコンサイズ
+- `--like-icon-color`: アイコン色
+
+### Counter Component
+
+CounterコンポーネントはCSS Variables未対応です。`theme`属性でスタイルを切り替えてください。
 
 ## 💡 Tips
 
