@@ -26,11 +26,6 @@ export const COUNTER = {
   DEFAULT_FORMAT: "image" as const,
 } as const;
 
-export const LIKE = {
-  ICONS: ["heart", "star", "thumb", "peta"] as const,
-  DEFAULT_ICON: "heart" as const,
-} as const;
-
 export const RANKING = {
   LIMIT: { MIN: 1, MAX: 100, DEFAULT: 10 },
   SORT_ORDER: { VALUES: ["desc", "asc"] as const, DEFAULT: "desc" as const },
@@ -40,10 +35,9 @@ export const RANKING = {
 } as const;
 
 export const BBS = {
-  AUTHOR: { MAX_LENGTH: 20, DEFAULT_VALUE: "名無しさん" },
+  AUTHOR: { MAX_LENGTH: 20, DEFAULT_VALUE: "ああああ" },
   MESSAGE: { MIN_LENGTH: 1, MAX_LENGTH: 200 },
   MAX_MESSAGES: { MIN: 1, MAX: 1000 },
-  ICONS: ["😀", "😉", "😎", "😠", "😢", "😮"] as const,
 } as const;
 
 export const TTL = {
@@ -54,5 +48,3 @@ export const TTL = {
 export type ThemeType = (typeof THEMES)[number];
 export type CounterType = (typeof COUNTER.TYPES)[number];
 export type CounterFormat = (typeof COUNTER.FORMATS)[number];
-export type LikeIcon = (typeof LIKE.ICONS)[number];
-export type BBSIcon = (typeof BBS.ICONS)[number];

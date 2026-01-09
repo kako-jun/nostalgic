@@ -79,7 +79,7 @@ https://api.nostalgic.llll-ll.com/like?action=toggle&url=https://yoursite.com&to
 1. **Create ranking**:
 
 ```
-https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret-token&max=100
+https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret-token&maxEntries=100
 ```
 
 2. **Submit scores**:
@@ -93,7 +93,7 @@ https://api.nostalgic.llll-ll.com/ranking?action=submit&url=https://yoursite.com
 1. **Create BBS**:
 
 ```
-https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://yoursite.com&token=your-secret-token&max=1000
+https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://yoursite.com&token=your-secret-token&maxMessages=1000
 ```
 
 2. **Post messages** (pure GET, 1990s style):

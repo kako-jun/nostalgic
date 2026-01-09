@@ -53,8 +53,8 @@ GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&standardValue
 **Parameters:**
 
 - `id` (required): Public BBS ID
-- `author` (optional): Author name (default: "名無しさん", max 50 characters)
-- `message` (required): Message content (max 1000 characters)
+- `author` (optional): Author name (default: "ああああ", max 20 characters)
+- `message` (required): Message content (max 200 characters)
 - `standardValue` (optional): Value from standard select dropdown
 - `incrementalValue` (optional): Value from incremental select dropdown
 - `emoteValue` (optional): Image URL from emote picker
@@ -72,6 +72,8 @@ GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&standardValue
         "author": "User",
         "message": "Hello world!",
         "standardValue": "Japan",
+        "incrementalValue": "General",
+        "emoteValue": "https://example.com/emote.png",
         "userHash": "a1b2c3d4",
         "timestamp": "2025-08-13T10:00:00Z"
       }
@@ -247,6 +249,8 @@ GET /api/bbs?action=get&id={ID}&limit={LIMIT}
         "author": "User",
         "message": "Hello world!",
         "standardValue": "Japan",
+        "incrementalValue": "General",
+        "emoteValue": "https://example.com/emote.png",
         "userHash": "a1b2c3d4",
         "timestamp": "2025-08-13T10:00:00Z"
       }
@@ -424,4 +428,4 @@ This prevents TypeScript build errors when using Web Components in React/Next.js
 - Owner token required for BBS creation and management
 - Authors can only edit their own messages
 - IP addresses are hashed for privacy
-- Message content length limited to 1000 characters
+- Message content length limited to 200 characters

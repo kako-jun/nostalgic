@@ -195,6 +195,7 @@ GET /api/ranking?action=get&id={ID}&limit={LIMIT}
         "createdAt": "2025-08-13T09:30:00Z"
       }
     ],
+    "title": "HIGH SCORE",
     "sortOrder": "desc",
     "maxEntries": 100
   }
@@ -224,6 +225,7 @@ GET /api/ranking?action=get&url={URL}&token={TOKEN}&limit={LIMIT}
     "id": "yoursite-a7b9c3d4",
     "url": "https://yoursite.com",
     "entries": [...],
+    "title": "HIGH SCORE",
     "sortOrder": "desc",
     "maxEntries": 100,
     "settings": {
@@ -262,7 +264,7 @@ GET /api/ranking?action=delete&url={URL}&token={TOKEN}
 ```javascript
 // 1. Create ranking for score-based game (high scores win)
 const response = await fetch(
-  "/api/ranking?action=create&url=https://mygame.com&token=game-secret&max=50&sortOrder=desc"
+  "/api/ranking?action=create&url=https://mygame.com&token=game-secret&maxEntries=50&sortOrder=desc"
 );
 const data = await response.json();
 console.log("Ranking ID:", data.id);
@@ -282,7 +284,7 @@ console.log("Top players:", leaderboard.entries);
 ```javascript
 // 1. Create ranking for time-based game (lower times win)
 const response = await fetch(
-  "/api/ranking?action=create&url=https://racegame.com&token=race-secret&max=100&sortOrder=asc"
+  "/api/ranking?action=create&url=https://racegame.com&token=race-secret&maxEntries=100&sortOrder=asc"
 );
 const data = await response.json();
 console.log("Race Ranking ID:", data.id);
@@ -312,7 +314,7 @@ await fetch("/api/ranking?action=clear&url=https://mygame.com&token=game-secret"
 
 // Update settings
 await fetch(
-  "/api/ranking?action=update&url=https://mygame.com&token=game-secret&max=50&sortOrder=asc"
+  "/api/ranking?action=update&url=https://mygame.com&token=game-secret&maxEntries=50&sortOrder=asc"
 );
 ```
 

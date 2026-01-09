@@ -44,7 +44,7 @@ async function getMessages(db: D1Database, id: string, limit: number = 100) {
   const { results } = await db
     .prepare(
       `
-    SELECT id, author, message, icon, selects, user_hash, created_at
+    SELECT id, author, message, selects, user_hash, created_at
     FROM bbs_messages
     WHERE service_id = ?
     ORDER BY created_at DESC
@@ -191,8 +191,8 @@ app.get("/", async (c) => {
     await db
       .prepare(
         `
-      INSERT INTO bbs_messages (id, service_id, author, message, icon, selects, user_hash, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
+      INSERT INTO bbs_messages (id, service_id, author, message, selects, user_hash, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
     `
       )
       .bind(
@@ -200,7 +200,6 @@ app.get("/", async (c) => {
         `bbs:${id}:messages`,
         author.slice(0, BBS.AUTHOR.MAX_LENGTH),
         message,
-        null,
         selects ? JSON.stringify(selects) : null,
         userHash
       )

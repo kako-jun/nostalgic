@@ -16,7 +16,7 @@ export const counterEmbedConfig = {
       { name: "FF", value: "ff" },
     ],
     getUrl: (publicId: string, theme: string) =>
-      `/api/visit?action=display&id=${publicId}&type=total&theme=${theme}`,
+      `/api/visit?action=get&id=${publicId}&type=total&theme=${theme}&format=image`,
   },
   sections: [
     {
@@ -92,6 +92,7 @@ export const likeEmbedConfig = {
         { value: "heart", description: "ハート（♥）" },
         { value: "star", description: "スター（★）" },
         { value: "thumb", description: "サムズアップ（👍）" },
+        { value: "peta", description: "肉球（🐾）" },
       ],
     },
   ],
@@ -104,7 +105,7 @@ declare module 'react' {
       'nostalgic-like': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
-        icon?: 'heart' | 'star' | 'thumb';
+        icon?: 'heart' | 'star' | 'thumb' | 'peta';
       };
     }
   }

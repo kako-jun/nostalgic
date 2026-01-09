@@ -66,7 +66,6 @@ CREATE TABLE IF NOT EXISTS bbs_messages (
   service_id TEXT NOT NULL,
   author TEXT NOT NULL,
   message TEXT NOT NULL,
-  icon TEXT,
   selects TEXT,                     -- JSON
   user_hash TEXT,
   created_at TEXT DEFAULT (datetime('now'))
