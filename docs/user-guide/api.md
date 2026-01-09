@@ -64,6 +64,8 @@ All services support webhook functionality for real-time event notifications:
 - **Simple design**: Lightweight implementation without retries or digital signatures
 - **Optional configuration**: Set via webhookUrl parameter during service creation or updates
 
+**[→ WebHook詳細ドキュメント](./webhook.md)** - ペイロード形式、設定方法、サンプル
+
 ### Service Lifecycle
 
 1. **Create**: URL + token → returns public ID
