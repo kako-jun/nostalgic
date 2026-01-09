@@ -82,7 +82,7 @@ function generateTextCounter(count: string): string;
 ### テーマカラー
 
 - **light**: `#333333` (ダークグレー)
-- **dark**: `#finalfinalfinal` (ホワイト)
+- **dark**: `#ffffff` (ホワイト)
 - **kawaii**: `#e91e63` (ピンク)
 
 ### フォントスタイル
