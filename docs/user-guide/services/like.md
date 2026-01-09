@@ -24,11 +24,9 @@ GET /api/like?action=create&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 
 ```json
 {
+  "success": true,
   "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "total": 0,
-  "userLiked": false,
-  "message": "Like button created successfully"
+  "url": "https://yoursite.com"
 }
 ```
 
@@ -48,11 +46,12 @@ GET /api/like?action=toggle&id={ID}
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "total": 1,
-  "userLiked": true,
-  "action": "liked"
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "total": 1,
+    "liked": true
+  }
 }
 ```
 
@@ -74,10 +73,12 @@ GET /api/like?action=get&id={ID}
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "total": 5,
-  "userLiked": false
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "total": 5,
+    "liked": false
+  }
 }
 ```
 
@@ -98,12 +99,15 @@ GET /api/like?action=get&url={URL}&token={TOKEN}
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "total": 5,
-  "userLiked": false,
-  "settings": {
-    "webhookUrl": "https://hooks.example.com/notify"
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "url": "https://yoursite.com",
+    "total": 5,
+    "liked": false,
+    "settings": {
+      "webhookUrl": "https://hooks.example.com/notify"
+    }
   }
 }
 ```
@@ -120,18 +124,18 @@ GET /api/like?action=update&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 
 - `url` (required): Target URL
 - `token` (required): Owner token
-- `webhookUrl` (optional): Webhook URL (empty string to remove)
-
-Only specify the parameters you want to change.
+- `webhookUrl` (required): Webhook URL (empty string to remove)
 
 **Response:**
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "total": 5,
-  "userLiked": false
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "url": "https://yoursite.com",
+    "total": 5
+  }
 }
 ```
 
@@ -195,6 +199,7 @@ declare module "react" {
         id?: string;
         theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
         icon?: "heart" | "star" | "thumb" | "peta";
+        format?: "interactive" | "text" | "image";
       };
     }
   }

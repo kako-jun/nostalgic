@@ -11,40 +11,26 @@ Message board service with customizable dropdown selections, icon support, and a
 Create a new BBS message board.
 
 ```
-GET /api/bbs?action=create&url={URL}&token={TOKEN}&max={MAX_MESSAGES}&perPage={PER_PAGE}&icons={ICONS}&select1Label={LABEL}&select1Values={VALUES}&webhookUrl={WEBHOOK_URL}
+GET /api/bbs?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MAX_MESSAGES}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL for BBS
 - `token` (required): Owner token (8-16 characters)
-- `max` (optional): Maximum messages (1-10000, default: 1000)
-- `perPage` (optional): Messages per page (1-100, default: 10)
-- `icons` (optional): Available icons (comma-separated, max 20)
-- `select1Label`, `select1Values`, `select1Required`: First dropdown configuration
-- `select2Label`, `select2Values`, `select2Required`: Second dropdown configuration
-- `select3Label`, `select3Values`, `select3Required`: Third dropdown configuration
+- `title` (optional): BBS title (default: "BBS")
+- `maxMessages` (optional): Maximum messages (default: 100)
 - `webhookUrl` (optional): Webhook URL for event notifications
 
 **Response:**
 
 ```json
 {
+  "success": true,
   "id": "yoursite-a7b9c3d4",
   "url": "https://yoursite.com",
-  "messages": [],
-  "totalMessages": 0,
-  "currentPage": 1,
-  "messagesPerPage": 10,
-  "options": {
-    "availableIcons": ["😀", "😎", "😍"],
-    "select1": {
-      "label": "Country",
-      "values": ["Japan", "USA", "UK"],
-      "required": false
-    }
-  },
-  "message": "BBS created successfully"
+  "title": "BBS",
+  "maxMessages": 100
 }
 ```
 
@@ -53,7 +39,7 @@ GET /api/bbs?action=create&url={URL}&token={TOKEN}&max={MAX_MESSAGES}&perPage={P
 Post a new message to the BBS.
 
 ```
-GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&icon={ICON}&select1={VALUE1}
+GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&icon={ICON}&select1={VALUE1}&select2={VALUE2}&select3={VALUE3}
 ```
 
 **Parameters:**
@@ -61,23 +47,27 @@ GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&icon={ICON}&s
 - `id` (required): Public BBS ID
 - `author` (optional): Author name (default: "名無しさん", max 50 characters)
 - `message` (required): Message content (max 1000 characters)
-- `icon` (optional): Selected icon
-- `select1`, `select2`, `select3` (optional): Dropdown selections
+- `icon` (optional): Icon for the message
+- `select1`, `select2`, `select3` (optional): Custom selections
 
 **Response:**
 
 ```json
 {
-  "message": "Message posted successfully",
+  "success": true,
   "data": {
-    "id": "abc123def456",
-    "author": "User",
-    "message": "Hello world!",
-    "timestamp": "2025-08-13T10:00:00Z",
-    "icon": "😀",
-    "select1": "Japan",
-    "userAgent": "Mozilla/5.0...",
-    "ipHash": "a1b2c3d4"
+    "id": "yoursite-a7b9c3d4",
+    "messages": [
+      {
+        "id": "abc123def456",
+        "author": "User",
+        "message": "Hello world!",
+        "icon": "😀",
+        "selects": { "select1": "Japan" },
+        "userHash": "a1b2c3d4",
+        "timestamp": "2025-08-13T10:00:00Z"
+      }
+    ]
   }
 }
 ```
@@ -109,12 +99,12 @@ GET /api/bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&messag
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "messages": [...],
-  "page": 1,
-  "hasMore": false,
-  "totalMessages": 1
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "messages": [...],
+    "updated": "abc123def456"
+  }
 }
 ```
 
@@ -123,29 +113,28 @@ GET /api/bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&messag
 Update BBS settings without messageId parameter.
 
 ```
-GET /api/bbs?action=update&url={URL}&token={TOKEN}&perPage={PER_PAGE}&max={MAX}&webhookUrl={WEBHOOK_URL}
+GET /api/bbs?action=update&url={URL}&token={TOKEN}&maxMessages={MAX_MESSAGES}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL
 - `token` (required): Owner token
-- `perPage` (optional): Messages per page (1-100)
-- `max` (optional): Maximum total messages (1-10000)
+- `maxMessages` (optional): Maximum total messages
 - `webhookUrl` (optional): Webhook URL (empty string to remove)
 
-Only specify the parameters you want to change.
+At least one of maxMessages or webhookUrl is required.
 
 **Response:**
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "messages": [...],
-  "totalMessages": 5,
-  "currentPage": 1,
-  "messagesPerPage": 20
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "messages": [...],
+    "maxMessages": 200
+  }
 }
 ```
 
@@ -175,12 +164,12 @@ GET /api/bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "messages": [],
-  "page": 1,
-  "hasMore": false,
-  "totalMessages": 0
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "messages": [...],
+    "removed": "abc123def456"
+  }
 }
 ```
 
@@ -201,12 +190,12 @@ GET /api/bbs?action=clear&url={URL}&token={TOKEN}
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "messages": [],
-  "page": 1,
-  "hasMore": false,
-  "totalMessages": 0
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "messages": [],
+    "cleared": true
+  }
 }
 ```
 
@@ -217,43 +206,35 @@ Get BBS messages.
 #### Public Mode (by ID)
 
 ```
-GET /api/bbs?action=get&id={ID}&page={PAGE}
+GET /api/bbs?action=get&id={ID}&limit={LIMIT}
 ```
 
 **Parameters:**
 
 - `id` (required): Public BBS ID
-- `page` (optional): Page number (default: 1)
+- `limit` (optional): Number of messages to return (default: 100, max: 1000)
 
 **Response:**
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "messages": [
-    {
-      "id": "abc123def456",
-      "author": "User",
-      "message": "Hello world!",
-      "timestamp": "2025-08-13T10:00:00Z",
-      "updated": "2025-08-13T10:05:00Z",
-      "icon": "😀",
-      "select1": "Japan",
-      "userAgent": "Mozilla/5.0...",
-      "ipHash": "a1b2c3d4"
-    }
-  ],
-  "totalMessages": 1,
-  "currentPage": 1,
-  "messagesPerPage": 10,
-  "options": {
-    "availableIcons": ["😀", "😎", "😍"],
-    "select1": {
-      "label": "Country",
-      "values": ["Japan", "USA", "UK"],
-      "required": false
-    }
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "title": "BBS",
+    "maxMessages": 100,
+    "messages": [
+      {
+        "id": "abc123def456",
+        "author": "User",
+        "message": "Hello world!",
+        "icon": "😀",
+        "selects": { "select1": "Japan" },
+        "userHash": "a1b2c3d4",
+        "timestamp": "2025-08-13T10:00:00Z"
+      }
+    ],
+    "currentUserHash": "b2c3d4e5"
   }
 }
 ```
@@ -263,31 +244,30 @@ GET /api/bbs?action=get&id={ID}&page={PAGE}
 Get full settings including webhookUrl.
 
 ```
-GET /api/bbs?action=get&url={URL}&token={TOKEN}&page={PAGE}
+GET /api/bbs?action=get&url={URL}&token={TOKEN}&limit={LIMIT}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL
 - `token` (required): Owner token
-- `page` (optional): Page number (default: 1)
+- `limit` (optional): Number of messages to return (default: 100, max: 1000)
 
 **Response:**
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "messages": [...],
-  "totalMessages": 1,
-  "currentPage": 1,
-  "messagesPerPage": 10,
-  "options": {
-    "availableIcons": ["😀", "😎", "😍"],
-    "select1": { ... }
-  },
-  "settings": {
-    "webhookUrl": "https://hooks.example.com/notify"
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "url": "https://yoursite.com",
+    "title": "BBS",
+    "maxMessages": 100,
+    "messages": [...],
+    "currentUserHash": "b2c3d4e5",
+    "settings": {
+      "webhookUrl": "https://hooks.example.com/notify"
+    }
   }
 }
 ```
@@ -319,15 +299,15 @@ GET /api/bbs?action=delete&url={URL}&token={TOKEN}
 ### Basic BBS Setup
 
 ```javascript
-// 1. Create BBS with custom options
+// 1. Create BBS
 const response = await fetch(
-  `/api/bbs?action=create&url=https://mysite.com&token=my-secret&max=500&perPage=20&icons=😀,😎,😍,🤔,😢&select1Label=Country&select1Values=Japan,USA,UK&select2Label=Topic&select2Values=General,Tech,Gaming`
+  `/api/bbs?action=create&url=https://mysite.com&token=my-secret&title=My BBS&maxMessages=500`
 );
 
 const data = await response.json();
 console.log("BBS ID:", data.id);
 
-// 2. Post message
+// 2. Post message with optional icon and selections
 await fetch(
   "/api/bbs?action=post&id=" +
     data.id +
@@ -350,35 +330,11 @@ await fetch("/api/bbs?action=remove&id=mysite-a7b9c3d4&messageId=abc123def456");
 await fetch("/api/bbs?action=clear&url=https://mysite.com&token=my-secret");
 ```
 
-## Customization Options
-
-### Icon Selection
-
-```
-&icons=😀,😎,😍,🤔,😢,😊,😭,😡,😱,🤗
-```
-
-- Up to 20 icons
-- Users can select when posting
-
-### Dropdown Selections
-
-```
-&select1Label=Country&select1Values=Japan,USA,UK,France,Germany&select1Required=true
-&select2Label=Category&select2Values=General,Tech,Gaming,Music
-&select3Label=Priority&select3Values=High,Medium,Low
-```
-
-- Up to 3 configurable dropdowns
-- Each can have up to 50 options
-- Can be marked as required
-
 ## Features
 
-- **Author Verification**: Users can edit/remove their own posts
-- **Owner Management**: BBS owners can remove any message
-- **Customizable Options**: Icons and dropdown selections
-- **Pagination**: Fixed height display (400px), starts at latest page
+- **Author Verification**: Users can edit/remove their own posts (via IP+UserAgent hash)
+- **Owner Management**: BBS owners can manage any message
+- **Optional Fields**: Icon and custom selections (select1-3) on posts
 - **Message History**: Tracks post creation and update times
 - **Privacy Protection**: IP addresses are hashed
 
@@ -396,25 +352,18 @@ Messages are stored in D1 (SQLite) database:
 <script src="https://nostalgic.llll-ll.com/components/bbs.js"></script>
 
 <!-- Interactive BBS display -->
-<nostalgic-bbs id="yoursite-a7b9c3d4" theme="light" page="1"></nostalgic-bbs>
+<nostalgic-bbs id="yoursite-a7b9c3d4" theme="light"></nostalgic-bbs>
 
 <!-- Text format BBS -->
-<nostalgic-bbs id="yoursite-a7b9c3d4" format="text" theme="dark" page="1"></nostalgic-bbs>
+<nostalgic-bbs id="yoursite-a7b9c3d4" format="text" theme="dark"></nostalgic-bbs>
 ```
 
 **Attributes:**
 
 - `id`: BBS public ID
 - `theme`: Visual style (light, dark, retro, kawaii, mom, final)
-- `page`: Page number to display (default: last page for latest messages)
 - `format`: Display format (interactive, text) - default: interactive
 - `api-base`: Custom API base URL (optional)
-
-**Display Features:**
-
-- Fixed height of 400px regardless of message count
-- Pagination format: "2/3" (current/total pages)
-- Automatically shows latest messages on initial load
 
 ## TypeScript Support
 
@@ -430,7 +379,7 @@ declare module "react" {
       "nostalgic-bbs": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
-        page?: string;
+        format?: "interactive" | "text";
       };
     }
   }

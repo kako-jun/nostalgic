@@ -24,8 +24,10 @@ GET /api/visit?action=create&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 
 ```json
 {
+  "success": true,
   "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com"
+  "url": "https://yoursite.com",
+  "message": "Counter created successfully"
 }
 ```
 
@@ -45,14 +47,15 @@ GET /api/visit?action=increment&id={ID}
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "total": 2,
-  "today": 2,
-  "yesterday": 0,
-  "week": 2,
-  "month": 2,
-  "lastVisit": "2025-07-30T12:05:00Z"
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "total": 2,
+    "today": 2,
+    "yesterday": 0,
+    "week": 2,
+    "month": 2
+  }
 }
 ```
 
@@ -222,7 +225,7 @@ declare module "react" {
         type?: "total" | "today" | "yesterday" | "week" | "month";
         theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
         digits?: string;
-        scale?: string;
+        format?: "image" | "text";
       };
     }
   }

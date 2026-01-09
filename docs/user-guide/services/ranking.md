@@ -11,14 +11,14 @@ Score leaderboard system with automatic sorting, score management, and configura
 Create a new ranking leaderboard.
 
 ```
-GET /api/ranking?action=create&url={URL}&token={TOKEN}&max={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
+GET /api/ranking?action=create&url={URL}&token={TOKEN}&maxEntries={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL for ranking
 - `token` (required): Owner token (8-16 characters)
-- `max` (optional): Maximum entries (1-1000, default: 100)
+- `maxEntries` (optional): Maximum entries (default: 100)
 - `sortOrder` (optional): Sort order - "desc" for high scores first, "asc" for low times first (default: "desc")
 - `webhookUrl` (optional): Webhook URL for event notifications
 
@@ -26,13 +26,11 @@ GET /api/ranking?action=create&url={URL}&token={TOKEN}&max={MAX_ENTRIES}&sortOrd
 
 ```json
 {
+  "success": true,
   "id": "yoursite-a7b9c3d4",
   "url": "https://yoursite.com",
-  "entries": [],
-  "totalEntries": 0,
-  "maxEntries": 100,
   "sortOrder": "desc",
-  "message": "Ranking created successfully"
+  "maxEntries": 100
 }
 ```
 
@@ -54,21 +52,19 @@ GET /api/ranking?action=submit&id={ID}&name={PLAYER_NAME}&score={SCORE}
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "entries": [
-    {
-      "name": "Player1",
-      "score": 1000,
-      "displayScore": "1,000",
-      "rank": 1,
-      "timestamp": "2025-08-13T10:00:00Z"
-    }
-  ],
-  "totalEntries": 1,
-  "maxEntries": 100,
-  "sortOrder": "desc",
-  "message": "Score submitted successfully"
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "entries": [
+      {
+        "rank": 1,
+        "name": "Player1",
+        "score": 1000,
+        "displayScore": "1000",
+        "createdAt": "2025-08-13T10:00:00Z"
+      }
+    ]
+  }
 }
 ```
 
@@ -77,18 +73,18 @@ GET /api/ranking?action=submit&id={ID}&name={PLAYER_NAME}&score={SCORE}
 Update ranking settings (owner only).
 
 ```
-GET /api/ranking?action=update&url={URL}&token={TOKEN}&max={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
+GET /api/ranking?action=update&url={URL}&token={TOKEN}&maxEntries={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL
 - `token` (required): Owner token
-- `max` (optional): Maximum entries (1-1000)
+- `maxEntries` (optional): Maximum entries
 - `sortOrder` (optional): Sort order ("desc" for high scores, "asc" for low times)
 - `webhookUrl` (optional): Webhook URL (empty string to remove)
 
-Only specify the parameters you want to change.
+At least one of maxEntries, sortOrder, or webhookUrl is required.
 
 **Note:** To update player scores, use the `submit` action which handles UPSERT (insert or update).
 
@@ -96,12 +92,13 @@ Only specify the parameters you want to change.
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "entries": [...],
-  "totalEntries": 3,
-  "maxEntries": 50,
-  "sortOrder": "desc"
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "entries": [...],
+    "maxEntries": 50,
+    "sortOrder": "desc"
+  }
 }
 ```
 
@@ -123,13 +120,12 @@ GET /api/ranking?action=remove&url={URL}&token={TOKEN}&name={PLAYER_NAME}
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "rankings": [
-    { "name": "Player2", "score": 900 },
-    { "name": "Player3", "score": 500 }
-  ],
-  "maxEntries": 100
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "entries": [...],
+    "removed": "Cheater"
+  }
 }
 ```
 
@@ -150,10 +146,12 @@ GET /api/ranking?action=clear&url={URL}&token={TOKEN}
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "rankings": [],
-  "maxEntries": 100
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "entries": [],
+    "cleared": true
+  }
 }
 ```
 
@@ -176,27 +174,28 @@ GET /api/ranking?action=get&id={ID}&limit={LIMIT}
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "entries": [
-    {
-      "name": "Player1",
-      "score": 1500,
-      "displayScore": "1,500",
-      "rank": 1,
-      "timestamp": "2025-08-13T10:00:00Z"
-    },
-    {
-      "name": "Player2",
-      "score": 1200,
-      "displayScore": "1,200",
-      "rank": 2,
-      "timestamp": "2025-08-13T09:30:00Z"
-    }
-  ],
-  "totalEntries": 2,
-  "maxEntries": 100,
-  "sortOrder": "desc"
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "entries": [
+      {
+        "rank": 1,
+        "name": "Player1",
+        "score": 1500,
+        "displayScore": "1500",
+        "createdAt": "2025-08-13T10:00:00Z"
+      },
+      {
+        "rank": 2,
+        "name": "Player2",
+        "score": 1200,
+        "displayScore": "1200",
+        "createdAt": "2025-08-13T09:30:00Z"
+      }
+    ],
+    "sortOrder": "desc",
+    "maxEntries": 100
+  }
 }
 ```
 
@@ -218,14 +217,16 @@ GET /api/ranking?action=get&url={URL}&token={TOKEN}&limit={LIMIT}
 
 ```json
 {
-  "id": "yoursite-a7b9c3d4",
-  "url": "https://yoursite.com",
-  "entries": [...],
-  "totalEntries": 2,
-  "maxEntries": 100,
-  "sortOrder": "desc",
-  "settings": {
-    "webhookUrl": "https://hooks.example.com/notify"
+  "success": true,
+  "data": {
+    "id": "yoursite-a7b9c3d4",
+    "url": "https://yoursite.com",
+    "entries": [...],
+    "sortOrder": "desc",
+    "maxEntries": 100,
+    "settings": {
+      "webhookUrl": "https://hooks.example.com/notify"
+    }
   }
 }
 ```
@@ -368,6 +369,7 @@ declare module "react" {
         id?: string;
         theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
         limit?: string;
+        format?: "interactive" | "text";
       };
     }
   }
