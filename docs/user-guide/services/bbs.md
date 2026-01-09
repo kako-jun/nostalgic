@@ -26,8 +26,8 @@ GET /api/bbs?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MA
 - `standardSelectOptions` (optional): Comma-separated options for standard select
 - `incrementalSelectLabel` (optional): Label for incremental select dropdown
 - `incrementalSelectOptions` (optional): Comma-separated options for incremental select
-- `emoteSelectLabel` (optional): Label for emote select dropdown
-- `emoteSelectOptions` (optional): Comma-separated options for emote select
+- `emoteSelectLabel` (optional): Label for emote picker
+- `emoteSelectOptions` (optional): Comma-separated image URLs for emote picker (max 9, displayed as 3x3 grid)
 
 **Response:**
 
@@ -57,7 +57,7 @@ GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&standardValue
 - `message` (required): Message content (max 1000 characters)
 - `standardValue` (optional): Value from standard select dropdown
 - `incrementalValue` (optional): Value from incremental select dropdown
-- `emoteValue` (optional): Value from emote select dropdown
+- `emoteValue` (optional): Image URL from emote picker
 
 **Response:**
 
@@ -136,8 +136,8 @@ GET /api/bbs?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MA
 - `standardSelectOptions` (optional): Comma-separated options for standard select
 - `incrementalSelectLabel` (optional): Label for incremental select dropdown
 - `incrementalSelectOptions` (optional): Comma-separated options for incremental select
-- `emoteSelectLabel` (optional): Label for emote select dropdown
-- `emoteSelectOptions` (optional): Comma-separated options for emote select
+- `emoteSelectLabel` (optional): Label for emote picker
+- `emoteSelectOptions` (optional): Comma-separated image URLs for emote picker (max 9, displayed as 3x3 grid)
 
 At least one setting parameter is required.
 
@@ -254,7 +254,10 @@ GET /api/bbs?action=get&id={ID}&limit={LIMIT}
     "settings": {
       "standardSelect": { "label": "カテゴリ", "options": ["質問", "雑談", "報告"] },
       "incrementalSelect": null,
-      "emoteSelect": { "label": "気分", "options": ["😊", "😢", "😡"] }
+      "emoteSelect": {
+        "label": "アバター",
+        "options": ["https://example.com/emote1.png", "https://example.com/emote2.png"]
+      }
     }
   }
 }
@@ -291,7 +294,7 @@ GET /api/bbs?action=get&url={URL}&token={TOKEN}&limit={LIMIT}
       "webhookUrl": "https://hooks.example.com/notify",
       "standardSelect": { "label": "カテゴリ", "options": ["質問", "雑談", "報告"] },
       "incrementalSelect": null,
-      "emoteSelect": { "label": "気分", "options": ["😊", "😢", "😡"] }
+      "emoteSelect": { "label": "アバター", "options": ["https://example.com/emote1.png", "https://example.com/emote2.png"] }
     }
   }
 }
@@ -332,11 +335,11 @@ const response = await fetch(
 const data = await response.json();
 console.log("BBS ID:", data.id);
 
-// 2. Post message with dropdown selections
+// 2. Post message with selections
 await fetch(
   "/api/bbs?action=post&id=" +
     data.id +
-    "&author=Alice&message=Hello everyone!&standardValue=Japan&incrementalValue=General&emoteValue=😀"
+    "&author=Alice&message=Hello everyone!&standardValue=Japan&incrementalValue=General&emoteValue=https://example.com/emote.png"
 );
 ```
 
@@ -359,7 +362,7 @@ await fetch("/api/bbs?action=clear&url=https://mysite.com&token=my-secret");
 
 - **Author Verification**: Users can edit/remove their own posts (via IP+UserAgent hash)
 - **Owner Management**: BBS owners can manage any message
-- **Optional Fields**: Dropdown selections (standardValue, incrementalValue, emoteValue) on posts
+- **Optional Fields**: Selections (standardValue, incrementalValue dropdowns; emoteValue image picker) on posts
 - **Message History**: Tracks post creation and update times
 - **Privacy Protection**: IP addresses are hashed
 

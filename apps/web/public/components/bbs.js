@@ -710,6 +710,95 @@ class NostalgicBBS extends HTMLElement {
           border: 1px solid #4caf50;
           color: #2e7d32;
         }
+        /* Emote Picker */
+        .emote-picker-container {
+          position: relative;
+          display: inline-block;
+        }
+        .emote-picker-btn {
+          font-family: inherit;
+          font-size: 12px;
+          padding: 4px 8px;
+          border: 1px solid var(--bbs-border-color);
+          border-radius: 2px;
+          background: var(--bbs-message-bg);
+          color: var(--bbs-text-color);
+          height: 32px;
+          box-sizing: border-box;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .emote-picker-btn img {
+          width: 20px;
+          height: 20px;
+          object-fit: cover;
+          border-radius: 2px;
+        }
+        .emote-picker-popup {
+          display: none;
+          position: absolute;
+          bottom: 100%;
+          left: 0;
+          margin-bottom: 4px;
+          background: var(--bbs-message-bg);
+          border: 1px solid var(--bbs-border-color);
+          border-radius: 4px;
+          padding: 6px;
+          z-index: 1000;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .emote-picker-popup.open {
+          display: block;
+        }
+        .emote-picker-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 4px;
+        }
+        .emote-picker-item {
+          width: 40px;
+          height: 40px;
+          padding: 2px;
+          border: 1px solid var(--bbs-border-color);
+          border-radius: 4px;
+          background: var(--bbs-bg-color);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .emote-picker-item:hover {
+          border-color: var(--bbs-header-bg);
+          background: var(--bbs-header-bg);
+        }
+        .emote-picker-item.selected {
+          border-color: var(--bbs-header-bg);
+          border-width: 2px;
+        }
+        .emote-picker-item img {
+          max-width: 36px;
+          max-height: 36px;
+          object-fit: contain;
+        }
+        .emote-display {
+          width: 16px;
+          height: 16px;
+          object-fit: cover;
+          border-radius: 2px;
+          vertical-align: middle;
+          margin-left: 2px;
+        }
+        .emote-clear {
+          font-size: 14px;
+          color: #999;
+          cursor: pointer;
+          padding: 0 2px;
+        }
+        .emote-clear:hover {
+          color: #f44336;
+        }
       </style>
       <div class="bbs-container ${theme}">
         ${theme === "final" ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ""}
@@ -841,22 +930,32 @@ class NostalgicBBS extends HTMLElement {
         `;
       }
 
-      // エモートセレクト
+      // エモートセレクト（3x3グリッドポップアップ）
       if (
         settings.emoteSelect &&
         settings.emoteSelect.options &&
         settings.emoteSelect.options.length > 0
       ) {
+        const emoteOptions = settings.emoteSelect.options.slice(0, 9); // 最大9個
         dropdowns += `
-          <select id="emote-select">
-            <option value="">${this.escapeHtml(settings.emoteSelect.label || "セレクト")}</option>
-            ${settings.emoteSelect.options
-              .map(
-                (option) =>
-                  `<option value="${this.escapeHtml(option)}">${this.escapeHtml(option)}</option>`
-              )
-              .join("")}
-          </select>
+          <div class="emote-picker-container">
+            <input type="hidden" id="emote-select" value="">
+            <button type="button" class="emote-picker-btn" id="emote-picker-btn" onclick="this.getRootNode().host.toggleEmotePicker()">
+              <span id="emote-picker-label">${this.escapeHtml(settings.emoteSelect.label || "エモート")}</span>
+            </button>
+            <div class="emote-picker-popup" id="emote-picker-popup">
+              <div class="emote-picker-grid">
+                ${emoteOptions
+                  .map(
+                    (url) =>
+                      `<div class="emote-picker-item" data-emote="${this.escapeHtml(url)}" onclick="this.getRootNode().host.selectEmote('${this.escapeHtml(url)}')">
+                        <img src="${this.escapeHtml(url)}" alt="emote" loading="lazy">
+                      </div>`
+                  )
+                  .join("")}
+              </div>
+            </div>
+          </div>
         `;
       }
     }
@@ -866,10 +965,64 @@ class NostalgicBBS extends HTMLElement {
 
   formatSelectValues(message) {
     const values = [];
-    if (message.standardValue) values.push(`${message.standardValue}`);
-    if (message.incrementalValue) values.push(`${message.incrementalValue}`);
-    if (message.emoteValue) values.push(`${message.emoteValue}`);
-    return values.length > 0 ? ` [${values.join(", ")}]` : "";
+    if (message.standardValue) values.push(this.escapeHtml(message.standardValue));
+    if (message.incrementalValue) values.push(this.escapeHtml(message.incrementalValue));
+    // emoteValueは別途画像として表示
+    let result = values.length > 0 ? ` [${values.join(", ")}]` : "";
+    if (message.emoteValue) {
+      result += `<img src="${this.escapeHtml(message.emoteValue)}" alt="emote" class="emote-display">`;
+    }
+    return result;
+  }
+
+  toggleEmotePicker() {
+    const popup = this.shadowRoot.querySelector("#emote-picker-popup");
+    if (popup) {
+      popup.classList.toggle("open");
+    }
+  }
+
+  selectEmote(url) {
+    const hiddenInput = this.shadowRoot.querySelector("#emote-select");
+    const btn = this.shadowRoot.querySelector("#emote-picker-btn");
+    const popup = this.shadowRoot.querySelector("#emote-picker-popup");
+
+    if (hiddenInput) {
+      hiddenInput.value = url;
+    }
+
+    // ボタンの表示を更新（選択した画像を表示）
+    if (btn) {
+      btn.innerHTML = `<img src="${this.escapeHtml(url)}" alt="emote"><span class="emote-clear" onclick="event.stopPropagation(); this.getRootNode().host.clearEmoteSelection()">✕</span>`;
+    }
+
+    // ポップアップを閉じる
+    if (popup) {
+      popup.classList.remove("open");
+    }
+
+    // 選択状態を更新
+    const items = this.shadowRoot.querySelectorAll(".emote-picker-item");
+    items.forEach((item) => {
+      item.classList.toggle("selected", item.dataset.emote === url);
+    });
+  }
+
+  clearEmoteSelection() {
+    const hiddenInput = this.shadowRoot.querySelector("#emote-select");
+    const btn = this.shadowRoot.querySelector("#emote-picker-btn");
+    const label = this.bbsData?.settings?.emoteSelect?.label || "エモート";
+
+    if (hiddenInput) {
+      hiddenInput.value = "";
+    }
+
+    if (btn) {
+      btn.innerHTML = `<span id="emote-picker-label">${this.escapeHtml(label)}</span>`;
+    }
+
+    const items = this.shadowRoot.querySelectorAll(".emote-picker-item");
+    items.forEach((item) => item.classList.remove("selected"));
   }
 
   showMessage(text, type = "error") {
@@ -987,6 +1140,7 @@ class NostalgicBBS extends HTMLElement {
         if (standardSelect) standardSelect.value = "";
         if (incrementalSelect) incrementalSelect.value = "";
         if (emoteSelect) emoteSelect.value = "";
+        this.clearEmoteSelection();
 
         // 編集モードをクリア
         this.clearEditMode();
