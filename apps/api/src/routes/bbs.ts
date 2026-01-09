@@ -19,7 +19,6 @@ type BBSMessageRow = {
   id: string;
   author: string;
   message: string;
-  icon?: string;
   selects?: string;
   user_hash: string;
   created_at: string;
@@ -61,7 +60,6 @@ async function getMessages(db: D1Database, id: string, limit: number = 100) {
       id: row.id,
       author: row.author,
       message: row.message,
-      icon: row.icon,
       standardValue: selects.standardValue,
       incrementalValue: selects.incrementalValue,
       emoteValue: selects.emoteValue,
@@ -156,7 +154,6 @@ app.get("/", async (c) => {
     const id = c.req.query("id");
     const author = c.req.query("author") || BBS.AUTHOR.DEFAULT_VALUE;
     const message = c.req.query("message");
-    const icon = c.req.query("icon");
     const standardValue = c.req.query("standardValue");
     const incrementalValue = c.req.query("incrementalValue");
     const emoteValue = c.req.query("emoteValue");
@@ -195,7 +192,7 @@ app.get("/", async (c) => {
         `bbs:${id}:messages`,
         author.slice(0, BBS.AUTHOR.MAX_LENGTH),
         message,
-        icon || null,
+        null,
         selects ? JSON.stringify(selects) : null,
         userHash
       )
