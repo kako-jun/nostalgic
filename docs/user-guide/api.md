@@ -102,10 +102,10 @@ curl "https://api.nostalgic.llll-ll.com/like?action=delete&url=https://yoursite.
 
 ```bash
 # Create ranking (score-based game, high score wins) with webhook
-curl "https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=desc&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+curl "https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret&maxEntries=100&sortOrder=desc&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # Create ranking (time-based game, lower time wins)
-curl "https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret&max=100&sortOrder=asc"
+curl "https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret&maxEntries=100&sortOrder=asc"
 
 # Submit score
 curl "https://api.nostalgic.llll-ll.com/ranking?action=submit&id=yoursite-a7b9c3d4&name=Player1&score=1000"
@@ -118,7 +118,7 @@ curl "https://api.nostalgic.llll-ll.com/ranking?action=delete&url=https://yoursi
 
 ```bash
 # Create BBS with webhook
-curl "https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://yoursite.com&token=your-secret&max=1000&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+curl "https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://yoursite.com&token=your-secret&maxMessages=1000&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # Post message (pure GET, 1990s style)
 curl "https://api.nostalgic.llll-ll.com/bbs?action=post&id=yoursite-a7b9c3d4&author=User&message=Hello!"
