@@ -53,7 +53,7 @@ GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&standardValue
 **Parameters:**
 
 - `id` (required): Public BBS ID
-- `author` (optional): Author name (default: "ああああ", max 20 characters)
+- `author` (optional): Author name (default: "Anonymous", max 20 characters)
 - `message` (required): Message content (max 200 characters)
 - `standardValue` (optional): Value from standard select dropdown
 - `incrementalValue` (optional): Value from incremental select dropdown

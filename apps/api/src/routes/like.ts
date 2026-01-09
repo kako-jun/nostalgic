@@ -68,6 +68,7 @@ app.get("/", async (c) => {
     const url = c.req.query("url");
     const token = c.req.query("token");
     const webhookUrl = c.req.query("webhookUrl");
+    const icon = c.req.query("icon");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -77,6 +78,12 @@ app.get("/", async (c) => {
       return c.json({ error: "Token must be 8-16 characters" }, 400);
     }
 
+    // Validate icon if provided
+    const validIcons = ["heart", "star", "thumb", "peta"];
+    if (icon && !validIcons.includes(icon)) {
+      return c.json({ error: "Invalid icon. Use: heart, star, thumb, peta" }, 400);
+    }
+
     const existing = await getLikeByUrl(db, url);
     if (existing) {
       return c.json({ error: "Like service already exists for this URL" }, 400);
@@ -84,7 +91,10 @@ app.get("/", async (c) => {
 
     const publicId = await generatePublicId(url);
     const hashedToken = await hashToken(token);
-    const metadata = JSON.stringify({ webhookUrl: webhookUrl || null });
+    const metadata = JSON.stringify({
+      webhookUrl: webhookUrl || null,
+      icon: icon || "heart",
+    });
 
     await db.batch([
       db
@@ -203,6 +213,7 @@ app.get("/", async (c) => {
           liked: isLiked,
           settings: {
             webhookUrl: metadata.webhookUrl || null,
+            icon: metadata.icon || "heart",
           },
         },
       });
@@ -242,7 +253,11 @@ app.get("/", async (c) => {
       });
     }
 
-    return c.json({ success: true, data: { id, total, liked: isLiked } });
+    const metadata = JSON.parse((like as { metadata: string }).metadata || "{}");
+    return c.json({
+      success: true,
+      data: { id, total, liked: isLiked, icon: metadata.icon || "heart" },
+    });
   }
 
   // UPDATE (owner only) - update settings
@@ -250,13 +265,20 @@ app.get("/", async (c) => {
     const url = c.req.query("url");
     const token = c.req.query("token");
     const webhookUrl = c.req.query("webhookUrl");
+    const icon = c.req.query("icon");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
     }
 
-    if (webhookUrl === undefined) {
-      return c.json({ error: "webhookUrl is required" }, 400);
+    if (webhookUrl === undefined && icon === undefined) {
+      return c.json({ error: "At least one of webhookUrl or icon is required" }, 400);
+    }
+
+    // Validate icon if provided
+    const validIcons = ["heart", "star", "thumb", "peta"];
+    if (icon !== undefined && icon !== "" && !validIcons.includes(icon)) {
+      return c.json({ error: "Invalid icon. Use: heart, star, thumb, peta" }, 400);
     }
 
     const like = await getLikeByUrl(db, url);
@@ -276,10 +298,14 @@ app.get("/", async (c) => {
     }
 
     const currentMetadata = JSON.parse((like as { metadata: string }).metadata || "{}");
-    const newMetadata = {
-      ...currentMetadata,
-      webhookUrl: webhookUrl === "" ? null : webhookUrl,
-    };
+    const newMetadata = { ...currentMetadata };
+
+    if (webhookUrl !== undefined) {
+      newMetadata.webhookUrl = webhookUrl === "" ? null : webhookUrl;
+    }
+    if (icon !== undefined) {
+      newMetadata.icon = icon === "" ? "heart" : icon;
+    }
 
     await db
       .prepare("UPDATE services SET metadata = ? WHERE id = ?")

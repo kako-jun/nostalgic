@@ -8,6 +8,41 @@
 
 // バリデーション定数は不要になりました（API側でデフォルト値処理）
 
+// APIエラーメッセージの翻訳辞書
+// デフォルト投稿者名（ブラウザ言語で決定）
+function getDefaultAuthor() {
+  const lang = (navigator.language || "en").split("-")[0];
+  return lang === "ja" ? "ああああ" : "Anonymous";
+}
+
+const BBS_ERROR_TRANSLATIONS = {
+  "BBS not found": "掲示板が見つかりません",
+  "BBS already exists for this URL": "この URL には既に掲示板が存在します",
+  "id and message are required": "ID とメッセージが必要です",
+  "Message must be 200 characters or less": "メッセージは200文字以内で入力してください",
+  "Message not found": "メッセージが見つかりません",
+  "You can only edit your own messages": "自分のメッセージのみ編集できます",
+  "You can only delete your own messages": "自分のメッセージのみ削除できます",
+  "Invalid token": "トークンが無効です",
+  "url and token are required": "URL とトークンが必要です",
+  "Token must be 8-16 characters": "トークンは8〜16文字で入力してください",
+  "Failed to load BBS data": "掲示板データの読み込みに失敗しました",
+  "Failed to post message": "メッセージの投稿に失敗しました",
+  "Failed to delete message": "メッセージの削除に失敗しました",
+};
+
+function translateBBSError(message) {
+  if (BBS_ERROR_TRANSLATIONS[message]) {
+    return BBS_ERROR_TRANSLATIONS[message];
+  }
+  // 動的パターン（文字数制限など）
+  const charLimitMatch = message.match(/^Message must be (\d+) characters or less$/);
+  if (charLimitMatch) {
+    return `メッセージは${charLimitMatch[1]}文字以内で入力してください`;
+  }
+  return message;
+}
+
 class NostalgicBBS extends HTMLElement {
   // APIのベースURL
   static apiBaseUrl = "https://api.nostalgic.llll-ll.com";
@@ -106,11 +141,11 @@ class NostalgicBBS extends HTMLElement {
           totalPages: totalPages,
         };
       } else {
-        this.renderError(data.error || "Failed to load BBS data");
+        this.renderError(translateBBSError(data.error || "Failed to load BBS data"));
         return;
       }
     } catch (error) {
-      this.renderError(`Network error: ${error.message}`);
+      this.renderError(`ネットワークエラー: ${error.message}`);
       return;
     } finally {
       this.loading = false;
@@ -1096,7 +1131,8 @@ class NostalgicBBS extends HTMLElement {
     }
 
     // 致命的エラー防止のみ（軽微なバリデーションはAPI側に任せる）
-    const author = typeof rawAuthor === "string" ? rawAuthor || "ああああ" : "ああああ";
+    const author =
+      typeof rawAuthor === "string" ? rawAuthor || getDefaultAuthor() : getDefaultAuthor();
     const message = typeof rawMessage === "string" ? rawMessage : "";
     const standardValue = typeof rawStandardValue === "string" ? rawStandardValue : "";
     const incrementalValue = typeof rawIncrementalValue === "string" ? rawIncrementalValue : "";
@@ -1169,11 +1205,11 @@ class NostalgicBBS extends HTMLElement {
           this.showMessage("メッセージを投稿しました", "success");
         }
       } else {
-        throw new Error(data.error || "Failed to post message");
+        throw new Error(translateBBSError(data.error || "Failed to post message"));
       }
     } catch (error) {
       console.error("Post message failed:", error);
-      this.showMessage(`メッセージの投稿に失敗しました: ${error.message}`);
+      this.showMessage(error.message);
     } finally {
       this.posting = false;
       this.updatePostButton();
@@ -1336,11 +1372,11 @@ class NostalgicBBS extends HTMLElement {
         await this.loadBBSData();
         this.showMessage("メッセージが削除されました", "success");
       } else {
-        throw new Error(data.error || "Failed to delete message");
+        throw new Error(translateBBSError(data.error || "Failed to delete message"));
       }
     } catch (error) {
       console.error("Delete message failed:", error);
-      this.showMessage(`メッセージの削除に失敗しました: ${error.message}`);
+      this.showMessage(error.message);
     }
   }
 

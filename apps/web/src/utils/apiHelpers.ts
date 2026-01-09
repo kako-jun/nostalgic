@@ -1,6 +1,21 @@
+import { translateError } from "./errorTranslations";
+
 export interface ApiCallOptions {
   onSuccess?: (data: unknown, publicId?: string) => void;
   onError?: (error: Error) => void;
+}
+
+/**
+ * APIレスポンスのエラーメッセージを翻訳する
+ */
+function translateApiResponse(jsonResponse: Record<string, unknown>): Record<string, unknown> {
+  if (jsonResponse.error && typeof jsonResponse.error === "string") {
+    return {
+      ...jsonResponse,
+      error: translateError(jsonResponse.error),
+    };
+  }
+  return jsonResponse;
 }
 
 export async function callApi(
@@ -16,7 +31,9 @@ export async function callApi(
 
     if (contentType && contentType.includes("application/json")) {
       const jsonResponse = await res.json();
-      responseText = JSON.stringify(jsonResponse, null, 2);
+      // APIエラーを翻訳
+      const translatedResponse = translateApiResponse(jsonResponse);
+      responseText = JSON.stringify(translatedResponse, null, 2);
 
       // Extract public ID if available (support both jsonResponse.id and jsonResponse.data.id)
       const publicId = jsonResponse.id || jsonResponse.data?.id;
@@ -36,7 +53,7 @@ export async function callApi(
 
     setResponse(responseText);
   } catch (error) {
-    const errorMessage = `エラー: ${error}`;
+    const errorMessage = `エラー: ネットワークエラーが発生しました`;
     setResponse(errorMessage);
     if (options?.onError && error instanceof Error) {
       options.onError(error);
@@ -63,7 +80,9 @@ export async function callApiWithFormat(
       const contentType = res.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
         const jsonResponse = await res.json();
-        responseText = JSON.stringify(jsonResponse, null, 2);
+        // APIエラーを翻訳
+        const translatedResponse = translateApiResponse(jsonResponse);
+        responseText = JSON.stringify(translatedResponse, null, 2);
 
         if (options?.onSuccess) {
           options.onSuccess(jsonResponse);
@@ -78,7 +97,7 @@ export async function callApiWithFormat(
 
     setResponse(responseText);
   } catch (error) {
-    const errorMessage = `エラー: ${error}`;
+    const errorMessage = `エラー: ネットワークエラーが発生しました`;
     setResponse(errorMessage);
     if (options?.onError && error instanceof Error) {
       options.onError(error);
