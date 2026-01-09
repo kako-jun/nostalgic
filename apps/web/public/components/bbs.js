@@ -812,7 +812,7 @@ class NostalgicBBS extends HTMLElement {
       </style>
       <div class="bbs-container ${theme}">
         ${theme === "final" ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ""}
-        <div class="bbs-header ${theme}">${this.formatMixedText(this.bbsData.settings?.title || "BBS")}</div>
+        <div class="bbs-header ${theme}">${this.formatMixedText(this.bbsData.title || "BBS")}</div>
         <div class="bbs-messages">
           ${
             messages.length > 0
