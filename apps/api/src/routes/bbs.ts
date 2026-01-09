@@ -78,7 +78,16 @@ app.get("/", async (c) => {
     const token = c.req.query("token");
     const title = c.req.query("title") || "BBS";
     const maxMessages = Number(c.req.query("maxMessages")) || 100;
+    const messagesPerPage = Number(c.req.query("messagesPerPage")) || 20;
     const webhookUrl = c.req.query("webhookUrl");
+
+    // Select configuration
+    const standardSelectLabel = c.req.query("standardSelectLabel");
+    const standardSelectOptions = c.req.query("standardSelectOptions");
+    const incrementalSelectLabel = c.req.query("incrementalSelectLabel");
+    const incrementalSelectOptions = c.req.query("incrementalSelectOptions");
+    const emoteSelectLabel = c.req.query("emoteSelectLabel");
+    const emoteSelectOptions = c.req.query("emoteSelectOptions");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -95,7 +104,30 @@ app.get("/", async (c) => {
 
     const publicId = await generatePublicId(url);
     const hashedToken = await hashToken(token);
-    const metadata = JSON.stringify({ title, maxMessages, webhookUrl: webhookUrl || null });
+
+    const parseOptions = (opts: string | undefined) =>
+      opts
+        ? opts
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [];
+
+    const metadata = JSON.stringify({
+      title,
+      maxMessages,
+      messagesPerPage,
+      webhookUrl: webhookUrl || null,
+      standardSelect: standardSelectLabel
+        ? { label: standardSelectLabel, options: parseOptions(standardSelectOptions) }
+        : null,
+      incrementalSelect: incrementalSelectLabel
+        ? { label: incrementalSelectLabel, options: parseOptions(incrementalSelectOptions) }
+        : null,
+      emoteSelect: emoteSelectLabel
+        ? { label: emoteSelectLabel, options: parseOptions(emoteSelectOptions) }
+        : null,
+    });
 
     await db.batch([
       db
@@ -111,7 +143,7 @@ app.get("/", async (c) => {
         .bind(`bbs:${publicId}`, hashedToken),
     ]);
 
-    return c.json({ success: true, id: publicId, url, title, maxMessages });
+    return c.json({ success: true, id: publicId, url, title, maxMessages, messagesPerPage });
   }
 
   // POST
@@ -230,10 +262,14 @@ app.get("/", async (c) => {
           url,
           title: metadata.title,
           maxMessages: metadata.maxMessages,
+          messagesPerPage: metadata.messagesPerPage || 20,
           messages,
           currentUserHash,
           settings: {
             webhookUrl: metadata.webhookUrl || null,
+            standardSelect: metadata.standardSelect || null,
+            incrementalSelect: metadata.incrementalSelect || null,
+            emoteSelect: metadata.emoteSelect || null,
           },
         },
       });
@@ -263,8 +299,14 @@ app.get("/", async (c) => {
         id,
         title: metadata.title,
         maxMessages: metadata.maxMessages,
+        messagesPerPage: metadata.messagesPerPage || 20,
         messages,
         currentUserHash,
+        settings: {
+          standardSelect: metadata.standardSelect || null,
+          incrementalSelect: metadata.incrementalSelect || null,
+          emoteSelect: metadata.emoteSelect || null,
+        },
       },
     });
   }
@@ -280,7 +322,16 @@ app.get("/", async (c) => {
     const newMessage = c.req.query("message");
     const newTitle = c.req.query("title");
     const newMaxMessages = c.req.query("maxMessages");
+    const newMessagesPerPage = c.req.query("messagesPerPage");
     const webhookUrl = c.req.query("webhookUrl");
+
+    // Select configuration
+    const standardSelectLabel = c.req.query("standardSelectLabel");
+    const standardSelectOptions = c.req.query("standardSelectOptions");
+    const incrementalSelectLabel = c.req.query("incrementalSelectLabel");
+    const incrementalSelectOptions = c.req.query("incrementalSelectOptions");
+    const emoteSelectLabel = c.req.query("emoteSelectLabel");
+    const emoteSelectOptions = c.req.query("emoteSelectOptions");
 
     // Settings update mode (url + token, no messageId)
     if (url && token && !messageId) {
@@ -300,19 +351,49 @@ app.get("/", async (c) => {
         return c.json({ error: "Invalid token" }, 403);
       }
 
-      if (newTitle === undefined && newMaxMessages === undefined && webhookUrl === undefined) {
-        return c.json(
-          { error: "At least one of title, maxMessages or webhookUrl is required" },
-          400
-        );
+      const hasSettingsUpdate =
+        newTitle !== undefined ||
+        newMaxMessages !== undefined ||
+        newMessagesPerPage !== undefined ||
+        webhookUrl !== undefined ||
+        standardSelectLabel !== undefined ||
+        incrementalSelectLabel !== undefined ||
+        emoteSelectLabel !== undefined;
+
+      if (!hasSettingsUpdate) {
+        return c.json({ error: "At least one setting parameter is required" }, 400);
       }
+
+      const parseOptions = (opts: string | undefined) =>
+        opts
+          ? opts
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : [];
 
       const currentMetadata = JSON.parse((bbs as BBSRecord).metadata || "{}");
       const newMetadata = {
         ...currentMetadata,
         ...(newTitle !== undefined && { title: newTitle }),
         ...(newMaxMessages !== undefined && { maxMessages: Number(newMaxMessages) }),
+        ...(newMessagesPerPage !== undefined && { messagesPerPage: Number(newMessagesPerPage) }),
         ...(webhookUrl !== undefined && { webhookUrl: webhookUrl === "" ? null : webhookUrl }),
+        ...(standardSelectLabel !== undefined && {
+          standardSelect: standardSelectLabel
+            ? { label: standardSelectLabel, options: parseOptions(standardSelectOptions) }
+            : null,
+        }),
+        ...(incrementalSelectLabel !== undefined && {
+          incrementalSelect: incrementalSelectLabel
+            ? { label: incrementalSelectLabel, options: parseOptions(incrementalSelectOptions) }
+            : null,
+        }),
+        ...(emoteSelectLabel !== undefined && {
+          emoteSelect: emoteSelectLabel
+            ? { label: emoteSelectLabel, options: parseOptions(emoteSelectOptions) }
+            : null,
+        }),
       };
 
       await db
@@ -323,7 +404,13 @@ app.get("/", async (c) => {
       const messages = await getMessages(db, id);
       return c.json({
         success: true,
-        data: { id, messages, title: newMetadata.title, maxMessages: newMetadata.maxMessages },
+        data: {
+          id,
+          messages,
+          title: newMetadata.title,
+          maxMessages: newMetadata.maxMessages,
+          messagesPerPage: newMetadata.messagesPerPage,
+        },
       });
     }
 

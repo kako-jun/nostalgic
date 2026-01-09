@@ -21,8 +21,6 @@ export const getRankingFormSections = (
   setUpdateDisplayScore: (v: string) => void,
   removeName: string,
   setRemoveName: (v: string) => void,
-  _webhookUrl: string,
-  _setWebhookUrl: (v: string) => void,
   settingsTitle: string,
   setSettingsTitle: (v: string) => void,
   settingsMax: string,

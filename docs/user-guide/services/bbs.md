@@ -11,7 +11,7 @@ Message board service with customizable dropdown selections, icon support, and a
 Create a new BBS message board.
 
 ```
-GET /api/bbs?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MAX_MESSAGES}&webhookUrl={WEBHOOK_URL}
+GET /api/bbs?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MAX_MESSAGES}&messagesPerPage={MESSAGES_PER_PAGE}&webhookUrl={WEBHOOK_URL}&standardSelectLabel={LABEL}&standardSelectOptions={OPTIONS}&incrementalSelectLabel={LABEL}&incrementalSelectOptions={OPTIONS}&emoteSelectLabel={LABEL}&emoteSelectOptions={OPTIONS}
 ```
 
 **Parameters:**
@@ -20,7 +20,14 @@ GET /api/bbs?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MA
 - `token` (required): Owner token (8-16 characters)
 - `title` (optional): BBS title (default: "BBS")
 - `maxMessages` (optional): Maximum messages (default: 100)
+- `messagesPerPage` (optional): Messages per page for pagination (default: 20)
 - `webhookUrl` (optional): Webhook URL for event notifications
+- `standardSelectLabel` (optional): Label for standard select dropdown
+- `standardSelectOptions` (optional): Comma-separated options for standard select
+- `incrementalSelectLabel` (optional): Label for incremental select dropdown
+- `incrementalSelectOptions` (optional): Comma-separated options for incremental select
+- `emoteSelectLabel` (optional): Label for emote/icon select dropdown
+- `emoteSelectOptions` (optional): Comma-separated options for emote select
 
 **Response:**
 
@@ -30,7 +37,8 @@ GET /api/bbs?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MA
   "id": "yoursite-a7b9c3d4",
   "url": "https://yoursite.com",
   "title": "BBS",
-  "maxMessages": 100
+  "maxMessages": 100,
+  "messagesPerPage": 20
 }
 ```
 
@@ -113,7 +121,7 @@ GET /api/bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&messag
 Update BBS settings without messageId parameter.
 
 ```
-GET /api/bbs?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MAX_MESSAGES}&webhookUrl={WEBHOOK_URL}
+GET /api/bbs?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MAX_MESSAGES}&messagesPerPage={MESSAGES_PER_PAGE}&webhookUrl={WEBHOOK_URL}&standardSelectLabel={LABEL}&standardSelectOptions={OPTIONS}&incrementalSelectLabel={LABEL}&incrementalSelectOptions={OPTIONS}&emoteSelectLabel={LABEL}&emoteSelectOptions={OPTIONS}
 ```
 
 **Parameters:**
@@ -122,9 +130,16 @@ GET /api/bbs?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MA
 - `token` (required): Owner token
 - `title` (optional): BBS title
 - `maxMessages` (optional): Maximum total messages
+- `messagesPerPage` (optional): Messages per page for pagination
 - `webhookUrl` (optional): Webhook URL (empty string to remove)
+- `standardSelectLabel` (optional): Label for standard select dropdown
+- `standardSelectOptions` (optional): Comma-separated options for standard select
+- `incrementalSelectLabel` (optional): Label for incremental select dropdown
+- `incrementalSelectOptions` (optional): Comma-separated options for incremental select
+- `emoteSelectLabel` (optional): Label for emote/icon select dropdown
+- `emoteSelectOptions` (optional): Comma-separated options for emote select
 
-At least one of title, maxMessages or webhookUrl is required.
+At least one setting parameter is required.
 
 **Response:**
 
@@ -224,6 +239,7 @@ GET /api/bbs?action=get&id={ID}&limit={LIMIT}
     "id": "yoursite-a7b9c3d4",
     "title": "BBS",
     "maxMessages": 100,
+    "messagesPerPage": 20,
     "messages": [
       {
         "id": "abc123def456",
@@ -235,7 +251,12 @@ GET /api/bbs?action=get&id={ID}&limit={LIMIT}
         "timestamp": "2025-08-13T10:00:00Z"
       }
     ],
-    "currentUserHash": "b2c3d4e5"
+    "currentUserHash": "b2c3d4e5",
+    "settings": {
+      "standardSelect": { "label": "カテゴリ", "options": ["質問", "雑談", "報告"] },
+      "incrementalSelect": null,
+      "emoteSelect": { "label": "気分", "options": ["😊", "😢", "😡"] }
+    }
   }
 }
 ```
@@ -264,10 +285,14 @@ GET /api/bbs?action=get&url={URL}&token={TOKEN}&limit={LIMIT}
     "url": "https://yoursite.com",
     "title": "BBS",
     "maxMessages": 100,
+    "messagesPerPage": 20,
     "messages": [...],
     "currentUserHash": "b2c3d4e5",
     "settings": {
-      "webhookUrl": "https://hooks.example.com/notify"
+      "webhookUrl": "https://hooks.example.com/notify",
+      "standardSelect": { "label": "カテゴリ", "options": ["質問", "雑談", "報告"] },
+      "incrementalSelect": null,
+      "emoteSelect": { "label": "気分", "options": ["😊", "😢", "😡"] }
     }
   }
 }

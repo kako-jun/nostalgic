@@ -29,6 +29,20 @@ interface BBSFormParams {
   setMaxMessages: (value: string) => void;
   webhookUrl: string;
   setWebhookUrl: (value: string) => void;
+  messagesPerPage: string;
+  setMessagesPerPage: (value: string) => void;
+  standardSelectLabel: string;
+  setStandardSelectLabel: (value: string) => void;
+  standardSelectOptions: string;
+  setStandardSelectOptions: (value: string) => void;
+  incrementalSelectLabel: string;
+  setIncrementalSelectLabel: (value: string) => void;
+  incrementalSelectOptions: string;
+  setIncrementalSelectOptions: (value: string) => void;
+  emoteSelectLabel: string;
+  setEmoteSelectLabel: (value: string) => void;
+  emoteSelectOptions: string;
+  setEmoteSelectOptions: (value: string) => void;
   postAuthor: string;
   postMessage: string;
   standardValue: string;
@@ -74,6 +88,20 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
     setMaxMessages,
     webhookUrl,
     setWebhookUrl,
+    messagesPerPage,
+    setMessagesPerPage,
+    standardSelectLabel,
+    setStandardSelectLabel,
+    standardSelectOptions,
+    setStandardSelectOptions,
+    incrementalSelectLabel,
+    setIncrementalSelectLabel,
+    incrementalSelectOptions,
+    setIncrementalSelectOptions,
+    emoteSelectLabel,
+    setEmoteSelectLabel,
+    emoteSelectOptions,
+    setEmoteSelectOptions,
     postAuthor,
     postMessage,
     standardValue,
@@ -377,7 +405,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
     // 9. 設定更新
     {
       title: "◆ 設定更新 ◆",
-      apiUrl: `/bbs?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${maxMessages ? `&maxMessages=${maxMessages}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`,
+      apiUrl: `/bbs?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${maxMessages ? `&maxMessages=${maxMessages}` : ""}${messagesPerPage ? `&messagesPerPage=${messagesPerPage}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}${standardSelectLabel ? `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}` : ""}${incrementalSelectLabel ? `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}` : ""}${emoteSelectLabel ? `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}` : ""}`,
       apiUrlDisplay: (
         <>
           https://api.nostalgic.llll-ll.com/bbs?action=update&url=
@@ -393,9 +421,32 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
               &maxMessages=<GreenParam>{maxMessages}</GreenParam>
             </>
           )}
+          {messagesPerPage && (
+            <>
+              &messagesPerPage=<GreenParam>{messagesPerPage}</GreenParam>
+            </>
+          )}
           {webhookUrl && (
             <>
               &webhookUrl=<GreenParam>{webhookUrl}</GreenParam>
+            </>
+          )}
+          {standardSelectLabel && (
+            <>
+              &standardSelectLabel=<GreenParam>{standardSelectLabel}</GreenParam>
+              &standardSelectOptions=<GreenParam>{standardSelectOptions}</GreenParam>
+            </>
+          )}
+          {incrementalSelectLabel && (
+            <>
+              &incrementalSelectLabel=<GreenParam>{incrementalSelectLabel}</GreenParam>
+              &incrementalSelectOptions=<GreenParam>{incrementalSelectOptions}</GreenParam>
+            </>
+          )}
+          {emoteSelectLabel && (
+            <>
+              &emoteSelectLabel=<GreenParam>{emoteSelectLabel}</GreenParam>
+              &emoteSelectOptions=<GreenParam>{emoteSelectOptions}</GreenParam>
             </>
           )}
         </>
@@ -418,12 +469,68 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
           onChange: setMaxMessages,
         },
         {
+          name: "messagesPerPage",
+          label: "1ページあたり件数",
+          type: "number" as const,
+          placeholder: "20",
+          value: messagesPerPage,
+          onChange: setMessagesPerPage,
+        },
+        {
           name: "webhookUrl",
           label: "Webhook URL",
           type: "url" as const,
           placeholder: "https://hooks.slack.com/...",
           value: webhookUrl,
           onChange: setWebhookUrl,
+        },
+        {
+          name: "standardSelectLabel",
+          label: "セレクト1ラベル",
+          type: "text" as const,
+          placeholder: "カテゴリ",
+          value: standardSelectLabel,
+          onChange: setStandardSelectLabel,
+        },
+        {
+          name: "standardSelectOptions",
+          label: "セレクト1選択肢",
+          type: "text" as const,
+          placeholder: "質問,雑談,報告（カンマ区切り）",
+          value: standardSelectOptions,
+          onChange: setStandardSelectOptions,
+        },
+        {
+          name: "incrementalSelectLabel",
+          label: "セレクト2ラベル",
+          type: "text" as const,
+          placeholder: "優先度",
+          value: incrementalSelectLabel,
+          onChange: setIncrementalSelectLabel,
+        },
+        {
+          name: "incrementalSelectOptions",
+          label: "セレクト2選択肢",
+          type: "text" as const,
+          placeholder: "低,中,高（カンマ区切り）",
+          value: incrementalSelectOptions,
+          onChange: setIncrementalSelectOptions,
+        },
+        {
+          name: "emoteSelectLabel",
+          label: "アイコンラベル",
+          type: "text" as const,
+          placeholder: "気分",
+          value: emoteSelectLabel,
+          onChange: setEmoteSelectLabel,
+        },
+        {
+          name: "emoteSelectOptions",
+          label: "アイコン選択肢",
+          type: "text" as const,
+          placeholder: "😊,😢,😡（カンマ区切り）",
+          value: emoteSelectOptions,
+          onChange: setEmoteSelectOptions,
         },
       ],
       buttonText: "更新",

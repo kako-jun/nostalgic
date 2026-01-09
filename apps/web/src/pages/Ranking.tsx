@@ -139,8 +139,6 @@ export default function RankingPage() {
     setUpdateDisplayScore,
     removeName,
     setRemoveName,
-    webhookUrl,
-    setWebhookUrl,
     settingsTitle,
     setSettingsTitle,
     settingsMax,

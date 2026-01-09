@@ -16,14 +16,14 @@ export default function BBSPage() {
 
   const [title, setTitle] = useState("");
   const [maxMessages, setMaxMessages] = useState("");
-  const [messagesPerPage, _setMessagesPerPage] = useState("");
+  const [messagesPerPage, setMessagesPerPage] = useState("");
 
-  const [standardSelectLabel, _setStandardSelectLabel] = useState("");
-  const [standardSelectOptions, _setStandardSelectOptions] = useState("");
-  const [incrementalSelectLabel, _setIncrementalSelectLabel] = useState("");
-  const [incrementalSelectOptions, _setIncrementalSelectOptions] = useState("");
-  const [emoteSelectLabel, _setEmoteSelectLabel] = useState("");
-  const [emoteSelectOptions, _setEmoteSelectOptions] = useState("");
+  const [standardSelectLabel, setStandardSelectLabel] = useState("");
+  const [standardSelectOptions, setStandardSelectOptions] = useState("");
+  const [incrementalSelectLabel, setIncrementalSelectLabel] = useState("");
+  const [incrementalSelectOptions, setIncrementalSelectOptions] = useState("");
+  const [emoteSelectLabel, setEmoteSelectLabel] = useState("");
+  const [emoteSelectOptions, setEmoteSelectOptions] = useState("");
 
   const [postAuthor, setPostAuthor] = useState("");
   const [postMessage, setPostMessage] = useState("");
@@ -50,7 +50,7 @@ export default function BBSPage() {
     let apiUrl = `/api/bbs?action=create&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
     if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
     if (maxMessages) apiUrl += `&maxMessages=${maxMessages}`;
-    if (messagesPerPage) apiUrl += `&perPage=${messagesPerPage}`;
+    if (messagesPerPage) apiUrl += `&messagesPerPage=${messagesPerPage}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
     if (standardSelectLabel && standardSelectOptions) {
       apiUrl += `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}`;
@@ -125,7 +125,17 @@ export default function BBSPage() {
     let apiUrl = `/api/bbs?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
     if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
     if (maxMessages) apiUrl += `&maxMessages=${maxMessages}`;
+    if (messagesPerPage) apiUrl += `&messagesPerPage=${messagesPerPage}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
+    if (standardSelectLabel) {
+      apiUrl += `&standardSelectLabel=${encodeURIComponent(standardSelectLabel)}&standardSelectOptions=${encodeURIComponent(standardSelectOptions)}`;
+    }
+    if (incrementalSelectLabel) {
+      apiUrl += `&incrementalSelectLabel=${encodeURIComponent(incrementalSelectLabel)}&incrementalSelectOptions=${encodeURIComponent(incrementalSelectOptions)}`;
+    }
+    if (emoteSelectLabel) {
+      apiUrl += `&emoteSelectLabel=${encodeURIComponent(emoteSelectLabel)}&emoteSelectOptions=${encodeURIComponent(emoteSelectOptions)}`;
+    }
 
     await callApi(apiUrl, setUpdateSettingsResponse);
   };
@@ -156,6 +166,20 @@ export default function BBSPage() {
     setMaxMessages,
     webhookUrl,
     setWebhookUrl,
+    messagesPerPage,
+    setMessagesPerPage,
+    standardSelectLabel,
+    setStandardSelectLabel,
+    standardSelectOptions,
+    setStandardSelectOptions,
+    incrementalSelectLabel,
+    setIncrementalSelectLabel,
+    incrementalSelectOptions,
+    setIncrementalSelectOptions,
+    emoteSelectLabel,
+    setEmoteSelectLabel,
+    emoteSelectOptions,
+    setEmoteSelectOptions,
     postAuthor,
     postMessage,
     standardValue,
