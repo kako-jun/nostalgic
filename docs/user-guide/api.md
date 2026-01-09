@@ -70,63 +70,6 @@ All services support webhook functionality for real-time event notifications:
 2. **Use**: Public ID for display/interaction
 3. **Manage**: URL + token for owner operations
 
-## Quick Start Examples
-
-### Counter
-
-```bash
-# Create counter with webhook
-curl "https://api.nostalgic.llll-ll.com/visit?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
-
-# Get counter
-curl "https://api.nostalgic.llll-ll.com/visit?action=get&id=yoursite-a7b9c3d4&type=total&theme=dark"
-
-# Delete counter
-curl "https://api.nostalgic.llll-ll.com/visit?action=delete&url=https://yoursite.com&token=your-secret"
-```
-
-### Like
-
-```bash
-# Create like button with webhook
-curl "https://api.nostalgic.llll-ll.com/like?action=create&url=https://yoursite.com&token=your-secret&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
-
-# Toggle like
-curl "https://api.nostalgic.llll-ll.com/like?action=toggle&id=yoursite-a7b9c3d4"
-
-# Delete like
-curl "https://api.nostalgic.llll-ll.com/like?action=delete&url=https://yoursite.com&token=your-secret"
-```
-
-### Ranking
-
-```bash
-# Create ranking (score-based game, high score wins) with webhook
-curl "https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret&maxEntries=100&sortOrder=desc&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
-
-# Create ranking (time-based game, lower time wins)
-curl "https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret&maxEntries=100&sortOrder=asc"
-
-# Submit score
-curl "https://api.nostalgic.llll-ll.com/ranking?action=submit&id=yoursite-a7b9c3d4&name=Player1&score=1000"
-
-# Delete ranking
-curl "https://api.nostalgic.llll-ll.com/ranking?action=delete&url=https://yoursite.com&token=your-secret"
-```
-
-### BBS
-
-```bash
-# Create BBS with webhook
-curl "https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://yoursite.com&token=your-secret&maxMessages=1000&webhookUrl=https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
-
-# Post message (pure GET, 1990s style)
-curl "https://api.nostalgic.llll-ll.com/bbs?action=post&id=yoursite-a7b9c3d4&author=User&message=Hello!"
-
-# Delete BBS
-curl "https://api.nostalgic.llll-ll.com/bbs?action=delete&url=https://yoursite.com&token=your-secret"
-```
-
 ## Try the Demos
 
 Visit our interactive demo pages to test all services:
