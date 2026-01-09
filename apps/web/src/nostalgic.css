@@ -9,8 +9,8 @@
 body {
   background-color: #ffffff !important;
   font-family:
-    "ＭＳ ゴシック", "MS Gothic", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro", "Yu Gothic",
-    "游ゴシック", monospace !important;
+    "BIZ UDGothic", "ＭＳ ゴシック", "MS Gothic", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro",
+    "Yu Gothic", "游ゴシック", monospace !important;
   margin: 0 !important;
   padding: 0 !important;
   color: black !important;
@@ -175,8 +175,8 @@ p {
 /* 強制スタイル適用 */
 .nostalgic-main-frame * {
   font-family:
-    "ＭＳ ゴシック", "MS Gothic", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro", "Yu Gothic",
-    "游ゴシック", monospace !important;
+    "BIZ UDGothic", "ＭＳ ゴシック", "MS Gothic", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro",
+    "Yu Gothic", "游ゴシック", monospace !important;
 }
 
 /* ナビゲーションリンクのアクティブ状態 */
@@ -248,7 +248,7 @@ p {
   border: 2px outset #c0c0c0 !important;
   padding: 8px 12px !important;
   font-size: 18px !important;
-  font-family: "ＭＳ ゴシック", "MS Gothic", monospace !important;
+  font-family: "BIZ UDGothic", "ＭＳ ゴシック", "MS Gothic", monospace !important;
   cursor: pointer !important;
   border-radius: 0 !important;
 }

@@ -33,24 +33,14 @@ interface BBSFormParams {
   incrementalValue: string;
   emoteValue: string;
   messageId: string;
-  editAuthor: string;
   editMessage: string;
-  editToken: string;
-  editStandardValue: string;
-  editIncrementalValue: string;
-  editEmoteValue: string;
   setPostAuthor: (value: string) => void;
   setPostMessage: (value: string) => void;
   setStandardValue: (value: string) => void;
   setIncrementalValue: (value: string) => void;
   setEmoteValue: (value: string) => void;
   setMessageId: (value: string) => void;
-  setEditAuthor: (value: string) => void;
   setEditMessage: (value: string) => void;
-  setEditToken: (value: string) => void;
-  setEditStandardValue: (value: string) => void;
-  setEditIncrementalValue: (value: string) => void;
-  setEditEmoteValue: (value: string) => void;
   handleCreate: (e: React.FormEvent) => void;
   handlePost: (e: React.FormEvent) => void;
   handleGet: (e: React.FormEvent) => void;
@@ -86,24 +76,14 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
     incrementalValue,
     emoteValue,
     messageId,
-    editAuthor,
     editMessage,
-    editToken,
-    editStandardValue,
-    editIncrementalValue,
-    editEmoteValue,
     setPostAuthor,
     setPostMessage,
     setStandardValue,
     setIncrementalValue,
     setEmoteValue,
     setMessageId,
-    setEditAuthor,
     setEditMessage,
-    setEditToken,
-    setEditStandardValue,
-    setEditIncrementalValue,
-    setEditEmoteValue,
     handleCreate,
     handlePost,
     handleGet,
@@ -232,33 +212,17 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       response: createResponse,
     },
 
-    // 3. メッセージ編集（URL/Token使用）
+    // 3. メッセージ編集（URL/Token使用 - 管理者用）
     {
-      title: "◆ メッセージ編集（URL/Token） ◆",
-      apiUrl: `/bbs?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&messageId=${messageId || "メッセージID"}&author=${encodeURIComponent(editAuthor || "投稿者名")}&message=${encodeURIComponent(editMessage || "新しいメッセージ")}${editStandardValue ? `&standardValue=${encodeURIComponent(editStandardValue)}` : ""}${editIncrementalValue ? `&incrementalValue=${encodeURIComponent(editIncrementalValue)}` : ""}${editEmoteValue ? `&emoteValue=${encodeURIComponent(editEmoteValue)}` : ""}`,
+      title: "◆ メッセージ編集（管理者） ◆",
+      apiUrl: `/bbs?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&messageId=${messageId || "メッセージID"}&message=${encodeURIComponent(editMessage || "新しいメッセージ")}`,
       apiUrlDisplay: (
         <>
           https://api.nostalgic.llll-ll.com/bbs?action=update&url=
           <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
           &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
           &messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>
-          &author=<GreenParam>{editAuthor || "投稿者名"}</GreenParam>
           &message=<GreenParam>{editMessage || "新しいメッセージ"}</GreenParam>
-          {editStandardValue && (
-            <>
-              &standardValue=<GreenParam>{editStandardValue}</GreenParam>
-            </>
-          )}
-          {editIncrementalValue && (
-            <>
-              &incrementalValue=<GreenParam>{editIncrementalValue}</GreenParam>
-            </>
-          )}
-          {editEmoteValue && (
-            <>
-              &emoteValue=<GreenParam>{editEmoteValue}</GreenParam>
-            </>
-          )}
         </>
       ),
       fields: [
@@ -266,49 +230,17 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
           name: "messageId",
           label: "メッセージID",
           type: "text",
-          placeholder: "編集対象メッセージID（トークン認証）",
+          placeholder: "編集対象メッセージID",
           value: messageId,
           onChange: setMessageId,
-        },
-        {
-          name: "editAuthor",
-          label: "投稿者名",
-          type: "text",
-          placeholder: "編集後投稿者名（トークン認証）",
-          value: editAuthor,
-          onChange: setEditAuthor,
         },
         {
           name: "editMessage",
           label: "新しいメッセージ",
           type: "text",
-          placeholder: "編集後メッセージ（トークン認証）",
+          placeholder: "編集後メッセージ",
           value: editMessage,
           onChange: setEditMessage,
-        },
-        {
-          name: "editStandardValue",
-          label: "標準セレクト値（任意）",
-          type: "text",
-          placeholder: "標準セレクト値（トークン認証）",
-          value: editStandardValue,
-          onChange: setEditStandardValue,
-        },
-        {
-          name: "editIncrementalValue",
-          label: "増分セレクト値（任意）",
-          type: "text",
-          placeholder: "増分セレクト値（トークン認証）",
-          value: editIncrementalValue,
-          onChange: setEditIncrementalValue,
-        },
-        {
-          name: "editEmoteValue",
-          label: "エモートセレクト値（任意）",
-          type: "text",
-          placeholder: "エモートセレクト値（トークン認証）",
-          value: editEmoteValue,
-          onChange: setEditEmoteValue,
         },
       ],
       buttonText: "編集",
@@ -316,9 +248,9 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       response: updateResponse,
     },
 
-    // 4. メッセージ削除（URL/Token使用）
+    // 4. メッセージ削除（URL/Token使用 - 管理者用）
     {
-      title: "◆ メッセージ削除（URL/Token） ◆",
+      title: "◆ メッセージ削除（管理者） ◆",
       apiUrl: `/bbs?action=remove&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}&messageId=${messageId || "メッセージID"}`,
       apiUrlDisplay: (
         <>
@@ -333,7 +265,7 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
           name: "messageId",
           label: "メッセージID",
           type: "text",
-          placeholder: "削除対象メッセージID（トークン認証）",
+          placeholder: "削除対象メッセージID",
           value: messageId,
           onChange: setMessageId,
         },
@@ -343,33 +275,16 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       response: removeResponse,
     },
 
-    // 5. メッセージ編集（Public ID + editToken使用）
+    // 5. メッセージ編集（投稿者用 - IP+UserAgentで自動認証）
     {
-      title: "◆ メッセージ編集（Public ID） ◆",
-      apiUrl: `/bbs?action=update&id=${encodeURIComponent(publicId || "パブリックID")}&messageId=${messageId || "メッセージID"}&author=${encodeURIComponent(editAuthor || "投稿者名")}&message=${encodeURIComponent(editMessage || "新しいメッセージ")}&editToken=${encodeURIComponent(editToken || "編集トークン")}${editStandardValue ? `&standardValue=${encodeURIComponent(editStandardValue)}` : ""}${editIncrementalValue ? `&incrementalValue=${encodeURIComponent(editIncrementalValue)}` : ""}${editEmoteValue ? `&emoteValue=${encodeURIComponent(editEmoteValue)}` : ""}`,
+      title: "◆ メッセージ編集（投稿者） ◆",
+      apiUrl: `/bbs?action=update&id=${encodeURIComponent(publicId || "パブリックID")}&messageId=${messageId || "メッセージID"}&message=${encodeURIComponent(editMessage || "新しいメッセージ")}`,
       apiUrlDisplay: (
         <>
           https://api.nostalgic.llll-ll.com/bbs?action=update&id=
           <GreenParam>{publicId || "パブリックID"}</GreenParam>
           &messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>
-          &author=<GreenParam>{editAuthor || "投稿者名"}</GreenParam>
           &message=<GreenParam>{editMessage || "新しいメッセージ"}</GreenParam>
-          &editToken=<GreenParam>{editToken || "編集トークン"}</GreenParam>
-          {editStandardValue && (
-            <>
-              &standardValue=<GreenParam>{editStandardValue}</GreenParam>
-            </>
-          )}
-          {editIncrementalValue && (
-            <>
-              &incrementalValue=<GreenParam>{editIncrementalValue}</GreenParam>
-            </>
-          )}
-          {editEmoteValue && (
-            <>
-              &emoteValue=<GreenParam>{editEmoteValue}</GreenParam>
-            </>
-          )}
         </>
       ),
       fields: [
@@ -377,57 +292,17 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
           name: "messageId",
           label: "メッセージID",
           type: "text",
-          placeholder: "編集対象メッセージID（公開ID認証）",
+          placeholder: "編集対象メッセージID",
           value: messageId,
           onChange: setMessageId,
-        },
-        {
-          name: "editAuthor",
-          label: "投稿者名",
-          type: "text",
-          placeholder: "編集後投稿者名（公開ID認証）",
-          value: editAuthor,
-          onChange: setEditAuthor,
         },
         {
           name: "editMessage",
           label: "新しいメッセージ",
           type: "text",
-          placeholder: "編集後メッセージ（公開ID認証）",
+          placeholder: "編集後メッセージ",
           value: editMessage,
           onChange: setEditMessage,
-        },
-        {
-          name: "editToken",
-          label: "編集トークン",
-          type: "text",
-          placeholder: "編集トークン（公開ID認証）",
-          value: editToken,
-          onChange: setEditToken,
-        },
-        {
-          name: "editStandardValue",
-          label: "標準セレクト値（任意）",
-          type: "text",
-          placeholder: "標準セレクト値（公開ID認証）",
-          value: editStandardValue,
-          onChange: setEditStandardValue,
-        },
-        {
-          name: "editIncrementalValue",
-          label: "増分セレクト値（任意）",
-          type: "text",
-          placeholder: "増分セレクト値（公開ID認証）",
-          value: editIncrementalValue,
-          onChange: setEditIncrementalValue,
-        },
-        {
-          name: "editEmoteValue",
-          label: "エモートセレクト値（任意）",
-          type: "text",
-          placeholder: "エモートセレクト値（公開ID認証）",
-          value: editEmoteValue,
-          onChange: setEditEmoteValue,
         },
       ],
       buttonText: "編集",
@@ -435,16 +310,15 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
       response: updateResponse,
     },
 
-    // 6. メッセージ削除（Public ID + editToken使用）
+    // 6. メッセージ削除（投稿者用 - IP+UserAgentで自動認証）
     {
-      title: "◆ メッセージ削除（Public ID） ◆",
-      apiUrl: `/bbs?action=remove&id=${encodeURIComponent(publicId || "パブリックID")}&messageId=${messageId || "メッセージID"}&editToken=${encodeURIComponent(editToken || "編集トークン")}`,
+      title: "◆ メッセージ削除（投稿者） ◆",
+      apiUrl: `/bbs?action=remove&id=${encodeURIComponent(publicId || "パブリックID")}&messageId=${messageId || "メッセージID"}`,
       apiUrlDisplay: (
         <>
           https://api.nostalgic.llll-ll.com/bbs?action=remove&id=
           <GreenParam>{publicId || "パブリックID"}</GreenParam>
           &messageId=<GreenParam>{messageId || "メッセージID"}</GreenParam>
-          &editToken=<GreenParam>{editToken || "編集トークン"}</GreenParam>
         </>
       ),
       fields: [
@@ -452,17 +326,9 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
           name: "messageId",
           label: "メッセージID",
           type: "text",
-          placeholder: "削除対象メッセージID（公開ID認証）",
+          placeholder: "削除対象メッセージID",
           value: messageId,
           onChange: setMessageId,
-        },
-        {
-          name: "editToken",
-          label: "編集トークン",
-          type: "text",
-          placeholder: "削除用編集トークン（公開ID認証）",
-          value: editToken,
-          onChange: setEditToken,
         },
       ],
       buttonText: "削除",

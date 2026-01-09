@@ -32,12 +32,7 @@ export default function BBSPage() {
   const [emoteValue, setEmoteValue] = useState("");
 
   const [messageId, setMessageId] = useState("");
-  const [editAuthor, setEditAuthor] = useState("");
   const [editMessage, setEditMessage] = useState("");
-  const [editToken, setEditToken] = useState("");
-  const [editStandardValue, setEditStandardValue] = useState("");
-  const [editIncrementalValue, setEditIncrementalValue] = useState("");
-  const [editEmoteValue, setEditEmoteValue] = useState("");
 
   const [createResponse, setCreateResponse] = useState("");
   const [postResponse, setPostResponse] = useState("");
@@ -163,24 +158,14 @@ export default function BBSPage() {
     incrementalValue,
     emoteValue,
     messageId,
-    editAuthor,
     editMessage,
-    editToken,
-    editStandardValue,
-    editIncrementalValue,
-    editEmoteValue,
     setPostAuthor,
     setPostMessage,
     setStandardValue,
     setIncrementalValue,
     setEmoteValue,
     setMessageId,
-    setEditAuthor,
     setEditMessage,
-    setEditToken,
-    setEditStandardValue,
-    setEditIncrementalValue,
-    setEditEmoteValue,
     handleCreate,
     handlePost,
     handleGet,
