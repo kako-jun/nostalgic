@@ -135,6 +135,28 @@ Only specify the parameters you want to change.
 }
 ```
 
+### delete
+
+Delete a like button (owner only).
+
+```
+GET /api/like?action=delete&url={URL}&token={TOKEN}
+```
+
+**Parameters:**
+
+- `url` (required): Target URL
+- `token` (required): Owner token
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Like service deleted"
+}
+```
+
 ## Web Component Integration
 
 ```html

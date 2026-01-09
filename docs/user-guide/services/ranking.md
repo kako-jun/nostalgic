@@ -230,6 +230,28 @@ GET /api/ranking?action=get&url={URL}&token={TOKEN}&limit={LIMIT}
 }
 ```
 
+### delete
+
+Delete a ranking (owner only).
+
+```
+GET /api/ranking?action=delete&url={URL}&token={TOKEN}
+```
+
+**Parameters:**
+
+- `url` (required): Target URL
+- `token` (required): Owner token
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Ranking deleted"
+}
+```
+
 ## Usage Examples
 
 ### Basic Ranking Setup

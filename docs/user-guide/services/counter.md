@@ -155,6 +155,28 @@ Only specify the parameters you want to change.
 }
 ```
 
+### delete
+
+Delete a counter (owner only).
+
+```
+GET /api/visit?action=delete&url={URL}&token={TOKEN}
+```
+
+**Parameters:**
+
+- `url` (required): Target URL
+- `token` (required): Owner token
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Counter deleted"
+}
+```
+
 ## Web Component Integration
 
 ```html

@@ -292,6 +292,28 @@ GET /api/bbs?action=get&url={URL}&token={TOKEN}&page={PAGE}
 }
 ```
 
+### delete
+
+Delete a BBS (owner only).
+
+```
+GET /api/bbs?action=delete&url={URL}&token={TOKEN}
+```
+
+**Parameters:**
+
+- `url` (required): Target URL
+- `token` (required): Owner token
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "BBS deleted"
+}
+```
+
 ## Usage Examples
 
 ### Basic BBS Setup

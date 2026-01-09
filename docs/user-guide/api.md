@@ -80,6 +80,9 @@ curl "https://api.nostalgic.llll-ll.com/visit?action=create&url=https://yoursite
 
 # Get counter
 curl "https://api.nostalgic.llll-ll.com/visit?action=get&id=yoursite-a7b9c3d4&type=total&theme=dark"
+
+# Delete counter
+curl "https://api.nostalgic.llll-ll.com/visit?action=delete&url=https://yoursite.com&token=your-secret"
 ```
 
 ### Like
@@ -90,6 +93,9 @@ curl "https://api.nostalgic.llll-ll.com/like?action=create&url=https://yoursite.
 
 # Toggle like
 curl "https://api.nostalgic.llll-ll.com/like?action=toggle&id=yoursite-a7b9c3d4"
+
+# Delete like
+curl "https://api.nostalgic.llll-ll.com/like?action=delete&url=https://yoursite.com&token=your-secret"
 ```
 
 ### Ranking
@@ -103,6 +109,9 @@ curl "https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursi
 
 # Submit score
 curl "https://api.nostalgic.llll-ll.com/ranking?action=submit&id=yoursite-a7b9c3d4&name=Player1&score=1000"
+
+# Delete ranking
+curl "https://api.nostalgic.llll-ll.com/ranking?action=delete&url=https://yoursite.com&token=your-secret"
 ```
 
 ### BBS
@@ -113,6 +122,9 @@ curl "https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://yoursite.c
 
 # Post message (pure GET, 1990s style)
 curl "https://api.nostalgic.llll-ll.com/bbs?action=post&id=yoursite-a7b9c3d4&author=User&message=Hello!"
+
+# Delete BBS
+curl "https://api.nostalgic.llll-ll.com/bbs?action=delete&url=https://yoursite.com&token=your-secret"
 ```
 
 ## Try the Demos
