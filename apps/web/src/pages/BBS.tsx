@@ -14,7 +14,7 @@ export default function BBSPage() {
   const [sharedToken, setSharedToken] = useState("");
   const [webhookUrl, setWebhookUrl] = useState("");
 
-  const [_title, _setTitle] = useState("");
+  const [title, setTitle] = useState("");
   const [maxMessages, setMaxMessages] = useState("");
   const [messagesPerPage, _setMessagesPerPage] = useState("");
 
@@ -48,7 +48,8 @@ export default function BBSPage() {
     if (!sharedUrl || !sharedToken) return;
 
     let apiUrl = `/api/bbs?action=create&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
-    if (maxMessages) apiUrl += `&max=${maxMessages}`;
+    if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
+    if (maxMessages) apiUrl += `&maxMessages=${maxMessages}`;
     if (messagesPerPage) apiUrl += `&perPage=${messagesPerPage}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
     if (standardSelectLabel && standardSelectOptions) {
@@ -122,6 +123,7 @@ export default function BBSPage() {
     if (!sharedUrl || !sharedToken) return;
 
     let apiUrl = `/api/bbs?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
     if (maxMessages) apiUrl += `&maxMessages=${maxMessages}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
@@ -148,6 +150,8 @@ export default function BBSPage() {
     publicId,
     sharedUrl,
     sharedToken,
+    title,
+    setTitle,
     maxMessages,
     setMaxMessages,
     webhookUrl,

@@ -45,7 +45,7 @@ export default function RankingPage() {
 
     let apiUrl = `/api/ranking?action=create&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
     if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
-    if (maxEntries) apiUrl += `&max=${maxEntries}`;
+    if (maxEntries) apiUrl += `&maxEntries=${maxEntries}`;
     if (sortOrder) apiUrl += `&sortOrder=${sortOrder}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
@@ -110,6 +110,7 @@ export default function RankingPage() {
     if (!sharedUrl || !sharedToken) return;
 
     let apiUrl = `/api/ranking?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    if (settingsTitle) apiUrl += `&title=${encodeURIComponent(settingsTitle)}`;
     if (settingsMax) apiUrl += `&maxEntries=${settingsMax}`;
     if (settingsSortOrder) apiUrl += `&sortOrder=${settingsSortOrder}`;
     if (settingsWebhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(settingsWebhookUrl)}`;

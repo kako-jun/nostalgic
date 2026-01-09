@@ -113,17 +113,18 @@ GET /api/bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&messag
 Update BBS settings without messageId parameter.
 
 ```
-GET /api/bbs?action=update&url={URL}&token={TOKEN}&maxMessages={MAX_MESSAGES}&webhookUrl={WEBHOOK_URL}
+GET /api/bbs?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MAX_MESSAGES}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL
 - `token` (required): Owner token
+- `title` (optional): BBS title
 - `maxMessages` (optional): Maximum total messages
 - `webhookUrl` (optional): Webhook URL (empty string to remove)
 
-At least one of maxMessages or webhookUrl is required.
+At least one of title, maxMessages or webhookUrl is required.
 
 **Response:**
 

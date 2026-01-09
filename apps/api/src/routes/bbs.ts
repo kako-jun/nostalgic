@@ -278,6 +278,7 @@ app.get("/", async (c) => {
     const idParam = c.req.query("id");
     const messageId = c.req.query("messageId");
     const newMessage = c.req.query("message");
+    const newTitle = c.req.query("title");
     const newMaxMessages = c.req.query("maxMessages");
     const webhookUrl = c.req.query("webhookUrl");
 
@@ -299,13 +300,17 @@ app.get("/", async (c) => {
         return c.json({ error: "Invalid token" }, 403);
       }
 
-      if (newMaxMessages === undefined && webhookUrl === undefined) {
-        return c.json({ error: "At least one of maxMessages or webhookUrl is required" }, 400);
+      if (newTitle === undefined && newMaxMessages === undefined && webhookUrl === undefined) {
+        return c.json(
+          { error: "At least one of title, maxMessages or webhookUrl is required" },
+          400
+        );
       }
 
       const currentMetadata = JSON.parse((bbs as BBSRecord).metadata || "{}");
       const newMetadata = {
         ...currentMetadata,
+        ...(newTitle !== undefined && { title: newTitle }),
         ...(newMaxMessages !== undefined && { maxMessages: Number(newMaxMessages) }),
         ...(webhookUrl !== undefined && { webhookUrl: webhookUrl === "" ? null : webhookUrl }),
       };
@@ -318,7 +323,7 @@ app.get("/", async (c) => {
       const messages = await getMessages(db, id);
       return c.json({
         success: true,
-        data: { id, messages, maxMessages: newMetadata.maxMessages },
+        data: { id, messages, title: newMetadata.title, maxMessages: newMetadata.maxMessages },
       });
     }
 

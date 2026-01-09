@@ -80,6 +80,7 @@ app.get("/", async (c) => {
   if (action === "create") {
     const url = c.req.query("url");
     const token = c.req.query("token");
+    const title = c.req.query("title") || "RANKING";
     const sortOrder = c.req.query("sortOrder") || RANKING.SORT_ORDER.DEFAULT;
     const maxEntries = Number(c.req.query("maxEntries")) || 100;
     const webhookUrl = c.req.query("webhookUrl");
@@ -99,7 +100,12 @@ app.get("/", async (c) => {
 
     const publicId = await generatePublicId(url);
     const hashedToken = await hashToken(token);
-    const metadata = JSON.stringify({ sortOrder, maxEntries, webhookUrl: webhookUrl || null });
+    const metadata = JSON.stringify({
+      title,
+      sortOrder,
+      maxEntries,
+      webhookUrl: webhookUrl || null,
+    });
 
     await db.batch([
       db
@@ -115,7 +121,7 @@ app.get("/", async (c) => {
         .bind(`ranking:${publicId}`, hashedToken),
     ]);
 
-    return c.json({ success: true, id: publicId, url, sortOrder, maxEntries });
+    return c.json({ success: true, id: publicId, url, title, sortOrder, maxEntries });
   }
 
   // SUBMIT
@@ -187,6 +193,7 @@ app.get("/", async (c) => {
   if (action === "update") {
     const url = c.req.query("url");
     const token = c.req.query("token");
+    const newTitle = c.req.query("title");
     const newMaxEntries = c.req.query("maxEntries");
     const newSortOrder = c.req.query("sortOrder");
     const webhookUrl = c.req.query("webhookUrl");
@@ -195,9 +202,14 @@ app.get("/", async (c) => {
       return c.json({ error: "url and token are required" }, 400);
     }
 
-    if (newMaxEntries === undefined && newSortOrder === undefined && webhookUrl === undefined) {
+    if (
+      newTitle === undefined &&
+      newMaxEntries === undefined &&
+      newSortOrder === undefined &&
+      webhookUrl === undefined
+    ) {
       return c.json(
-        { error: "At least one of maxEntries, sortOrder, or webhookUrl is required" },
+        { error: "At least one of title, maxEntries, sortOrder, or webhookUrl is required" },
         400
       );
     }
@@ -221,6 +233,7 @@ app.get("/", async (c) => {
     const currentMetadata = JSON.parse((ranking as RankingRecord).metadata || "{}");
     const newMetadata = {
       ...currentMetadata,
+      ...(newTitle !== undefined && { title: newTitle }),
       ...(newMaxEntries !== undefined && { maxEntries: Number(newMaxEntries) }),
       ...(newSortOrder !== undefined && { sortOrder: newSortOrder }),
       ...(webhookUrl !== undefined && { webhookUrl: webhookUrl === "" ? null : webhookUrl }),
@@ -239,7 +252,13 @@ app.get("/", async (c) => {
     );
     return c.json({
       success: true,
-      data: { id, entries, maxEntries: newMetadata.maxEntries, sortOrder: newMetadata.sortOrder },
+      data: {
+        id,
+        entries,
+        title: newMetadata.title,
+        maxEntries: newMetadata.maxEntries,
+        sortOrder: newMetadata.sortOrder,
+      },
     });
   }
 
@@ -281,6 +300,7 @@ app.get("/", async (c) => {
           id: rankingId,
           url,
           entries,
+          title: metadata.title,
           sortOrder,
           maxEntries: metadata.maxEntries,
           settings: {
@@ -306,7 +326,7 @@ app.get("/", async (c) => {
     const entries = await getTopEntries(db, id, limit, sortOrder);
     return c.json({
       success: true,
-      data: { id, entries, sortOrder, maxEntries: metadata.maxEntries },
+      data: { id, entries, title: metadata.title, sortOrder, maxEntries: metadata.maxEntries },
     });
   }
 

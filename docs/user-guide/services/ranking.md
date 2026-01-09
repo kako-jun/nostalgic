@@ -11,13 +11,14 @@ Score leaderboard system with automatic sorting, score management, and configura
 Create a new ranking leaderboard.
 
 ```
-GET /api/ranking?action=create&url={URL}&token={TOKEN}&maxEntries={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
+GET /api/ranking?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxEntries={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL for ranking
 - `token` (required): Owner token (8-16 characters)
+- `title` (optional): Ranking title (default: "RANKING")
 - `maxEntries` (optional): Maximum entries (default: 100)
 - `sortOrder` (optional): Sort order - "desc" for high scores first, "asc" for low times first (default: "desc")
 - `webhookUrl` (optional): Webhook URL for event notifications
@@ -73,18 +74,19 @@ GET /api/ranking?action=submit&id={ID}&name={PLAYER_NAME}&score={SCORE}
 Update ranking settings (owner only).
 
 ```
-GET /api/ranking?action=update&url={URL}&token={TOKEN}&maxEntries={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
+GET /api/ranking?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxEntries={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
 
 - `url` (required): Target URL
 - `token` (required): Owner token
+- `title` (optional): Ranking title (default: "RANKING")
 - `maxEntries` (optional): Maximum entries
 - `sortOrder` (optional): Sort order ("desc" for high scores, "asc" for low times)
 - `webhookUrl` (optional): Webhook URL (empty string to remove)
 
-At least one of maxEntries, sortOrder, or webhookUrl is required.
+At least one of title, maxEntries, sortOrder, or webhookUrl is required.
 
 **Note:** To update player scores, use the `submit` action which handles UPSERT (insert or update).
 

@@ -228,6 +228,20 @@ app.get("/", async (c) => {
       getUserLikeState(db, id, userHash, today),
     ]);
 
+    const format = c.req.query("format") || "json";
+
+    if (format === "text") {
+      return c.text(String(total));
+    }
+
+    if (format === "svg" || format === "image") {
+      const svg = generateLikeSVG(String(total), isLiked);
+      return c.body(svg, 200, {
+        "Content-Type": "image/svg+xml",
+        "Cache-Control": "no-cache",
+      });
+    }
+
     return c.json({ success: true, data: { id, total, liked: isLiked } });
   }
 
@@ -314,5 +328,20 @@ app.get("/", async (c) => {
 
   return c.json({ error: "Invalid action. Use: create, toggle, get, update, delete" }, 400);
 });
+
+// === SVG Generator ===
+function generateLikeSVG(count: string, liked: boolean): string {
+  const heart = liked ? "❤️" : "🤍";
+  const bg = liked ? "#ffebee" : "#fafafa";
+  const textColor = liked ? "#e91e63" : "#666666";
+  const width = Math.max(60, count.length * 12 + 40);
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="28">
+  <rect width="100%" height="100%" fill="${bg}" stroke="#ddd" stroke-width="1" rx="4"/>
+  <text x="8" y="50%" dominant-baseline="middle" font-size="14">${heart}</text>
+  <text x="28" y="50%" dominant-baseline="middle"
+        fill="${textColor}" font-family="sans-serif" font-size="14" font-weight="bold">${count}</text>
+</svg>`;
+}
 
 export default app;

@@ -38,7 +38,7 @@ export default function LikePage() {
     e.preventDefault();
     if (!publicId) return;
 
-    const apiUrl = `/api/like?action=get&id=${encodeURIComponent(publicId)}`;
+    const apiUrl = `/api/like?action=get&id=${encodeURIComponent(publicId)}&format=${selectedFormat}`;
     await callApiWithFormat(
       apiUrl,
       selectedFormat as "json" | "text" | "svg",

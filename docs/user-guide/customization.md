@@ -145,14 +145,12 @@ Counterコンポーネントは`theme`属性でスタイルを切り替えます
   /* スマホ対応 */
   @media (max-width: 768px) {
     nostalgic-ranking {
-      --ranking-min-width: 280px;
-      --ranking-max-width: 100%;
+      --ranking-width: 100%;
       --ranking-item-padding: 8px 12px;
     }
 
     nostalgic-bbs {
-      --bbs-min-width: 280px;
-      --bbs-max-width: 100%;
+      --bbs-width: 100%;
       --bbs-max-height: 300px;
       --bbs-message-padding: 8px;
     }
@@ -161,16 +159,18 @@ Counterコンポーネントは`theme`属性でスタイルを切り替えます
   /* デスクトップ対応 */
   @media (min-width: 1200px) {
     nostalgic-ranking {
-      --ranking-max-width: 600px;
+      --ranking-width: 600px;
     }
 
     nostalgic-bbs {
-      --bbs-max-width: 900px;
+      --bbs-width: 900px;
       --bbs-max-height: 600px;
     }
   }
 </style>
 ```
+
+> **Note**: 実装では `width: min(var(--ranking-width), 100%)` となっているため、指定した幅か画面幅の小さい方が適用されます。
 
 ## 4. 高度なカスタマイズ例
 
@@ -187,7 +187,7 @@ Counterコンポーネントは`theme`属性でスタイルを切り替えます
     --ranking-item-padding: 12px 16px;
     --ranking-border-radius: 0;
     --ranking-font-family: "Arial", sans-serif;
-    --ranking-min-width: 400px;
+    --ranking-width: 400px;
   }
 </style>
 
@@ -209,7 +209,7 @@ Counterコンポーネントは`theme`属性でスタイルを切り替えます
     --bbs-message-padding: 10px 16px;
     --bbs-message-margin: 2px 8px;
     --bbs-border-radius: 12px;
-    --bbs-max-width: 700px;
+    --bbs-width: 700px;
     --bbs-font-family: "Roboto", sans-serif;
   }
 </style>
@@ -237,6 +237,7 @@ Counterコンポーネントは`theme`属性でスタイルを切り替えます
 
 - `--bbs-bg-color`: 背景色
 - `--bbs-border-color`: 枠線色
+- `--bbs-shadow-color`: 影色
 - `--bbs-header-bg`: ヘッダー背景色
 - `--bbs-header-color`: ヘッダー文字色
 - `--bbs-message-bg`: メッセージ背景色
@@ -249,8 +250,12 @@ Counterコンポーネントは`theme`属性でスタイルを切り替えます
 - `--bbs-message-border-radius`: メッセージ角丸
 - `--bbs-max-height`: 最大高さ
 - `--bbs-header-padding`: ヘッダー内余白
+- `--bbs-scrollbar-thumb`: スクロールバーの色
+- `--bbs-scrollbar-hover`: スクロールバーホバー時の色
 
 ### Like Component
+
+#### Interactive/Image Format
 
 - `--like-bg`: 背景色
 - `--like-text`: 文字色
@@ -262,6 +267,11 @@ Counterコンポーネントは`theme`属性でスタイルを切り替えます
 - `--like-hover-bg`: ホバー時背景色
 - `--like-icon-size`: アイコンサイズ
 - `--like-icon-color`: アイコン色
+
+#### Text Format
+
+- `--like-text-color`: テキスト文字色
+- `--like-text-hover-color`: テキストホバー時文字色
 
 ### Counter Component
 

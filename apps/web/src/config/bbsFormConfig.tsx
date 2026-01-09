@@ -23,6 +23,8 @@ interface BBSFormParams {
   publicId: string;
   sharedUrl: string;
   sharedToken: string;
+  title: string;
+  setTitle: (value: string) => void;
   maxMessages: string;
   setMaxMessages: (value: string) => void;
   webhookUrl: string;
@@ -66,6 +68,8 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
     publicId,
     sharedUrl,
     sharedToken,
+    title,
+    setTitle,
     maxMessages,
     setMaxMessages,
     webhookUrl,
@@ -373,12 +377,17 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
     // 9. 設定更新
     {
       title: "◆ 設定更新 ◆",
-      apiUrl: `/bbs?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${maxMessages ? `&maxMessages=${maxMessages}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`,
+      apiUrl: `/bbs?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${title ? `&title=${encodeURIComponent(title)}` : ""}${maxMessages ? `&maxMessages=${maxMessages}` : ""}${webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : ""}`,
       apiUrlDisplay: (
         <>
           https://api.nostalgic.llll-ll.com/bbs?action=update&url=
           <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
           &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+          {title && (
+            <>
+              &title=<GreenParam>{title}</GreenParam>
+            </>
+          )}
           {maxMessages && (
             <>
               &maxMessages=<GreenParam>{maxMessages}</GreenParam>
@@ -392,6 +401,14 @@ export function getBBSFormSections(params: BBSFormParams): BBSFormSectionConfig[
         </>
       ),
       fields: [
+        {
+          name: "title",
+          label: "タイトル",
+          type: "text" as const,
+          placeholder: "BBS",
+          value: title,
+          onChange: setTitle,
+        },
         {
           name: "maxMessages",
           label: "最大メッセージ数",

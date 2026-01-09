@@ -332,12 +332,17 @@ export const getRankingFormSections = (
   {
     title: "◆設定更新◆",
     description: "ランキングの設定を更新します。",
-    apiUrl: `https://api.nostalgic.llll-ll.com/ranking?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${settingsMax ? `&maxEntries=${settingsMax}` : ""}${settingsSortOrder ? `&sortOrder=${settingsSortOrder}` : ""}${settingsWebhookUrl ? `&webhookUrl=${encodeURIComponent(settingsWebhookUrl)}` : ""}`,
+    apiUrl: `https://api.nostalgic.llll-ll.com/ranking?action=update&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${settingsTitle ? `&title=${encodeURIComponent(settingsTitle)}` : ""}${settingsMax ? `&maxEntries=${settingsMax}` : ""}${settingsSortOrder ? `&sortOrder=${settingsSortOrder}` : ""}${settingsWebhookUrl ? `&webhookUrl=${encodeURIComponent(settingsWebhookUrl)}` : ""}`,
     apiUrlDisplay: (
       <>
         https://api.nostalgic.llll-ll.com/ranking?action=update&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
+        {settingsTitle && (
+          <>
+            &title=<GreenParam>{settingsTitle}</GreenParam>
+          </>
+        )}
         {settingsMax && (
           <>
             &maxEntries=<GreenParam>{settingsMax}</GreenParam>
