@@ -95,6 +95,16 @@ class NostalgicBBS extends HTMLElement {
 
       if (data.success) {
         this.bbsData = data.data;
+        // Calculate pagination from API response
+        const messagesPerPage = this.bbsData.messagesPerPage || 20;
+        const totalMessages = this.bbsData.totalMessages || this.bbsData.messages.length;
+        const totalPages = Math.ceil(totalMessages / messagesPerPage) || 1;
+        this.bbsData.totalPages = totalPages;
+        this.bbsData.pagination = {
+          page: this.currentPage,
+          perPage: messagesPerPage,
+          totalPages: totalPages,
+        };
       } else {
         this.renderError(data.error || "Failed to load BBS data");
         return;

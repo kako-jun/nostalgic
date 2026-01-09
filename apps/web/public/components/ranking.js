@@ -412,7 +412,7 @@ class NostalgicRanking extends HTMLElement {
       </style>
       <div class="ranking-container ${theme || ""}">
         ${theme === "final" ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ""}
-        <div class="ranking-header ${theme || ""}">${this.escapeHtml(this.rankingData.settings?.title || "RANKING")}</div>
+        <div class="ranking-header ${theme || ""}">${this.escapeHtml(this.rankingData.title || "RANKING")}</div>
         ${
           entries.length > 0
             ? `

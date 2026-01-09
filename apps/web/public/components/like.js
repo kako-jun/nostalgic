@@ -84,7 +84,7 @@ class NostalgicLike extends HTMLElement {
       }
     } catch (error) {
       console.error("nostalgic-like: Failed to load data:", error);
-      this.likeData = { total: 0, userLiked: false };
+      this.likeData = { total: 0, liked: false };
     }
 
     this.isLoading = false;
@@ -170,7 +170,7 @@ class NostalgicLike extends HTMLElement {
     if (format === "text") {
       const isLoading = this.isLoading;
       const total = this.likeData ? this.likeData.total : 0;
-      const userLiked = this.likeData ? this.likeData.userLiked : false;
+      const userLiked = this.likeData ? this.likeData.liked : false;
 
       // テーマ別デフォルト色（ボタン版textColorと完全一致）
       const textThemes = {
@@ -244,7 +244,7 @@ class NostalgicLike extends HTMLElement {
 
     const isLoading = this.isLoading;
     const total = this.likeData ? this.likeData.total : 0;
-    const userLiked = this.likeData ? this.likeData.userLiked : false;
+    const userLiked = this.likeData ? this.likeData.liked : false;
 
     // アイコンマッピング（幅を統一するため同じ文字を使用）
     const iconMapping = {

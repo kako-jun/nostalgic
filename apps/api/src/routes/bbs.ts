@@ -69,6 +69,14 @@ async function getMessages(db: D1Database, id: string, limit: number = 100) {
   });
 }
 
+async function getMessageCount(db: D1Database, id: string): Promise<number> {
+  const result = await db
+    .prepare("SELECT COUNT(*) as count FROM bbs_messages WHERE service_id = ?")
+    .bind(`bbs:${id}:messages`)
+    .first<{ count: number }>();
+  return result?.count || 0;
+}
+
 // === Routes ===
 
 app.get("/", async (c) => {
@@ -255,6 +263,7 @@ app.get("/", async (c) => {
 
       const metadata = JSON.parse((bbs as BBSRecord).metadata || "{}");
       const messages = await getMessages(db, bbsId, limit);
+      const totalMessages = await getMessageCount(db, bbsId);
 
       const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
       const userAgent = c.req.header("User-Agent") || "";
@@ -268,6 +277,7 @@ app.get("/", async (c) => {
           title: metadata.title,
           maxMessages: metadata.maxMessages,
           messagesPerPage: metadata.messagesPerPage || 20,
+          totalMessages,
           messages,
           currentUserHash,
           settings: {
@@ -292,6 +302,7 @@ app.get("/", async (c) => {
 
     const metadata = JSON.parse((bbs as BBSRecord).metadata || "{}");
     const messages = await getMessages(db, id, limit);
+    const totalMessages = await getMessageCount(db, id);
 
     // Add user hash for edit permission check
     const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
@@ -305,6 +316,7 @@ app.get("/", async (c) => {
         title: metadata.title,
         maxMessages: metadata.maxMessages,
         messagesPerPage: metadata.messagesPerPage || 20,
+        totalMessages,
         messages,
         currentUserHash,
         settings: {

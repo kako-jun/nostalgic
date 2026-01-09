@@ -240,6 +240,7 @@ GET /api/bbs?action=get&id={ID}&limit={LIMIT}
     "title": "BBS",
     "maxMessages": 100,
     "messagesPerPage": 20,
+    "totalMessages": 1,
     "messages": [
       {
         "id": "abc123def456",
@@ -288,6 +289,7 @@ GET /api/bbs?action=get&url={URL}&token={TOKEN}&limit={LIMIT}
     "title": "BBS",
     "maxMessages": 100,
     "messagesPerPage": 20,
+    "totalMessages": 1,
     "messages": [...],
     "currentUserHash": "b2c3d4e5",
     "settings": {
