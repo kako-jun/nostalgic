@@ -1386,7 +1386,7 @@ export default function HomePage() {
           style={{
             position: "fixed",
             bottom: "10px",
-            right: "10px",
+            right: "20px",
             fontSize: "12px",
             color: "#666666",
             backgroundColor: "rgba(255, 255, 255, 0.7)",

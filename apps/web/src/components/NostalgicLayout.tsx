@@ -85,12 +85,13 @@ export default function NostalgicLayout({ children }: NostalgicLayoutProps) {
           style={{
             position: "fixed",
             bottom: "10px",
-            right: "10px",
+            right: "20px",
             fontSize: "12px",
             color: "#666666",
-            backgroundColor: "transparent",
+            backgroundColor: "rgba(255, 255, 255, 0.7)",
             padding: "5px 8px",
             fontStyle: "italic",
+            borderRadius: "4px",
           }}
         >
           1997年風のデザインを再現しています
