@@ -249,7 +249,7 @@ export default function NostalgicSidebar({
         <br />
         <span style={{ marginLeft: "0.5em" }}>●</span>
         <a
-          href="https://github.com/kako-jun/nostalgic-counter"
+          href="https://github.com/kako-jun/nostalgic"
           className="nostalgic-old-link"
           target="_blank"
           rel="noopener noreferrer"

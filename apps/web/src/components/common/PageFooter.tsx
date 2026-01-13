@@ -40,7 +40,7 @@ export default function PageFooter({ servicePath, currentPage }: PageFooterProps
       <p style={{ textAlign: "center" }}>
         これ以上の詳しい説明は{" "}
         <a
-          href="https://github.com/kako-jun/nostalgic/blob/main/README_ja.md"
+          href="https://github.com/kako-jun/nostalgic/blob/main/README.ja.md"
           className="nostalgic-old-link"
           target="_blank"
           rel="noopener noreferrer"
