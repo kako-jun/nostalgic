@@ -426,7 +426,7 @@ class NostalgicRanking extends HTMLElement {
               <li class="ranking-item">
                 <span class="rank">${entry.rank || index + 1}</span>
                 <span class="name">${this.escapeHtml(entry.name || "Anonymous")}</span>
-                <span class="score">${entry.displayScore || entry.score || 0}</span>
+                <span class="score">${entry.displayScore || (entry.score ? entry.score.toLocaleString() : 0)}</span>
               </li>
             `
               )
