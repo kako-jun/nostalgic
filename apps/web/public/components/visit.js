@@ -53,7 +53,19 @@ class NostalgicCounter extends HTMLElement {
     }
   }
 
+  loadFont() {
+    const fontId = "nostalgic-biz-udgothic-font";
+    if (!document.getElementById(fontId)) {
+      const link = document.createElement("link");
+      link.id = fontId;
+      link.rel = "stylesheet";
+      link.href = "https://fonts.googleapis.com/css2?family=BIZ+UDGothic&display=swap";
+      document.head.appendChild(link);
+    }
+  }
+
   connectedCallback() {
+    this.loadFont();
     // カウントアップを先に実行し、完了を待つ
     this.countUpAndRender();
   }
@@ -143,7 +155,15 @@ class NostalgicCounter extends HTMLElement {
       return String(value);
     };
 
-    this.shadowRoot.innerHTML = digits ? formatValue(0) : "0";
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host {
+          display: inline;
+          font-family: 'BIZ UDGothic', monospace;
+        }
+      </style>
+      <span>${digits ? formatValue(0) : "0"}</span>
+    `;
   }
 
   render() {
@@ -161,7 +181,15 @@ class NostalgicCounter extends HTMLElement {
         }
         return String(value);
       };
-      this.shadowRoot.innerHTML = formatValue(0);
+      this.shadowRoot.innerHTML = `
+        <style>
+          :host {
+            display: inline;
+            font-family: 'BIZ UDGothic', monospace;
+          }
+        </style>
+        <span>${formatValue(0)}</span>
+      `;
       return;
     }
 
@@ -182,13 +210,22 @@ class NostalgicCounter extends HTMLElement {
         return String(value);
       };
 
+      const textStyle = `
+        <style>
+          :host {
+            display: inline;
+            font-family: 'BIZ UDGothic', monospace;
+          }
+        </style>
+      `;
+
       // 最新データがあれば即座に表示
       if (hasLatestData) {
         const value = latestData[type];
-        this.shadowRoot.innerHTML = formatValue(value);
+        this.shadowRoot.innerHTML = `${textStyle}<span>${formatValue(value)}</span>`;
       } else {
         // ローディング中は0を桁数分表示
-        this.shadowRoot.innerHTML = formatValue(0);
+        this.shadowRoot.innerHTML = `${textStyle}<span>${formatValue(0)}</span>`;
 
         // 値を非同期で取得（action=get&format=textを使用）
         fetch(
@@ -202,10 +239,10 @@ class NostalgicCounter extends HTMLElement {
           })
           .then((data) => {
             // すでに桁数がパディング済みの文字列なのでそのまま表示
-            this.shadowRoot.innerHTML = data;
+            this.shadowRoot.innerHTML = `${textStyle}<span>${data}</span>`;
           })
           .catch((error) => {
-            this.shadowRoot.innerHTML = "エラー";
+            this.shadowRoot.innerHTML = `${textStyle}<span>エラー</span>`;
           });
       }
     } else {

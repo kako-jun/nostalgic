@@ -48,7 +48,19 @@ class NostalgicRanking extends HTMLElement {
     }
   }
 
+  loadFont() {
+    const fontId = "nostalgic-biz-udgothic-font";
+    if (!document.getElementById(fontId)) {
+      const link = document.createElement("link");
+      link.id = fontId;
+      link.rel = "stylesheet";
+      link.href = "https://fonts.googleapis.com/css2?family=BIZ+UDGothic&display=swap";
+      document.head.appendChild(link);
+    }
+  }
+
   connectedCallback() {
+    this.loadFont();
     this.loadRankingData();
   }
 
@@ -100,7 +112,7 @@ class NostalgicRanking extends HTMLElement {
       this.shadowRoot.innerHTML = `
         <style>
           .ranking-container {
-            font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
+            font-family: 'BIZ UDGothic', monospace;
             background: #f0f0f0;
             border: 2px solid #333;
             padding: 10px;
@@ -220,7 +232,7 @@ class NostalgicRanking extends HTMLElement {
                               radial-gradient(circle at 185px 115px, rgba(255,255,255,0.4) 6px, transparent 6px);
         }
         .ranking-container {
-          font-family: var(--ranking-font-family, 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace);
+          font-family: var(--ranking-font-family, 'BIZ UDGothic', monospace);
           background: var(--ranking-bg-color);
           border: 2px solid var(--ranking-border-color);
           border-radius: var(--ranking-border-radius);
@@ -445,7 +457,7 @@ class NostalgicRanking extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         .error-container {
-          font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
+          font-family: 'BIZ UDGothic', monospace;
           background: #ffebee;
           border: 2px solid #f44336;
           padding: 10px;

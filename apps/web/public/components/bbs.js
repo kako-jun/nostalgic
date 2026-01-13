@@ -58,6 +58,18 @@ class NostalgicBBS extends HTMLElement {
     this.editingMessageId = null;
   }
 
+  // Load BIZ UDGothic font from Google Fonts
+  loadFont() {
+    const fontId = "nostalgic-biz-udgothic-font";
+    if (!document.getElementById(fontId)) {
+      const link = document.createElement("link");
+      link.id = fontId;
+      link.rel = "stylesheet";
+      link.href = "https://fonts.googleapis.com/css2?family=BIZ+UDGothic&display=swap";
+      document.head.appendChild(link);
+    }
+  }
+
   static get observedAttributes() {
     return ["id", "page", "theme", "format"];
   }
@@ -88,6 +100,9 @@ class NostalgicBBS extends HTMLElement {
   }
 
   async connectedCallback() {
+    // Load BIZ UDGothic font if not already loaded
+    this.loadFont();
+
     // 最初にBBSデータを読み込んで最終ページを取得
     await this.loadBBSData();
     // 最終ページに設定（最新の投稿を表示）
@@ -167,7 +182,7 @@ class NostalgicBBS extends HTMLElement {
       this.shadowRoot.innerHTML = `
         <style>
           .bbs-container {
-            font-family: 'Courier New', monospace;
+            font-family: 'BIZ UDGothic', monospace;
             background: #f0f0f0;
             border: 2px solid #333;
             padding: 10px;
@@ -324,7 +339,7 @@ class NostalgicBBS extends HTMLElement {
                               radial-gradient(circle at 185px 115px, rgba(255,255,255,0.4) 6px, transparent 6px);
        }
         .bbs-container {
-          font-family: var(--bbs-font-family, 'Courier New', monospace);
+          font-family: var(--bbs-font-family, 'BIZ UDGothic', monospace);
           background: var(--bbs-bg-color);
           border: 2px solid var(--bbs-border-color);
           border-radius: var(--bbs-border-radius);
@@ -506,11 +521,11 @@ class NostalgicBBS extends HTMLElement {
         .message-author {
           font-weight: bold;
           font-size: 12px;
-          font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
+          font-family: 'BIZ UDGothic', monospace;
         }
         .message-time {
           font-size: 12px;
-          font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
+          font-family: 'BIZ UDGothic', monospace;
         }
         .message-content {
           margin: 4px 0;
@@ -518,7 +533,7 @@ class NostalgicBBS extends HTMLElement {
           word-wrap: break-word;
           word-break: break-word;
           overflow-wrap: break-word;
-          font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
+          font-family: 'BIZ UDGothic', monospace;
           white-space: pre-wrap;
           text-align: left;
           font-size: clamp(12px, 2vw, 16px);
@@ -706,7 +721,7 @@ class NostalgicBBS extends HTMLElement {
         }
         .form-row input[type="text"] {
           flex: 2;
-          font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
+          font-family: 'BIZ UDGothic', monospace;
           min-width: 0;
         }
         .form-row select {
@@ -719,7 +734,7 @@ class NostalgicBBS extends HTMLElement {
           resize: vertical;
           min-height: 60px;
           height: auto;
-          font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
+          font-family: 'BIZ UDGothic', monospace;
         }
         .form-row button {
           font-family: inherit;
@@ -927,7 +942,7 @@ class NostalgicBBS extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         .error-container {
-          font-family: 'Courier New', monospace;
+          font-family: 'BIZ UDGothic', monospace;
           background: #ffebee;
           border: 2px solid #f44336;
           padding: 10px;

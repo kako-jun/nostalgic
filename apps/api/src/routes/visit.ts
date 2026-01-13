@@ -458,7 +458,7 @@ function generateCounterSVG(value: string, theme: string): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="28">
   <rect width="100%" height="100%" fill="${t.bg}" stroke="${t.border}" stroke-width="1"/>
   <text x="50%" y="50%" dy="0.35em" text-anchor="middle"
-        fill="${t.text}" font-family="monospace" font-size="14" font-weight="bold">${value}</text>
+        fill="${t.text}" font-family="'BIZ UDGothic', monospace" font-size="14" font-weight="bold">${value}</text>
 </svg>`;
 }
 

@@ -48,7 +48,19 @@ class NostalgicLike extends HTMLElement {
     }
   }
 
+  loadFont() {
+    const fontId = "nostalgic-biz-udgothic-font";
+    if (!document.getElementById(fontId)) {
+      const link = document.createElement("link");
+      link.id = fontId;
+      link.rel = "stylesheet";
+      link.href = "https://fonts.googleapis.com/css2?family=BIZ+UDGothic&display=swap";
+      document.head.appendChild(link);
+    }
+  }
+
   connectedCallback() {
+    this.loadFont();
     this.loadLikeData();
   }
 
@@ -405,7 +417,7 @@ class NostalgicLike extends HTMLElement {
           border-radius: var(--like-radius, 4px);
           box-shadow: 3px 3px 0px var(--like-shadow, ${style.shadowColor});
           cursor: pointer;
-          font-family: var(--like-font, 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace);
+          font-family: var(--like-font, 'BIZ UDGothic', monospace);
           font-size: var(--like-font-size, 14px);
           font-weight: bold;
           user-select: none;
@@ -538,7 +550,7 @@ class NostalgicLike extends HTMLElement {
         }
         
         .like-count {
-          font-family: 'Courier New', 'MS Gothic', 'ＭＳ ゴシック', monospace;
+          font-family: 'BIZ UDGothic', monospace;
           min-width: 20px;
           text-align: center;
           position: relative;
