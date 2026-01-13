@@ -1,35 +1,48 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import ServicePageTemplate from "../components/ServicePageTemplate";
+import NostalgicLayout from "../components/NostalgicLayout";
 import RankingFeaturesTab from "../components/ranking/RankingFeaturesTab";
+import StepRenderer from "../components/StepRenderer";
+import { PageFooter } from "../components/common";
 import { callApi } from "../utils/apiHelpers";
-import { getRankingFormSections } from "../config/rankingFormConfig";
+import { rankingSteps } from "../config/services/rankingSteps";
 import { rankingEmbedConfig } from "../config/embedConfigs";
 
 export default function RankingPage() {
   const location = useLocation();
   const currentPage = location.pathname === "/ranking/usage" ? "usage" : "features";
+
+  // Field state
   const [publicId, setPublicId] = useState("");
-  const [sharedUrl, setSharedUrl] = useState("");
-  const [sharedToken, setSharedToken] = useState("");
+  const [url, setUrl] = useState("");
+  const [token, setToken] = useState("");
   const [webhookUrl, setWebhookUrl] = useState("");
 
-  // Ranking specific states
+  // Create step additional fields
   const [title, setTitle] = useState("");
   const [maxEntries, setMaxEntries] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
+
+  // Submit step fields
   const [submitName, setSubmitName] = useState("");
   const [submitScore, setSubmitScore] = useState("");
   const [submitDisplayScore, setSubmitDisplayScore] = useState("");
+
+  // Update step fields
   const [updateName, setUpdateName] = useState("");
   const [updateScore, setUpdateScore] = useState("");
   const [updateDisplayScore, setUpdateDisplayScore] = useState("");
+
+  // Remove step fields
   const [removeName, setRemoveName] = useState("");
+
+  // Settings fields
   const [settingsTitle, setSettingsTitle] = useState("");
   const [settingsMax, setSettingsMax] = useState("");
   const [settingsSortOrder, setSettingsSortOrder] = useState("");
   const [settingsWebhookUrl, setSettingsWebhookUrl] = useState("");
 
+  // Response state
   const [createResponse, setCreateResponse] = useState("");
   const [submitResponse, setSubmitResponse] = useState("");
   const [getResponse, setGetResponse] = useState("");
@@ -39,11 +52,34 @@ export default function RankingPage() {
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
 
+  // Field values for StepRenderer
+  const fieldValues = {
+    url: { value: url, onChange: setUrl },
+    token: { value: token, onChange: setToken },
+    publicId: { value: publicId, onChange: setPublicId },
+    webhookUrl: { value: webhookUrl, onChange: setWebhookUrl },
+    title: { value: title, onChange: setTitle },
+    maxEntries: { value: maxEntries, onChange: setMaxEntries },
+    sortOrder: { value: sortOrder, onChange: setSortOrder },
+    submitName: { value: submitName, onChange: setSubmitName },
+    submitScore: { value: submitScore, onChange: setSubmitScore },
+    submitDisplayScore: { value: submitDisplayScore, onChange: setSubmitDisplayScore },
+    updateName: { value: updateName, onChange: setUpdateName },
+    updateScore: { value: updateScore, onChange: setUpdateScore },
+    updateDisplayScore: { value: updateDisplayScore, onChange: setUpdateDisplayScore },
+    removeName: { value: removeName, onChange: setRemoveName },
+    settingsTitle: { value: settingsTitle, onChange: setSettingsTitle },
+    settingsMax: { value: settingsMax, onChange: setSettingsMax },
+    settingsSortOrder: { value: settingsSortOrder, onChange: setSettingsSortOrder },
+    settingsWebhookUrl: { value: settingsWebhookUrl, onChange: setSettingsWebhookUrl },
+  };
+
+  // Handlers
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sharedUrl || !sharedToken) return;
+    if (!url || !token) return;
 
-    let apiUrl = `/api/ranking?action=create&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    let apiUrl = `/api/ranking?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
     if (maxEntries) apiUrl += `&maxEntries=${maxEntries}`;
     if (sortOrder) apiUrl += `&sortOrder=${sortOrder}`;
@@ -74,7 +110,6 @@ export default function RankingPage() {
     e.preventDefault();
     if (!publicId || !updateName || !updateScore) return;
 
-    // Use submit action for UPSERT (update is now settings-only)
     let apiUrl = `/api/ranking?action=submit&id=${encodeURIComponent(publicId)}&name=${encodeURIComponent(updateName)}&score=${updateScore}`;
     if (updateDisplayScore) apiUrl += `&displayScore=${encodeURIComponent(updateDisplayScore)}`;
 
@@ -83,33 +118,33 @@ export default function RankingPage() {
 
   const handleRemove = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sharedUrl || !sharedToken || !removeName) return;
+    if (!url || !token || !removeName) return;
 
-    const apiUrl = `/api/ranking?action=remove&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}&name=${encodeURIComponent(removeName)}`;
+    const apiUrl = `/api/ranking?action=remove&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}&name=${encodeURIComponent(removeName)}`;
     await callApi(apiUrl, setRemoveResponse);
   };
 
   const handleClear = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sharedUrl || !sharedToken) return;
+    if (!url || !token) return;
 
-    const apiUrl = `/api/ranking?action=clear&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    const apiUrl = `/api/ranking?action=clear&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setClearResponse);
   };
 
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sharedUrl || !sharedToken) return;
+    if (!url || !token) return;
 
-    const apiUrl = `/api/ranking?action=delete&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    const apiUrl = `/api/ranking?action=delete&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setDeleteResponse);
   };
 
   const handleUpdateSettings = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sharedUrl || !sharedToken) return;
+    if (!url || !token) return;
 
-    let apiUrl = `/api/ranking?action=update&url=${encodeURIComponent(sharedUrl)}&token=${encodeURIComponent(sharedToken)}`;
+    let apiUrl = `/api/ranking?action=update&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     if (settingsTitle) apiUrl += `&title=${encodeURIComponent(settingsTitle)}`;
     if (settingsMax) apiUrl += `&maxEntries=${settingsMax}`;
     if (settingsSortOrder) apiUrl += `&sortOrder=${settingsSortOrder}`;
@@ -118,133 +153,213 @@ export default function RankingPage() {
     await callApi(apiUrl, setUpdateSettingsResponse);
   };
 
-  const formSections = getRankingFormSections(
-    sharedUrl,
-    setSharedUrl,
-    sharedToken,
-    setSharedToken,
-    publicId,
-    setPublicId,
-    submitName,
-    setSubmitName,
-    submitScore,
-    setSubmitScore,
-    submitDisplayScore,
-    setSubmitDisplayScore,
-    updateName,
-    setUpdateName,
-    updateScore,
-    setUpdateScore,
-    updateDisplayScore,
-    setUpdateDisplayScore,
-    removeName,
-    setRemoveName,
-    settingsTitle,
-    setSettingsTitle,
-    settingsMax,
-    setSettingsMax,
-    settingsSortOrder,
-    setSettingsSortOrder,
-    settingsWebhookUrl,
-    setSettingsWebhookUrl,
-    {
-      handleCreate,
-      handleSubmit,
-      handleGet,
-      handleUpdate,
-      handleRemove,
-      handleClear,
-      handleUpdateSettings,
-      handleDelete,
-    },
-    {
-      createResponse,
-      submitResponse,
-      getResponse,
-      updateResponse,
-      removeResponse,
-      clearResponse,
-      updateSettingsResponse,
-      deleteResponse,
-    }
-  );
+  const handlers = {
+    handleCreate,
+    handleSubmit,
+    handleGet,
+    handleUpdate,
+    handleRemove,
+    handleClear,
+    handleDelete,
+    handleUpdateSettings,
+  };
 
-  const createSectionChildren = (
+  const responses = {
+    createResponse,
+    submitResponse,
+    getResponse,
+    updateResponse,
+    removeResponse,
+    clearResponse,
+    deleteResponse,
+    updateSettingsResponse,
+  };
+
+  const renderEmbedCode = () => {
+    const attrs = rankingEmbedConfig.attributes
+      .map((attr) => `${attr.name}="${attr.defaultValue}"`)
+      .join(" ");
+    return `<script src="${rankingEmbedConfig.scriptUrl}"></script>
+<${rankingEmbedConfig.componentName} id="公開ID" ${attrs}></${rankingEmbedConfig.componentName}>`;
+  };
+
+  const renderEmbedCodeWithId = () => {
+    const attrs = rankingEmbedConfig.attributes
+      .map((attr) => `${attr.name}="${attr.defaultValue}"`)
+      .join(" ");
+    return `<script src="${rankingEmbedConfig.scriptUrl}"></script>
+<${rankingEmbedConfig.componentName} id="${publicId}" ${attrs}></${rankingEmbedConfig.componentName}>`;
+  };
+
+  const renderUsagePage = () => (
     <>
-      <p>
-        <b>タイトル（オプション）：</b>
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          type="text"
-          placeholder="ランキングのタイトル"
+      <div className="nostalgic-title-bar">
+        ★ Nostalgic Ranking ★
+        <br />
+        使い方
+      </div>
+
+      <StepRenderer
+        steps={rankingSteps}
+        fieldValues={fieldValues}
+        handlers={handlers}
+        responses={responses}
+        serviceName="ランキング"
+      />
+
+      <div className="nostalgic-section">
+        <p>
+          <span className="nostalgic-section-title">
+            <b>◆STEP 3: ランキング埋め込み◆</b>
+          </span>
+        </p>
+        <p>あなたのサイトのHTMLに以下のコードを追加してください。</p>
+        <pre
           style={{
-            width: "60%",
-            padding: "4px",
-            border: "1px solid #666",
-            fontFamily: "inherit",
-            fontSize: "16px",
-          }}
-        />
-      </p>
-      <p>
-        <b>最大エントリー数（オプション）：</b>
-        <input
-          value={maxEntries}
-          onChange={(e) => setMaxEntries(e.target.value)}
-          type="number"
-          min="1"
-          placeholder="100"
-          style={{
-            width: "30%",
-            padding: "4px",
-            border: "1px solid #666",
-            fontFamily: "inherit",
-            fontSize: "16px",
-          }}
-        />
-      </p>
-      <p>
-        <b>ソート順（オプション）：</b>
-        <select
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value)}
-          style={{
-            width: "30%",
-            padding: "4px",
-            border: "1px solid #666",
-            fontFamily: "inherit",
-            fontSize: "16px",
+            backgroundColor: "#f0f0f0",
+            padding: "10px",
+            overflow: "auto",
+            fontSize: "14px",
+            margin: "10px 0",
           }}
         >
-          <option value="desc">降順（高い順）</option>
-          <option value="asc">昇順（低い順）</option>
-        </select>
-      </p>
+          {renderEmbedCode()
+            .split("\n")
+            .map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < 1 && <br />}
+              </span>
+            ))}
+        </pre>
+
+        {rankingEmbedConfig.sections.map((section, idx) => (
+          <div className="nostalgic-section" key={idx}>
+            <p>
+              <span className="nostalgic-section-title">
+                <b>◆{section.title}◆</b>
+              </span>
+            </p>
+            <p>
+              {section.options.map((opt, optIdx) => (
+                <span key={optIdx}>
+                  • <span style={{ color: "#008000" }}>{opt.value}</span> - {opt.description}
+                  {optIdx < section.options.length - 1 && <br />}
+                </span>
+              ))}
+            </p>
+          </div>
+        ))}
+
+        <div className="nostalgic-section">
+          <p>
+            <span className="nostalgic-section-title">
+              <b>◆TypeScript使用時の設定◆</b>
+            </span>
+          </p>
+          <p>
+            TypeScriptプロジェクトでWeb Componentsを使用する場合、プロジェクトルートに{" "}
+            <code>types.d.ts</code> ファイルを作成してください。
+          </p>
+          <pre
+            style={{
+              backgroundColor: "#f0f0f0",
+              padding: "10px",
+              overflow: "auto",
+              fontSize: "12px",
+              margin: "10px 0",
+            }}
+          >
+            {rankingEmbedConfig.typescriptType}
+          </pre>
+          <p style={{ fontSize: "14px", color: "#666" }}>
+            ※この設定により、TypeScriptでWeb Componentsを使用してもビルドエラーが発生しません。
+          </p>
+        </div>
+
+        {rankingEmbedConfig.demo && publicId && (
+          <div className="nostalgic-section">
+            <p>
+              <span className="nostalgic-section-title">
+                <b>◆デモ用ランキング◆</b>
+              </span>
+            </p>
+            <p style={{ marginBottom: "15px" }}>このデモページのランキング（実際に動作します）：</p>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: "20px",
+                justifyItems: "center",
+              }}
+            >
+              {rankingEmbedConfig.demo.themes.map((theme) => (
+                <div key={theme.value}>
+                  <p style={{ fontSize: "14px", marginBottom: "10px", fontWeight: "bold" }}>
+                    {theme.name}
+                  </p>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: `<${rankingEmbedConfig.componentName} id="${publicId}" theme="${theme.value}" limit="5"></${rankingEmbedConfig.componentName}>`,
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: "12px", color: "#666", marginTop: "15px" }}>
+              {rankingEmbedConfig.demo.hint}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {publicId && (
+        <div className="nostalgic-section">
+          <p>
+            <span style={{ color: "#ff8c00" }}>
+              <b>◆ランキング設置方法◆</b>
+            </span>
+          </p>
+          <p>
+            公開ID:{" "}
+            <span
+              style={{
+                backgroundColor: "#ffff00",
+                padding: "2px 4px",
+                fontFamily: "monospace",
+              }}
+            >
+              {publicId}
+            </span>
+          </p>
+          <p
+            style={{
+              backgroundColor: "#f0f0f0",
+              padding: "10px",
+              fontFamily: "monospace",
+              fontSize: "14px",
+              wordBreak: "break-all",
+            }}
+          >
+            {renderEmbedCodeWithId()}
+          </p>
+        </div>
+      )}
+
+      <PageFooter servicePath="ranking" currentPage="usage" />
+    </>
+  );
+
+  const renderFeaturesPage = () => (
+    <>
+      <RankingFeaturesTab />
+      <PageFooter servicePath="ranking" currentPage="features" />
     </>
   );
 
   return (
-    <ServicePageTemplate
-      serviceName="ランキング"
-      serviceDisplayName="Ranking"
-      serviceIcon="🏆"
-      servicePath="ranking"
-      apiEndpoint="/api/ranking"
-      currentPage={currentPage}
-      FeaturesTab={RankingFeaturesTab}
-      sharedUrl={sharedUrl}
-      setSharedUrl={setSharedUrl}
-      sharedToken={sharedToken}
-      setSharedToken={setSharedToken}
-      webhookUrl={webhookUrl}
-      setWebhookUrl={setWebhookUrl}
-      onCreateSubmit={handleCreate}
-      createResponse={createResponse}
-      createSectionChildren={createSectionChildren}
-      publicId={publicId}
-      formSections={formSections}
-      embedConfig={rankingEmbedConfig}
-    />
+    <NostalgicLayout serviceName="Ranking" serviceIcon="🏆">
+      {currentPage === "usage" ? renderUsagePage() : renderFeaturesPage()}
+    </NostalgicLayout>
   );
 }

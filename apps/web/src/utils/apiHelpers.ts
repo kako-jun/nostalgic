@@ -63,18 +63,19 @@ export async function callApi(
 
 export async function callApiWithFormat(
   url: string,
-  format: "json" | "text" | "svg",
+  format: "json" | "text" | "image",
   setResponse: (response: string) => void,
   setResponseType: (type: "json" | "text" | "svg") => void,
   options?: ApiCallOptions
 ): Promise<void> {
-  setResponseType(format);
+  // "image" format returns SVG content, so we use "svg" internally for display
+  setResponseType(format === "image" ? "svg" : format);
 
   try {
     const res = await fetch(url, { method: "GET" });
     let responseText = "";
 
-    if (format === "svg") {
+    if (format === "image") {
       responseText = await res.text();
     } else {
       const contentType = res.headers.get("content-type");
