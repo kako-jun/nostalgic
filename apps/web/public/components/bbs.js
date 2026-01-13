@@ -333,6 +333,7 @@ class NostalgicBBS extends HTMLElement {
           width: min(var(--bbs-width), 100%);
           box-sizing: border-box;
           position: relative;
+          line-height: normal;
         }
         .bbs-container.retro::after {
           content: '';
