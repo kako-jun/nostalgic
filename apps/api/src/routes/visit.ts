@@ -447,8 +447,8 @@ function generateCounterSVG(value: string, theme: string): string {
     light: { bg: "#ffffff", text: "#333333", border: "#cccccc" },
     dark: { bg: "#1a1a2e", text: "#eaeaea", border: "#4a4a6a" },
     retro: { bg: "#000000", text: "#00ff00", border: "#00ff00" },
-    kawaii: { bg: "#e0f7fa", text: "#ff69b4", border: "#9c27b0" },
-    mom: { bg: "#98fb98", text: "#2d4a2b", border: "#ff8c00" },
+    kawaii: { bg: "#e0f7fa", text: "#ff69b4", border: "#ff69b4" },
+    mom: { bg: "#98fb98", text: "#2d4a2b", border: "#2d4a2b" },
     final: { bg: "#0000ff", text: "#ffffff", border: "#ffffff" },
   };
 
@@ -456,7 +456,7 @@ function generateCounterSVG(value: string, theme: string): string {
   const width = Math.max(60, value.length * 12 + 20);
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="28">
-  <rect width="100%" height="100%" fill="${t.bg}" stroke="${t.border}" stroke-width="1" rx="4"/>
+  <rect width="100%" height="100%" fill="${t.bg}" stroke="${t.border}" stroke-width="1"/>
   <text x="50%" y="50%" dy="0.35em" text-anchor="middle"
         fill="${t.text}" font-family="monospace" font-size="14" font-weight="bold">${value}</text>
 </svg>`;
