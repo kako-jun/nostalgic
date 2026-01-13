@@ -865,6 +865,9 @@ class NostalgicBBS extends HTMLElement {
                   <span class="message-author"><span style="display:inline-block;min-width:2em;text-align:right;">${startNumber + index + 1}.</span> ${this.escapeHtml(message.author || "Anonymous")}${this.formatSelectValues(message)}</span>
                   <div class="message-time-actions">
                     <span class="message-time">${this.formatDate(message.timestamp)}</span>
+                    ${
+                      message.userHash === this.bbsData.currentUserHash
+                        ? `
                     <div class="message-actions">
                       <button class="edit-btn" onclick="this.getRootNode().host.editMessage('${message.id}')">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
@@ -877,6 +880,9 @@ class NostalgicBBS extends HTMLElement {
                         </svg>
                       </button>
                     </div>
+                    `
+                        : ""
+                    }
                   </div>
                 </div>
                 <div class="message-content">${this.escapeHtml(message.message || "")}</div>
@@ -1158,17 +1164,8 @@ class NostalgicBBS extends HTMLElement {
       let apiUrl;
 
       if (this.editMode && this.editingMessageId) {
-        // 編集モード
-        const storageKey = `bbs_edit_${this.getAttribute("id")}`;
-        const tokens = JSON.parse(localStorage.getItem(storageKey) || "{}");
-        const editToken = tokens[this.editingMessageId];
-
-        if (!editToken) {
-          this.showMessage("編集権限がありません");
-          return;
-        }
-
-        apiUrl = `${baseUrl}/bbs?action=update&id=${encodeURIComponent(id)}&messageId=${encodeURIComponent(this.editingMessageId)}&editToken=${encodeURIComponent(editToken)}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ""}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ""}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ""}`;
+        // 編集モード（userHashによる認証はAPI側で行う）
+        apiUrl = `${baseUrl}/bbs?action=update&id=${encodeURIComponent(id)}&messageId=${encodeURIComponent(this.editingMessageId)}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ""}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ""}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ""}`;
       } else {
         // 新規投稿モード
         apiUrl = `${baseUrl}/bbs?action=post&id=${encodeURIComponent(id)}&author=${encodeURIComponent(author)}&message=${encodeURIComponent(message)}${standardValue ? `&standardValue=${encodeURIComponent(standardValue)}` : ""}${incrementalValue ? `&incrementalValue=${encodeURIComponent(incrementalValue)}` : ""}${emoteValue ? `&emoteValue=${encodeURIComponent(emoteValue)}` : ""}`;
@@ -1178,14 +1175,6 @@ class NostalgicBBS extends HTMLElement {
       const data = await response.json();
 
       if (data.success) {
-        // editTokenをlocalStorageに保存（新規投稿の場合のみ）
-        if (!this.editMode && data.data && data.data.editToken && data.data.messageId) {
-          const storageKey = `bbs_edit_${this.getAttribute("id")}`;
-          const existingTokens = JSON.parse(localStorage.getItem(storageKey) || "{}");
-          existingTokens[data.data.messageId] = data.data.editToken;
-          localStorage.setItem(storageKey, JSON.stringify(existingTokens));
-        }
-
         // 成功: フォームをクリアして再読み込み
         authorInput.value = "";
         messageInput.value = "";
@@ -1296,19 +1285,15 @@ class NostalgicBBS extends HTMLElement {
 
   // メッセージ編集
   editMessage(messageId) {
-    // localStorageからeditTokenを取得
-    const storageKey = `bbs_edit_${this.getAttribute("id")}`;
-    const tokens = JSON.parse(localStorage.getItem(storageKey) || "{}");
-
-    if (!tokens[messageId]) {
-      this.showMessage("このメッセージを編集する権限がありません");
-      return;
-    }
-
-    // メッセージデータを取得
+    // currentUserHashとメッセージのuserHashを比較して権限確認
     const message = this.bbsData.messages.find((m) => m.id === messageId);
     if (!message) {
       this.showMessage("メッセージが見つかりません");
+      return;
+    }
+
+    if (message.userHash !== this.bbsData.currentUserHash) {
+      this.showMessage("このメッセージを編集する権限がありません");
       return;
     }
 
@@ -1349,11 +1334,14 @@ class NostalgicBBS extends HTMLElement {
 
   // メッセージ削除
   async deleteMessage(messageId) {
-    // localStorageからeditTokenを取得
-    const storageKey = `bbs_edit_${this.getAttribute("id")}`;
-    const tokens = JSON.parse(localStorage.getItem(storageKey) || "{}");
+    // currentUserHashとメッセージのuserHashを比較して権限確認
+    const message = this.bbsData.messages.find((m) => m.id === messageId);
+    if (!message) {
+      this.showMessage("メッセージが見つかりません");
+      return;
+    }
 
-    if (!tokens[messageId]) {
+    if (message.userHash !== this.bbsData.currentUserHash) {
       this.showMessage("このメッセージを削除する権限がありません");
       return;
     }
@@ -1364,16 +1352,12 @@ class NostalgicBBS extends HTMLElement {
 
     try {
       const baseUrl = this.getAttribute("api-base") || NostalgicBBS.apiBaseUrl;
-      const deleteUrl = `${baseUrl}/bbs?action=remove&id=${encodeURIComponent(this.getAttribute("id"))}&messageId=${encodeURIComponent(messageId)}&editToken=${encodeURIComponent(tokens[messageId])}`;
+      const deleteUrl = `${baseUrl}/bbs?action=remove&id=${encodeURIComponent(this.getAttribute("id"))}&messageId=${encodeURIComponent(messageId)}`;
 
       const response = await fetch(deleteUrl);
       const data = await response.json();
 
       if (data.success) {
-        // localStorageからトークンを削除
-        delete tokens[messageId];
-        localStorage.setItem(storageKey, JSON.stringify(tokens));
-
         // BBSデータを再読み込み
         await this.loadBBSData();
         this.showMessage("メッセージが削除されました", "success");
