@@ -12,8 +12,12 @@ export const counterEmbedConfig = {
       { name: "Dark", value: "dark" },
       { name: "Retro", value: "retro" },
       { name: "Kawaii", value: "kawaii" },
-      { name: "Mother", value: "mother" },
-      { name: "FF", value: "ff" },
+      { name: "Mother", value: "mom" },
+      { name: "FF", value: "final" },
+      { name: "Mahjong", value: "mahjong" },
+      { name: "Segment", value: "segment" },
+      { name: "Nixie", value: "nixie" },
+      { name: "Dots", value: "dots_f" },
     ],
     getUrl: (publicId: string, theme: string) =>
       `/api/visit?action=get&id=${publicId}&type=total&theme=${theme}&format=image`,
@@ -38,6 +42,10 @@ export const counterEmbedConfig = {
         { value: "kawaii", description: "かわいい（ファンシー系）" },
         { value: "mom", description: "Mother味（緑チェック模様）" },
         { value: "final", description: "FF味（青系）" },
+        { value: "mahjong", description: "麻雀牌風" },
+        { value: "segment", description: "7セグメント風" },
+        { value: "nixie", description: "ニキシー管風" },
+        { value: "dots_f", description: "ドットマトリクス風" },
       ],
     },
   ],
@@ -50,7 +58,7 @@ declare module 'react' {
       'nostalgic-counter': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         type?: 'total' | 'today' | 'yesterday' | 'week' | 'month';
-        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final' | 'mahjong' | 'segment' | 'nixie' | 'dots_f';
         digits?: string;
         scale?: string;
       };

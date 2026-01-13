@@ -82,7 +82,7 @@ export const COMMON_FIELDS = {
     options: [
       { value: "json", label: "JSON" },
       { value: "text", label: "テキスト" },
-      { value: "image", label: "SVG画像" },
+      { value: "image", label: "画像" },
     ],
   },
 };

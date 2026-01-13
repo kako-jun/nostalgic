@@ -147,12 +147,9 @@ const setStep: StepConfig = {
     },
   ],
   buttonText: "値を設定",
-  buttonVariant: "warning",
   handlerKey: "handleSet",
   responseKey: "setResponse",
-  warningMessage: (
-    <p style={{ color: "#ff6600", fontWeight: "bold" }}>※カウント値を直接設定します。</p>
-  ),
+  description: "※カウント値を直接設定します。",
   buildApiUrl: (values) => {
     const url = values.url || "サイトURL";
     const token = values.token || "オーナートークン";
