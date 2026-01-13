@@ -917,15 +917,13 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆全サービス人気投票◆</b>
+                  <b>◆ランキングのサンプル - Light◆</b>
                 </span>
               </p>
-
+              <p style={{ marginBottom: "10px" }}>どのサービスが一番人気か投票してみよう！</p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
                 <nostalgic-ranking id="nostalgic-5e577b5b" theme="light" />
               </div>
-
-              <p>どのサービスが一番人気か投票してみよう！</p>
 
               <div
                 style={{
@@ -1063,8 +1061,20 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ナンバークリックゲーム ハイスコア◆</b>
+                  <b>◆ランキングのサンプル - Dark◆</b>
                 </span>
+              </p>
+              <p style={{ marginBottom: "10px" }}>
+                ナンバークリックゲームのハイスコア（
+                <a
+                  href="https://llll-ll.com/easter-egg"
+                  className="nostalgic-old-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  遊んでみる
+                </a>
+                ）
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
                 <div
@@ -1080,23 +1090,25 @@ export default function HomePage() {
                   <nostalgic-ranking id="llll-ll-a235b610" theme="dark" />
                 </div>
               </div>
-              <div style={{ textAlign: "center", marginTop: "15px" }}>
-                <a
-                  href="https://llll-ll.com/easter-egg"
-                  className="nostalgic-old-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  ナンバークリックゲームを遊んでみる
-                </a>
-              </div>
             </div>
 
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆名詞性別クイズ ハイスコア◆</b>
+                  <b>◆ランキングのサンプル - Retro◆</b>
                 </span>
+              </p>
+              <p style={{ marginBottom: "10px" }}>
+                名詞性別クイズのハイスコア（
+                <a
+                  href="https://noun-gender.llll-ll.com/quiz"
+                  className="nostalgic-old-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  遊んでみる
+                </a>
+                ）
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
                 <div
@@ -1112,41 +1124,37 @@ export default function HomePage() {
                   <nostalgic-ranking id="noun-gender-d0bb6d1f" theme="retro" />
                 </div>
               </div>
-              <div style={{ textAlign: "center", marginTop: "15px" }}>
-                <a
-                  href="https://noun-gender.llll-ll.com/quiz"
-                  className="nostalgic-old-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  名詞性別クイズを遊んでみる
-                </a>
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆ランキングのサンプル - Kawaii◆</b>
+                </span>
+              </p>
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
+                <nostalgic-ranking id="nostalgic-b89803bb" theme="kawaii" limit="5" />
               </div>
             </div>
 
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆ランキングのサンプル　その他◆</b>
+                  <b>◆ランキングのサンプル - Mother味◆</b>
                 </span>
               </p>
-              {/* Kawaii Theme */}
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>Kawaii</p>
-                <nostalgic-ranking id="nostalgic-b89803bb" theme="kawaii" limit="5" />
-              </div>
-
-              {/* Mother Theme */}
-              <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>
-                  Mother味
-                </p>
                 <nostalgic-ranking id="nostalgic-b89803bb" theme="mom" limit="5" />
               </div>
+            </div>
 
-              {/* FF Theme */}
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆ランキングのサンプル - FF味◆</b>
+                </span>
+              </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <p style={{ fontSize: "14px", marginBottom: "15px", fontWeight: "bold" }}>FF味</p>
                 <div
                   style={{
                     background:
