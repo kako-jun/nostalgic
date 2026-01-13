@@ -34,13 +34,13 @@ export default function CreateServiceSection({
   children,
 }: CreateServiceSectionProps) {
   const webhookParam = webhookUrl ? `&webhookUrl=${encodeURIComponent(webhookUrl)}` : "";
-  const fullUrl = `https://nostalgic.llll-ll.com${apiEndpoint}?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${additionalParams}${webhookParam}`;
+  const fullUrl = `https://api.nostalgic.llll-ll.com${apiEndpoint}?action=create&url=${encodeURIComponent(sharedUrl || "サイトURL")}&token=${encodeURIComponent(sharedToken || "オーナートークン")}${additionalParams}${webhookParam}`;
 
   return (
     <ActionSection title={`◆STEP 1: ${serviceName}作成◆`}>
       <p>ブラウザのアドレスバーに以下のURLを入力してアクセスしてください。</p>
       <ApiUrlDisplay url={fullUrl}>
-        https://nostalgic.llll-ll.com{apiEndpoint}?action=create&url=
+        https://api.nostalgic.llll-ll.com{apiEndpoint}?action=create&url=
         <GreenParam>{sharedUrl || "サイトURL"}</GreenParam>
         &token=<GreenParam>{sharedToken || "オーナートークン"}</GreenParam>
         {additionalParams && <span dangerouslySetInnerHTML={{ __html: additionalParams }} />}
