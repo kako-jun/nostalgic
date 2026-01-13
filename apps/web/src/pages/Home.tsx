@@ -920,7 +920,9 @@ export default function HomePage() {
                   <b>◆ランキングのサンプル - Light◆</b>
                 </span>
               </p>
-              <p style={{ marginBottom: "10px" }}>どのサービスが一番人気か投票してみよう！</p>
+              <p style={{ marginBottom: "10px", textAlign: "center" }}>
+                どのサービスが一番人気か投票してみよう！
+              </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
                 <nostalgic-ranking id="nostalgic-5e577b5b" theme="light" />
               </div>
@@ -1064,7 +1066,7 @@ export default function HomePage() {
                   <b>◆ランキングのサンプル - Dark◆</b>
                 </span>
               </p>
-              <p style={{ marginBottom: "10px" }}>
+              <p style={{ marginBottom: "10px", textAlign: "center" }}>
                 ナンバークリックゲームのハイスコア（
                 <a
                   href="https://llll-ll.com/easter-egg"
@@ -1098,7 +1100,7 @@ export default function HomePage() {
                   <b>◆ランキングのサンプル - Retro◆</b>
                 </span>
               </p>
-              <p style={{ marginBottom: "10px" }}>
+              <p style={{ marginBottom: "10px", textAlign: "center" }}>
                 名詞性別クイズのハイスコア（
                 <a
                   href="https://noun-gender.llll-ll.com/quiz"
