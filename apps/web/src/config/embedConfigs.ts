@@ -17,7 +17,7 @@ export const counterEmbedConfig = {
       { name: "Mahjong", value: "mahjong" },
       { name: "Segment", value: "segment" },
       { name: "Nixie", value: "nixie" },
-      { name: "Dots_f", value: "dots_f" },
+      { name: "DotsF", value: "dots_f" },
     ],
     getUrl: (publicId: string, theme: string) =>
       `/api/visit?action=get&id=${publicId}&type=total&theme=${theme}&format=image`,
