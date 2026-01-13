@@ -65,7 +65,7 @@ async function getMessages(db: D1Database, id: string, limit: number = 100) {
       incrementalValue: selects.incrementalValue,
       emoteValue: selects.emoteValue,
       userHash: row.user_hash,
-      timestamp: row.created_at,
+      timestamp: row.created_at + "Z",
     };
   });
 }
