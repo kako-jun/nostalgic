@@ -1165,10 +1165,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>
-                    ◆<span className="jp-text">雑談</span>
-                    <span className="en-text">BBS</span>のサンプル - Light ◆
-                  </b>
+                  <b>◆BBSのサンプル - Light◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -1180,10 +1177,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>
-                    ◆<span className="jp-text">雑談</span>
-                    <span className="en-text">BBS</span>のサンプル - Dark ◆
-                  </b>
+                  <b>◆BBSのサンプル - Dark◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -1205,7 +1199,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆BBSのサンプル - Retro ◆</b>
+                  <b>◆BBSのサンプル - Retro◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -1227,7 +1221,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆BBSのサンプル - Kawaii ◆</b>
+                  <b>◆BBSのサンプル - Kawaii◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -1238,7 +1232,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆BBSのサンプル - Mother味 ◆</b>
+                  <b>◆BBSのサンプル - Mother味◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
@@ -1249,7 +1243,7 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆BBSのサンプル - FF味 ◆</b>
+                  <b>◆BBSのサンプル - FF味◆</b>
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
