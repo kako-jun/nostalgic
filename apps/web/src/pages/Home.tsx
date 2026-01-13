@@ -1134,8 +1134,20 @@ export default function HomePage() {
                   <b>◆ランキングのサンプル - Kawaii◆</b>
                 </span>
               </p>
+              <p style={{ marginBottom: "10px", textAlign: "center" }}>
+                Sasso 3分モード(Sprint)のハイスコア（
+                <a
+                  href="https://sasso.llll-ll.com"
+                  className="nostalgic-old-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  遊んでみる
+                </a>
+                ）
+              </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <nostalgic-ranking id="nostalgic-b89803bb" theme="kawaii" limit="5" />
+                <nostalgic-ranking id="sasso-sprint-a1b2c3d4" theme="kawaii" limit="5" />
               </div>
             </div>
 
