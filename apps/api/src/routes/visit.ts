@@ -447,8 +447,8 @@ function generateCounterSVG(value: string, theme: string): string {
     light: { bg: "#ffffff", text: "#333333", border: "#cccccc" },
     dark: { bg: "#1a1a2e", text: "#eaeaea", border: "#4a4a6a" },
     retro: { bg: "#000000", text: "#00ff00", border: "#00ff00" },
-    kawaii: { bg: "#ffb6c1", text: "#ff1493", border: "#ff69b4" },
-    mom: { bg: "#f5f5dc", text: "#8b4513", border: "#d2691e" },
+    kawaii: { bg: "#e0f7fa", text: "#ff69b4", border: "#9c27b0" },
+    mom: { bg: "#98fb98", text: "#2d4a2b", border: "#ff8c00" },
     final: { bg: "#0000ff", text: "#ffffff", border: "#ffffff" },
   };
 
