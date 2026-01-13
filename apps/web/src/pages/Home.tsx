@@ -1147,7 +1147,7 @@ export default function HomePage() {
                 ）
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <nostalgic-ranking id="sasso-sprint-a1b2c3d4" theme="kawaii" limit="5" />
+                <nostalgic-ranking id="sasso-5d582992" theme="kawaii" limit="5" />
               </div>
             </div>
 
