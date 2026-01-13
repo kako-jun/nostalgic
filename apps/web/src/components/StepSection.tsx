@@ -82,10 +82,12 @@ export default function StepSection({
   const apiUrl = config.buildApiUrl(values);
   const apiUrlDisplay = config.buildApiUrlDisplay(values);
 
+  const titleStyle = config.isOwnerStep ? { color: "#ff8c00" } : undefined;
+
   return (
     <div className="nostalgic-section">
       <p>
-        <span className="nostalgic-section-title">
+        <span className="nostalgic-section-title" style={titleStyle}>
           <b>{config.title}</b>
         </span>
       </p>

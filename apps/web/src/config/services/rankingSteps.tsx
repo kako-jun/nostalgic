@@ -7,6 +7,7 @@ const ENDPOINT = "/api/ranking";
 const createStep: StepConfig = {
   id: "create",
   title: "◆STEP 1: ランキング作成◆",
+  isOwnerStep: true,
   fields: [
     COMMON_FIELDS.url,
     COMMON_FIELDS.token,
@@ -162,6 +163,7 @@ const getStep: StepConfig = {
 const confirmIdStep: StepConfig = {
   id: "confirmId",
   title: "◆公開IDを再確認したいときは？◆",
+  isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "公開ID確認",
   handlerKey: "handleCreate",
@@ -244,6 +246,7 @@ const updateStep: StepConfig = {
 const removeStep: StepConfig = {
   id: "remove",
   title: "◆エントリを削除したいときは？◆",
+  isOwnerStep: true,
   fields: [
     COMMON_FIELDS.url,
     COMMON_FIELDS.token,
@@ -280,6 +283,7 @@ const removeStep: StepConfig = {
 const clearStep: StepConfig = {
   id: "clear",
   title: "◆全エントリをクリアしたいときは？◆",
+  isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "全エントリクリア",
   buttonVariant: "danger",
@@ -309,6 +313,7 @@ const clearStep: StepConfig = {
 const updateSettingsStep: StepConfig = {
   id: "updateSettings",
   title: "◆設定更新◆",
+  isOwnerStep: true,
   description: "ランキングの設定を更新します。",
   fields: [
     COMMON_FIELDS.url,
@@ -393,6 +398,7 @@ const updateSettingsStep: StepConfig = {
 const deleteStep: StepConfig = {
   id: "delete",
   title: "◆ランキングを削除したいときは？◆",
+  isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "削除",
   buttonVariant: "danger",

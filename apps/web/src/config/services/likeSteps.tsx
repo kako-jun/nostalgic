@@ -12,7 +12,7 @@ const likeFormatField = {
   options: [
     { value: "json", label: "JSON" },
     { value: "text", label: "テキスト" },
-    { value: "image", label: "SVG画像" },
+    { value: "image", label: "画像" },
   ],
 };
 
@@ -20,6 +20,7 @@ const likeFormatField = {
 const createStep: StepConfig = {
   id: "create",
   title: "◆STEP 1: いいね作成◆",
+  isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token, COMMON_FIELDS.webhookUrl],
   buttonText: "作成",
   handlerKey: "handleCreate",
@@ -74,6 +75,7 @@ const displayStep: StepConfig = {
 const confirmIdStep: StepConfig = {
   id: "confirmId",
   title: "◆公開IDを再確認したいときは？◆",
+  isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "公開ID確認",
   handlerKey: "handleCreate",
@@ -147,6 +149,7 @@ const getStep: StepConfig = {
 const updateSettingsStep: StepConfig = {
   id: "updateSettings",
   title: "◆設定更新◆",
+  isOwnerStep: true,
   description: "いいねボタンの設定を更新します。",
   fields: [
     COMMON_FIELDS.url,
@@ -188,6 +191,7 @@ const updateSettingsStep: StepConfig = {
 const deleteStep: StepConfig = {
   id: "delete",
   title: "◆いいねを削除したいときは？◆",
+  isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "削除",
   buttonVariant: "danger",

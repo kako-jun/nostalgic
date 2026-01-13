@@ -7,6 +7,7 @@ const ENDPOINT = "/api/bbs";
 const createStep: StepConfig = {
   id: "create",
   title: "◆STEP 1: 掲示板作成◆",
+  isOwnerStep: true,
   fields: [
     COMMON_FIELDS.url,
     COMMON_FIELDS.token,
@@ -164,14 +165,14 @@ const getStep: StepConfig = {
   handlerKey: "handleGet",
   responseKey: "getResponse",
   buildApiUrl: (values) => {
-    const id = values.publicId || "パブリックID";
+    const id = values.publicId || "公開ID";
     return `${API_BASE}${ENDPOINT}?action=get&id=${encodeURIComponent(id)}`;
   },
   buildApiUrlDisplay: (values) => (
     <>
       {API_BASE}
       {ENDPOINT}?action=get&id=
-      <GreenParam>{values.publicId || "パブリックID"}</GreenParam>
+      <GreenParam>{values.publicId || "公開ID"}</GreenParam>
     </>
   ),
 };
@@ -180,6 +181,7 @@ const getStep: StepConfig = {
 const confirmIdStep: StepConfig = {
   id: "confirmId",
   title: "◆公開IDを再確認したいときは？◆",
+  isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "公開ID確認",
   handlerKey: "handleCreate",
@@ -203,6 +205,7 @@ const confirmIdStep: StepConfig = {
 const updateAdminStep: StepConfig = {
   id: "updateAdmin",
   title: "◆ メッセージ編集（管理者） ◆",
+  isOwnerStep: true,
   fields: [
     COMMON_FIELDS.url,
     COMMON_FIELDS.token,
@@ -247,6 +250,7 @@ const updateAdminStep: StepConfig = {
 const removeAdminStep: StepConfig = {
   id: "removeAdmin",
   title: "◆ メッセージ削除（管理者） ◆",
+  isOwnerStep: true,
   fields: [
     COMMON_FIELDS.url,
     COMMON_FIELDS.token,
@@ -303,7 +307,7 @@ const updateAuthorStep: StepConfig = {
   handlerKey: "handleEditMessageById",
   responseKey: "updateResponse",
   buildApiUrl: (values) => {
-    const id = values.publicId || "パブリックID";
+    const id = values.publicId || "公開ID";
     const messageId = values.messageId || "メッセージID";
     const message = values.editMessage || "新しいメッセージ";
     return `${API_BASE}${ENDPOINT}?action=update&id=${encodeURIComponent(id)}&messageId=${messageId}&message=${encodeURIComponent(message)}`;
@@ -312,7 +316,7 @@ const updateAuthorStep: StepConfig = {
     <>
       {API_BASE}
       {ENDPOINT}?action=update&id=
-      <GreenParam>{values.publicId || "パブリックID"}</GreenParam>
+      <GreenParam>{values.publicId || "公開ID"}</GreenParam>
       &messageId=<GreenParam>{values.messageId || "メッセージID"}</GreenParam>
       &message=<GreenParam>{values.editMessage || "新しいメッセージ"}</GreenParam>
     </>
@@ -337,7 +341,7 @@ const removeAuthorStep: StepConfig = {
   handlerKey: "handleDeleteMessageById",
   responseKey: "removeResponse",
   buildApiUrl: (values) => {
-    const id = values.publicId || "パブリックID";
+    const id = values.publicId || "公開ID";
     const messageId = values.messageId || "メッセージID";
     return `${API_BASE}${ENDPOINT}?action=remove&id=${encodeURIComponent(id)}&messageId=${messageId}`;
   },
@@ -345,7 +349,7 @@ const removeAuthorStep: StepConfig = {
     <>
       {API_BASE}
       {ENDPOINT}?action=remove&id=
-      <GreenParam>{values.publicId || "パブリックID"}</GreenParam>
+      <GreenParam>{values.publicId || "公開ID"}</GreenParam>
       &messageId=<GreenParam>{values.messageId || "メッセージID"}</GreenParam>
     </>
   ),
@@ -355,6 +359,7 @@ const removeAuthorStep: StepConfig = {
 const clearStep: StepConfig = {
   id: "clear",
   title: "◆ 全メッセージ削除 ◆",
+  isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "全削除",
   buttonVariant: "danger",
@@ -384,6 +389,7 @@ const clearStep: StepConfig = {
 const updateSettingsStep: StepConfig = {
   id: "updateSettings",
   title: "◆ 設定更新 ◆",
+  isOwnerStep: true,
   description: "掲示板の設定を更新します。",
   fields: [
     COMMON_FIELDS.url,
@@ -527,6 +533,7 @@ const updateSettingsStep: StepConfig = {
 const deleteStep: StepConfig = {
   id: "delete",
   title: "◆ BBS削除 ◆",
+  isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "削除",
   buttonVariant: "danger",

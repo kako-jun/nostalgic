@@ -7,6 +7,7 @@ const ENDPOINT = "/api/visit";
 const createStep: StepConfig = {
   id: "create",
   title: "◆STEP 1: カウンター作成◆",
+  isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token, COMMON_FIELDS.webhookUrl],
   buttonText: "作成",
   handlerKey: "handleCreate",
@@ -61,6 +62,7 @@ const displayStep: StepConfig = {
 const confirmIdStep: StepConfig = {
   id: "confirmId",
   title: "◆公開IDを再確認したいときは？◆",
+  isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "公開ID確認",
   handlerKey: "handleCreate",
@@ -134,6 +136,7 @@ const getStep: StepConfig = {
 const setStep: StepConfig = {
   id: "set",
   title: "◆カウント値を設定したいときは？◆",
+  isOwnerStep: true,
   fields: [
     COMMON_FIELDS.url,
     COMMON_FIELDS.token,
@@ -171,6 +174,7 @@ const setStep: StepConfig = {
 const updateSettingsStep: StepConfig = {
   id: "updateSettings",
   title: "◆設定更新◆",
+  isOwnerStep: true,
   description: "カウンターの設定を更新します。",
   fields: [
     COMMON_FIELDS.url,
@@ -212,6 +216,7 @@ const updateSettingsStep: StepConfig = {
 const deleteStep: StepConfig = {
   id: "delete",
   title: "◆カウンターを削除したいときは？◆",
+  isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "削除",
   buttonVariant: "danger",

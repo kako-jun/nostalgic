@@ -42,6 +42,8 @@ export interface StepConfig {
   responseType?: "json" | "text" | "svg";
   // Additional content to show between API URL and form
   additionalContent?: ReactNode;
+  // Owner operation (requires url+token) - shows orange heading
+  isOwnerStep?: boolean;
 }
 
 // Common field definitions
