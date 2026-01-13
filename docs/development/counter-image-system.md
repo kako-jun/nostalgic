@@ -28,7 +28,7 @@
 | `mahjong` | 麻雀牌（萬子）- 零萬〜九萬                |
 | `segment` | 7セグメントLED - 発光感のあるデジタル表示 |
 | `nixie`   | ニキシー管 - オレンジグロー、ガラス管表現 |
-| `dot_f`   | ドット絵 - FF5風レトロRPGスタイル         |
+| `dots_f`  | ドット絵 - FF5風レトロRPGスタイル         |
 
 ## API仕様
 
@@ -65,14 +65,14 @@ const IMAGE_THEMES = {
   },
   segment: { ... },
   nixie: { ... },
-  dot_f: { ... },
+  dots_f: { ... },
 };
 ```
 
 ### 判定ロジック
 
 ```typescript
-const IMAGE_THEME_NAMES = ["mahjong", "segment", "nixie", "dot_f"];
+const IMAGE_THEME_NAMES = ["mahjong", "segment", "nixie", "dots_f"];
 
 if (IMAGE_THEME_NAMES.includes(theme)) {
   return generateImageCounterSVG(value, theme);
@@ -104,7 +104,7 @@ if (IMAGE_THEME_NAMES.includes(theme)) {
 - メッシュ/グリッドの背景
 - サイズ: 28x40px
 
-### dot_f（ドット絵）
+### dots_f（ドット絵）
 
 - FF5のダメージ数字風
 - 白文字 + 黒縁取り
@@ -121,7 +121,7 @@ if (IMAGE_THEME_NAMES.includes(theme)) {
 <nostalgic-counter id="xxx" theme="mahjong"></nostalgic-counter>
 <nostalgic-counter id="xxx" theme="segment"></nostalgic-counter>
 <nostalgic-counter id="xxx" theme="nixie"></nostalgic-counter>
-<nostalgic-counter id="xxx" theme="dot_f"></nostalgic-counter>
+<nostalgic-counter id="xxx" theme="dots_f"></nostalgic-counter>
 ```
 
 ## 利点

@@ -90,7 +90,7 @@ GET /api/visit?action=get&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
     - `mahjong`: Mahjong tile style (Chinese numerals)
     - `segment`: 7-segment LED display
     - `nixie`: Nixie tube style (orange glow)
-    - `dot_f`: Pixel art style (FF5-like)
+    - `dots_f`: Pixel art style (FF5-like)
 - `format` (optional): Response format
   - `image` (default): SVG image
   - `text`: Plain text number (no styling)
@@ -209,7 +209,7 @@ GET /api/visit?action=delete&url={URL}&token={TOKEN}
 - `type`: Display type (total, today, yesterday, week, month)
 - `theme`: Visual style - only for image format
   - Color themes: light, dark, retro, kawaii, mom, final
-  - Image themes: mahjong, segment, nixie, dot_f
+  - Image themes: mahjong, segment, nixie, dots_f
 - `format`: Output format (image, text) - default: image
 - `digits`: Zero-padding digits (only when specified)
 - `api-base`: Custom API base URL (optional)
@@ -241,7 +241,7 @@ declare module "react" {
           | "mahjong"
           | "segment"
           | "nixie"
-          | "dot_f";
+          | "dots_f";
         digits?: string;
         format?: "image" | "text";
       };

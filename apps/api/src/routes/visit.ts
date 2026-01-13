@@ -520,7 +520,7 @@ const IMAGE_THEMES: Record<string, ImageThemeConfig> = {
       "9": `<image href="data:image/webp;base64,"/>`,
     },
   },
-  dot_f: {
+  dots_f: {
     width: 16,
     height: 24,
     digits: {

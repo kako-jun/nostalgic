@@ -27,7 +27,7 @@
   - `mahjong`: 麻雀牌（萬子）- 一萬〜九萬 + 零萬
   - `segment`: 7セグメントLED - 発光感のあるデジタル表示
   - `nixie`: ニキシー管 - オレンジグロー、ガラス管
-  - `dot_f`: ドット絵 - FF5風レトロRPGスタイル
+  - `dots_f`: ドット絵 - FF5風レトロRPGスタイル
 - **実装箇所**: `apps/api/src/routes/visit.ts`
 
 ---
