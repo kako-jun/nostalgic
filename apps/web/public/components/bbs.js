@@ -611,6 +611,12 @@ class NostalgicBBS extends HTMLElement {
         .bbs-container.final .empty-message {
           color: #999999;
         }
+        .bbs-container.final .empty-message {
+          text-shadow: 1px 1px 0px black;
+        }
+        .bbs-container.mom .empty-message {
+          text-shadow: -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 1px 1px 0px white;
+        }
         .bbs-container.final input::placeholder,
         .bbs-container.final textarea::placeholder {
           color: #999999 !important;
