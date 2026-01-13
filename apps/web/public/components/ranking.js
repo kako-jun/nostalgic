@@ -339,9 +339,12 @@ class NostalgicRanking extends HTMLElement {
         .ranking-container.final .ranking-header,
         .ranking-container.final .rank,
         .ranking-container.final .name,
-        .ranking-container.final .score,
+        .ranking-container.final .score {
+          text-shadow: 1px 1px 0px black;
+        }
         .ranking-container.final .empty-message {
           text-shadow: 1px 1px 0px black;
+          color: #999999;
         }
         .ranking-list {
           padding: 10px;

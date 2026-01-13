@@ -449,7 +449,7 @@ function generateCounterSVG(value: string, theme: string): string {
     retro: { bg: "#000000", text: "#00ff00", border: "#00ff00" },
     kawaii: { bg: "#ffb6c1", text: "#ff1493", border: "#ff69b4" },
     mom: { bg: "#f5f5dc", text: "#8b4513", border: "#d2691e" },
-    final: { bg: "#0d0d0d", text: "#ffd700", border: "#ffd700" },
+    final: { bg: "#0000ff", text: "#ffffff", border: "#ffffff" },
   };
 
   const t = themes[theme] || themes.dark;
