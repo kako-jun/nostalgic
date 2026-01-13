@@ -357,11 +357,11 @@ const clearStep: StepConfig = {
   title: "◆ 全メッセージ削除 ◆",
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "全削除",
-  buttonVariant: "warning",
+  buttonVariant: "danger",
   handlerKey: "handleClear",
   responseKey: "clearResponse",
   warningMessage: (
-    <p style={{ color: "#ff6600", fontWeight: "bold" }}>
+    <p style={{ color: "#ff0000", fontWeight: "bold" }}>
       ※全てのメッセージを削除します。元に戻せません。
     </p>
   ),

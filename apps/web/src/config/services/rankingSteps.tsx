@@ -257,7 +257,6 @@ const removeStep: StepConfig = {
     },
   ],
   buttonText: "エントリ削除",
-  buttonVariant: "warning",
   handlerKey: "handleRemove",
   responseKey: "removeResponse",
   buildApiUrl: (values) => {
@@ -283,11 +282,11 @@ const clearStep: StepConfig = {
   title: "◆全エントリをクリアしたいときは？◆",
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "全エントリクリア",
-  buttonVariant: "warning",
+  buttonVariant: "danger",
   handlerKey: "handleClear",
   responseKey: "clearResponse",
   warningMessage: (
-    <p style={{ color: "#ff6600", fontWeight: "bold" }}>
+    <p style={{ color: "#ff0000", fontWeight: "bold" }}>
       ※全てのランキングデータをクリアします。元に戻せません。
     </p>
   ),
