@@ -45,7 +45,7 @@ export const counterEmbedConfig = {
         { value: "mahjong", description: "麻雀牌風" },
         { value: "segment", description: "7セグメント風" },
         { value: "nixie", description: "ニキシー管風" },
-        { value: "dots_f", description: "ドットマトリクス風" },
+        { value: "dots_f", description: "FF5味（青系）" },
       ],
     },
   ],
