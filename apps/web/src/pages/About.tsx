@@ -45,10 +45,7 @@ export default function AboutPage() {
         </p>
         <p>
           バグ報告・機能要望は{" "}
-          <a
-            href="https://github.com/kako-jun/nostalgic-counter/issues"
-            className="nostalgic-old-link"
-          >
+          <a href="https://github.com/kako-jun/nostalgic/issues" className="nostalgic-old-link">
             GitHub Issues
           </a>{" "}
           まで！

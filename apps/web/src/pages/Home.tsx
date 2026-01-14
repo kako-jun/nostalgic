@@ -1344,7 +1344,7 @@ export default function HomePage() {
               <p>
                 バグ報告・機能要望は{" "}
                 <a
-                  href="https://github.com/kako-jun/nostalgic-counter/issues"
+                  href="https://github.com/kako-jun/nostalgic/issues"
                   className="nostalgic-old-link"
                 >
                   GitHub Issues
