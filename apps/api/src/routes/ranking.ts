@@ -191,17 +191,39 @@ app.get("/", async (c) => {
     const sortOrder = metadata.sortOrder || "desc";
     const maxEntries = metadata.maxEntries || 100;
 
-    // Insert or update score
-    await db
+    // Check existing score for this name
+    const existingEntry = await db
       .prepare(
-        `
-      INSERT INTO ranking_scores (service_id, name, score, display_score, unique_id, created_at)
-      VALUES (?, ?, ?, ?, '', datetime('now'))
-      ON CONFLICT(service_id, name, unique_id) DO UPDATE SET score = ?, display_score = ?
-    `
+        "SELECT score FROM ranking_scores WHERE service_id = ? AND name = ? AND unique_id = ''"
       )
-      .bind(`ranking:${id}:scores`, name, score, displayScore || null, score, displayScore || null)
-      .run();
+      .bind(`ranking:${id}:scores`, name)
+      .first<{ score: number }>();
+
+    // Only update if new score is better (or if no existing entry)
+    const shouldUpdate =
+      !existingEntry ||
+      (sortOrder === "asc" ? score < existingEntry.score : score > existingEntry.score);
+
+    if (shouldUpdate) {
+      // Insert or update score
+      await db
+        .prepare(
+          `
+        INSERT INTO ranking_scores (service_id, name, score, display_score, unique_id, created_at)
+        VALUES (?, ?, ?, ?, '', datetime('now'))
+        ON CONFLICT(service_id, name, unique_id) DO UPDATE SET score = ?, display_score = ?
+      `
+        )
+        .bind(
+          `ranking:${id}:scores`,
+          name,
+          score,
+          displayScore || null,
+          score,
+          displayScore || null
+        )
+        .run();
+    }
 
     // Trim excess entries
     const count = await db
