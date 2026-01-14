@@ -124,7 +124,7 @@ export default function HomePage() {
               <p>
                 <span>●</span> 完全無料で利用可能
                 <br />
-                <span>●</span> 4つのサービス（Counter・Like・Ranking・BBS）
+                <span>●</span> 5つのサービス（Counter・Like・Ranking・BBS・Yokoso）
                 <br />
                 <span>●</span> 最新技術で高速・安定動作
               </p>
@@ -202,6 +202,17 @@ export default function HomePage() {
                       }}
                     >
                       💬 Nostalgic BBS
+                    </a>
+                    <a
+                      href="/yokoso"
+                      className="nostalgic-old-link"
+                      style={{
+                        padding: "5px 10px",
+                        border: "1px solid #666",
+                        backgroundColor: "#f0f0f0",
+                      }}
+                    >
+                      🚪 Nostalgic Yokoso
                     </a>
                   </div>
                 </div>
