@@ -700,17 +700,28 @@ function escapeXml(text: string): string {
     .replace(/'/g, "&#39;");
 }
 
-function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength - 1) + "…";
+// 表示幅で切り詰め（maxWidth は半角基準、全角=2, 半角=1）
+function truncateByWidth(text: string, maxWidth: number): string {
+  let width = 0;
+  let result = "";
+  for (const char of text) {
+    const code = char.charCodeAt(0);
+    const charWidth = code > 0x7f ? 2 : 1;
+    if (width + charWidth > maxWidth - 1) {
+      return result + "…";
+    }
+    width += charWidth;
+    result += char;
+  }
+  return result;
 }
 
 function generateBBSSVG(messages: BBSMessage[]): string {
   const labelWidth = 50;
   const contentWidth = 350; // スマホ/GitHub対応の広め幅
   const totalWidth = labelWidth + contentWidth;
-  const lineHeight = 16;
-  const padding = 4;
+  const lineHeight = 20; // 行間広め
+  const padding = 12; // Yokosoカードと同じ上下余白
   const headerHeight = 20;
   const contentHeight =
     messages.length > 0 ? messages.length * lineHeight + padding * 2 : lineHeight + padding * 2;
@@ -734,10 +745,10 @@ function generateBBSSVG(messages: BBSMessage[]): string {
     <rect x="${labelWidth}" width="${contentWidth}" height="${totalHeight}" fill="${contentBg}" stroke="#ddd" stroke-width="1"/>
   </g>
   <g text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
-    <text x="${labelWidth / 2}" y="${totalHeight / 2 + 1}" fill="#010101" fill-opacity=".3">BBS</text>
-    <text x="${labelWidth / 2}" y="${totalHeight / 2}" fill="${headerTextColor}">BBS</text>
+    <text x="${labelWidth / 2}" y="${totalHeight / 2 + 5}" fill="#010101" fill-opacity=".3">BBS</text>
+    <text x="${labelWidth / 2}" y="${totalHeight / 2 + 4}" fill="${headerTextColor}">BBS</text>
   </g>
-  <g fill="#999" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+  <g fill="#999" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12">
     <text x="${labelWidth + 8}" y="${headerHeight + lineHeight - 2}">No messages yet</text>
   </g>
 </svg>`;
@@ -748,8 +759,9 @@ function generateBBSSVG(messages: BBSMessage[]): string {
     .slice()
     .reverse()
     .map((msg, index) => {
-      const author = truncateText(msg.author || "ああああ", 8);
-      const content = truncateText(msg.message.replace(/\n/g, " "), 40);
+      // 全角半角考慮: author最大12幅(全角6文字)、content最大50幅(全角25文字)
+      const author = truncateByWidth(msg.author || "Anonymous", 12);
+      const content = truncateByWidth(msg.message.replace(/\n/g, " "), 50);
       const y = headerHeight + padding + (index + 1) * lineHeight - 4;
       return `<text x="${labelWidth + 8}" y="${y}">• ${escapeXml(author)}: ${escapeXml(content)}</text>`;
     })
@@ -766,10 +778,10 @@ function generateBBSSVG(messages: BBSMessage[]): string {
     <rect x="${labelWidth}" width="${contentWidth}" height="${totalHeight}" fill="${contentBg}" stroke="#ddd" stroke-width="1"/>
   </g>
   <g text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
-    <text x="${labelWidth / 2}" y="${totalHeight / 2 + 1}" fill="#010101" fill-opacity=".3">BBS</text>
-    <text x="${labelWidth / 2}" y="${totalHeight / 2}" fill="${headerTextColor}">BBS</text>
+    <text x="${labelWidth / 2}" y="${totalHeight / 2 + 5}" fill="#010101" fill-opacity=".3">BBS</text>
+    <text x="${labelWidth / 2}" y="${totalHeight / 2 + 4}" fill="${headerTextColor}">BBS</text>
   </g>
-  <g fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+  <g fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12">
     ${messageLines}
   </g>
 </svg>`;

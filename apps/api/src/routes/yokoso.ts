@@ -85,13 +85,54 @@ function getManekiNekoIcon(x: number, y: number): string {
   </g>`;
 }
 
+// === Helper Functions ===
+
+// 全角半角を考慮した幅計算（全角=2, 半角=1）
+function getDisplayWidth(text: string): number {
+  let width = 0;
+  for (const char of text) {
+    const code = char.charCodeAt(0);
+    width += code > 0x7f ? 2 : 1;
+  }
+  return width;
+}
+
+// 表示幅で行分割（maxWidth は半角基準）
+function splitByWidth(text: string, maxWidth: number): string[] {
+  const lines: string[] = [];
+  let currentLine = "";
+  let currentWidth = 0;
+
+  for (const char of text) {
+    const code = char.charCodeAt(0);
+    const charWidth = code > 0x7f ? 2 : 1;
+
+    if (currentWidth + charWidth > maxWidth) {
+      lines.push(currentLine);
+      currentLine = char;
+      currentWidth = charWidth;
+    } else {
+      currentLine += char;
+      currentWidth += charWidth;
+    }
+  }
+
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+
+  return lines;
+}
+
 // === SVG Generators ===
 
 function generateBadgeSVG(message: string): string {
   const label = "Yokoso";
   const labelWidth = 50;
   const iconWidth = 20; // 招き猫アイコン用スペース
-  const textWidth = Math.max(message.length * 7 + 16, 50);
+  // 全角半角考慮: 全角12px、半角7px相当
+  const displayWidth = getDisplayWidth(message);
+  const textWidth = Math.max(displayWidth * 6 + 24, 60);
   const messageWidth = iconWidth + textWidth;
   const totalWidth = labelWidth + messageWidth;
   const height = 20;
@@ -116,7 +157,7 @@ function generateBadgeSVG(message: string): string {
     <text x="${labelWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${label}</text>
     <text x="${labelWidth / 2}" y="14" fill="${textColor}">${label}</text>
   </g>
-  ${getManekiNekoIcon(labelWidth + 2, 2)}
+  ${getManekiNekoIcon(labelWidth + 5, 2)}
   <text x="${labelWidth + iconWidth + textWidth / 2}" y="15" fill="#010101" fill-opacity=".3" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
   <text x="${labelWidth + iconWidth + textWidth / 2}" y="14" fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
 </svg>`;
@@ -158,14 +199,9 @@ function generateCardSVG(
   const padding = 12;
   const avatarSize = 28;
 
-  // Split message into lines (約30文字/行 for Japanese)
-  const maxCharsPerLine = 30;
-  const lines: string[] = [];
-  let remaining = message;
-  while (remaining.length > 0) {
-    lines.push(remaining.slice(0, maxCharsPerLine));
-    remaining = remaining.slice(maxCharsPerLine);
-  }
+  // 全角半角考慮で行分割（50半角幅 ≈ 全角25文字）
+  const maxLineWidth = 50;
+  const lines = splitByWidth(message, maxLineWidth);
 
   const headerHeight = avatarSize + 8;
   const messageHeight = lines.length * lineHeight;
