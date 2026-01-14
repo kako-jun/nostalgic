@@ -211,7 +211,7 @@ export default function NostalgicSidebar({
           }
           onClick={() => onClose?.()}
         >
-          GitHub README
+          GitHubのREADME埋め込み用
         </Link>
         <br />
         {location.pathname === "/" && currentPage === "about" ? (

@@ -130,7 +130,7 @@ export default function GitHubPage() {
           }}
         >
           ![visitors](https://api.nostalgic.llll-ll.com/visit?action=increment&id=
-          <span style={{ color: "#008000" }}>YOUR_ID</span>
+          <span style={{ color: "#008000" }}>公開ID</span>
           &format=image&theme=github)
         </pre>
 
@@ -148,9 +148,9 @@ export default function GitHubPage() {
           }}
         >
           [![Like](https://api.nostalgic.llll-ll.com/like?action=get&id=
-          <span style={{ color: "#008000" }}>YOUR_ID</span>
+          <span style={{ color: "#008000" }}>公開ID</span>
           &format=image)](https://nostalgic.llll-ll.com/like?id=
-          <span style={{ color: "#008000" }}>YOUR_ID</span>)
+          <span style={{ color: "#008000" }}>公開ID</span>)
         </pre>
 
         <p style={{ marginTop: "15px", marginBottom: "5px" }}>
@@ -167,14 +167,14 @@ export default function GitHubPage() {
           }}
         >
           [![BBS](https://api.nostalgic.llll-ll.com/bbs?action=get&id=
-          <span style={{ color: "#008000" }}>YOUR_ID</span>
+          <span style={{ color: "#008000" }}>公開ID</span>
           &format=image&limit=3)](https://nostalgic.llll-ll.com/bbs?id=
-          <span style={{ color: "#008000" }}>YOUR_ID</span>)
+          <span style={{ color: "#008000" }}>公開ID</span>)
         </pre>
 
         <p style={{ marginTop: "15px" }}>
-          ※ <span style={{ color: "#008000" }}>YOUR_ID</span>{" "}
-          を各サービスで作成した公開IDに置き換えてください。
+          ※ <span style={{ color: "#008000" }}>公開ID</span>{" "}
+          の部分を、各サービスで作成したIDに置き換えてください。
         </p>
       </div>
 
