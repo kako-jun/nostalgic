@@ -1,6 +1,5 @@
 import { useState } from "react";
 import NostalgicLayout from "../components/NostalgicLayout";
-import { PageFooter } from "../components/common";
 
 export default function GitHubPage() {
   const [counterId] = useState("nostalgic-b89803bb");
@@ -201,8 +200,6 @@ export default function GitHubPage() {
           <li>GitHubは画像をキャッシュするため、更新が反映されるまで時間がかかることがあります</li>
         </ul>
       </div>
-
-      <PageFooter servicePath="github" currentPage="features" />
     </NostalgicLayout>
   );
 }
