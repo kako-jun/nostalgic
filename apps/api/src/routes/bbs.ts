@@ -337,7 +337,8 @@ app.get("/", async (c) => {
     if (format === "image") {
       const imageLimit = Math.min(Number(c.req.query("limit")) || 3, 10);
       const messages = await getMessages(db, id, imageLimit);
-      const svg = generateBBSSVG(messages);
+      const totalMessages = await getMessageCount(db, id);
+      const svg = generateBBSSVG(messages, totalMessages);
       return c.body(svg, 200, {
         "Content-Type": "image/svg+xml",
         "Cache-Control": "no-cache",
@@ -716,7 +717,7 @@ function truncateByWidth(text: string, maxWidth: number): string {
   return result;
 }
 
-function generateBBSSVG(messages: BBSMessage[]): string {
+function generateBBSSVG(messages: BBSMessage[], totalMessages: number): string {
   const labelWidth = 50;
   const contentWidth = 350; // スマホ/GitHub対応の広め幅
   const totalWidth = labelWidth + contentWidth;
@@ -754,16 +755,17 @@ function generateBBSSVG(messages: BBSMessage[]): string {
 </svg>`;
   }
 
-  // メッセージ行を生成（最新が上）
+  // メッセージ行を生成（新しい順、番号付き）- APIは既にDESC順
+  // totalMessages = DB上の総数、最新が totalMessages 番
   const messageLines = messages
-    .slice()
-    .reverse()
     .map((msg, index) => {
-      // 全角半角考慮: author最大12幅(全角6文字)、content最大50幅(全角25文字)
-      const author = truncateByWidth(msg.author || "Anonymous", 12);
-      const content = truncateByWidth(msg.message.replace(/\n/g, " "), 50);
+      const msgNum = totalMessages - index; // 最新=totalMessages, 2番目=totalMessages-1, ...
+      // 全角半角考慮: #9999(6) + author(10) + ": "(2) + content(30) = 48幅
+      const author = truncateByWidth(msg.author || "Anonymous", 10);
+      const content = truncateByWidth(msg.message.replace(/\n/g, " "), 30);
       const y = headerHeight + padding + (index + 1) * lineHeight - 4;
-      return `<text x="${labelWidth + 8}" y="${y}">• ${escapeXml(author)}: ${escapeXml(content)}</text>`;
+      // #番号=グレー、投稿者=太字、内容=通常
+      return `<text x="${labelWidth + 8}" y="${y}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12"><tspan fill="#999">#${msgNum}</tspan> <tspan font-weight="bold" fill="${textColor}">${escapeXml(author)}</tspan><tspan fill="${textColor}">: ${escapeXml(content)}</tspan></text>`;
     })
     .join("\n    ");
 
