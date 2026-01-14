@@ -994,7 +994,7 @@ class NostalgicBBS extends HTMLElement {
             <div class="form-header ${theme}">${this.t.postComment}</div>
             <div class="form-body">
               <div class="form-row">
-                <input type="text" id="message-author" placeholder="${this.t.namePlaceholder}" maxlength="20" spellcheck="false">
+                <input type="text" id="message-author" name="bbs-author" autocomplete="nickname" placeholder="${this.t.namePlaceholder}" maxlength="20" spellcheck="false">
                 ${this.generateSelectDropdowns()}
               </div>
               <div class="form-row">
