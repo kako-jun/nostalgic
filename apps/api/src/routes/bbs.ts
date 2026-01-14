@@ -183,6 +183,26 @@ app.get("/", async (c) => {
     const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
     const userAgent = c.req.header("User-Agent") || "";
     const userHash = await generateUserHash(ip, userAgent);
+
+    // 投稿間隔制限（10秒）
+    const POST_INTERVAL_SECONDS = 10;
+    const lastPost = await db
+      .prepare(
+        "SELECT created_at FROM bbs_messages WHERE service_id = ? AND user_hash = ? ORDER BY created_at DESC LIMIT 1"
+      )
+      .bind(`bbs:${id}:messages`, userHash)
+      .first<{ created_at: string }>();
+
+    if (lastPost) {
+      const lastPostTime = new Date(lastPost.created_at + "Z").getTime();
+      const now = Date.now();
+      const elapsed = (now - lastPostTime) / 1000;
+      if (elapsed < POST_INTERVAL_SECONDS) {
+        const remaining = Math.ceil(POST_INTERVAL_SECONDS - elapsed);
+        return c.json({ error: `Please wait ${remaining} seconds before posting again` }, 429);
+      }
+    }
+
     const messageId = crypto.randomUUID();
     const selects =
       standardValue || incrementalValue || emoteValue

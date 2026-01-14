@@ -5,6 +5,7 @@
 import { Hono } from "hono";
 import { hashToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
+import { generateUserHash } from "../lib/core/crypto";
 import { RANKING } from "../lib/core/constants";
 import { sendWebHook, WebHookMessages } from "../lib/core/webhook";
 
@@ -145,6 +146,46 @@ app.get("/", async (c) => {
     if (!ranking) {
       return c.json({ error: "Ranking not found" }, 404);
     }
+
+    // 投票間隔制限（5秒）- 同じユーザーからの連続投票を防止
+    const VOTE_INTERVAL_SECONDS = 5;
+    const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
+    const userAgent = c.req.header("User-Agent") || "";
+    const userHash = await generateUserHash(ip, userAgent);
+
+    // 同じユーザーかどうかをチェックするため、daily_actionsテーブルを使用
+    const lastUserVote = await db
+      .prepare(
+        "SELECT value FROM daily_actions WHERE service_id = ? AND user_hash = ? AND action_type = ? ORDER BY date DESC LIMIT 1"
+      )
+      .bind(`ranking:${id}`, userHash, "vote")
+      .first<{ value: string }>();
+
+    if (lastUserVote) {
+      const lastVoteTime = new Date(lastUserVote.value).getTime();
+      const now = Date.now();
+      const elapsed = (now - lastVoteTime) / 1000;
+      if (elapsed < VOTE_INTERVAL_SECONDS) {
+        const remaining = Math.ceil(VOTE_INTERVAL_SECONDS - elapsed);
+        return c.json({ error: `Please wait ${remaining} seconds before voting again` }, 429);
+      }
+    }
+
+    // 投票履歴を記録
+    const today = new Date().toISOString().split("T")[0];
+    await db
+      .prepare(
+        "INSERT INTO daily_actions (service_id, user_hash, date, action_type, value) VALUES (?, ?, ?, ?, ?) ON CONFLICT(service_id, user_hash, date, action_type) DO UPDATE SET value = ?"
+      )
+      .bind(
+        `ranking:${id}`,
+        userHash,
+        today,
+        "vote",
+        new Date().toISOString(),
+        new Date().toISOString()
+      )
+      .run();
 
     const metadata = JSON.parse((ranking as RankingRecord).metadata || "{}");
     const sortOrder = metadata.sortOrder || "desc";
