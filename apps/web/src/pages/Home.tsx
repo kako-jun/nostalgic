@@ -1312,105 +1312,23 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆Yokosoのサンプル - バッジモード◆</b>
+                  <b>◆Yokosoのサンプル◆</b>
                 </span>
               </p>
-              <p style={{ marginBottom: "10px", textAlign: "center" }}>
-                招き猫（Maneki-neko）がメッセージを喋ります！
-              </p>
+              <p style={{ marginBottom: "10px" }}>アバター + 名前 + 日付 + メッセージ（140文字）</p>
               <div
                 style={{
                   display: "flex",
                   gap: "20px",
-                  justifyContent: "center",
                   flexWrap: "wrap",
                   margin: "20px 0",
                 }}
               >
-                <div style={{ textAlign: "center" }}>
-                  <p style={{ fontSize: "12px", marginBottom: "5px" }}>Light</p>
-                  <nostalgic-yokoso id="nostalgic-0f5ead1d" theme="light" />
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <p style={{ fontSize: "12px", marginBottom: "5px" }}>Dark</p>
-                  <div
-                    style={{
-                      background:
-                        "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
-                      padding: "10px",
-                    }}
-                  >
-                    <nostalgic-yokoso id="nostalgic-0f5ead1d" theme="dark" />
-                  </div>
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <p style={{ fontSize: "12px", marginBottom: "5px" }}>Retro</p>
-                  <div
-                    style={{
-                      background:
-                        "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
-                      padding: "10px",
-                    }}
-                  >
-                    <nostalgic-yokoso id="nostalgic-0f5ead1d" theme="retro" />
-                  </div>
-                </div>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "20px",
-                  justifyContent: "center",
-                  flexWrap: "wrap",
-                  margin: "20px 0",
-                }}
-              >
-                <div style={{ textAlign: "center" }}>
-                  <p style={{ fontSize: "12px", marginBottom: "5px" }}>Kawaii</p>
-                  <nostalgic-yokoso id="nostalgic-0f5ead1d" theme="kawaii" />
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <p style={{ fontSize: "12px", marginBottom: "5px" }}>Mother味</p>
-                  <nostalgic-yokoso id="nostalgic-0f5ead1d" theme="mom" />
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <p style={{ fontSize: "12px", marginBottom: "5px" }}>FF味</p>
-                  <div
-                    style={{
-                      background:
-                        "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
-                      padding: "10px",
-                    }}
-                  >
-                    <nostalgic-yokoso id="nostalgic-0f5ead1d" theme="final" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="nostalgic-section">
-              <p>
-                <span className="nostalgic-section-title">
-                  <b>◆Yokosoのサンプル - カードモード◆</b>
-                </span>
-              </p>
-              <p style={{ marginBottom: "10px", textAlign: "center" }}>
-                長文メッセージ + アバター + 名前 + 日付
-              </p>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "20px",
-                  justifyContent: "center",
-                  flexWrap: "wrap",
-                  margin: "20px 0",
-                }}
-              >
-                <div style={{ textAlign: "center" }}>
+                <div>
                   <p style={{ fontSize: "12px", marginBottom: "5px" }}>Light</p>
                   <nostalgic-yokoso id="nostalgic-11f690b3" theme="light" />
                 </div>
-                <div style={{ textAlign: "center" }}>
+                <div>
                   <p style={{ fontSize: "12px", marginBottom: "5px" }}>Dark</p>
                   <div
                     style={{
@@ -1422,7 +1340,7 @@ export default function HomePage() {
                     <nostalgic-yokoso id="nostalgic-11f690b3" theme="dark" />
                   </div>
                 </div>
-                <div style={{ textAlign: "center" }}>
+                <div>
                   <p style={{ fontSize: "12px", marginBottom: "5px" }}>Retro</p>
                   <div
                     style={{
@@ -1439,20 +1357,19 @@ export default function HomePage() {
                 style={{
                   display: "flex",
                   gap: "20px",
-                  justifyContent: "center",
                   flexWrap: "wrap",
                   margin: "20px 0",
                 }}
               >
-                <div style={{ textAlign: "center" }}>
+                <div>
                   <p style={{ fontSize: "12px", marginBottom: "5px" }}>Kawaii</p>
                   <nostalgic-yokoso id="nostalgic-11f690b3" theme="kawaii" />
                 </div>
-                <div style={{ textAlign: "center" }}>
+                <div>
                   <p style={{ fontSize: "12px", marginBottom: "5px" }}>Mother味</p>
                   <nostalgic-yokoso id="nostalgic-11f690b3" theme="mom" />
                 </div>
-                <div style={{ textAlign: "center" }}>
+                <div>
                   <p style={{ fontSize: "12px", marginBottom: "5px" }}>FF味</p>
                   <div
                     style={{

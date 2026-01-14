@@ -272,11 +272,12 @@ class NostalgicYokoso extends HTMLElement {
         }
         .yokoso-card {
           font-family: 'BIZ UDGothic', Verdana, Geneva, sans-serif;
-          font-size: 12px;
+          font-size: 14px;
           border-radius: 4px;
           overflow: hidden;
           background-color: ${style.bgColor};
-          border: 1px solid ${style.borderColor};
+          border: 2px solid ${style.borderColor};
+          box-shadow: 3px 3px 0px ${style.shadowColor};
           padding: 12px;
           max-width: 350px;
           position: relative;
