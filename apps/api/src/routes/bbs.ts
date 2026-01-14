@@ -707,7 +707,7 @@ function truncateText(text: string, maxLength: number): string {
 
 function generateBBSSVG(messages: BBSMessage[]): string {
   const labelWidth = 50;
-  const contentWidth = 270;
+  const contentWidth = 350; // スマホ/GitHub対応の広め幅
   const totalWidth = labelWidth + contentWidth;
   const lineHeight = 16;
   const padding = 4;
@@ -724,21 +724,18 @@ function generateBBSSVG(messages: BBSMessage[]): string {
   // メッセージがない場合
   if (messages.length === 0) {
     return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}">
-  <linearGradient id="smooth" x2="0" y2="100%">
-    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
-    <stop offset="1" stop-opacity=".1"/>
-  </linearGradient>
-  <clipPath id="round">
-    <rect width="${totalWidth}" height="${totalHeight}" rx="3" fill="#fff"/>
-  </clipPath>
+  <defs>
+    <clipPath id="round">
+      <rect width="${totalWidth}" height="${totalHeight}" rx="3"/>
+    </clipPath>
+  </defs>
   <g clip-path="url(#round)">
     <rect width="${labelWidth}" height="${totalHeight}" fill="${labelBg}"/>
-    <rect x="${labelWidth}" width="${contentWidth}" height="${totalHeight}" fill="${contentBg}"/>
-    <rect width="${totalWidth}" height="${totalHeight}" fill="url(#smooth)"/>
+    <rect x="${labelWidth}" width="${contentWidth}" height="${totalHeight}" fill="${contentBg}" stroke="#ddd" stroke-width="1"/>
   </g>
   <g text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
-    <text x="${labelWidth / 2}" y="15" fill="#010101" fill-opacity=".3">BBS</text>
-    <text x="${labelWidth / 2}" y="14" fill="${headerTextColor}">BBS</text>
+    <text x="${labelWidth / 2}" y="${totalHeight / 2 + 1}" fill="#010101" fill-opacity=".3">BBS</text>
+    <text x="${labelWidth / 2}" y="${totalHeight / 2}" fill="${headerTextColor}">BBS</text>
   </g>
   <g fill="#999" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
     <text x="${labelWidth + 8}" y="${headerHeight + lineHeight - 2}">No messages yet</text>
@@ -752,28 +749,25 @@ function generateBBSSVG(messages: BBSMessage[]): string {
     .reverse()
     .map((msg, index) => {
       const author = truncateText(msg.author || "ああああ", 8);
-      const content = truncateText(msg.message.replace(/\n/g, " "), 30);
+      const content = truncateText(msg.message.replace(/\n/g, " "), 40);
       const y = headerHeight + padding + (index + 1) * lineHeight - 4;
       return `<text x="${labelWidth + 8}" y="${y}">• ${escapeXml(author)}: ${escapeXml(content)}</text>`;
     })
     .join("\n    ");
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}">
-  <linearGradient id="smooth" x2="0" y2="100%">
-    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
-    <stop offset="1" stop-opacity=".1"/>
-  </linearGradient>
-  <clipPath id="round">
-    <rect width="${totalWidth}" height="${totalHeight}" rx="3" fill="#fff"/>
-  </clipPath>
+  <defs>
+    <clipPath id="round">
+      <rect width="${totalWidth}" height="${totalHeight}" rx="3"/>
+    </clipPath>
+  </defs>
   <g clip-path="url(#round)">
     <rect width="${labelWidth}" height="${totalHeight}" fill="${labelBg}"/>
-    <rect x="${labelWidth}" width="${contentWidth}" height="${totalHeight}" fill="${contentBg}"/>
-    <rect width="${totalWidth}" height="${totalHeight}" fill="url(#smooth)"/>
+    <rect x="${labelWidth}" width="${contentWidth}" height="${totalHeight}" fill="${contentBg}" stroke="#ddd" stroke-width="1"/>
   </g>
   <g text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
-    <text x="${labelWidth / 2}" y="15" fill="#010101" fill-opacity=".3">BBS</text>
-    <text x="${labelWidth / 2}" y="14" fill="${headerTextColor}">BBS</text>
+    <text x="${labelWidth / 2}" y="${totalHeight / 2 + 1}" fill="#010101" fill-opacity=".3">BBS</text>
+    <text x="${labelWidth / 2}" y="${totalHeight / 2}" fill="${headerTextColor}">BBS</text>
   </g>
   <g fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
     ${messageLines}

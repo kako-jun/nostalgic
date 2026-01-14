@@ -492,7 +492,7 @@ function generateCounterSVG(value: string, theme: string): string {
 
 // Shields.io風バッジSVG生成
 function generateShieldsBadgeSVG(label: string, value: string, valueColor: string): string {
-  const labelWidth = label.length * 6.5 + 10;
+  const labelWidth = label.length * 6 + 6;
   const valueWidth = Math.max(value.length * 7 + 10, 30);
   const totalWidth = labelWidth + valueWidth;
   const height = 20;

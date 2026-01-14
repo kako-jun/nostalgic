@@ -91,7 +91,7 @@ function generateBadgeSVG(message: string): string {
   const label = "Yokoso";
   const labelWidth = 50;
   const iconWidth = 20; // 招き猫アイコン用スペース
-  const textWidth = Math.max(message.length * 7 + 10, 50);
+  const textWidth = Math.max(message.length * 7 + 16, 50);
   const messageWidth = iconWidth + textWidth;
   const totalWidth = labelWidth + messageWidth;
   const height = 20;
@@ -152,14 +152,14 @@ function generateCardSVG(
   lang: string = "ja"
 ): string {
   const labelWidth = 50;
-  const contentWidth = 300;
+  const contentWidth = 350; // スマホ/GitHub対応の広め幅
   const totalWidth = labelWidth + contentWidth;
   const lineHeight = 16;
   const padding = 12;
-  const avatarSize = 28; // アバターサイズを大きく
+  const avatarSize = 28;
 
-  // Split message into lines (approximately 28 chars per line for Japanese)
-  const maxCharsPerLine = 28;
+  // Split message into lines (約30文字/行 for Japanese)
+  const maxCharsPerLine = 30;
   const lines: string[] = [];
   let remaining = message;
   while (remaining.length > 0) {
@@ -167,7 +167,7 @@ function generateCardSVG(
     remaining = remaining.slice(maxCharsPerLine);
   }
 
-  const headerHeight = avatarSize + 4; // アバターに合わせたヘッダー高さ
+  const headerHeight = avatarSize + 8;
   const messageHeight = lines.length * lineHeight;
   const contentHeight = padding + headerHeight + messageHeight + padding;
   const totalHeight = Math.max(contentHeight, 50);
@@ -193,18 +193,19 @@ function generateCardSVG(
   const avatarY = padding;
   const avatarSection = `<image href="${escapeXml(displayAvatar)}" x="${avatarX}" y="${avatarY}" width="${avatarSize}" height="${avatarSize}" clip-path="url(#avatarClip)"/>`;
 
-  // 名前: アバターの右側（縦中央揃え）
-  const nameX = avatarX + avatarSize + 6;
-  const nameY = avatarY + avatarSize / 2 + 4;
+  // 名前: アバターの右側
+  const nameX = avatarX + avatarSize + 8;
+  const nameY = avatarY + 12; // アバター上辺に揃える
   const nameSection = `<text x="${nameX}" y="${nameY}" fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12" font-weight="bold">${escapeXml(displayName)}</text>`;
 
-  // 日付: 名前と同じ行、右寄せ
-  const dateSection = `<text x="${totalWidth - padding}" y="${nameY}" fill="${dateColor}" text-anchor="end" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10">${dateStr}</text>`;
+  // 日付: 名前の下、アバター下辺に揃える
+  const dateY = avatarY + avatarSize - 2;
+  const dateSection = `<text x="${nameX}" y="${dateY}" fill="${dateColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10">${dateStr}</text>`;
 
   const messageLines = lines
     .map(
       (line, i) =>
-        `<text x="${labelWidth + padding}" y="${padding + headerHeight + (i + 1) * lineHeight}" fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12">${escapeXml(line)}</text>`
+        `<text x="${labelWidth + padding}" y="${padding + headerHeight + (i + 1) * lineHeight - 4}" fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12">${escapeXml(line)}</text>`
     )
     .join("\n    ");
 
@@ -213,10 +214,18 @@ function generateCardSVG(
     <clipPath id="avatarClip">
       <circle cx="${avatarX + avatarSize / 2}" cy="${avatarY + avatarSize / 2}" r="${avatarSize / 2}"/>
     </clipPath>
+    <clipPath id="round">
+      <rect width="${totalWidth}" height="${totalHeight}" rx="3"/>
+    </clipPath>
   </defs>
-  <rect width="${labelWidth}" height="${totalHeight}" fill="${labelBg}"/>
-  <rect x="${labelWidth}" width="${contentWidth}" height="${totalHeight}" fill="${contentBg}" stroke="#ddd" stroke-width="1"/>
-  <text x="${labelWidth / 2}" y="${totalHeight / 2 + 4}" fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">Yokoso</text>
+  <g clip-path="url(#round)">
+    <rect width="${labelWidth}" height="${totalHeight}" fill="${labelBg}"/>
+    <rect x="${labelWidth}" width="${contentWidth}" height="${totalHeight}" fill="${contentBg}" stroke="#ddd" stroke-width="1"/>
+  </g>
+  <g text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="${labelWidth / 2}" y="${totalHeight / 2 + 1}" fill="#010101" fill-opacity=".3">Yokoso</text>
+    <text x="${labelWidth / 2}" y="${totalHeight / 2}" fill="#fff">Yokoso</text>
+  </g>
   ${avatarSection}
   ${nameSection}
   ${dateSection}
