@@ -263,11 +263,7 @@ export default function YokosoPage() {
             </span>
           </p>
           <div style={{ margin: "20px 0", textAlign: "center" }}>
-            <nostalgic-yokoso
-              id="nostalgic-demo-yokoso"
-              theme="light"
-              lang={demoLang || undefined}
-            />
+            <nostalgic-yokoso id="nostalgic-11f690b3" theme="light" lang={demoLang || undefined} />
           </div>
         </div>
 
@@ -285,11 +281,7 @@ export default function YokosoPage() {
                 display: "inline-block",
               }}
             >
-              <nostalgic-yokoso
-                id="nostalgic-demo-yokoso"
-                theme="dark"
-                lang={demoLang || undefined}
-              />
+              <nostalgic-yokoso id="nostalgic-11f690b3" theme="dark" lang={demoLang || undefined} />
             </div>
           </div>
         </div>
@@ -309,7 +301,7 @@ export default function YokosoPage() {
               }}
             >
               <nostalgic-yokoso
-                id="nostalgic-demo-yokoso"
+                id="nostalgic-11f690b3"
                 theme="retro"
                 lang={demoLang || undefined}
               />
