@@ -4,6 +4,7 @@ import NostalgicLayout from "../components/NostalgicLayout";
 import CounterFeaturesTab from "../components/counter/CounterFeaturesTab";
 import StepRenderer from "../components/StepRenderer";
 import { PageFooter } from "../components/common";
+import { highlightPublicId } from "../components/ApiUrlDisplay";
 import { callApi, callApiWithFormat } from "../utils/apiHelpers";
 import { counterSteps } from "../config/services/counterSteps";
 import { counterEmbedConfig } from "../config/embedConfigs";
@@ -187,7 +188,7 @@ export default function CounterPage() {
             .split("\n")
             .map((line, i) => (
               <span key={i}>
-                {line}
+                {highlightPublicId(line)}
                 {i < 1 && <br />}
               </span>
             ))}

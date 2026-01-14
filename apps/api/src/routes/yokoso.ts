@@ -184,7 +184,7 @@ function generateCardSVG(
 
   // アバターとネームはデフォルト値を持つ
   const displayAvatar = avatar || getDefaultAvatarSVG();
-  const displayName = name || "Maneki";
+  const displayName = name || "Lucky Cat";
 
   // アバター: 左上に配置
   const avatarX = labelWidth + padding;

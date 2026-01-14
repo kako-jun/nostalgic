@@ -4,6 +4,7 @@ import NostalgicLayout from "../components/NostalgicLayout";
 import YokosoFeaturesTab from "../components/yokoso/YokosoFeaturesTab";
 import StepRenderer from "../components/StepRenderer";
 import { PageFooter } from "../components/common";
+import { highlightPublicId } from "../components/ApiUrlDisplay";
 import { callApi, callApiWithFormat } from "../utils/apiHelpers";
 import { yokosoSteps } from "../config/services/yokosoSteps";
 import { yokosoEmbedConfig } from "../config/embedConfigs";
@@ -176,7 +177,7 @@ export default function YokosoPage() {
             .split("\n")
             .map((line, i) => (
               <span key={i}>
-                {line}
+                {highlightPublicId(line)}
                 {i < 1 && <br />}
               </span>
             ))}

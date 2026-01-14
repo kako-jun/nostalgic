@@ -4,6 +4,7 @@ import NostalgicLayout from "../components/NostalgicLayout";
 import RankingFeaturesTab from "../components/ranking/RankingFeaturesTab";
 import StepRenderer from "../components/StepRenderer";
 import { PageFooter } from "../components/common";
+import { highlightPublicId } from "../components/ApiUrlDisplay";
 import { callApi } from "../utils/apiHelpers";
 import { rankingSteps } from "../config/services/rankingSteps";
 import { rankingEmbedConfig } from "../config/embedConfigs";
@@ -230,7 +231,7 @@ export default function RankingPage() {
             .split("\n")
             .map((line, i) => (
               <span key={i}>
-                {line}
+                {highlightPublicId(line)}
                 {i < 1 && <br />}
               </span>
             ))}

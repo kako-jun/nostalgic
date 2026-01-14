@@ -11,6 +11,14 @@ export const GreenParam = ({ children }: { children: React.ReactNode }) => (
   <span style={{ color: "#008000" }}>{children}</span>
 );
 
+// 文字列内の「公開ID」を緑色のspanに置き換えるヘルパー関数
+export function highlightPublicId(text: string): React.ReactNode {
+  const parts = text.split(/(公開ID)/);
+  return parts.map((part, i) =>
+    part === "公開ID" ? <GreenParam key={i}>公開ID</GreenParam> : part
+  );
+}
+
 export default function ApiUrlDisplay({ url, children }: ApiUrlDisplayProps) {
   const [copied, setCopied] = React.useState(false);
 

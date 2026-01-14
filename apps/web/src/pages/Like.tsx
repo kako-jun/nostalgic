@@ -4,6 +4,7 @@ import NostalgicLayout from "../components/NostalgicLayout";
 import LikeFeaturesTab from "../components/like/LikeFeaturesTab";
 import StepRenderer from "../components/StepRenderer";
 import { PageFooter } from "../components/common";
+import { highlightPublicId } from "../components/ApiUrlDisplay";
 import { callApi, callApiWithFormat } from "../utils/apiHelpers";
 import { likeSteps } from "../config/services/likeSteps";
 import { likeEmbedConfig } from "../config/embedConfigs";
@@ -311,7 +312,7 @@ export default function LikePage() {
             .split("\n")
             .map((line, i) => (
               <span key={i}>
-                {line}
+                {highlightPublicId(line)}
                 {i < 1 && <br />}
               </span>
             ))}

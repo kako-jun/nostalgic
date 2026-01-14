@@ -27,7 +27,7 @@ const nameField = {
   name: "name",
   label: "名前（カード用）",
   type: "text" as const,
-  placeholder: "Maneki（デフォルト）",
+  placeholder: "Lucky Cat（デフォルト）",
 };
 
 const avatarField = {
@@ -128,6 +128,7 @@ const updateMessageStep: StepConfig = {
     modeField,
     nameField,
     avatarField,
+    COMMON_FIELDS.webhookUrl,
   ],
   buttonText: "メッセージ更新",
   handlerKey: "handleUpdate",
@@ -140,6 +141,7 @@ const updateMessageStep: StepConfig = {
     if (values.mode) apiUrl += `&mode=${values.mode}`;
     if (values.name) apiUrl += `&name=${encodeURIComponent(values.name)}`;
     if (values.avatar) apiUrl += `&avatar=${encodeURIComponent(values.avatar)}`;
+    if (values.webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(values.webhookUrl)}`;
     return apiUrl;
   },
   buildApiUrlDisplay: (values) => (
@@ -166,6 +168,11 @@ const updateMessageStep: StepConfig = {
       {values.avatar && (
         <>
           &avatar=<GreenParam>{encodeURIComponent(values.avatar)}</GreenParam>
+        </>
+      )}
+      {values.webhookUrl && (
+        <>
+          &webhookUrl=<GreenParam>{encodeURIComponent(values.webhookUrl)}</GreenParam>
         </>
       )}
     </>

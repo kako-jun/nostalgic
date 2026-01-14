@@ -189,7 +189,7 @@ class NostalgicYokoso extends HTMLElement {
 
     const message = this.yokosoData.message || "";
     const mode = this.yokosoData.mode || "badge";
-    const name = this.yokosoData.name || "Maneki";
+    const name = this.yokosoData.name || "Lucky Cat";
     const avatar = this.yokosoData.avatar;
     const updatedAt = this.yokosoData.updatedAt;
 

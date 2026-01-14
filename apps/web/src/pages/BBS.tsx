@@ -4,6 +4,7 @@ import NostalgicLayout from "../components/NostalgicLayout";
 import BBSFeaturesTab from "../components/bbs/BBSFeaturesTab";
 import StepRenderer from "../components/StepRenderer";
 import { PageFooter } from "../components/common";
+import { highlightPublicId } from "../components/ApiUrlDisplay";
 import { callApi } from "../utils/apiHelpers";
 import { bbsSteps } from "../config/services/bbsSteps";
 import { bbsEmbedConfig } from "../config/embedConfigs";
@@ -293,7 +294,7 @@ export default function BBSPage() {
             .split("\n")
             .map((line, i) => (
               <span key={i}>
-                {line}
+                {highlightPublicId(line)}
                 {i < 1 && <br />}
               </span>
             ))}
