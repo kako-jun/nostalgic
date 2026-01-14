@@ -29,6 +29,9 @@ export default function LikePage() {
 
   const [responseType, setResponseType] = useState<"json" | "text" | "svg">("json");
 
+  // Language demo state
+  const [demoLang, setDemoLang] = useState<"" | "ja" | "en">("");
+
   // Field values for StepRenderer
   const fieldValues = {
     url: { value: url, onChange: setUrl },
@@ -219,6 +222,70 @@ export default function LikePage() {
           <p style={{ fontSize: "14px", color: "#666" }}>
             ※この設定により、TypeScriptでWeb Componentsを使用してもビルドエラーが発生しません。
           </p>
+        </div>
+
+        <div className="nostalgic-section">
+          <p>
+            <span className="nostalgic-section-title">
+              <b>◆言語切り替えテスト◆</b>
+            </span>
+          </p>
+          <p style={{ marginBottom: "10px" }}>
+            以下のコンポーネントの表示言語を切り替えます（エラーメッセージ等に反映されます）
+          </p>
+          <div style={{ marginBottom: "15px" }}>
+            <select
+              value={demoLang}
+              onChange={(e) => setDemoLang(e.target.value as "" | "ja" | "en")}
+              style={{
+                padding: "5px 10px",
+                fontSize: "14px",
+                border: "1px solid #666",
+                backgroundColor: "#fff",
+                cursor: "pointer",
+              }}
+            >
+              <option value="">指定なし（ブラウザ言語）</option>
+              <option value="ja">日本語</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: "20px",
+              justifyContent: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            <div style={{ textAlign: "center" }}>
+              <p style={{ fontSize: "12px", marginBottom: "5px" }}>Light</p>
+              <nostalgic-like
+                id="nostalgic-b89803bb"
+                theme="light"
+                icon="heart"
+                lang={demoLang || undefined}
+              />
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <p style={{ fontSize: "12px", marginBottom: "5px" }}>Dark</p>
+              <nostalgic-like
+                id="nostalgic-b89803bb"
+                theme="dark"
+                icon="heart"
+                lang={demoLang || undefined}
+              />
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <p style={{ fontSize: "12px", marginBottom: "5px" }}>Retro</p>
+              <nostalgic-like
+                id="nostalgic-b89803bb"
+                theme="retro"
+                icon="heart"
+                lang={demoLang || undefined}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

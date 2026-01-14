@@ -56,6 +56,9 @@ export default function BBSPage() {
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
 
+  // Language demo state
+  const [demoLang, setDemoLang] = useState<"" | "ja" | "en">("");
+
   // Field values for StepRenderer
   const fieldValues = {
     url: { value: url, onChange: setUrl },
@@ -319,6 +322,71 @@ export default function BBSPage() {
           <p style={{ fontSize: "14px", color: "#666" }}>
             ※この設定により、TypeScriptでWeb Componentsを使用してもビルドエラーが発生しません。
           </p>
+        </div>
+
+        <div className="nostalgic-section">
+          <p>
+            <span className="nostalgic-section-title">
+              <b>◆言語切り替えテスト◆</b>
+            </span>
+          </p>
+          <p style={{ marginBottom: "10px" }}>
+            以下のコンポーネントの表示言語を切り替えます（UI全般に反映されます）
+          </p>
+          <div style={{ marginBottom: "15px" }}>
+            <select
+              value={demoLang}
+              onChange={(e) => setDemoLang(e.target.value as "" | "ja" | "en")}
+              style={{
+                padding: "5px 10px",
+                fontSize: "14px",
+                border: "1px solid #666",
+                backgroundColor: "#fff",
+                cursor: "pointer",
+              }}
+            >
+              <option value="">指定なし（ブラウザ言語）</option>
+              <option value="ja">日本語</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: "20px",
+              justifyContent: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            <div style={{ textAlign: "center" }}>
+              <p style={{ fontSize: "12px", marginBottom: "5px" }}>Light</p>
+              <nostalgic-bbs
+                id="nostalgic-1cc54837"
+                theme="light"
+                limit="3"
+                lang={demoLang || undefined}
+              />
+            </div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: "20px",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              marginTop: "20px",
+            }}
+          >
+            <div style={{ textAlign: "center" }}>
+              <p style={{ fontSize: "12px", marginBottom: "5px" }}>Dark</p>
+              <nostalgic-bbs
+                id="nostalgic-4e2986a2"
+                theme="dark"
+                limit="3"
+                lang={demoLang || undefined}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
