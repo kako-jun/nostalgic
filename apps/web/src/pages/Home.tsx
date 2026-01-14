@@ -1103,7 +1103,7 @@ export default function HomePage() {
                 </span>
               </p>
               <p style={{ marginBottom: "10px", textAlign: "center" }}>
-                ナンバークリックゲームのハイスコア（
+                タッチナンバーゲームのハイスコア（
                 <a
                   href="https://llll-ll.com/easter-egg"
                   className="nostalgic-old-link"
