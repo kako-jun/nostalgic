@@ -281,6 +281,7 @@ class NostalgicYokoso extends HTMLElement {
           padding: 12px;
           max-width: 350px;
           position: relative;
+          text-align: left;
         }
         .yokoso-card-header {
           display: flex;
