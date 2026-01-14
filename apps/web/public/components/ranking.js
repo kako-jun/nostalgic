@@ -439,18 +439,6 @@ class NostalgicRanking extends HTMLElement {
           color: #666;
           font-size: 14px;
         }
-        
-        /* Font balancing for Japanese-English mixed text in header only */
-        .ranking-header .jp-text {
-          font-size: 0.85em;
-          font-feature-settings: "palt" 1;
-        }
-        
-        .ranking-header .en-text {
-          font-size: 1.05em;
-          font-weight: bold;
-          letter-spacing: -0.02em;
-        }
       </style>
       <div class="ranking-container ${theme || ""}">
         ${theme === "final" ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ""}

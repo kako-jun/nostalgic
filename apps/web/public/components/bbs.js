@@ -721,16 +721,6 @@ class NostalgicBBS extends HTMLElement {
           color: #666;
           font-size: 14px;
         }
-        /* Font balancing for Japanese-English mixed text in header only */
-        .bbs-header .jp-text {
-          font-size: 0.85em;
-          font-feature-settings: "palt" 1;
-        }
-        .bbs-header .en-text {
-          font-size: 1.05em;
-          font-weight: bold;
-          letter-spacing: -0.02em;
-        }
         .post-form {
           border-top: 2px solid var(--bbs-border-color);
         }
@@ -950,7 +940,7 @@ class NostalgicBBS extends HTMLElement {
       </style>
       <div class="bbs-container ${theme}">
         ${theme === "final" ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ""}
-        <div class="bbs-header ${theme}">${this.formatMixedText(this.bbsData.title || "BBS")}</div>
+        <div class="bbs-header ${theme}">${this.escapeHtml(this.bbsData.title || "BBS")}</div>
         <div class="bbs-messages">
           ${
             messages.length > 0
@@ -1472,24 +1462,6 @@ class NostalgicBBS extends HTMLElement {
     div.textContent = text;
     // 全角スペースを半角スペース2つに変換
     return div.innerHTML.replace(/　/g, "  ");
-  }
-
-  formatMixedText(text) {
-    const escapedText = this.escapeHtml(text);
-    // 日本語文字（ひらがな、カタカナ、漢字）を検出
-    const japanesePattern = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/;
-    // 英数字を検出
-    const englishPattern = /[a-zA-Z0-9]/;
-
-    return escapedText.replace(/(.)/g, (char) => {
-      if (japanesePattern.test(char)) {
-        return `<span class="jp-text">${char}</span>`;
-      } else if (englishPattern.test(char)) {
-        return `<span class="en-text">${char}</span>`;
-      } else {
-        return char;
-      }
-    });
   }
 }
 
