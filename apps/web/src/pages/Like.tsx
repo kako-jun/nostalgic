@@ -32,6 +32,10 @@ export default function LikePage() {
   const [getResponse, setGetResponse] = useState("");
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
+  const [batchGetResponse, setBatchGetResponse] = useState("");
+
+  // batchGet state
+  const [batchIds, setBatchIds] = useState("");
 
   const [responseType, setResponseType] = useState<"json" | "text" | "svg">("json");
 
@@ -105,6 +109,30 @@ export default function LikePage() {
     await callApi(apiUrl, setUpdateSettingsResponse);
   };
 
+  const handleBatchGet = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!batchIds.trim()) return;
+
+    const ids = batchIds
+      .split(/[,\n]/)
+      .map((id) => id.trim())
+      .filter((id) => id);
+
+    if (ids.length === 0) return;
+
+    try {
+      const response = await fetch("/api/like?action=batchGet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids }),
+      });
+      const data = await response.json();
+      setBatchGetResponse(JSON.stringify(data, null, 2));
+    } catch (error) {
+      setBatchGetResponse(JSON.stringify({ error: String(error) }, null, 2));
+    }
+  };
+
   const handlers = {
     handleCreate,
     handleDisplay,
@@ -159,6 +187,92 @@ export default function LikePage() {
         responseTypes={responseTypes}
         serviceName="いいね"
       />
+
+      <div className="nostalgic-section">
+        <p>
+          <span className="nostalgic-section-title" style={{ color: "#ff4500" }}>
+            <b>◆一括取得（batchGet）◆</b>
+          </span>
+        </p>
+        <p
+          style={{
+            backgroundColor: "#fff3cd",
+            border: "1px solid #ffc107",
+            padding: "8px 12px",
+            borderRadius: "4px",
+            marginBottom: "10px",
+          }}
+        >
+          ⚠️ <b>POSTメソッド必須</b> -
+          これは唯一POSTを使用するアクションです。一覧ページで大量のいいね数を1回のリクエストで取得できます。
+        </p>
+        <form onSubmit={handleBatchGet}>
+          <div style={{ marginBottom: "10px" }}>
+            <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
+              公開IDリスト（カンマまたは改行で区切り）:
+            </label>
+            <textarea
+              value={batchIds}
+              onChange={(e) => setBatchIds(e.target.value)}
+              placeholder={"id-1, id-2, id-3\nまたは\nid-1\nid-2\nid-3"}
+              style={{
+                width: "100%",
+                height: "80px",
+                padding: "8px",
+                fontFamily: "monospace",
+                fontSize: "14px",
+                border: "1px solid #666",
+                resize: "vertical",
+              }}
+            />
+          </div>
+          <div style={{ marginBottom: "10px" }}>
+            <button
+              type="submit"
+              style={{
+                padding: "8px 16px",
+                backgroundColor: "#ff4500",
+                color: "#fff",
+                border: "none",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              一括取得（POST）
+            </button>
+          </div>
+        </form>
+        <div style={{ marginBottom: "10px" }}>
+          <p style={{ fontSize: "12px", color: "#666", marginBottom: "5px" }}>API URL:</p>
+          <code
+            style={{
+              display: "block",
+              backgroundColor: "#f0f0f0",
+              padding: "8px",
+              fontSize: "12px",
+              wordBreak: "break-all",
+            }}
+          >
+            POST /api/like?action=batchGet
+            <br />
+            Body: {"{"} &quot;ids&quot;: [&quot;id-1&quot;, &quot;id-2&quot;, ...] {"}"}
+          </code>
+        </div>
+        {batchGetResponse && (
+          <pre
+            style={{
+              backgroundColor: "#1e1e1e",
+              color: "#d4d4d4",
+              padding: "10px",
+              overflow: "auto",
+              fontSize: "12px",
+              maxHeight: "200px",
+            }}
+          >
+            {batchGetResponse}
+          </pre>
+        )}
+      </div>
 
       <div className="nostalgic-section">
         <p>

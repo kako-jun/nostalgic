@@ -366,6 +366,73 @@ app.get("/", async (c) => {
   return c.json({ error: "Invalid action. Use: create, toggle, get, update, delete" }, 400);
 });
 
+// === POST Routes (for batch operations) ===
+
+app.post("/", async (c) => {
+  const action = c.req.query("action");
+  const db = c.env.DB;
+
+  // BATCH GET - 複数IDのlike数を一括取得
+  if (action === "batchGet") {
+    let ids: string[];
+    try {
+      const body = await c.req.json<{ ids: string[] }>();
+      ids = body.ids;
+    } catch {
+      return c.json({ error: "Invalid JSON body. Expected: { ids: string[] }" }, 400);
+    }
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return c.json({ error: "ids array is required and must not be empty" }, 400);
+    }
+
+    // 上限チェック（パフォーマンス保護）
+    const MAX_BATCH_SIZE = 1000;
+    if (ids.length > MAX_BATCH_SIZE) {
+      return c.json({ error: `Maximum ${MAX_BATCH_SIZE} ids per request` }, 400);
+    }
+
+    // IDバリデーション（英数字とハイフンのみ許可）
+    const validIdPattern = /^[a-zA-Z0-9-]+$/;
+    for (const id of ids) {
+      if (!validIdPattern.test(id)) {
+        return c.json({ error: `Invalid id format: ${id}` }, 400);
+      }
+    }
+
+    // service_idのリストを構築
+    const serviceIds = ids.map((id) => `like:${id}:total`);
+
+    // D1はIN句のプレースホルダを動的に構築する必要がある
+    const placeholders = serviceIds.map(() => "?").join(",");
+    const query = `SELECT service_id, total FROM likes WHERE service_id IN (${placeholders})`;
+
+    const result = await db
+      .prepare(query)
+      .bind(...serviceIds)
+      .all<{ service_id: string; total: number }>();
+
+    // 結果をIDでマップ
+    const data: Record<string, { total: number }> = {};
+    for (const row of result.results || []) {
+      // "like:xxx:total" から "xxx" を抽出
+      const id = row.service_id.replace(/^like:/, "").replace(/:total$/, "");
+      data[id] = { total: row.total };
+    }
+
+    // リクエストされたが存在しないIDは0として含める
+    for (const id of ids) {
+      if (!data[id]) {
+        data[id] = { total: 0 };
+      }
+    }
+
+    return c.json({ success: true, data });
+  }
+
+  return c.json({ error: "Invalid action for POST. Use: batchGet" }, 400);
+});
+
 // === SVG Generator ===
 // Shields.io風のバッジSVG生成（format=image用）
 function generateLikeSVG(count: string): string {

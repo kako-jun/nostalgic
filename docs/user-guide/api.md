@@ -6,21 +6,23 @@ Nostalgic is a comprehensive platform that recreates nostalgic web tools (Counte
 
 ## API Architecture
 
-All services use the same URL pattern with action parameters using **GET requests only**:
+All services use the same URL pattern with action parameters using **GET requests** (with one exception):
 
 ```
 /api/{service}?action={action}&url={your-site}&token={your-token}&...params
 ```
 
-### 🌐 Why GET-only? 1990s Web Culture Revival
+### 🌐 Why GET-based? 1990s Web Culture Revival
 
 Just like the original 1990s web tools, everything can be operated directly from the browser URL bar:
 
 1. **Click-to-create**: Share a link and instantly create services
 2. **URL-based operations**: All actions are simple GET links
-3. **Nostalgic simplicity**: No complex forms or POST requests needed
+3. **Nostalgic simplicity**: No complex forms needed
 4. **Easy sharing**: Every operation is a shareable URL
 5. **BBS culture**: Even message posting uses GET parameters, just like the old days
+
+> **Note**: The only exception is `Like.batchGet` which uses POST to handle large ID arrays (up to 1000) that exceed URL length limits.
 
 ## Services
 

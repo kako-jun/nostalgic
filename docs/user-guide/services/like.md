@@ -174,6 +174,64 @@ GET /api/like?action=delete&url={URL}&token={TOKEN}
 }
 ```
 
+### batchGet
+
+> **⚠️ POST Method Required** - This is the only action that uses POST instead of GET.
+
+Get like counts for multiple IDs in a single request. Useful for displaying like counts on list pages without making individual API calls for each item.
+
+```
+POST /api/like?action=batchGet
+Content-Type: application/json
+
+{
+  "ids": ["id1", "id2", "id3", ...]
+}
+```
+
+**Request Body:**
+
+- `ids` (required): Array of public like button IDs (max 1000)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id1": { "total": 5 },
+    "id2": { "total": 12 },
+    "id3": { "total": 0 }
+  }
+}
+```
+
+**Notes:**
+
+- IDs that don't exist return `{ "total": 0 }`
+- Maximum 1000 IDs per request
+- Does not return `liked` state (use individual `get` for that)
+
+**Usage Example:**
+
+```javascript
+// Fetch like counts for 100 articles in one request
+const response = await fetch("/api/like?action=batchGet", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    ids: ["article-a1b2c3d4", "article-e5f6g7h8", ...]
+  })
+});
+const { data } = await response.json();
+
+// Display in list
+articles.forEach(article => {
+  const likes = data[article.likeId]?.total || 0;
+  console.log(`${article.title}: ${likes} likes`);
+});
+```
+
 ## Web Component Integration
 
 ```html
