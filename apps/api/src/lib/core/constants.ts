@@ -36,7 +36,7 @@ export const RANKING = {
 
 export const BBS = {
   AUTHOR: { MAX_LENGTH: 20, DEFAULT_VALUE: "Anonymous" },
-  MESSAGE: { MIN_LENGTH: 1, MAX_LENGTH: 200 },
+  MESSAGE: { MIN_LENGTH: 1, MAX_LENGTH: 420 },
   MAX_MESSAGES: { MIN: 1, MAX: 1000 },
 } as const;
 

@@ -14,7 +14,7 @@ const BBS_I18N = {
     noMessages: "まだメッセージがありません",
     postComment: "コメントを投稿",
     namePlaceholder: "名前（省略可、20文字まで）",
-    messagePlaceholder: "メッセージを入力（200文字まで）",
+    messagePlaceholder: "メッセージを入力（420文字まで）",
     post: "投稿",
     update: "更新",
     posting: "投稿中...",
@@ -37,7 +37,7 @@ const BBS_I18N = {
       "BBS not found": "掲示板が見つかりません",
       "BBS already exists for this URL": "この URL には既に掲示板が存在します",
       "id and message are required": "ID とメッセージが必要です",
-      "Message must be 200 characters or less": "メッセージは200文字以内で入力してください",
+      "Message must be 420 characters or less": "メッセージは420文字以内で入力してください",
       "Message not found": "メッセージが見つかりません",
       "You can only edit your own messages": "自分のメッセージのみ編集できます",
       "You can only delete your own messages": "自分のメッセージのみ削除できます",
@@ -56,7 +56,7 @@ const BBS_I18N = {
     noMessages: "No messages yet",
     postComment: "Post a comment",
     namePlaceholder: "Name (optional, max 20 chars)",
-    messagePlaceholder: "Enter message (max 200 chars)",
+    messagePlaceholder: "Enter message (max 420 chars)",
     post: "Post",
     update: "Update",
     posting: "Posting...",
@@ -79,7 +79,7 @@ const BBS_I18N = {
       "BBS not found": "BBS not found",
       "BBS already exists for this URL": "BBS already exists for this URL",
       "id and message are required": "ID and message are required",
-      "Message must be 200 characters or less": "Message must be 200 characters or less",
+      "Message must be 420 characters or less": "Message must be 420 characters or less",
       "Message not found": "Message not found",
       "You can only edit your own messages": "You can only edit your own messages",
       "You can only delete your own messages": "You can only delete your own messages",
@@ -998,7 +998,7 @@ class NostalgicBBS extends HTMLElement {
                 ${this.generateSelectDropdowns()}
               </div>
               <div class="form-row">
-                <textarea id="message-content" placeholder="${this.t.messagePlaceholder}" maxlength="200" rows="5" spellcheck="false"></textarea>
+                <textarea id="message-content" placeholder="${this.t.messagePlaceholder}" maxlength="420" rows="5" spellcheck="false"></textarea>
               </div>
               <div class="form-row button-right">
                 <button id="post-button" class="${theme}" onclick="this.getRootNode().host.postMessage()">${this.t.post}</button>
