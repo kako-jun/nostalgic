@@ -3,7 +3,7 @@ import NostalgicLayout from "../components/NostalgicLayout";
 import { PageFooter } from "../components/common";
 
 export default function GitHubPage() {
-  const [counterId] = useState("nostalgic-demo-counter");
+  const [counterId] = useState("nostalgic-b89803bb");
   const [likeId] = useState("nostalgic-b89803bb");
   const [bbsId] = useState("nostalgic-1cc54837");
 
