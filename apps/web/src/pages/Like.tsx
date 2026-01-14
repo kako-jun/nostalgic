@@ -190,7 +190,7 @@ export default function LikePage() {
 
       <div className="nostalgic-section">
         <p>
-          <span className="nostalgic-section-title" style={{ color: "#ff4500" }}>
+          <span className="nostalgic-section-title">
             <b>◆一括取得（batchGet）◆</b>
           </span>
         </p>
@@ -231,7 +231,7 @@ export default function LikePage() {
               type="submit"
               style={{
                 padding: "8px 16px",
-                backgroundColor: "#ff4500",
+                backgroundColor: "#2196F3",
                 color: "#fff",
                 border: "none",
                 cursor: "pointer",
