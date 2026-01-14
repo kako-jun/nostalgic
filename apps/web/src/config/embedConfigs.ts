@@ -167,6 +167,57 @@ declare module 'react' {
 }`,
 };
 
+export const yokosoEmbedConfig = {
+  scriptUrl: "https://nostalgic.llll-ll.com/components/yokoso.js",
+  componentName: "nostalgic-yokoso",
+  attributes: [{ name: "theme", defaultValue: "dark", description: "テーマ" }],
+  demo: {
+    themes: [
+      { name: "Light", value: "light" },
+      { name: "Dark", value: "dark" },
+      { name: "Retro", value: "retro" },
+      { name: "Kawaii", value: "kawaii" },
+      { name: "Mom", value: "mom" },
+      { name: "Final", value: "final" },
+    ],
+    hint: "※メッセージ更新フォームからテストしてください！",
+  },
+  sections: [
+    {
+      title: "theme デザインテーマ",
+      options: [
+        { value: "light", description: "ライト（明るい背景）" },
+        { value: "dark", description: "ダーク（暗い背景）" },
+        { value: "retro", description: "レトロ（古いコンピュータ画面風）" },
+        { value: "kawaii", description: "かわいい（ファンシー系）" },
+        { value: "mom", description: "Mother味（緑チェック模様）" },
+        { value: "final", description: "FF味（青系）" },
+      ],
+    },
+    {
+      title: "mode 表示モード",
+      options: [
+        { value: "badge", description: "バッジ（短文20文字、招き猫アイコン付き）" },
+        { value: "card", description: "カード（長文140文字、アバター・名前付き）" },
+      ],
+    },
+  ],
+  typescriptType: `// types.d.ts
+import 'react'
+
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements {
+      'nostalgic-yokoso': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+        id?: string;
+        theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
+        lang?: 'ja' | 'en';
+      };
+    }
+  }
+}`,
+};
+
 export const bbsEmbedConfig = {
   scriptUrl: "https://nostalgic.llll-ll.com/components/bbs.js",
   componentName: "nostalgic-bbs",

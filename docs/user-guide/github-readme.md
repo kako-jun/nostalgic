@@ -10,11 +10,12 @@ GitHub の README では JavaScript が実行されないため、通常の Web 
 
 ### 対応サービス
 
-| サービス | 形式         | 動作                     |
-| -------- | ------------ | ------------------------ |
-| Counter  | バッジ       | 表示時にカウントアップ   |
-| Like     | ボタン風画像 | クリックでいいねページへ |
-| BBS      | 投稿一覧画像 | クリックで掲示板ページへ |
+| サービス | 形式          | 動作                                     |
+| -------- | ------------- | ---------------------------------------- |
+| Counter  | バッジ        | 表示時にカウントアップ                   |
+| Like     | ボタン風画像  | クリックでいいねページへ                 |
+| BBS      | 投稿一覧画像  | クリックで掲示板ページへ                 |
+| Yokoso   | バッジ/カード | 招き猫がメッセージを喋る（動的更新可能） |
 
 ※ Ranking は README 埋め込みには対応していません
 
@@ -137,6 +138,66 @@ Shields.io 風のバッジデザインで表示されます。
 
 ---
 
+## Yokoso（ようこそ）
+
+招き猫（Maneki-neko / Lucky Cat）がメッセージを喋ります。**API経由でメッセージを更新でき、READMEを編集せずに内容を変更できます。** プロジェクトの縁起物・マスコットとしてもどうぞ。
+
+### バッジモード（短文・招き猫アイコン付き）
+
+```markdown
+![Yokoso](https://api.nostalgic.llll-ll.com/yokoso?action=get&id=YOUR_ID&format=image)
+```
+
+### カードモード（長文・アバター付き）
+
+カードモードは作成時に `mode=card` を指定します。表示は同じURLです。
+アバター未設定時は招き猫アイコン、名前は「Maneki」がデフォルトです。
+
+```markdown
+![Yokoso](https://api.nostalgic.llll-ll.com/yokoso?action=get&id=YOUR_ID&format=image)
+```
+
+### パラメータ
+
+| パラメータ | 必須 | 説明           |
+| ---------- | ---- | -------------- |
+| `id`       | ○    | Yokosoの公開ID |
+| `format`   | ○    | `image` を指定 |
+
+### 表示例
+
+```
+バッジモード:
+┌──────────┬──────────────────────────────┐
+│  Yokoso  │ 🐱 ようこそ！                │
+└──────────┴──────────────────────────────┘
+
+カードモード:
+┌──────────┬─────────────────────────────────┐
+│          │ 🐱 Maneki                        │
+│  Yokoso  │ v2.0開発中です！新機能として    │
+│          │ Yokoso機能を追加予定。          │
+│          │                   2025/01/14    │
+└──────────┴─────────────────────────────────┘
+```
+
+### メッセージの更新
+
+```bash
+# APIを叩くだけでREADMEの表示が変わる
+curl "https://api.nostalgic.llll-ll.com/yokoso?action=update&url=YOUR_URL&token=YOUR_TOKEN&message=新しいメッセージ"
+```
+
+### コピペ用テンプレート
+
+```markdown
+<!-- Yokoso（招き猫がメッセージを喋る・動的に更新可能） -->
+
+![Yokoso](https://api.nostalgic.llll-ll.com/yokoso?action=get&id=YOUR_ID&format=image)
+```
+
+---
+
 ## デザインについて
 
 GitHub README 用の画像は [Shields.io](https://shields.io/) のデザインを参考にしています。
@@ -178,4 +239,5 @@ Nostalgic Like は「気軽にいいね」を押してもらうための仕組�
 - [Counter サービス詳細](./services/counter.md)
 - [Like サービス詳細](./services/like.md)
 - [BBS サービス詳細](./services/bbs.md)
+- [Yokoso サービス詳細](./services/yokoso.md)
 - [API リファレンス](./api.md)

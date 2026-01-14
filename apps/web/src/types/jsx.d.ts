@@ -37,5 +37,11 @@ declare namespace JSX {
       lang?: "ja" | "en";
       "api-base"?: string;
     };
+    "nostalgic-yokoso": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+      id?: string;
+      theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
+      lang?: "ja" | "en";
+      "api-base"?: string;
+    };
   }
 }

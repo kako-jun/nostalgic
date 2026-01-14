@@ -5,7 +5,12 @@
  * 送信失敗してもメイン処理には影響しない（非同期・エラー握りつぶし）
  */
 
-export type WebHookEvent = "counter.increment" | "like.toggle" | "ranking.submit" | "bbs.post";
+export type WebHookEvent =
+  | "counter.increment"
+  | "like.toggle"
+  | "ranking.submit"
+  | "bbs.post"
+  | "yokoso.update";
 
 export interface WebHookPayload {
   content: string; // Discord用
@@ -70,5 +75,9 @@ export const WebHookMessages = {
   bbs: {
     post: (author: string, message: string) =>
       `📝 新しい投稿 by ${author}: ${message.slice(0, 50)}${message.length > 50 ? "..." : ""}`,
+  },
+  yokoso: {
+    update: (message: string) =>
+      `🐱 ようこそ更新: ${message.slice(0, 50)}${message.length > 50 ? "..." : ""}`,
   },
 };

@@ -5,6 +5,7 @@ import visitRoute from "./routes/visit";
 import likeRoute from "./routes/like";
 import rankingRoute from "./routes/ranking";
 import bbsRoute from "./routes/bbs";
+import yokosoRoute from "./routes/yokoso";
 
 type Bindings = {
   DB: D1Database;
@@ -23,5 +24,6 @@ app.route("/visit", visitRoute);
 app.route("/like", likeRoute);
 app.route("/ranking", rankingRoute);
 app.route("/bbs", bbsRoute);
+app.route("/yokoso", yokosoRoute);
 
 export default app;

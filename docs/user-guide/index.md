@@ -58,19 +58,29 @@ APIを直接触らずに、すべての機能を試せます。
 - 投稿者/管理者による編集・削除
 - IP+UserAgentによる投稿者認証
 
+### [7. Yokoso（ようこそ）](./services/yokoso.md)
+
+招き猫が喋るウェルカムメッセージ。README編集なしでメッセージを変更可能。
+
+- バッジモード（短文20文字、招き猫アイコン付き）
+- カードモード（長文140文字、アバター・名前付き）
+- デフォルトアバターは招き猫（Lucky Cat）
+- API経由でメッセージを更新
+
 ---
 
 ## カスタマイズ
 
-### [7. GitHub README での使い方](./github-readme.md)
+### [8. GitHub README での使い方](./github-readme.md)
 
 GitHub の README.md にサービスを埋め込む方法。
 
 - Counter バッジ（訪問者数）
 - Like ボタン（いいね）
 - BBS 一覧（最新投稿）
+- Yokoso 招き猫メッセージ（動的更新可能）
 
-### [8. テーマとスタイル](./customization.md)
+### [9. テーマとスタイル](./customization.md)
 
 Web Componentsのカスタマイズ方法。
 
@@ -82,7 +92,7 @@ Web Componentsのカスタマイズ方法。
 
 ## APIリファレンス
 
-### [9. API仕様](./api.md)
+### [10. API仕様](./api.md)
 
 GET専用の統一アクション型API。URLバーから直接操作も可能。
 
@@ -90,7 +100,7 @@ GET専用の統一アクション型API。URLバーから直接操作も可能�
 - 認証とセキュリティ
 - Webhook連携
 
-### [10. WebHook連携](./webhook.md)
+### [11. WebHook連携](./webhook.md)
 
 Discord/Slack等への通知連携。
 

@@ -205,6 +205,37 @@ export default function NostalgicSidebar({
         </>
         <span>●</span>
         <Link
+          to="/yokoso"
+          className={
+            currentService === "yokoso" ? "nostalgic-old-link-visited" : "nostalgic-old-link"
+          }
+          onClick={() => onClose?.()}
+        >
+          Nostalgic Yokoso
+        </Link>
+        <br />
+        <>
+          <span style={{ marginLeft: "1em" }}>├</span>
+          {currentService === "yokoso" && location.pathname === "/yokoso" ? (
+            <span className="nostalgic-nav-active">機能一覧</span>
+          ) : (
+            <Link to="/yokoso" className="nostalgic-old-link" onClick={() => onClose?.()}>
+              機能一覧
+            </Link>
+          )}
+          <br />
+          <span style={{ marginLeft: "1em" }}>└</span>
+          {currentService === "yokoso" && location.pathname === "/yokoso/usage" ? (
+            <span className="nostalgic-nav-active">使い方</span>
+          ) : (
+            <Link to="/yokoso/usage" className="nostalgic-old-link" onClick={() => onClose?.()}>
+              使い方
+            </Link>
+          )}
+          <br />
+        </>
+        <span>●</span>
+        <Link
           to="/github"
           className={
             currentService === "github" ? "nostalgic-old-link-visited" : "nostalgic-old-link"

@@ -5,10 +5,12 @@ export default function GitHubPage() {
   const [counterId] = useState("nostalgic-b89803bb");
   const [likeId] = useState("nostalgic-b89803bb");
   const [bbsId] = useState("nostalgic-1cc54837");
+  const [yokosoId] = useState("nostalgic-demo-yokoso");
 
   const counterUrl = `https://api.nostalgic.llll-ll.com/visit?action=increment&id=${counterId}&format=image&theme=github`;
   const likeUrl = `https://api.nostalgic.llll-ll.com/like?action=get&id=${likeId}&format=image`;
   const bbsUrl = `https://api.nostalgic.llll-ll.com/bbs?action=get&id=${bbsId}&format=image&limit=3`;
+  const yokosoUrl = `https://api.nostalgic.llll-ll.com/yokoso?action=get&id=${yokosoId}&format=image`;
 
   const likeLinkUrl = `https://nostalgic.llll-ll.com/like?id=${likeId}`;
   const bbsLinkUrl = `https://nostalgic.llll-ll.com/bbs?id=${bbsId}`;
@@ -58,6 +60,10 @@ export default function GitHubPage() {
 
           <p style={{ marginBottom: "16px" }}>
             <img src={counterUrl} alt="visitors" style={{ verticalAlign: "middle" }} />
+          </p>
+
+          <p style={{ marginBottom: "16px" }}>
+            <img src={yokosoUrl} alt="Yokoso" style={{ verticalAlign: "middle" }} />
           </p>
 
           <p style={{ marginBottom: "16px" }}>This is my awesome project description.</p>
@@ -171,6 +177,24 @@ export default function GitHubPage() {
           <span style={{ color: "#008000" }}>公開ID</span>)
         </pre>
 
+        <p style={{ marginTop: "15px", marginBottom: "5px" }}>
+          <b>Yokoso（招き猫メッセージ）:</b>
+        </p>
+        <pre
+          style={{
+            backgroundColor: "#f6f8fa",
+            padding: "10px",
+            overflow: "auto",
+            fontSize: "13px",
+            border: "1px solid #d0d7de",
+            borderRadius: "6px",
+          }}
+        >
+          ![Yokoso](https://api.nostalgic.llll-ll.com/yokoso?action=get&id=
+          <span style={{ color: "#008000" }}>公開ID</span>
+          &format=image)
+        </pre>
+
         <p style={{ marginTop: "15px" }}>
           ※ <span style={{ color: "#008000" }}>公開ID</span>{" "}
           の部分を、各サービスで作成したIDに置き換えてください。
@@ -196,6 +220,13 @@ export default function GitHubPage() {
           </li>
           <li>
             <b>BBS</b>: 画像クリックで掲示板ページに移動し、そこで書き込めます
+          </li>
+          <li>
+            <b>Yokoso</b>: 招き猫がメッセージを喋ります（API経由で更新可能）
+            <br />
+            <span style={{ color: "#666", marginLeft: "1em" }}>
+              ※プロジェクトの縁起物・マスコットとしてもどうぞ
+            </span>
           </li>
           <li>GitHubは画像をキャッシュするため、更新が反映されるまで時間がかかることがあります</li>
         </ul>
