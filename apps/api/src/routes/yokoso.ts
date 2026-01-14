@@ -146,7 +146,8 @@ function generateCardSVG(
   message: string,
   name: string | null,
   avatar: string | null,
-  updatedAt: string
+  updatedAt: string,
+  lang: string = "ja"
 ): string {
   const labelWidth = 50;
   const contentWidth = 280;
@@ -174,9 +175,12 @@ function generateCardSVG(
   const textColor = "#333";
   const dateColor = "#999";
 
-  // Format date with hyphens (YYYY-MM-DD)
+  // Format date based on language
   const date = new Date(updatedAt);
-  const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const dateStr = lang === "en" ? `${month}-${day}-${year}` : `${year}-${month}-${day}`;
 
   // アバターとネームはデフォルト値を持つ
   const displayAvatar = avatar || getDefaultAvatarSVG();
@@ -354,9 +358,16 @@ app.get("/", async (c) => {
 
     // Image format
     if (format === "image") {
+      const lang = c.req.query("lang") || "ja";
       const svg =
         metadata.mode === "card"
-          ? generateCardSVG(metadata.message, metadata.name, metadata.avatar, metadata.updatedAt)
+          ? generateCardSVG(
+              metadata.message,
+              metadata.name,
+              metadata.avatar,
+              metadata.updatedAt,
+              lang
+            )
           : generateBadgeSVG(truncateText(metadata.message, MAX_MESSAGE_BADGE));
       return c.body(svg, 200, {
         "Content-Type": "image/svg+xml",
