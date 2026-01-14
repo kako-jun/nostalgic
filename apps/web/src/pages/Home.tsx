@@ -212,7 +212,7 @@ export default function HomePage() {
                         backgroundColor: "#f0f0f0",
                       }}
                     >
-                      🚪 Nostalgic Yokoso
+                      🐱 Nostalgic Yokoso
                     </a>
                   </div>
                 </div>
