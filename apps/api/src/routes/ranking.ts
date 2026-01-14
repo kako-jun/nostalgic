@@ -27,6 +27,41 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 // === Helper Functions ===
 
+// 匿名プレイヤー名を生成（IP + User-Agent + Accept-Languageからハッシュ）
+async function generatePlayerName(
+  ip: string,
+  userAgent: string,
+  acceptLanguage: string
+): Promise<string> {
+  const adjectives = [
+    "Swift",
+    "Clever",
+    "Brave",
+    "Quick",
+    "Smart",
+    "Fast",
+    "Sharp",
+    "Wise",
+    "Cool",
+    "Super",
+  ];
+  const animals = ["Fox", "Eagle", "Tiger", "Wolf", "Lion", "Hawk", "Bear", "Cat", "Dog", "Owl"];
+
+  const userString = `${ip}-${userAgent}-${acceptLanguage}`;
+  let hash = 0;
+  for (let i = 0; i < userString.length; i++) {
+    const char = userString.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash;
+  }
+
+  const adjIndex = Math.abs(hash) % adjectives.length;
+  const animalIndex = Math.abs(hash >> 8) % animals.length;
+  const number = (Math.abs(hash >> 16) % 999) + 1;
+
+  return `${adjectives[adjIndex]}${animals[animalIndex]}${String(number).padStart(3, "0")}`;
+}
+
 async function getRankingByUrl(db: D1Database, url: string) {
   const mapping = await db
     .prepare("SELECT service_id FROM url_mappings WHERE type = ? AND url = ?")
@@ -129,12 +164,12 @@ app.get("/", async (c) => {
   // SUBMIT
   if (action === "submit") {
     const id = c.req.query("id");
-    const name = c.req.query("name");
+    let name = c.req.query("name");
     const scoreStr = c.req.query("score");
     const displayScore = c.req.query("displayScore");
 
-    if (!id || !name || !scoreStr) {
-      return c.json({ error: "id, name, and score are required" }, 400);
+    if (!id || !scoreStr) {
+      return c.json({ error: "id and score are required" }, 400);
     }
 
     const score = Number(scoreStr);
@@ -151,6 +186,12 @@ app.get("/", async (c) => {
     const VOTE_INTERVAL_SECONDS = 5;
     const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
     const userAgent = c.req.header("User-Agent") || "";
+    const acceptLanguage = c.req.header("Accept-Language") || "";
+
+    // 名前が未指定の場合は自動生成
+    if (!name) {
+      name = await generatePlayerName(ip, userAgent, acceptLanguage);
+    }
     const userHash = await generateUserHash(ip, userAgent);
 
     // 同じユーザーかどうかをチェックするため、daily_actionsテーブルを使用
