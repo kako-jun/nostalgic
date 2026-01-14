@@ -1414,6 +1414,21 @@ export default function HomePage() {
               </div>
             </div>
 
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆GitHubのREADMEに埋め込む◆</b>
+                </span>
+              </p>
+              <p style={{ textAlign: "center" }}>
+                各サービスはGitHubのREADME.mdにも埋め込めます！
+                <br />
+                <a href="/github" className="nostalgic-old-link" style={{ fontSize: "16px" }}>
+                  → GitHubのREADME埋め込み方法はこちら
+                </a>
+              </p>
+            </div>
+
             <FooterDivider />
 
             <p

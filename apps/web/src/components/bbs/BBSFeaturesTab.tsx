@@ -65,6 +65,21 @@ export default function BBSFeaturesTab() {
           <span>●</span>必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
         </p>
       </div>
+
+      <div className="nostalgic-section">
+        <p>
+          <span className="nostalgic-section-title">
+            <b>◆GitHubのREADMEに埋め込む◆</b>
+          </span>
+        </p>
+        <p>
+          GitHubのREADME.mdにも掲示板を埋め込めます！
+          <br />
+          <a href="/github" className="nostalgic-old-link">
+            → 埋め込み方法はこちら
+          </a>
+        </p>
+      </div>
     </>
   );
 }
