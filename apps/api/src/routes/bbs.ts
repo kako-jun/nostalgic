@@ -759,10 +759,10 @@ function generateBBSSVG(messages: BBSMessage[], totalMessages: number): string {
   const messageLines = messages
     .map((msg, index) => {
       const msgNum = totalMessages - index; // 最新=totalMessages, 2番目=totalMessages-1, ...
-      // 全角半角考慮: #9999(6) + author(10) + ": "(2) + content(30) = 48幅
+      // 全角半角考慮: #9999(6) + author(10) + ": "(2) + content(36) = 54幅
       const author = truncateByWidth(msg.author || "Anonymous", 10);
-      const content = truncateByWidth(msg.message.replace(/\n/g, " "), 30);
-      const y = headerHeight + padding + (index + 1) * lineHeight - 4;
+      const content = truncateByWidth(msg.message.replace(/\n/g, " "), 36);
+      const y = padding + (index + 1) * lineHeight - 4;
       // #番号=グレー、投稿者=太字、内容=通常
       return `<text x="${labelWidth + 8}" y="${y}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12"><tspan fill="#999">#${msgNum}</tspan> <tspan font-weight="bold" fill="${textColor}">${escapeXml(author)}</tspan><tspan fill="${textColor}">: ${escapeXml(content)}</tspan></text>`;
     })
