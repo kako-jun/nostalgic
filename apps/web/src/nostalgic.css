@@ -65,6 +65,12 @@ body {
   font-weight: bold !important;
   text-align: center !important;
   border-bottom: 3px double #808080 !important;
+  min-height: 67px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 
 /* セクション */
