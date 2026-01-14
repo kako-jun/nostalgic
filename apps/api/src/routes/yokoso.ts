@@ -153,6 +153,7 @@ function generateCardSVG(
   const totalWidth = labelWidth + contentWidth;
   const lineHeight = 16;
   const padding = 8;
+  const avatarSize = 28; // アバターサイズを大きく
 
   // Split message into lines (approximately 28 chars per line for Japanese)
   const maxCharsPerLine = 28;
@@ -163,39 +164,48 @@ function generateCardSVG(
     remaining = remaining.slice(maxCharsPerLine);
   }
 
-  const headerHeight = 20; // 常に表示（デフォルト名があるため）
+  const headerHeight = avatarSize + 4; // アバターに合わせたヘッダー高さ
   const messageHeight = lines.length * lineHeight;
-  const dateHeight = 16;
-  const contentHeight = padding + headerHeight + messageHeight + dateHeight + padding;
-  const totalHeight = Math.max(contentHeight, 40);
+  const contentHeight = padding + headerHeight + messageHeight + padding;
+  const totalHeight = Math.max(contentHeight, 50);
 
   const labelBg = "#555";
   const contentBg = "#fff";
   const textColor = "#333";
   const dateColor = "#999";
 
-  // Format date
+  // Format date with hyphens (YYYY-MM-DD)
   const date = new Date(updatedAt);
-  const dateStr = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}`;
+  const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
   // アバターとネームはデフォルト値を持つ
   const displayAvatar = avatar || getDefaultAvatarSVG();
   const displayName = name || "Maneki";
 
-  const avatarSection = `<image href="${escapeXml(displayAvatar)}" x="${labelWidth + 8}" y="${padding}" width="16" height="16" clip-path="url(#avatarClip)"/>`;
-  const nameSection = `<text x="${labelWidth + 30}" y="${padding + 13}" fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12" font-weight="bold">${escapeXml(displayName)}</text>`;
+  // アバター: 左上に配置
+  const avatarX = labelWidth + padding;
+  const avatarY = padding;
+  const avatarSection = `<image href="${escapeXml(displayAvatar)}" x="${avatarX}" y="${avatarY}" width="${avatarSize}" height="${avatarSize}" clip-path="url(#avatarClip)"/>`;
+
+  // 名前: アバターの右側（縦中央揃え）
+  const nameX = avatarX + avatarSize + 6;
+  const nameY = avatarY + avatarSize / 2 + 4;
+  const nameSection = `<text x="${nameX}" y="${nameY}" fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12" font-weight="bold">${escapeXml(displayName)}</text>`;
+
+  // 日付: 名前と同じ行、右寄せ
+  const dateSection = `<text x="${totalWidth - padding}" y="${nameY}" fill="${dateColor}" text-anchor="end" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10">${dateStr}</text>`;
 
   const messageLines = lines
     .map(
       (line, i) =>
-        `<text x="${labelWidth + 8}" y="${padding + headerHeight + (i + 1) * lineHeight}" fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12">${escapeXml(line)}</text>`
+        `<text x="${labelWidth + padding}" y="${padding + headerHeight + (i + 1) * lineHeight}" fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12">${escapeXml(line)}</text>`
     )
     .join("\n    ");
 
   return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${totalWidth}" height="${totalHeight}">
   <defs>
     <clipPath id="avatarClip">
-      <circle cx="${labelWidth + 16}" cy="${padding + 8}" r="8"/>
+      <circle cx="${avatarX + avatarSize / 2}" cy="${avatarY + avatarSize / 2}" r="${avatarSize / 2}"/>
     </clipPath>
   </defs>
   <rect width="${labelWidth}" height="${totalHeight}" fill="${labelBg}"/>
@@ -203,8 +213,8 @@ function generateCardSVG(
   <text x="${labelWidth / 2}" y="${totalHeight / 2 + 4}" fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">Yokoso</text>
   ${avatarSection}
   ${nameSection}
+  ${dateSection}
   ${messageLines}
-  <text x="${totalWidth - 10}" y="${totalHeight - 8}" fill="${dateColor}" text-anchor="end" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10">${dateStr}</text>
 </svg>`;
 }
 
