@@ -188,7 +188,6 @@ class NostalgicYokoso extends HTMLElement {
     }
 
     const message = this.yokosoData.message || "";
-    const mode = this.yokosoData.mode || "badge";
     const name = this.yokosoData.name || "Lucky Cat";
     const avatar = this.yokosoData.avatar;
     const updatedAt = this.yokosoData.updatedAt;
@@ -201,7 +200,6 @@ class NostalgicYokoso extends HTMLElement {
         borderColor: "#000000",
         shadowColor: "#000000",
         labelBg: "#555",
-        valueBg: "#e91e63",
       },
       dark: {
         bgColor: "#2a2a2a",
@@ -209,7 +207,6 @@ class NostalgicYokoso extends HTMLElement {
         borderColor: "#ffffff",
         shadowColor: "#ffffff",
         labelBg: "#555",
-        valueBg: "#e91e63",
       },
       retro: {
         bgColor: "#0d1117",
@@ -217,7 +214,6 @@ class NostalgicYokoso extends HTMLElement {
         borderColor: "#00ff41",
         shadowColor: "#00ff41",
         labelBg: "#003300",
-        valueBg: "#006600",
       },
       kawaii: {
         bgColor: "#ffe4ec",
@@ -225,7 +221,6 @@ class NostalgicYokoso extends HTMLElement {
         borderColor: "#9c27b0",
         shadowColor: "#9c27b0",
         labelBg: "#ff69b4",
-        valueBg: "#ffb6c1",
       },
       mom: {
         bgColor: "#98fb98",
@@ -233,7 +228,6 @@ class NostalgicYokoso extends HTMLElement {
         borderColor: "#ff8c00",
         shadowColor: "#ff8c00",
         labelBg: "#4d6b4a",
-        valueBg: "#98fb98",
       },
       final: {
         bgColor: "#0000ff",
@@ -241,83 +235,13 @@ class NostalgicYokoso extends HTMLElement {
         borderColor: "#ffffff",
         shadowColor: "#ffffff",
         labelBg: "#000080",
-        valueBg: "#0000ff",
       },
     };
 
     // デフォルトテーマはdark
     const style = themeStyles[theme] || themeStyles.dark;
 
-    // 招き猫SVGアイコン（インライン）
-    const manekiNekoSvg = `<svg viewBox="0 0 16 16" width="20" height="20" style="vertical-align: middle; margin-right: 4px;">
-      <ellipse cx="8" cy="11" rx="6" ry="5" fill="#fff5e6" stroke="#d4a574" stroke-width="0.5"/>
-      <circle cx="8" cy="6" r="5" fill="#fff5e6" stroke="#d4a574" stroke-width="0.5"/>
-      <path d="M4 3 L3 0 L5.5 2 Z" fill="#fff5e6" stroke="#d4a574" stroke-width="0.3"/>
-      <path d="M12 3 L13 0 L10.5 2 Z" fill="#fff5e6" stroke="#d4a574" stroke-width="0.3"/>
-      <path d="M4 2.5 L3.5 1 L5 2 Z" fill="#ffb6c1"/>
-      <path d="M12 2.5 L12.5 1 L11 2 Z" fill="#ffb6c1"/>
-      <ellipse cx="6" cy="5.5" rx="1" ry="1.2" fill="#333"/>
-      <ellipse cx="10" cy="5.5" rx="1" ry="1.2" fill="#333"/>
-      <circle cx="6.3" cy="5.2" r="0.3" fill="#fff"/>
-      <circle cx="10.3" cy="5.2" r="0.3" fill="#fff"/>
-      <ellipse cx="8" cy="7" rx="0.6" ry="0.4" fill="#ffb6c1"/>
-      <path d="M7 8 Q8 9 9 8" fill="none" stroke="#d4a574" stroke-width="0.4"/>
-      <ellipse cx="13" cy="5" rx="2" ry="2.5" fill="#fff5e6" stroke="#d4a574" stroke-width="0.5"/>
-      <ellipse cx="8" cy="12" rx="2.5" ry="1.5" fill="#ffd700" stroke="#daa520" stroke-width="0.3"/>
-    </svg>`;
-
-    // バッジモード
-    if (mode === "badge") {
-      this.shadowRoot.innerHTML = `
-        <style>
-          :host {
-            display: inline-block;
-          }
-          .yokoso-badge {
-            display: inline-flex;
-            align-items: center;
-            font-family: 'BIZ UDGothic', Verdana, Geneva, sans-serif;
-            font-size: 14px;
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: 2px 2px 0px ${style.shadowColor};
-            border: 1px solid ${style.borderColor};
-          }
-          .yokoso-label {
-            background-color: ${style.labelBg};
-            color: #fff;
-            padding: 4px 8px;
-            font-weight: bold;
-          }
-          .yokoso-value {
-            background-color: ${style.valueBg};
-            color: #fff;
-            padding: 4px 8px;
-            display: flex;
-            align-items: center;
-          }
-          .yokoso-badge.retro .yokoso-label,
-          .yokoso-badge.retro .yokoso-value {
-            text-shadow: 0 0 3px currentColor;
-          }
-          .yokoso-badge.mom .yokoso-label,
-          .yokoso-badge.mom .yokoso-value {
-            text-shadow: 1px 1px 0px white;
-          }
-          .yokoso-badge.final .yokoso-label,
-          .yokoso-badge.final .yokoso-value {
-            text-shadow: 1px 1px 0px black;
-          }
-        </style>
-        <div class="yokoso-badge ${theme || ""}">
-          <span class="yokoso-label">Yokoso</span>
-          <span class="yokoso-value">${manekiNekoSvg}${this.escapeHtml(message)}</span>
-        </div>
-      `;
-      return;
-    }
-
-    // カードモード
+    // カードモード（SVG版と同じレイアウト）
     const dateStr = updatedAt ? this.formatDate(updatedAt) : "";
 
     // デフォルトアバター（招き猫）
@@ -347,82 +271,135 @@ class NostalgicYokoso extends HTMLElement {
           display: inline-block;
         }
         .yokoso-card {
-          display: flex;
           font-family: 'BIZ UDGothic', Verdana, Geneva, sans-serif;
-          font-size: 14px;
+          font-size: 12px;
           border-radius: 4px;
           overflow: hidden;
-          box-shadow: 3px 3px 0px ${style.shadowColor};
-          border: 2px solid ${style.borderColor};
-          max-width: 330px;
-        }
-        .yokoso-card-label {
-          background-color: ${style.labelBg};
-          color: #fff;
-          padding: 12px 8px;
-          font-weight: bold;
-          writing-mode: vertical-rl;
-          text-orientation: mixed;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          min-width: 40px;
-        }
-        .yokoso-card-content {
           background-color: ${style.bgColor};
-          color: ${style.textColor};
+          border: 1px solid ${style.borderColor};
           padding: 12px;
-          flex: 1;
-          min-width: 200px;
+          max-width: 350px;
+          position: relative;
         }
         .yokoso-card-header {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           margin-bottom: 8px;
+          position: relative;
+          z-index: 10;
         }
         .yokoso-card-avatar {
-          width: 24px;
-          height: 24px;
+          width: 28px;
+          height: 28px;
           border-radius: 50%;
           margin-right: 8px;
           object-fit: cover;
+          flex-shrink: 0;
+        }
+        .yokoso-card-meta {
+          display: flex;
+          flex-direction: column;
         }
         .yokoso-card-name {
           font-weight: bold;
-        }
-        .yokoso-card-message {
-          line-height: 1.5;
-          margin-bottom: 8px;
-          word-break: break-word;
+          color: ${style.textColor};
+          line-height: 1.2;
         }
         .yokoso-card-date {
-          text-align: right;
-          font-size: 11px;
+          font-size: 10px;
           color: #999;
+          margin-top: 2px;
         }
-        .yokoso-card.retro .yokoso-card-label,
-        .yokoso-card.retro .yokoso-card-content {
+        .yokoso-card-message {
+          color: ${style.textColor};
+          line-height: 1.5;
+          word-break: break-word;
+          position: relative;
+          z-index: 10;
+        }
+        /* Retro: 横線オーバーレイ */
+        .yokoso-card.retro::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-image: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 255, 65, 0.15) 2px,
+            rgba(0, 255, 65, 0.15) 4px
+          );
+          pointer-events: none;
+          z-index: 100;
+          border-radius: inherit;
+        }
+        .yokoso-card.retro {
           text-shadow: 0 0 3px currentColor;
         }
-        .yokoso-card.mom .yokoso-card-label,
-        .yokoso-card.mom .yokoso-card-content {
+        .yokoso-card.mom {
           text-shadow: 1px 1px 0px white;
         }
-        .yokoso-card.final .yokoso-card-label,
-        .yokoso-card.final .yokoso-card-content {
+        /* Final: グラデーションオーバーレイ */
+        .yokoso-card.final {
           text-shadow: 1px 1px 0px black;
+          overflow: hidden;
+        }
+        .yokoso-card.final::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 150%;
+          height: 150%;
+          background: radial-gradient(circle at 20% 20%, #add8e6 5%, rgba(173, 216, 230, 0.4) 30%, rgba(173, 216, 230, 0.1) 60%, rgba(173, 216, 230, 0) 100%);
+          pointer-events: none;
+          z-index: 1;
+        }
+        .yokoso-card.final::after {
+          content: '';
+          position: absolute;
+          top: -50%;
+          right: -50%;
+          width: 150%;
+          height: 150%;
+          background: radial-gradient(circle at 80% 20%, #000080 5%, rgba(0, 0, 128, 0.4) 30%, rgba(0, 0, 128, 0.1) 60%, rgba(0, 0, 128, 0) 100%);
+          pointer-events: none;
+          z-index: 1;
+        }
+        .gradient-bottom-left {
+          position: absolute;
+          bottom: -50%;
+          left: -50%;
+          width: 150%;
+          height: 150%;
+          background: radial-gradient(circle at 20% 80%, #9c27b0 5%, rgba(156, 39, 176, 0.4) 30%, rgba(156, 39, 176, 0.1) 60%, rgba(156, 39, 176, 0) 100%);
+          pointer-events: none;
+          z-index: 1;
+        }
+        .gradient-bottom-right {
+          position: absolute;
+          bottom: -50%;
+          right: -50%;
+          width: 150%;
+          height: 150%;
+          background: radial-gradient(circle at 80% 80%, #000033 5%, rgba(0, 0, 51, 0.4) 30%, rgba(0, 0, 51, 0.1) 60%, rgba(0, 0, 51, 0) 100%);
+          pointer-events: none;
+          z-index: 1;
         }
       </style>
       <div class="yokoso-card ${theme || ""}">
-        <div class="yokoso-card-label">Yokoso</div>
-        <div class="yokoso-card-content">
-          <div class="yokoso-card-header">
-            <img class="yokoso-card-avatar" src="${this.escapeHtml(avatarUrl)}" alt="avatar" />
+        ${theme === "final" ? '<div class="gradient-bottom-left"></div><div class="gradient-bottom-right"></div>' : ""}
+        <div class="yokoso-card-header">
+          <img class="yokoso-card-avatar" src="${this.escapeHtml(avatarUrl)}" alt="avatar" />
+          <div class="yokoso-card-meta">
             <span class="yokoso-card-name">${this.escapeHtml(name)}</span>
+            <span class="yokoso-card-date">${dateStr}</span>
           </div>
-          <div class="yokoso-card-message">${this.escapeHtml(message)}</div>
-          <div class="yokoso-card-date">${dateStr}</div>
         </div>
+        <div class="yokoso-card-message">${this.escapeHtml(message)}</div>
       </div>
     `;
   }
@@ -444,7 +421,8 @@ class NostalgicYokoso extends HTMLElement {
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const day = String(date.getDate()).padStart(2, "0");
       // 言語に応じてフォーマットを変更
-      if (this.lang === "en") {
+      const lang = getYokosoLang(this);
+      if (lang === "en") {
         return `${month}-${day}-${year}`;
       }
       return `${year}-${month}-${day}`;
