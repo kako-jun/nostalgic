@@ -305,56 +305,6 @@ export default function CounterPage() {
             </div>
           </div>
         </div>
-
-        {counterEmbedConfig.preview && (
-          <div className="nostalgic-section">
-            <p>
-              <span className="nostalgic-section-title">
-                <b>◆このように表示されます◆</b>
-              </span>
-            </p>
-            {publicId ? (
-              <div style={{ textAlign: "center", margin: "20px 0" }}>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-                    gap: "20px",
-                    justifyItems: "center",
-                    alignItems: "start",
-                    maxWidth: "800px",
-                    margin: "0 auto",
-                  }}
-                >
-                  {counterEmbedConfig.preview.themes.map((theme) => (
-                    <div key={theme.value} style={{ textAlign: "center" }}>
-                      <p style={{ fontSize: "14px", marginBottom: "10px" }}>{theme.name}</p>
-                      <img
-                        src={counterEmbedConfig.preview!.getUrl(publicId, theme.value)}
-                        alt={`${theme.name} カウンター`}
-                        style={{ border: "1px solid #ccc" }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div
-                style={{
-                  textAlign: "center",
-                  margin: "20px 0",
-                  padding: "20px",
-                  backgroundColor: "#f5f5f5",
-                  border: "1px solid #ddd",
-                }}
-              >
-                <p style={{ fontSize: "14px", color: "#666" }}>
-                  カウンターを作成すると、ここにプレビューが表示されます
-                </p>
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       {publicId && (
