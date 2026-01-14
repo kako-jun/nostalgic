@@ -20,15 +20,32 @@ export default function YokosoFeaturesTab() {
           </span>
         </p>
         <p>
-          <span>●</span> 招き猫（Maneki-neko）がメッセージを喋る
+          <span>●</span> 招き猫がメッセージを喋る
           <br />
-          <span>●</span> SVG画像: バッジ（20文字）/カード（140文字）、Web Component: カードのみ
+          <span>●</span> Web Componentsで簡単設置
           <br />
           <span>●</span> API経由でメッセージを動的更新
           <br />
-          <span>●</span> GitHub READMEに埋め込み可能
+          <span>●</span> SVG画像: バッジ（20文字）/カード（140文字）
           <br />
-          <span>●</span> Web Componentsで簡単設置
+          <span>●</span> GitHub READMEにも埋め込み可能
+        </p>
+      </div>
+
+      <div className="nostalgic-section">
+        <p>
+          <span className="nostalgic-section-title">
+            <b>◆設置のメリット◆</b>
+          </span>
+        </p>
+        <p>
+          <span>●</span> X（Twitter）の埋め込みが難しい今、代わりに使える
+          <br />
+          <span>●</span> ページ自体の更新と切り離して一部分だけを更新できる
+          <br />
+          <span>●</span> 静的ページでもアナウンスやお知らせに活用可能
+          <br />
+          <span>●</span> 見た目がXっぽくて馴染みやすい
         </p>
       </div>
 
@@ -41,7 +58,7 @@ export default function YokosoFeaturesTab() {
         <p>
           <span>●</span> デフォルトは招き猫アイコン
           <br />
-          <span>●</span> カードモードでは「Maneki」というデフォルト名
+          <span>●</span> デフォルト名は「Lucky Cat」
           <br />
           <span>●</span> 自分のアバター画像URLを設定可能
           <br />
