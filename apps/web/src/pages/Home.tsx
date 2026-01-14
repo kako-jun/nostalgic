@@ -935,7 +935,7 @@ export default function HomePage() {
                 どのサービスが一番人気か投票してみよう！
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <nostalgic-ranking id="nostalgic-5e577b5b" theme="light" />
+                <nostalgic-ranking id="nostalgic-5e577b5b" theme="light" limit="10" />
               </div>
 
               <div
@@ -1125,7 +1125,7 @@ export default function HomePage() {
                     maxWidth: "100%",
                   }}
                 >
-                  <nostalgic-ranking id="llll-ll-a235b610" theme="dark" />
+                  <nostalgic-ranking id="llll-ll-a235b610" theme="dark" limit="10" />
                 </div>
               </div>
             </div>
@@ -1159,7 +1159,7 @@ export default function HomePage() {
                     maxWidth: "100%",
                   }}
                 >
-                  <nostalgic-ranking id="noun-gender-d0bb6d1f" theme="retro" />
+                  <nostalgic-ranking id="noun-gender-d0bb6d1f" theme="retro" limit="10" />
                 </div>
               </div>
             </div>
@@ -1183,7 +1183,7 @@ export default function HomePage() {
                 ）
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <nostalgic-ranking id="sasso-5d582992" theme="kawaii" limit="5" />
+                <nostalgic-ranking id="sasso-5d582992" theme="kawaii" limit="10" />
               </div>
             </div>
 
@@ -1194,7 +1194,7 @@ export default function HomePage() {
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <nostalgic-ranking id="nostalgic-b89803bb" theme="mom" limit="5" />
+                <nostalgic-ranking id="nostalgic-b89803bb" theme="mom" limit="10" />
               </div>
             </div>
 
@@ -1215,7 +1215,7 @@ export default function HomePage() {
                     maxWidth: "100%",
                   }}
                 >
-                  <nostalgic-ranking id="nostalgic-b89803bb" theme="final" limit="5" />
+                  <nostalgic-ranking id="nostalgic-b89803bb" theme="final" limit="10" />
                 </div>
               </div>
             </div>
