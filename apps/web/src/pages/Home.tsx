@@ -108,7 +108,7 @@ export default function HomePage() {
 
             <div className="nostalgic-marquee-box">
               <div className="nostalgic-marquee-text">
-                ようこそ！Nostalgicへ！昔懐かしいWebツール（カウンター・いいね・ランキング・BBS）を無料で提供しています！
+                ようこそ！Nostalgicへ！昔懐かしいWebツール（カウンター・いいね・ランキング・BBS・招き猫）を無料で提供しています！
               </div>
             </div>
 

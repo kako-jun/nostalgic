@@ -2,7 +2,7 @@
 
 _[日本語版はこちら](README.ja.md)_
 
-A comprehensive nostalgic web tools platform that brings back the 90s internet culture with modern technology. Four essential services that used to be on every personal homepage: Counter, Like, Ranking, and BBS.
+A comprehensive nostalgic web tools platform that brings back the 90s internet culture with modern technology. Five essential services that used to be on every personal homepage: Counter, Like, Ranking, BBS, and Yokoso.
 
 ## ✨ Services
 

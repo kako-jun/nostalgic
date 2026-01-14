@@ -2,7 +2,7 @@
 
 ## Overview
 
-Nostalgic is a comprehensive platform that recreates nostalgic web tools (Counter, Like, Ranking, BBS) from the 90s internet culture with modern technology. All services follow a unified action-based API pattern.
+Nostalgic is a comprehensive platform that recreates nostalgic web tools (Counter, Like, Ranking, BBS, Yokoso) from the 90s internet culture with modern technology. All services follow a unified action-based API pattern.
 
 ## API Architecture
 
