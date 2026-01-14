@@ -253,32 +253,60 @@ export default function YokosoPage() {
               <option value="en">English</option>
             </select>
           </div>
-          <div
-            style={{
-              display: "flex",
-              gap: "20px",
-              justifyContent: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            <div style={{ textAlign: "center" }}>
-              <p style={{ fontSize: "12px", marginBottom: "5px" }}>Light</p>
-              <nostalgic-yokoso
-                id="nostalgic-demo-yokoso"
-                theme="light"
-                lang={demoLang || undefined}
-              />
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <p style={{ fontSize: "12px", marginBottom: "5px" }}>Dark</p>
+        </div>
+
+        <div className="nostalgic-section">
+          <p>
+            <span className="nostalgic-section-title">
+              <b>◆テーマ - Light◆</b>
+            </span>
+          </p>
+          <div style={{ margin: "20px 0", textAlign: "center" }}>
+            <nostalgic-yokoso
+              id="nostalgic-demo-yokoso"
+              theme="light"
+              lang={demoLang || undefined}
+            />
+          </div>
+        </div>
+
+        <div className="nostalgic-section">
+          <p>
+            <span className="nostalgic-section-title">
+              <b>◆テーマ - Dark◆</b>
+            </span>
+          </p>
+          <div style={{ margin: "20px 0", textAlign: "center" }}>
+            <div
+              style={{
+                background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
+                padding: "10px",
+                display: "inline-block",
+              }}
+            >
               <nostalgic-yokoso
                 id="nostalgic-demo-yokoso"
                 theme="dark"
                 lang={demoLang || undefined}
               />
             </div>
-            <div style={{ textAlign: "center" }}>
-              <p style={{ fontSize: "12px", marginBottom: "5px" }}>Retro</p>
+          </div>
+        </div>
+
+        <div className="nostalgic-section">
+          <p>
+            <span className="nostalgic-section-title">
+              <b>◆テーマ - Retro◆</b>
+            </span>
+          </p>
+          <div style={{ margin: "20px 0", textAlign: "center" }}>
+            <div
+              style={{
+                background: "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
+                padding: "10px",
+                display: "inline-block",
+              }}
+            >
               <nostalgic-yokoso
                 id="nostalgic-demo-yokoso"
                 theme="retro"

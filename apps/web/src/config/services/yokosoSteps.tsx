@@ -6,7 +6,7 @@ const ENDPOINT = "/api/yokoso";
 // Yokoso-specific fields
 const modeField = {
   name: "mode",
-  label: "モード",
+  label: "モード（SVG画像用）",
   type: "select" as const,
   width: "30%",
   options: [
