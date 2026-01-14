@@ -2,7 +2,12 @@
 
 ## Overview
 
-Dynamic welcome message service featuring a Maneki-neko (Lucky Cat) avatar. "Yokoso" (ようこそ) means "Welcome" in Japanese. The lucky cat greets your visitors with customizable messages. Update messages via API without editing HTML/markdown. Supports two display modes: badge (short text) and card (long text with avatar).
+Dynamic welcome message service featuring a Maneki-neko (Lucky Cat) avatar. "Yokoso" (ようこそ) means "Welcome" in Japanese. The lucky cat greets your visitors with customizable messages. Update messages via API without editing HTML/markdown.
+
+**Display Options:**
+
+- **SVG Image** (`format=image`): Badge mode (20 chars) or Card mode (140 chars) with "Yokoso" label
+- **Web Component**: Card layout only (avatar + name + date + message, no label)
 
 ## Default Avatar
 
@@ -198,14 +203,16 @@ GET /api/yokoso?action=delete&url={URL}&token={TOKEN}
 
 ## Web Component Integration
 
+Web Component displays card layout only (no "Yokoso" label). For badge/card SVG images with label, use `format=image`.
+
 ```html
 <script src="https://nostalgic.llll-ll.com/components/yokoso.js"></script>
 
-<!-- Badge mode -->
+<!-- Card layout (avatar + name + date + message) -->
 <nostalgic-yokoso id="yoursite-a7b9c3d4" theme="dark"></nostalgic-yokoso>
 
-<!-- Card mode (mode is determined by server-side setting) -->
-<nostalgic-yokoso id="yoursite-a7b9c3d4" theme="light"></nostalgic-yokoso>
+<!-- For SVG badge/card image with "Yokoso" label, use img tag -->
+<img src="https://api.nostalgic.llll-ll.com/yokoso?action=get&id=yoursite-a7b9c3d4&format=image" />
 ```
 
 **Attributes:**

@@ -22,7 +22,7 @@ export default function YokosoFeaturesTab() {
         <p>
           <span>●</span> 招き猫（Maneki-neko）がメッセージを喋る
           <br />
-          <span>●</span> バッジモード（20文字）とカードモード（140文字）
+          <span>●</span> SVG画像: バッジ（20文字）/カード（140文字）、Web Component: カードのみ
           <br />
           <span>●</span> API経由でメッセージを動的更新
           <br />
