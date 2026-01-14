@@ -1469,15 +1469,15 @@ export default function HomePage() {
               </p>
               <p>見た目はレトロですが、中身は最新技術を使っています。</p>
               <p>
-                <span>●</span>Cloudflare Workers
+                <span>●</span> Cloudflare Workers
                 <br />
-                <span>●</span>D1 (SQLite)
+                <span>●</span> D1 (SQLite)
                 <br />
-                <span>●</span>Hono
+                <span>●</span> Hono
                 <br />
-                <span>●</span>Web Components
+                <span>●</span> Web Components
                 <br />
-                <span>●</span>SVG Graphics
+                <span>●</span> SVG Graphics
               </p>
             </div>
 

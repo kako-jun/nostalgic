@@ -26,15 +26,15 @@ export default function AboutPage() {
         </p>
         <p>見た目はレトロですが、中身は最新技術を使っています。</p>
         <p>
-          <span>●</span>Cloudflare Workers (Hono)
+          <span>●</span> Cloudflare Workers (Hono)
           <br />
-          <span>●</span>Cloudflare D1 (SQLite)
+          <span>●</span> Cloudflare D1 (SQLite)
           <br />
-          <span>●</span>Vite + React
+          <span>●</span> Vite + React
           <br />
-          <span>●</span>Web Components
+          <span>●</span> Web Components
           <br />
-          <span>●</span>SVG Graphics
+          <span>●</span> SVG Graphics
         </p>
       </div>
 
