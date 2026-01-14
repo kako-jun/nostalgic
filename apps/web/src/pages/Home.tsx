@@ -1260,7 +1260,7 @@ export default function HomePage() {
                     maxWidth: "100%",
                   }}
                 >
-                  <nostalgic-bbs id="nostalgic-b89803bb" theme="retro" />
+                  <nostalgic-bbs id="nostalgic-2ba2b326" theme="retro" />
                 </div>
               </div>
             </div>
