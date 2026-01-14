@@ -357,9 +357,10 @@ class NostalgicBBS extends HTMLElement {
     const messages = (this.bbsData.messages || []).slice();
     const pagination = this.bbsData.pagination || {};
 
-    // 連番計算：現在のページの開始番号を計算
+    // 連番計算：投稿順の番号を計算（最古が1番、最新が最大番号）
     const currentPage = pagination.page || 1;
     const perPage = pagination.perPage || 10;
+    const totalMessages = this.bbsData.totalMessages || messages.length;
     const startNumber = (currentPage - 1) * perPage;
 
     this.shadowRoot.innerHTML = `
@@ -949,7 +950,7 @@ class NostalgicBBS extends HTMLElement {
                     (message, index) => `
               <div class="message-item">
                 <div class="message-header">
-                  <span class="message-author"><span style="display:inline-block;min-width:2em;text-align:right;">${startNumber + index + 1}.</span> ${this.escapeHtml(message.author || this.t.defaultAuthor)}${this.formatSelectValues(message)}</span>
+                  <span class="message-author"><span style="display:inline-block;min-width:2em;text-align:right;">${totalMessages - startNumber - index}.</span> ${this.escapeHtml(message.author || this.t.defaultAuthor)}${this.formatSelectValues(message)}</span>
                   <div class="message-time-actions">
                     <span class="message-time">${this.formatDate(message.timestamp)}</span>
                     ${
