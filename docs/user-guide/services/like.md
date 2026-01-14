@@ -62,14 +62,19 @@ Get current like data.
 #### Public Mode (by ID)
 
 ```
-GET /api/like?action=get&id={ID}
+GET /api/like?action=get&id={ID}&format={FORMAT}
 ```
 
 **Parameters:**
 
 - `id` (required): Public like button ID
+- `format` (optional): Response format (`json` default, `image`, `text`)
 
 **Response:**
+
+- `format=json` (default): JSON with like data
+- `format=image`: SVG image (Shields.io-style badge)
+- `format=text`: Plain text number
 
 ```json
 {
@@ -81,6 +86,14 @@ GET /api/like?action=get&id={ID}
   }
 }
 ```
+
+**GitHub README Example:**
+
+```markdown
+[![Like](https://api.nostalgic.llll-ll.com/like?action=get&id=YOUR_ID&format=image)](https://nostalgic.llll-ll.com/like?id=YOUR_ID)
+```
+
+Note: In GitHub README, the image links to a page where users can actually click to like.
 
 #### Owner Mode (by URL + Token)
 

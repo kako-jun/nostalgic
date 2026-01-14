@@ -224,15 +224,29 @@ Get BBS messages.
 #### Public Mode (by ID)
 
 ```
-GET /api/bbs?action=get&id={ID}&limit={LIMIT}
+GET /api/bbs?action=get&id={ID}&limit={LIMIT}&format={FORMAT}
 ```
 
 **Parameters:**
 
 - `id` (required): Public BBS ID
-- `limit` (optional): Number of messages to return (default: 100, max: 1000)
+- `limit` (optional): Number of messages to return (default: 100, max: 1000; for image format: default 3, max 10)
+- `format` (optional): Response format (`json` default, `image`)
 
 **Response:**
+
+- `format=json` (default): JSON with messages data
+- `format=image`: SVG image showing recent messages (Shields.io style, for GitHub README)
+
+**GitHub README Example:**
+
+```markdown
+[![BBS](https://api.nostalgic.llll-ll.com/bbs?action=get&id=YOUR_ID&format=image&limit=3)](https://nostalgic.llll-ll.com/bbs?id=YOUR_ID)
+```
+
+Note: In GitHub README, the image links to a page where users can post messages.
+
+**JSON Response:**
 
 ```json
 {

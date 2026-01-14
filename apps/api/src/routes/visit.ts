@@ -146,6 +146,11 @@ app.get("/", async (c) => {
   // INCREMENT
   if (action === "increment") {
     const id = c.req.query("id");
+    const format = c.req.query("format") || "json";
+    const theme = c.req.query("theme") || DEFAULT_THEME;
+    const type = c.req.query("type") || "total";
+    const digits = c.req.query("digits");
+
     if (!id) {
       return c.json({ error: "id is required" }, 400);
     }
@@ -169,45 +174,63 @@ app.get("/", async (c) => {
       .bind(`counter:${id}`, userHash, today, "visit")
       .first();
 
-    if (visited) {
-      // Already visited, return current counts
-      const data = await getCounterData(db, id);
-      return c.json({ success: true, data: { ...data, duplicate: true } });
+    if (!visited) {
+      // Mark visit and increment
+      await db.batch([
+        db
+          .prepare(
+            "INSERT INTO daily_actions (service_id, user_hash, date, action_type, value) VALUES (?, ?, ?, ?, ?)"
+          )
+          .bind(`counter:${id}`, userHash, today, "visit", "1"),
+        db
+          .prepare(
+            "INSERT INTO counters (service_id, total) VALUES (?, 1) ON CONFLICT(service_id) DO UPDATE SET total = total + 1"
+          )
+          .bind(`counter:${id}:total`),
+        db
+          .prepare(
+            "INSERT INTO counter_daily (service_id, date, count) VALUES (?, ?, 1) ON CONFLICT(service_id, date) DO UPDATE SET count = count + 1"
+          )
+          .bind(`counter:${id}`, today),
+      ]);
     }
-
-    // Mark visit and increment
-    await db.batch([
-      db
-        .prepare(
-          "INSERT INTO daily_actions (service_id, user_hash, date, action_type, value) VALUES (?, ?, ?, ?, ?)"
-        )
-        .bind(`counter:${id}`, userHash, today, "visit", "1"),
-      db
-        .prepare(
-          "INSERT INTO counters (service_id, total) VALUES (?, 1) ON CONFLICT(service_id) DO UPDATE SET total = total + 1"
-        )
-        .bind(`counter:${id}:total`),
-      db
-        .prepare(
-          "INSERT INTO counter_daily (service_id, date, count) VALUES (?, ?, 1) ON CONFLICT(service_id, date) DO UPDATE SET count = count + 1"
-        )
-        .bind(`counter:${id}`, today),
-    ]);
 
     const data = await getCounterData(db, id);
 
-    // WebHook送信（非同期、エラーは無視）
-    const metadata = JSON.parse((counter as { metadata: string }).metadata || "{}");
-    if (metadata.webhookUrl) {
-      sendWebHook(
-        metadata.webhookUrl,
-        "counter.increment",
-        WebHookMessages.counter.increment(data.total),
-        { id, ...data }
-      );
+    // WebHook送信（非同期、エラーは無視）- 新規訪問時のみ
+    if (!visited) {
+      const metadata = JSON.parse((counter as { metadata: string }).metadata || "{}");
+      if (metadata.webhookUrl) {
+        sendWebHook(
+          metadata.webhookUrl,
+          "counter.increment",
+          WebHookMessages.counter.increment(data.total),
+          { id, ...data }
+        );
+      }
     }
 
-    return c.json({ success: true, data });
+    // 画像形式で返す場合
+    if (format === "image") {
+      const value = data[type as keyof typeof data] ?? data.total;
+      const displayValue = digits ? String(value).padStart(Number(digits), "0") : String(value);
+      const svg = isImageTheme(theme as string)
+        ? generateImageCounterSVG(displayValue, theme as string)
+        : generateCounterSVG(displayValue, theme as string);
+      return c.body(svg, 200, {
+        "Content-Type": "image/svg+xml",
+        "Cache-Control": "no-cache",
+      });
+    }
+
+    // テキスト形式で返す場合
+    if (format === "text") {
+      const value = data[type as keyof typeof data] ?? data.total;
+      const displayValue = digits ? String(value).padStart(Number(digits), "0") : String(value);
+      return c.text(displayValue);
+    }
+
+    return c.json({ success: true, data: { ...data, duplicate: !!visited } });
   }
 
   // GET
@@ -443,6 +466,11 @@ app.get("/", async (c) => {
 
 // === SVG Generator ===
 function generateCounterSVG(value: string, theme: string): string {
+  // Shields.io風のgithubテーマ
+  if (theme === "github") {
+    return generateShieldsBadgeSVG("visitors", value, "#4c1");
+  }
+
   const themes: Record<string, { bg: string; text: string; border: string }> = {
     light: { bg: "#ffffff", text: "#333333", border: "#cccccc" },
     dark: { bg: "#1a1a2e", text: "#eaeaea", border: "#4a4a6a" },
@@ -459,6 +487,35 @@ function generateCounterSVG(value: string, theme: string): string {
   <rect width="100%" height="100%" fill="${t.bg}" stroke="${t.border}" stroke-width="1"/>
   <text x="50%" y="50%" dy="0.35em" text-anchor="middle"
         fill="${t.text}" font-family="'BIZ UDGothic', monospace" font-size="14" font-weight="bold">${value}</text>
+</svg>`;
+}
+
+// Shields.io風バッジSVG生成
+function generateShieldsBadgeSVG(label: string, value: string, valueColor: string): string {
+  const labelWidth = label.length * 6.5 + 10;
+  const valueWidth = Math.max(value.length * 7 + 10, 30);
+  const totalWidth = labelWidth + valueWidth;
+  const height = 20;
+  const labelBg = "#555";
+  const textColor = "#fff";
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${height}">
+  <linearGradient id="smooth" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="round">
+    <rect width="${totalWidth}" height="${height}" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#round)">
+    <rect width="${labelWidth}" height="${height}" fill="${labelBg}"/>
+    <rect x="${labelWidth}" width="${valueWidth}" height="${height}" fill="${valueColor}"/>
+    <rect width="${totalWidth}" height="${height}" fill="url(#smooth)"/>
+  </g>
+  <g fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="${labelWidth / 2}" y="14">${label}</text>
+    <text x="${labelWidth + valueWidth / 2}" y="14">${value}</text>
+  </g>
 </svg>`;
 }
 

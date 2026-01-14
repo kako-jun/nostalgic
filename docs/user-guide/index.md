@@ -62,7 +62,15 @@ APIを直接触らずに、すべての機能を試せます。
 
 ## カスタマイズ
 
-### [7. テーマとスタイル](./customization.md)
+### [7. GitHub README での使い方](./github-readme.md)
+
+GitHub の README.md にサービスを埋め込む方法。
+
+- Counter バッジ（訪問者数）
+- Like ボタン（いいね）
+- BBS 一覧（最新投稿）
+
+### [8. テーマとスタイル](./customization.md)
 
 Web Componentsのカスタマイズ方法。
 
@@ -74,7 +82,7 @@ Web Componentsのカスタマイズ方法。
 
 ## APIリファレンス
 
-### [8. API仕様](./api.md)
+### [9. API仕様](./api.md)
 
 GET専用の統一アクション型API。URLバーから直接操作も可能。
 
@@ -82,7 +90,7 @@ GET専用の統一アクション型API。URLバーから直接操作も可能�
 - 認証とセキュリティ
 - Webhook連携
 
-### [9. WebHook連携](./webhook.md)
+### [10. WebHook連携](./webhook.md)
 
 Discord/Slack等への通知連携。
 

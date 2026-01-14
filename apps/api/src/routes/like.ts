@@ -257,7 +257,7 @@ app.get("/", async (c) => {
     }
 
     if (format === "image") {
-      const svg = generateLikeSVG(String(total), isLiked);
+      const svg = generateLikeSVG(String(total));
       return c.body(svg, 200, {
         "Content-Type": "image/svg+xml",
         "Cache-Control": "no-cache",
@@ -367,17 +367,34 @@ app.get("/", async (c) => {
 });
 
 // === SVG Generator ===
-function generateLikeSVG(count: string, liked: boolean): string {
-  const heart = liked ? "❤️" : "🤍";
-  const bg = liked ? "#ffebee" : "#fafafa";
-  const textColor = liked ? "#e91e63" : "#666666";
-  const width = Math.max(60, count.length * 12 + 40);
+// Shields.io風のバッジSVG生成（format=image用）
+function generateLikeSVG(count: string): string {
+  const label = "♥ likes";
+  const labelWidth = 50;
+  const valueWidth = Math.max(count.length * 7 + 10, 30);
+  const totalWidth = labelWidth + valueWidth;
+  const height = 20;
+  const labelBg = "#555";
+  const valueBg = "#e91e63"; // ピンク
+  const textColor = "#fff";
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="28">
-  <rect width="100%" height="100%" fill="${bg}" stroke="#ddd" stroke-width="1" rx="4"/>
-  <text x="8" y="50%" dy="0.35em" font-size="14">${heart}</text>
-  <text x="28" y="50%" dy="0.35em"
-        fill="${textColor}" font-family="'BIZ UDGothic', monospace" font-size="14" font-weight="bold">${count}</text>
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${height}">
+  <linearGradient id="smooth" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="round">
+    <rect width="${totalWidth}" height="${height}" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#round)">
+    <rect width="${labelWidth}" height="${height}" fill="${labelBg}"/>
+    <rect x="${labelWidth}" width="${valueWidth}" height="${height}" fill="${valueBg}"/>
+    <rect width="${totalWidth}" height="${height}" fill="url(#smooth)"/>
+  </g>
+  <g fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="${labelWidth / 2}" y="14">${label}</text>
+    <text x="${labelWidth + valueWidth / 2}" y="14">${count}</text>
+  </g>
 </svg>`;
 }
 

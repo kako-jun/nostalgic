@@ -311,6 +311,19 @@ app.get("/", async (c) => {
     }
 
     const metadata = JSON.parse((bbs as BBSRecord).metadata || "{}");
+    const format = c.req.query("format") || "json";
+
+    // 画像形式で返す場合（GitHub README用）
+    if (format === "image") {
+      const imageLimit = Math.min(Number(c.req.query("limit")) || 3, 10);
+      const messages = await getMessages(db, id, imageLimit);
+      const svg = generateBBSSVG(messages);
+      return c.body(svg, 200, {
+        "Content-Type": "image/svg+xml",
+        "Cache-Control": "no-cache",
+      });
+    }
+
     const messages = await getMessages(db, id, limit);
     const totalMessages = await getMessageCount(db, id);
 
@@ -645,5 +658,105 @@ app.get("/", async (c) => {
     400
   );
 });
+
+// === SVG Generator (Shields.io風) ===
+type BBSMessage = {
+  id: string;
+  author: string;
+  message: string;
+  standardValue?: string;
+  incrementalValue?: string;
+  emoteValue?: string;
+  userHash: string;
+  timestamp: string;
+};
+
+function escapeXml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function truncateText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength - 1) + "…";
+}
+
+function generateBBSSVG(messages: BBSMessage[]): string {
+  const labelWidth = 40;
+  const contentWidth = 280;
+  const totalWidth = labelWidth + contentWidth;
+  const lineHeight = 16;
+  const padding = 4;
+  const headerHeight = 20;
+  const contentHeight =
+    messages.length > 0 ? messages.length * lineHeight + padding * 2 : lineHeight + padding * 2;
+  const totalHeight = headerHeight + contentHeight;
+
+  const labelBg = "#555";
+  const contentBg = "#fff";
+  const textColor = "#333";
+  const headerTextColor = "#fff";
+
+  // メッセージがない場合
+  if (messages.length === 0) {
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}">
+  <linearGradient id="smooth" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="round">
+    <rect width="${totalWidth}" height="${totalHeight}" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#round)">
+    <rect width="${labelWidth}" height="${totalHeight}" fill="${labelBg}"/>
+    <rect x="${labelWidth}" width="${contentWidth}" height="${totalHeight}" fill="${contentBg}"/>
+    <rect width="${totalWidth}" height="${totalHeight}" fill="url(#smooth)"/>
+  </g>
+  <g fill="${headerTextColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="${labelWidth / 2}" y="14">BBS</text>
+  </g>
+  <g fill="#999" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10">
+    <text x="${labelWidth + 8}" y="${headerHeight + lineHeight - 2}">No messages yet</text>
+  </g>
+</svg>`;
+  }
+
+  // メッセージ行を生成（最新が上）
+  const messageLines = messages
+    .slice()
+    .reverse()
+    .map((msg, index) => {
+      const author = truncateText(msg.author || "ああああ", 8);
+      const content = truncateText(msg.message.replace(/\n/g, " "), 30);
+      const y = headerHeight + padding + (index + 1) * lineHeight - 4;
+      return `<text x="${labelWidth + 8}" y="${y}">• ${escapeXml(author)}: ${escapeXml(content)}</text>`;
+    })
+    .join("\n    ");
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}">
+  <linearGradient id="smooth" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="round">
+    <rect width="${totalWidth}" height="${totalHeight}" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#round)">
+    <rect width="${labelWidth}" height="${totalHeight}" fill="${labelBg}"/>
+    <rect x="${labelWidth}" width="${contentWidth}" height="${totalHeight}" fill="${contentBg}"/>
+    <rect width="${totalWidth}" height="${totalHeight}" fill="url(#smooth)"/>
+  </g>
+  <g fill="${headerTextColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="${labelWidth / 2}" y="14">BBS</text>
+  </g>
+  <g fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10">
+    ${messageLines}
+  </g>
+</svg>`;
+}
 
 export default app;

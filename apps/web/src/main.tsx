@@ -6,6 +6,7 @@ import CounterPage from "./pages/Counter";
 import LikePage from "./pages/Like";
 import RankingPage from "./pages/Ranking";
 import BBSPage from "./pages/BBS";
+import GitHubPage from "./pages/GitHub";
 import AboutPage from "./pages/About";
 import "./nostalgic.css";
 
@@ -22,6 +23,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/ranking/usage" element={<RankingPage />} />
         <Route path="/bbs" element={<BBSPage />} />
         <Route path="/bbs/usage" element={<BBSPage />} />
+        <Route path="/github" element={<GitHubPage />} />
         <Route path="/about" element={<AboutPage />} />
       </Routes>
     </BrowserRouter>

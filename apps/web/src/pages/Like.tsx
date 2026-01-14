@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import NostalgicLayout from "../components/NostalgicLayout";
 import LikeFeaturesTab from "../components/like/LikeFeaturesTab";
 import StepRenderer from "../components/StepRenderer";
@@ -10,7 +10,13 @@ import { likeEmbedConfig } from "../config/embedConfigs";
 
 export default function LikePage() {
   const location = useLocation();
-  const currentPage = location.pathname === "/like/usage" ? "usage" : "features";
+  const [searchParams] = useSearchParams();
+  const embedId = searchParams.get("id");
+  const currentPage = embedId
+    ? "embed"
+    : location.pathname === "/like/usage"
+      ? "usage"
+      : "features";
 
   // Field state
   const [publicId, setPublicId] = useState("");
@@ -332,6 +338,48 @@ export default function LikePage() {
       <PageFooter servicePath="like" currentPage="features" />
     </>
   );
+
+  const renderEmbedPage = () => (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "#fff",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "20px",
+      }}
+    >
+      <p style={{ margin: 0, textAlign: "center", color: "#333" }}>
+        このプロジェクトにいいねを押してください！
+        <br />
+        <span style={{ fontSize: "12px", color: "#666" }}>
+          ※GitHubアカウント不要で誰でも押せます
+        </span>
+      </p>
+      <nostalgic-like id={embedId!} theme="light" icon="heart" />
+      <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>
+        Powered by{" "}
+        <a
+          href="https://nostalgic.llll-ll.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "#666" }}
+        >
+          Nostalgic
+        </a>
+      </p>
+    </div>
+  );
+
+  if (currentPage === "embed") {
+    return renderEmbedPage();
+  }
 
   return (
     <NostalgicLayout serviceName="Like" serviceIcon="💖">

@@ -203,6 +203,17 @@ export default function NostalgicSidebar({
           )}
           <br />
         </>
+        <span>●</span>
+        <Link
+          to="/github"
+          className={
+            currentService === "github" ? "nostalgic-old-link-visited" : "nostalgic-old-link"
+          }
+          onClick={() => onClose?.()}
+        >
+          GitHub README
+        </Link>
+        <br />
         {location.pathname === "/" && currentPage === "about" ? (
           <>
             <span className="nostalgic-blink">●</span>

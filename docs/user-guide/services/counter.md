@@ -36,14 +36,22 @@ GET /api/visit?action=create&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 Count up the counter (automatic duplicate prevention).
 
 ```
-GET /api/visit?action=increment&id={ID}
+GET /api/visit?action=increment&id={ID}&format={FORMAT}&theme={THEME}&type={TYPE}
 ```
 
 **Parameters:**
 
 - `id` (required): Public counter ID
+- `format` (optional): Response format (`json` default, `image`, `text`)
+- `theme` (optional): Visual style for image format (see get action for options)
+- `type` (optional): Display type (`total` default, `today`, `week`, `month`)
+- `digits` (optional): Zero-padding digits
 
 **Response:**
+
+- `format=json` (default): JSON with counter data
+- `format=image`: SVG image (useful for GitHub README)
+- `format=text`: Plain text number
 
 ```json
 {
@@ -57,6 +65,12 @@ GET /api/visit?action=increment&id={ID}
     "month": 2
   }
 }
+```
+
+**GitHub README Example:**
+
+```markdown
+![visitors](https://api.nostalgic.llll-ll.com/visit?action=increment&id=YOUR_ID&format=image&theme=github)
 ```
 
 ### get
@@ -86,6 +100,8 @@ GET /api/visit?action=get&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
     - `kawaii`: Pink background, magenta text
     - `mom`: Beige background, brown text (MOTHER2 style)
     - `final`: Black background, gold text (Final Fantasy style)
+  - **Badge themes (for GitHub README):**
+    - `github`: Shields.io-style badge (compact, for README.md)
   - **Image themes (digit graphics):**
     - `mahjong`: Mahjong tile style (Chinese numerals)
     - `segment`: 7-segment LED display

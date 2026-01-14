@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import NostalgicLayout from "../components/NostalgicLayout";
 import BBSFeaturesTab from "../components/bbs/BBSFeaturesTab";
 import StepRenderer from "../components/StepRenderer";
@@ -10,7 +10,9 @@ import { bbsEmbedConfig } from "../config/embedConfigs";
 
 export default function BBSPage() {
   const location = useLocation();
-  const currentPage = location.pathname === "/bbs/usage" ? "usage" : "features";
+  const [searchParams] = useSearchParams();
+  const embedId = searchParams.get("id");
+  const currentPage = embedId ? "embed" : location.pathname === "/bbs/usage" ? "usage" : "features";
 
   // Field state
   const [publicId, setPublicId] = useState("");
@@ -433,6 +435,43 @@ export default function BBSPage() {
       <PageFooter servicePath="bbs" currentPage="features" />
     </>
   );
+
+  const renderEmbedPage = () => (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "#fff",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "20px",
+        padding: "20px",
+        boxSizing: "border-box",
+      }}
+    >
+      <nostalgic-bbs id={embedId!} theme="light" />
+      <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>
+        Powered by{" "}
+        <a
+          href="https://nostalgic.llll-ll.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "#666" }}
+        >
+          Nostalgic
+        </a>
+      </p>
+    </div>
+  );
+
+  if (currentPage === "embed") {
+    return renderEmbedPage();
+  }
 
   return (
     <NostalgicLayout serviceName="BBS" serviceIcon="💬">
