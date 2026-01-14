@@ -54,12 +54,13 @@ export default function CounterFeaturesTab() {
           </span>
         </p>
         <p>
-          • Cloudflare Workers でホスティング
+          <span>●</span>Cloudflare Workers でホスティング
           <br />
-          • D1 (SQLite) でデータ保存
+          <span>●</span>D1 (SQLite) でデータ保存
           <br />
-          • SVG画像で美しい表示
-          <br />• 必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
+          <span>●</span>SVG画像で美しい表示
+          <br />
+          <span>●</span>必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
         </p>
       </div>
     </>

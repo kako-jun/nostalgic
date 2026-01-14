@@ -231,29 +231,26 @@ export default function GitHubPage() {
             <b>◆注意事項◆</b>
           </span>
         </p>
-        <ul style={{ marginLeft: "20px", lineHeight: "1.8" }}>
-          <li>
-            <b>Counter</b>: README表示時に自動でカウントアップされます
-          </li>
-          <li>
-            <b>Like</b>: 画像クリックでいいねページに移動し、そこでいいねを押せます
-            <br />
-            <span style={{ color: "#666", marginLeft: "1em" }}>
-              ※GitHub Starとは別のいいね機能です（アカウント不要）
-            </span>
-          </li>
-          <li>
-            <b>BBS</b>: 画像クリックで掲示板ページに移動し、そこで書き込めます
-          </li>
-          <li>
-            <b>Yokoso</b>: 招き猫がメッセージを喋ります（API経由で更新可能）
-            <br />
-            <span style={{ color: "#666", marginLeft: "1em" }}>
-              ※プロジェクトの縁起物・マスコットとしてもどうぞ
-            </span>
-          </li>
-          <li>GitHubは画像をキャッシュするため、更新が反映されるまで時間がかかることがあります</li>
-        </ul>
+        <p>
+          <span>●</span> <b>Counter</b>: README表示時に自動でカウントアップされます
+          <br />
+          <span>●</span> <b>Like</b>: 画像クリックでいいねページに移動し、そこでいいねを押せます
+          <br />
+          <span style={{ color: "#666", marginLeft: "1.5em" }}>
+            ※GitHub Starとは別のいいね機能です（アカウント不要）
+          </span>
+          <br />
+          <span>●</span> <b>BBS</b>: 画像クリックで掲示板ページに移動し、そこで書き込めます
+          <br />
+          <span>●</span> <b>Yokoso</b>: 招き猫がメッセージを喋ります（API経由で更新可能）
+          <br />
+          <span style={{ color: "#666", marginLeft: "1.5em" }}>
+            ※プロジェクトの縁起物・マスコットとしてもどうぞ
+          </span>
+          <br />
+          <span>●</span>{" "}
+          GitHubは画像をキャッシュするため、更新が反映されるまで時間がかかることがあります
+        </p>
       </div>
     </NostalgicLayout>
   );

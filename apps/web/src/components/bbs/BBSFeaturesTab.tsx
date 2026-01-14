@@ -56,12 +56,13 @@ export default function BBSFeaturesTab() {
           </span>
         </p>
         <p>
-          • Cloudflare Workers でホスティング
+          <span>●</span>Cloudflare Workers でホスティング
           <br />
-          • D1 (SQLite) でメッセージ保存
+          <span>●</span>D1 (SQLite) でメッセージ保存
           <br />
-          • 純粋なGET、1990年代スタイル
-          <br />• 必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
+          <span>●</span>純粋なGET、1990年代スタイル
+          <br />
+          <span>●</span>必要なすべての要素が無料プランの範囲で動作するため、完全無料・広告なしを実現
         </p>
       </div>
     </>

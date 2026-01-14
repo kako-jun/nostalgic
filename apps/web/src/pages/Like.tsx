@@ -328,7 +328,8 @@ export default function LikePage() {
             <p>
               {section.options.map((opt, optIdx) => (
                 <span key={optIdx}>
-                  • <span style={{ color: "#008000" }}>{opt.value}</span> - {opt.description}
+                  <span>●</span> <span style={{ color: "#008000" }}>{opt.value}</span> -{" "}
+                  {opt.description}
                   {optIdx < section.options.length - 1 && <br />}
                 </span>
               ))}
