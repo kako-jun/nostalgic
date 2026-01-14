@@ -182,6 +182,7 @@ GET /api/like?action=delete&url={URL}&token={TOKEN}
 - `theme`: Visual style (light, dark, retro, kawaii, mom, final)
 - `icon`: Icon type (heart, star, thumb, peta) - interactive format only
 - `format`: Display format (interactive, text, image) - default: interactive
+- `lang`: UI language (ja, en) - default: auto-detect from browser (non-Japanese browsers use English)
 - `api-base`: Custom API base URL (optional)
 
 ## TypeScript Support
@@ -200,6 +201,7 @@ declare module "react" {
         theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
         icon?: "heart" | "star" | "thumb" | "peta";
         format?: "interactive" | "text" | "image";
+        lang?: "ja" | "en";
       };
     }
   }

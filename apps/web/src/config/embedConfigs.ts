@@ -61,6 +61,7 @@ declare module 'react' {
         theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final' | 'mahjong' | 'segment' | 'nixie' | 'dots_f';
         digits?: string;
         scale?: string;
+        lang?: 'ja' | 'en';
       };
     }
   }
@@ -114,6 +115,7 @@ declare module 'react' {
         id?: string;
         theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
         icon?: 'heart' | 'star' | 'thumb' | 'peta';
+        lang?: 'ja' | 'en';
       };
     }
   }
@@ -158,6 +160,7 @@ declare module 'react' {
       'nostalgic-ranking': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
+        lang?: 'ja' | 'en';
       };
     }
   }
@@ -202,6 +205,7 @@ declare module 'react' {
       'nostalgic-bbs': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         id?: string;
         theme?: 'light' | 'dark' | 'retro' | 'kawaii' | 'mom' | 'final';
+        lang?: 'ja' | 'en';
       };
     }
   }

@@ -212,6 +212,7 @@ GET /api/visit?action=delete&url={URL}&token={TOKEN}
   - Image themes: mahjong, segment, nixie, dots_f
 - `format`: Output format (image, text) - default: image
 - `digits`: Zero-padding digits (only when specified)
+- `lang`: UI language (ja, en) - default: auto-detect from browser (non-Japanese browsers use English)
 - `api-base`: Custom API base URL (optional)
 
 ## TypeScript Support
@@ -244,6 +245,7 @@ declare module "react" {
           | "dots_f";
         digits?: string;
         format?: "image" | "text";
+        lang?: "ja" | "en";
       };
     }
   }

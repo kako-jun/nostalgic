@@ -1,44 +1,117 @@
 /**
  * Nostalgic BBS Web Component
  *
- * 使用方法:
+ * Usage / 使用方法:
  * <script src="/components/bbs.js"></script>
- * <nostalgic-bbs id="your-bbs-id" page="1" theme="dark"></nostalgic-bbs>
+ * <nostalgic-bbs id="your-bbs-id" page="1" theme="dark" lang="en"></nostalgic-bbs>
  */
 
-// バリデーション定数は不要になりました（API側でデフォルト値処理）
-
-// APIエラーメッセージの翻訳辞書
-// デフォルト投稿者名（ブラウザ言語で決定）
-function getDefaultAuthor() {
-  const lang = (navigator.language || "en").split("-")[0];
-  return lang === "ja" ? "ああああ" : "Anonymous";
-}
-
-const BBS_ERROR_TRANSLATIONS = {
-  "BBS not found": "掲示板が見つかりません",
-  "BBS already exists for this URL": "この URL には既に掲示板が存在します",
-  "id and message are required": "ID とメッセージが必要です",
-  "Message must be 200 characters or less": "メッセージは200文字以内で入力してください",
-  "Message not found": "メッセージが見つかりません",
-  "You can only edit your own messages": "自分のメッセージのみ編集できます",
-  "You can only delete your own messages": "自分のメッセージのみ削除できます",
-  "Invalid token": "トークンが無効です",
-  "url and token are required": "URL とトークンが必要です",
-  "Token must be 8-16 characters": "トークンは8〜16文字で入力してください",
-  "Failed to load BBS data": "掲示板データの読み込みに失敗しました",
-  "Failed to post message": "メッセージの投稿に失敗しました",
-  "Failed to delete message": "メッセージの削除に失敗しました",
+// i18n translations
+const BBS_I18N = {
+  ja: {
+    loading: "読み込み中...",
+    noData: "データがありません",
+    noMessages: "まだメッセージがありません",
+    postComment: "コメントを投稿",
+    namePlaceholder: "名前（省略可、20文字まで）",
+    messagePlaceholder: "メッセージを入力（200文字まで）",
+    post: "投稿",
+    update: "更新",
+    posting: "投稿中...",
+    updating: "更新中...",
+    select: "セレクト",
+    emote: "エモート",
+    defaultAuthor: "ああああ",
+    messageUpdated: "メッセージを更新しました",
+    messagePosted: "メッセージを投稿しました",
+    messageDeleted: "メッセージが削除されました",
+    confirmDelete: "このメッセージを削除しますか？",
+    messageNotFound: "メッセージが見つかりません",
+    noEditPermission: "このメッセージを編集する権限がありません",
+    noDeletePermission: "このメッセージを削除する権限がありません",
+    errorIdRequired: "エラー: メッセージ投稿にid属性が必要です",
+    errorFormNotFound: "エラー: フォーム要素が見つかりません",
+    errorInputFailed: "エラー: 入力値の取得に失敗しました",
+    networkError: "ネットワークエラー",
+    errors: {
+      "BBS not found": "掲示板が見つかりません",
+      "BBS already exists for this URL": "この URL には既に掲示板が存在します",
+      "id and message are required": "ID とメッセージが必要です",
+      "Message must be 200 characters or less": "メッセージは200文字以内で入力してください",
+      "Message not found": "メッセージが見つかりません",
+      "You can only edit your own messages": "自分のメッセージのみ編集できます",
+      "You can only delete your own messages": "自分のメッセージのみ削除できます",
+      "Invalid token": "トークンが無効です",
+      "url and token are required": "URL とトークンが必要です",
+      "Token must be 8-16 characters": "トークンは8〜16文字で入力してください",
+      "Failed to load BBS data": "掲示板データの読み込みに失敗しました",
+      "Failed to post message": "メッセージの投稿に失敗しました",
+      "Failed to delete message": "メッセージの削除に失敗しました",
+    },
+    charLimitError: (n) => `メッセージは${n}文字以内で入力してください`,
+  },
+  en: {
+    loading: "Loading...",
+    noData: "No data available",
+    noMessages: "No messages yet",
+    postComment: "Post a comment",
+    namePlaceholder: "Name (optional, max 20 chars)",
+    messagePlaceholder: "Enter message (max 200 chars)",
+    post: "Post",
+    update: "Update",
+    posting: "Posting...",
+    updating: "Updating...",
+    select: "Select",
+    emote: "Emote",
+    defaultAuthor: "Anonymous",
+    messageUpdated: "Message updated",
+    messagePosted: "Message posted",
+    messageDeleted: "Message deleted",
+    confirmDelete: "Delete this message?",
+    messageNotFound: "Message not found",
+    noEditPermission: "You don't have permission to edit this message",
+    noDeletePermission: "You don't have permission to delete this message",
+    errorIdRequired: "Error: id attribute is required for posting",
+    errorFormNotFound: "Error: Form elements not found",
+    errorInputFailed: "Error: Failed to get input values",
+    networkError: "Network error",
+    errors: {
+      "BBS not found": "BBS not found",
+      "BBS already exists for this URL": "BBS already exists for this URL",
+      "id and message are required": "ID and message are required",
+      "Message must be 200 characters or less": "Message must be 200 characters or less",
+      "Message not found": "Message not found",
+      "You can only edit your own messages": "You can only edit your own messages",
+      "You can only delete your own messages": "You can only delete your own messages",
+      "Invalid token": "Invalid token",
+      "url and token are required": "URL and token are required",
+      "Token must be 8-16 characters": "Token must be 8-16 characters",
+      "Failed to load BBS data": "Failed to load BBS data",
+      "Failed to post message": "Failed to post message",
+      "Failed to delete message": "Failed to delete message",
+    },
+    charLimitError: (n) => `Message must be ${n} characters or less`,
+  },
 };
 
-function translateBBSError(message) {
-  if (BBS_ERROR_TRANSLATIONS[message]) {
-    return BBS_ERROR_TRANSLATIONS[message];
+function getBBSLang(element) {
+  const lang = element?.getAttribute("lang") || navigator.language?.split("-")[0] || "en";
+  return lang === "ja" ? "ja" : "en";
+}
+
+function getBBSTranslations(element) {
+  return BBS_I18N[getBBSLang(element)] || BBS_I18N.en;
+}
+
+function translateBBSError(message, element) {
+  const t = getBBSTranslations(element);
+  if (t.errors[message]) {
+    return t.errors[message];
   }
-  // 動的パターン（文字数制限など）
+  // Dynamic pattern (character limit)
   const charLimitMatch = message.match(/^Message must be (\d+) characters or less$/);
   if (charLimitMatch) {
-    return `メッセージは${charLimitMatch[1]}文字以内で入力してください`;
+    return t.charLimitError(charLimitMatch[1]);
   }
   return message;
 }
@@ -71,7 +144,12 @@ class NostalgicBBS extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ["id", "page", "theme", "format"];
+    return ["id", "page", "theme", "format", "lang"];
+  }
+
+  // Get translations for this element
+  get t() {
+    return getBBSTranslations(this);
   }
 
   // 安全なアトリビュート処理
@@ -156,11 +234,11 @@ class NostalgicBBS extends HTMLElement {
           totalPages: totalPages,
         };
       } else {
-        this.renderError(translateBBSError(data.error || "Failed to load BBS data"));
+        this.renderError(translateBBSError(data.error || "Failed to load BBS data", this));
         return;
       }
     } catch (error) {
-      this.renderError(`ネットワークエラー: ${error.message}`);
+      this.renderError(`${this.t.networkError}: ${error.message}`);
       return;
     } finally {
       this.loading = false;
@@ -198,7 +276,7 @@ class NostalgicBBS extends HTMLElement {
           }
         </style>
         <div class="bbs-container">
-          <div class="loading">${this.loading ? "読み込み中..." : "データがありません"}</div>
+          <div class="loading">${this.loading ? this.t.loading : this.t.noData}</div>
         </div>
       `;
       return;
@@ -754,6 +832,9 @@ class NostalgicBBS extends HTMLElement {
           opacity: 0.5;
           cursor: not-allowed;
         }
+        #post-button {
+          min-width: 80px;
+        }
         .form-row button.kawaii {
           /* 投稿ボタンなどは水玉なしで濃い水色背景のみ */
         }
@@ -878,7 +959,7 @@ class NostalgicBBS extends HTMLElement {
                     (message, index) => `
               <div class="message-item">
                 <div class="message-header">
-                  <span class="message-author"><span style="display:inline-block;min-width:2em;text-align:right;">${startNumber + index + 1}.</span> ${this.escapeHtml(message.author || "Anonymous")}${this.formatSelectValues(message)}</span>
+                  <span class="message-author"><span style="display:inline-block;min-width:2em;text-align:right;">${startNumber + index + 1}.</span> ${this.escapeHtml(message.author || this.t.defaultAuthor)}${this.formatSelectValues(message)}</span>
                   <div class="message-time-actions">
                     <span class="message-time">${this.formatDate(message.timestamp)}</span>
                     ${
@@ -906,7 +987,7 @@ class NostalgicBBS extends HTMLElement {
             `
                   )
                   .join("")
-              : `<div class="empty-message">まだメッセージがありません</div>`
+              : `<div class="empty-message">${this.t.noMessages}</div>`
           }
         </div>
         ${
@@ -919,17 +1000,17 @@ class NostalgicBBS extends HTMLElement {
             : ""
         }
         <div class="post-form">
-            <div class="form-header ${theme}">コメントを投稿</div>
+            <div class="form-header ${theme}">${this.t.postComment}</div>
             <div class="form-body">
               <div class="form-row">
-                <input type="text" id="message-author" placeholder="名前（省略可、20文字まで）" maxlength="20" spellcheck="false">
+                <input type="text" id="message-author" placeholder="${this.t.namePlaceholder}" maxlength="20" spellcheck="false">
                 ${this.generateSelectDropdowns()}
               </div>
               <div class="form-row">
-                <textarea id="message-content" placeholder="メッセージを入力（200文字まで）" maxlength="200" rows="5" spellcheck="false"></textarea>
+                <textarea id="message-content" placeholder="${this.t.messagePlaceholder}" maxlength="200" rows="5" spellcheck="false"></textarea>
               </div>
               <div class="form-row button-right">
-                <button id="post-button" class="${theme}" onclick="this.getRootNode().host.postMessage()">投稿</button>
+                <button id="post-button" class="${theme}" onclick="this.getRootNode().host.postMessage()">${this.t.post}</button>
               </div>
               <div class="message-area" id="form-message"></div>
             </div>
@@ -973,7 +1054,7 @@ class NostalgicBBS extends HTMLElement {
       ) {
         dropdowns += `
           <select id="standard-select">
-            <option value="">${this.escapeHtml(settings.standardSelect.label || "セレクト")}</option>
+            <option value="">${this.escapeHtml(settings.standardSelect.label || this.t.select)}</option>
             ${settings.standardSelect.options
               .map(
                 (option) =>
@@ -992,7 +1073,7 @@ class NostalgicBBS extends HTMLElement {
       ) {
         dropdowns += `
           <select id="incremental-select">
-            <option value="">${this.escapeHtml(settings.incrementalSelect.label || "セレクト")}</option>
+            <option value="">${this.escapeHtml(settings.incrementalSelect.label || this.t.select)}</option>
             ${settings.incrementalSelect.options
               .map(
                 (option) =>
@@ -1014,7 +1095,7 @@ class NostalgicBBS extends HTMLElement {
           <div class="emote-picker-container">
             <input type="hidden" id="emote-select" value="">
             <button type="button" class="emote-picker-btn" id="emote-picker-btn" onclick="this.getRootNode().host.toggleEmotePicker()">
-              <span id="emote-picker-label">${this.escapeHtml(settings.emoteSelect.label || "エモート")}</span>
+              <span id="emote-picker-label">${this.escapeHtml(settings.emoteSelect.label || this.t.emote)}</span>
             </button>
             <div class="emote-picker-popup" id="emote-picker-popup">
               <div class="emote-picker-grid">
@@ -1084,7 +1165,7 @@ class NostalgicBBS extends HTMLElement {
   clearEmoteSelection() {
     const hiddenInput = this.shadowRoot.querySelector("#emote-select");
     const btn = this.shadowRoot.querySelector("#emote-picker-btn");
-    const label = this.bbsData?.settings?.emoteSelect?.label || "エモート";
+    const label = this.bbsData?.settings?.emoteSelect?.label || this.t.emote;
 
     if (hiddenInput) {
       hiddenInput.value = "";
@@ -1116,7 +1197,7 @@ class NostalgicBBS extends HTMLElement {
     const id = this.safeGetAttribute("id");
 
     if (!id) {
-      this.showMessage("エラー: メッセージ投稿にid属性が必要です");
+      this.showMessage(this.t.errorIdRequired);
       return;
     }
 
@@ -1128,7 +1209,7 @@ class NostalgicBBS extends HTMLElement {
 
     // 安全な入力値検証
     if (!authorInput || !messageInput) {
-      this.showMessage("エラー: フォーム要素が見つかりません");
+      this.showMessage(this.t.errorFormNotFound);
       return;
     }
 
@@ -1154,13 +1235,13 @@ class NostalgicBBS extends HTMLElement {
           : "";
       rawEmoteValue = emoteSelect && typeof emoteSelect.value === "string" ? emoteSelect.value : "";
     } catch (error) {
-      this.showMessage("エラー: 入力値の取得に失敗しました");
+      this.showMessage(this.t.errorInputFailed);
       return;
     }
 
     // 致命的エラー防止のみ（軽微なバリデーションはAPI側に任せる）
     const author =
-      typeof rawAuthor === "string" ? rawAuthor || getDefaultAuthor() : getDefaultAuthor();
+      typeof rawAuthor === "string" ? rawAuthor || this.t.defaultAuthor : this.t.defaultAuthor;
     const message = typeof rawMessage === "string" ? rawMessage : "";
     const standardValue = typeof rawStandardValue === "string" ? rawStandardValue : "";
     const incrementalValue = typeof rawIncrementalValue === "string" ? rawIncrementalValue : "";
@@ -1211,12 +1292,12 @@ class NostalgicBBS extends HTMLElement {
 
         // 成功メッセージ
         if (this.editMode) {
-          this.showMessage("メッセージを更新しました", "success");
+          this.showMessage(this.t.messageUpdated, "success");
         } else {
-          this.showMessage("メッセージを投稿しました", "success");
+          this.showMessage(this.t.messagePosted, "success");
         }
       } else {
-        throw new Error(translateBBSError(data.error || "Failed to post message"));
+        throw new Error(translateBBSError(data.error || "Failed to post message", this));
       }
     } catch (error) {
       console.error("Post message failed:", error);
@@ -1232,9 +1313,9 @@ class NostalgicBBS extends HTMLElement {
     if (button) {
       button.disabled = this.posting;
       if (this.posting) {
-        button.textContent = this.editMode ? "更新中..." : "投稿中...";
+        button.textContent = this.editMode ? this.t.updating : this.t.posting;
       } else {
-        button.textContent = this.editMode ? "更新" : "投稿";
+        button.textContent = this.editMode ? this.t.update : this.t.post;
       }
     }
   }
@@ -1259,7 +1340,7 @@ class NostalgicBBS extends HTMLElement {
     this.editingMessageId = null;
     const postButton = this.shadowRoot.querySelector("#post-button");
     if (postButton) {
-      postButton.textContent = "投稿";
+      postButton.textContent = this.t.post;
     }
   }
 
@@ -1304,12 +1385,12 @@ class NostalgicBBS extends HTMLElement {
     // currentUserHashとメッセージのuserHashを比較して権限確認
     const message = this.bbsData.messages.find((m) => m.id === messageId);
     if (!message) {
-      this.showMessage("メッセージが見つかりません");
+      this.showMessage(this.t.messageNotFound);
       return;
     }
 
     if (message.userHash !== this.bbsData.currentUserHash) {
-      this.showMessage("このメッセージを編集する権限がありません");
+      this.showMessage(this.t.noEditPermission);
       return;
     }
 
@@ -1338,7 +1419,7 @@ class NostalgicBBS extends HTMLElement {
 
     const postButton = this.shadowRoot.querySelector("#post-button");
     if (postButton) {
-      postButton.textContent = "更新";
+      postButton.textContent = this.t.update;
     }
 
     // フォームまでスクロール
@@ -1353,16 +1434,16 @@ class NostalgicBBS extends HTMLElement {
     // currentUserHashとメッセージのuserHashを比較して権限確認
     const message = this.bbsData.messages.find((m) => m.id === messageId);
     if (!message) {
-      this.showMessage("メッセージが見つかりません");
+      this.showMessage(this.t.messageNotFound);
       return;
     }
 
     if (message.userHash !== this.bbsData.currentUserHash) {
-      this.showMessage("このメッセージを削除する権限がありません");
+      this.showMessage(this.t.noDeletePermission);
       return;
     }
 
-    if (!confirm("このメッセージを削除しますか？")) {
+    if (!confirm(this.t.confirmDelete)) {
       return;
     }
 
@@ -1376,9 +1457,9 @@ class NostalgicBBS extends HTMLElement {
       if (data.success) {
         // BBSデータを再読み込み
         await this.loadBBSData();
-        this.showMessage("メッセージが削除されました", "success");
+        this.showMessage(this.t.messageDeleted, "success");
       } else {
-        throw new Error(translateBBSError(data.error || "Failed to delete message"));
+        throw new Error(translateBBSError(data.error || "Failed to delete message", this));
       }
     } catch (error) {
       console.error("Delete message failed:", error);

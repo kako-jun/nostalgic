@@ -1,12 +1,29 @@
 /**
  * Nostalgic Like Web Component
  *
- * 使用方法:
+ * Usage / 使用方法:
  * <script src="/components/like.js"></script>
- * <nostalgic-like id="your-like-id" theme="dark" icon="heart" format="interactive"></nostalgic-like>
+ * <nostalgic-like id="your-like-id" theme="dark" icon="heart" format="interactive" lang="en"></nostalgic-like>
  */
 
-// バリデーション定数は不要になりました（API側でデフォルト値処理）
+// i18n translations
+const LIKE_I18N = {
+  ja: {
+    errorIdRequired: "エラー: id属性が必要です",
+  },
+  en: {
+    errorIdRequired: "Error: id attribute is required",
+  },
+};
+
+function getLikeLang(element) {
+  const lang = element?.getAttribute("lang") || navigator.language?.split("-")[0] || "en";
+  return lang === "ja" ? "ja" : "en";
+}
+
+function getLikeTranslations(element) {
+  return LIKE_I18N[getLikeLang(element)] || LIKE_I18N.en;
+}
 
 class NostalgicLike extends HTMLElement {
   // APIのベースURL
@@ -20,7 +37,11 @@ class NostalgicLike extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ["id", "theme", "icon", "format"];
+    return ["id", "theme", "icon", "format", "lang"];
+  }
+
+  get t() {
+    return getLikeTranslations(this);
   }
 
   // 安全なアトリビュート処理
@@ -73,7 +94,7 @@ class NostalgicLike extends HTMLElement {
   async loadLikeData() {
     const id = this.safeGetAttribute("id");
     if (!id) {
-      this.renderError("エラー: id属性が必要です");
+      this.renderError(this.t.errorIdRequired);
       return;
     }
 
@@ -92,7 +113,7 @@ class NostalgicLike extends HTMLElement {
       if (responseData.success) {
         this.likeData = responseData.data;
       } else {
-        throw new Error(responseData.error || "APIがエラーを返しました");
+        throw new Error(responseData.error || "API returned an error");
       }
     } catch (error) {
       console.error("nostalgic-like: Failed to load data:", error);
@@ -123,7 +144,7 @@ class NostalgicLike extends HTMLElement {
       if (responseData.success) {
         this.likeData = responseData.data;
       } else {
-        throw new Error(responseData.error || "APIがエラーを返しました");
+        throw new Error(responseData.error || "API returned an error");
       }
     } catch (error) {
       console.error("nostalgic-like: Toggle failed:", error);
@@ -152,7 +173,7 @@ class NostalgicLike extends HTMLElement {
     const format = this.safeGetAttribute("format");
 
     if (!this.safeGetAttribute("id")) {
-      this.renderError("エラー: id属性が必要です");
+      this.renderError(this.t.errorIdRequired);
       return;
     }
 

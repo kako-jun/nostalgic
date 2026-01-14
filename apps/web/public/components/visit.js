@@ -1,12 +1,29 @@
 /**
  * Nostalgic Counter Web Component
  *
- * 使用方法:
+ * Usage / 使用方法:
  * <script src="/components/visit.js"></script>
- * <nostalgic-counter id="your-counter-id" type="total" theme="dark"></nostalgic-counter>
+ * <nostalgic-counter id="your-counter-id" type="total" theme="dark" lang="en"></nostalgic-counter>
  */
 
-// バリデーション定数は不要になりました（API側でデフォルト値処理）
+// i18n translations
+const COUNTER_I18N = {
+  ja: {
+    error: "エラー",
+  },
+  en: {
+    error: "Error",
+  },
+};
+
+function getCounterLang(element) {
+  const lang = element?.getAttribute("lang") || navigator.language?.split("-")[0] || "en";
+  return lang === "ja" ? "ja" : "en";
+}
+
+function getCounterTranslations(element) {
+  return COUNTER_I18N[getCounterLang(element)] || COUNTER_I18N.en;
+}
 
 class NostalgicCounter extends HTMLElement {
   // ページ内でカウント済みのIDを記録（同じIDは1回のみカウント）
@@ -22,7 +39,11 @@ class NostalgicCounter extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ["id", "type", "theme", "digits"];
+    return ["id", "type", "theme", "digits", "lang"];
+  }
+
+  get t() {
+    return getCounterTranslations(this);
   }
 
   // 安全なアトリビュート処理
@@ -242,7 +263,7 @@ class NostalgicCounter extends HTMLElement {
             this.shadowRoot.innerHTML = `${textStyle}<span>${data}</span>`;
           })
           .catch((error) => {
-            this.shadowRoot.innerHTML = `${textStyle}<span>エラー</span>`;
+            this.shadowRoot.innerHTML = `${textStyle}<span>${this.t.error}</span>`;
           });
       }
     } else {

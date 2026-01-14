@@ -7,6 +7,7 @@ declare namespace JSX {
       theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
       digits?: string;
       format?: "text" | "svg" | "image" | "json";
+      lang?: "ja" | "en";
       "api-base"?: string;
     };
     "nostalgic-like": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
@@ -16,6 +17,7 @@ declare namespace JSX {
       theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
       icon?: "heart" | "star" | "thumb" | "peta";
       format?: "interactive" | "text" | "image";
+      lang?: "ja" | "en";
       "api-base"?: string;
     };
     "nostalgic-ranking": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
@@ -23,6 +25,7 @@ declare namespace JSX {
       url?: string;
       limit?: string;
       theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
+      lang?: "ja" | "en";
       "api-base"?: string;
     };
     "nostalgic-bbs": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
@@ -31,6 +34,7 @@ declare namespace JSX {
       token?: string;
       theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
       limit?: string;
+      lang?: "ja" | "en";
       "api-base"?: string;
     };
   }

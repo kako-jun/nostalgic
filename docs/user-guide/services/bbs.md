@@ -397,6 +397,7 @@ Messages are stored in D1 (SQLite) database:
 - `id`: BBS public ID
 - `theme`: Visual style (light, dark, retro, kawaii, mom, final)
 - `format`: Display format (interactive, text) - default: interactive
+- `lang`: UI language (ja, en) - default: auto-detect from browser (non-Japanese browsers use English)
 - `api-base`: Custom API base URL (optional)
 
 ## TypeScript Support
@@ -414,6 +415,7 @@ declare module "react" {
         id?: string;
         theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
         format?: "interactive" | "text";
+        lang?: "ja" | "en";
       };
     }
   }

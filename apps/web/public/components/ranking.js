@@ -1,12 +1,35 @@
 /**
  * Nostalgic Ranking Web Component (Read-only)
  *
- * 使用方法:
+ * Usage / 使用方法:
  * <script src="/components/ranking.js"></script>
- * <nostalgic-ranking id="your-ranking-id" limit="10" theme="dark"></nostalgic-ranking>
+ * <nostalgic-ranking id="your-ranking-id" limit="10" theme="dark" lang="en"></nostalgic-ranking>
  */
 
-// バリデーション定数は不要になりました（API側でデフォルト値処理）
+// i18n translations
+const RANKING_I18N = {
+  ja: {
+    loading: "読み込み中...",
+    noData: "データがありません",
+    noRankings: "まだランキングがありません",
+    anonymous: "ああああ",
+  },
+  en: {
+    loading: "Loading...",
+    noData: "No data available",
+    noRankings: "No rankings yet",
+    anonymous: "Anonymous",
+  },
+};
+
+function getRankingLang(element) {
+  const lang = element?.getAttribute("lang") || navigator.language?.split("-")[0] || "en";
+  return lang === "ja" ? "ja" : "en";
+}
+
+function getRankingTranslations(element) {
+  return RANKING_I18N[getRankingLang(element)] || RANKING_I18N.en;
+}
 
 class NostalgicRanking extends HTMLElement {
   // APIのベースURL
@@ -20,7 +43,11 @@ class NostalgicRanking extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ["id", "limit", "theme", "format"];
+    return ["id", "limit", "theme", "format", "lang"];
+  }
+
+  get t() {
+    return getRankingTranslations(this);
   }
 
   // 安全なアトリビュート処理
@@ -127,7 +154,7 @@ class NostalgicRanking extends HTMLElement {
           }
         </style>
         <div class="ranking-container">
-          <div class="loading">${this.loading ? "読み込み中..." : "データがありません"}</div>
+          <div class="loading">${this.loading ? this.t.loading : this.t.noData}</div>
         </div>
       `;
       return;
@@ -437,7 +464,7 @@ class NostalgicRanking extends HTMLElement {
                 (entry, index) => `
               <li class="ranking-item">
                 <span class="rank">${entry.rank || index + 1}</span>
-                <span class="name">${this.escapeHtml(entry.name || "Anonymous")}</span>
+                <span class="name">${this.escapeHtml(entry.name || this.t.anonymous)}</span>
                 <span class="score">${entry.displayScore || (entry.score ? entry.score.toLocaleString() : 0)}</span>
               </li>
             `
@@ -446,7 +473,7 @@ class NostalgicRanking extends HTMLElement {
           </ul>
         `
             : `
-          <div class="empty-message">まだランキングがありません</div>
+          <div class="empty-message">${this.t.noRankings}</div>
         `
         }
       </div>

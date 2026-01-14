@@ -277,6 +277,44 @@ Counterコンポーネントは`theme`属性でスタイルを切り替えます
 
 CounterコンポーネントはCSS Variables未対応です。`theme`属性でスタイルを切り替えてください。
 
+## 6. 言語設定（i18n）
+
+すべてのWeb Componentsは `lang` 属性で表示言語を切り替えられます。
+
+### 対応言語
+
+- `ja`: 日本語
+- `en`: 英語
+
+### 使用方法
+
+```html
+<!-- 英語で表示 -->
+<nostalgic-bbs id="your-id" lang="en"></nostalgic-bbs>
+
+<!-- 日本語で表示 -->
+<nostalgic-bbs id="your-id" lang="ja"></nostalgic-bbs>
+
+<!-- ブラウザ言語で自動判定（デフォルト） -->
+<nostalgic-bbs id="your-id"></nostalgic-bbs>
+```
+
+### 自動判定ロジック
+
+`lang` 属性を指定しない場合、ブラウザの言語設定（`navigator.language`）を参照します。
+
+- 日本語ブラウザ（`ja`, `ja-JP`など）→ 日本語で表示
+- それ以外 → 英語で表示
+
+### 全コンポーネント対応
+
+```html
+<nostalgic-counter id="..." lang="en"></nostalgic-counter>
+<nostalgic-like id="..." lang="en"></nostalgic-like>
+<nostalgic-ranking id="..." lang="en"></nostalgic-ranking>
+<nostalgic-bbs id="..." lang="en"></nostalgic-bbs>
+```
+
 ## 💡 Tips
 
 1. **段階的カスタマイズ**: まず基本的な色から変更し、徐々に細かい調整を行う

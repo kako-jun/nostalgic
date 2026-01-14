@@ -353,6 +353,7 @@ Rankings use D1 (SQLite) with indexed ORDER BY for efficient sorting:
 - `theme`: Visual style (light, dark, retro, kawaii, mom, final)
 - `limit`: Number of entries to display (1-100, default: 10)
 - `format`: Display format (interactive, text) - default: interactive
+- `lang`: UI language (ja, en) - default: auto-detect from browser (non-Japanese browsers use English)
 - `api-base`: Custom API base URL (optional)
 
 ## TypeScript Support
@@ -374,6 +375,7 @@ declare module "react" {
         theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
         limit?: string;
         format?: "interactive" | "text";
+        lang?: "ja" | "en";
       };
     }
   }
