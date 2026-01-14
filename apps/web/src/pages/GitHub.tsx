@@ -5,12 +5,14 @@ export default function GitHubPage() {
   const [counterId] = useState("nostalgic-b89803bb");
   const [likeId] = useState("nostalgic-b89803bb");
   const [bbsId] = useState("nostalgic-1cc54837");
-  const [yokosoId] = useState("nostalgic-0f5ead1d");
+  const [yokosoBadgeId] = useState("nostalgic-0f5ead1d");
+  const [yokosoCardId] = useState("nostalgic-11f690b3");
 
   const counterUrl = `https://api.nostalgic.llll-ll.com/visit?action=increment&id=${counterId}&format=image&theme=github`;
   const likeUrl = `https://api.nostalgic.llll-ll.com/like?action=get&id=${likeId}&format=image`;
   const bbsUrl = `https://api.nostalgic.llll-ll.com/bbs?action=get&id=${bbsId}&format=image&limit=3`;
-  const yokosoUrl = `https://api.nostalgic.llll-ll.com/yokoso?action=get&id=${yokosoId}&format=image`;
+  const yokosoBadgeUrl = `https://api.nostalgic.llll-ll.com/yokoso?action=get&id=${yokosoBadgeId}&format=image`;
+  const yokosoCardUrl = `https://api.nostalgic.llll-ll.com/yokoso?action=get&id=${yokosoCardId}&format=image`;
 
   const likeLinkUrl = `https://nostalgic.llll-ll.com/like?id=${likeId}`;
   const bbsLinkUrl = `https://nostalgic.llll-ll.com/bbs?id=${bbsId}`;
@@ -63,7 +65,11 @@ export default function GitHubPage() {
           </p>
 
           <p style={{ marginBottom: "16px" }}>
-            <img src={yokosoUrl} alt="Yokoso" style={{ verticalAlign: "middle" }} />
+            <img src={yokosoBadgeUrl} alt="Yokoso Badge" style={{ verticalAlign: "middle" }} />
+          </p>
+
+          <p style={{ marginBottom: "16px" }}>
+            <img src={yokosoCardUrl} alt="Yokoso Card" style={{ verticalAlign: "middle" }} />
           </p>
 
           <p style={{ marginBottom: "16px" }}>This is my awesome project description.</p>
@@ -178,7 +184,25 @@ export default function GitHubPage() {
         </pre>
 
         <p style={{ marginTop: "15px", marginBottom: "5px" }}>
-          <b>Yokoso（招き猫メッセージ）:</b>
+          <b>Yokoso バッジモード（短文20文字）:</b>
+        </p>
+        <pre
+          style={{
+            backgroundColor: "#f6f8fa",
+            padding: "10px",
+            overflow: "auto",
+            fontSize: "13px",
+            border: "1px solid #d0d7de",
+            borderRadius: "6px",
+          }}
+        >
+          ![Yokoso](https://api.nostalgic.llll-ll.com/yokoso?action=get&id=
+          <span style={{ color: "#008000" }}>公開ID</span>
+          &format=image)
+        </pre>
+
+        <p style={{ marginTop: "15px", marginBottom: "5px" }}>
+          <b>Yokoso カードモード（長文140文字）:</b>
         </p>
         <pre
           style={{

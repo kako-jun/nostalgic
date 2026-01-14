@@ -438,6 +438,11 @@ declare module "react" {
 
 This prevents TypeScript build errors when using Web Components in React/Next.js projects.
 
+## Rate Limiting
+
+- **Post interval**: 10 seconds between posts from the same user
+- Returns HTTP 429 with remaining wait time when rate limited
+
 ## Security Notes
 
 - Message authorship verified by IP+UserAgent hash

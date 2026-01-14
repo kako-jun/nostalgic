@@ -91,12 +91,12 @@ function generateBadgeSVG(message: string): string {
   const label = "Yokoso";
   const labelWidth = 50;
   const iconWidth = 20; // 招き猫アイコン用スペース
-  const textWidth = Math.max(message.length * 8, 50);
+  const textWidth = Math.max(message.length * 7 + 10, 50);
   const messageWidth = iconWidth + textWidth;
   const totalWidth = labelWidth + messageWidth;
   const height = 20;
   const labelBg = "#555";
-  const valueBg = "#e91e63"; // ピンク（縁起の良い色）
+  const valueBg = "#d32f2f"; // 赤（縁起の良い色）
   const textColor = "#fff";
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${height}">
@@ -112,10 +112,12 @@ function generateBadgeSVG(message: string): string {
     <rect x="${labelWidth}" width="${messageWidth}" height="${height}" fill="${valueBg}"/>
     <rect width="${totalWidth}" height="${height}" fill="url(#smooth)"/>
   </g>
-  <g fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
-    <text x="${labelWidth / 2}" y="14">${label}</text>
+  <g text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="${labelWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${label}</text>
+    <text x="${labelWidth / 2}" y="14" fill="${textColor}">${label}</text>
   </g>
   ${getManekiNekoIcon(labelWidth + 2, 2)}
+  <text x="${labelWidth + iconWidth + textWidth / 2}" y="15" fill="#010101" fill-opacity=".3" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
   <text x="${labelWidth + iconWidth + textWidth / 2}" y="14" fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
 </svg>`;
 }
@@ -150,10 +152,10 @@ function generateCardSVG(
   lang: string = "ja"
 ): string {
   const labelWidth = 50;
-  const contentWidth = 280;
+  const contentWidth = 300;
   const totalWidth = labelWidth + contentWidth;
   const lineHeight = 16;
-  const padding = 8;
+  const padding = 12;
   const avatarSize = 28; // アバターサイズを大きく
 
   // Split message into lines (approximately 28 chars per line for Japanese)

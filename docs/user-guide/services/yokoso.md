@@ -9,7 +9,7 @@ Dynamic welcome message service featuring a Maneki-neko (Lucky Cat) avatar. "Yok
 When no avatar is specified, a cute Maneki-neko (招き猫 / Lucky Cat) icon appears:
 
 - Badge mode: Small cat icon next to the message
-- Card mode: Cat avatar with default name "Maneki"
+- Card mode: Cat avatar with default name "Lucky Cat"
 
 You can override with your own avatar URL if desired.
 
@@ -31,7 +31,7 @@ Longer message up to 140 characters with avatar, name, and date.
 
 ```
 ┌──────────┬─────────────────────────────────┐
-│          │ 🐱 Maneki                        │
+│          │ 🐱 Lucky Cat                     │
 │  Yokoso  │ v2.0開発中です！新機能として    │
 │          │ Yokoso機能を追加予定。          │
 │          │                   2025/01/14    │
@@ -54,7 +54,7 @@ GET /api/yokoso?action=create&url={URL}&token={TOKEN}&message={MESSAGE}&mode={MO
 - `token` (required): Owner token (8-16 characters)
 - `message` (required): Welcome message (badge: max 20 chars, card: max 140 chars)
 - `mode` (optional): Display mode (`badge` default, `card`)
-- `name` (optional): Display name for card mode (default: "Maneki")
+- `name` (optional): Display name for card mode (default: "Lucky Cat")
 - `avatar` (optional): Avatar image URL for card mode (default: Maneki-neko icon)
 - `webhookUrl` (optional): Webhook URL for event notifications
 
@@ -132,7 +132,7 @@ GET /api/yokoso?action=get&url={URL}&token={TOKEN}
     "url": "https://yoursite.com",
     "message": "ようこそ！",
     "mode": "badge",
-    "name": "Maneki",
+    "name": "Lucky Cat",
     "avatar": null,
     "updatedAt": "2025-01-14T12:00:00Z",
     "settings": {

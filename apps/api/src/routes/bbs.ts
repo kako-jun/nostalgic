@@ -706,8 +706,8 @@ function truncateText(text: string, maxLength: number): string {
 }
 
 function generateBBSSVG(messages: BBSMessage[]): string {
-  const labelWidth = 40;
-  const contentWidth = 280;
+  const labelWidth = 50;
+  const contentWidth = 270;
   const totalWidth = labelWidth + contentWidth;
   const lineHeight = 16;
   const padding = 4;
@@ -736,10 +736,11 @@ function generateBBSSVG(messages: BBSMessage[]): string {
     <rect x="${labelWidth}" width="${contentWidth}" height="${totalHeight}" fill="${contentBg}"/>
     <rect width="${totalWidth}" height="${totalHeight}" fill="url(#smooth)"/>
   </g>
-  <g fill="${headerTextColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
-    <text x="${labelWidth / 2}" y="14">BBS</text>
+  <g text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="${labelWidth / 2}" y="15" fill="#010101" fill-opacity=".3">BBS</text>
+    <text x="${labelWidth / 2}" y="14" fill="${headerTextColor}">BBS</text>
   </g>
-  <g fill="#999" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10">
+  <g fill="#999" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
     <text x="${labelWidth + 8}" y="${headerHeight + lineHeight - 2}">No messages yet</text>
   </g>
 </svg>`;
@@ -770,10 +771,11 @@ function generateBBSSVG(messages: BBSMessage[]): string {
     <rect x="${labelWidth}" width="${contentWidth}" height="${totalHeight}" fill="${contentBg}"/>
     <rect width="${totalWidth}" height="${totalHeight}" fill="url(#smooth)"/>
   </g>
-  <g fill="${headerTextColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
-    <text x="${labelWidth / 2}" y="14">BBS</text>
+  <g text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="${labelWidth / 2}" y="15" fill="#010101" fill-opacity=".3">BBS</text>
+    <text x="${labelWidth / 2}" y="14" fill="${headerTextColor}">BBS</text>
   </g>
-  <g fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10">
+  <g fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
     ${messageLines}
   </g>
 </svg>`;

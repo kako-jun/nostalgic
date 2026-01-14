@@ -458,9 +458,11 @@ function generateLikeSVG(count: string): string {
     <rect x="${labelWidth}" width="${valueWidth}" height="${height}" fill="${valueBg}"/>
     <rect width="${totalWidth}" height="${height}" fill="url(#smooth)"/>
   </g>
-  <g fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
-    <text x="${labelWidth / 2}" y="14">${label}</text>
-    <text x="${labelWidth + valueWidth / 2}" y="14">${count}</text>
+  <g text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="${labelWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${label}</text>
+    <text x="${labelWidth / 2}" y="14" fill="${textColor}">${label}</text>
+    <text x="${labelWidth + valueWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${count}</text>
+    <text x="${labelWidth + valueWidth / 2}" y="14" fill="${textColor}">${count}</text>
   </g>
 </svg>`;
 }

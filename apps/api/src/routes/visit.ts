@@ -512,9 +512,11 @@ function generateShieldsBadgeSVG(label: string, value: string, valueColor: strin
     <rect x="${labelWidth}" width="${valueWidth}" height="${height}" fill="${valueColor}"/>
     <rect width="${totalWidth}" height="${height}" fill="url(#smooth)"/>
   </g>
-  <g fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
-    <text x="${labelWidth / 2}" y="14">${label}</text>
-    <text x="${labelWidth + valueWidth / 2}" y="14">${value}</text>
+  <g text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="${labelWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${label}</text>
+    <text x="${labelWidth / 2}" y="14" fill="${textColor}">${label}</text>
+    <text x="${labelWidth + valueWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${value}</text>
+    <text x="${labelWidth + valueWidth / 2}" y="14" fill="${textColor}">${value}</text>
   </g>
 </svg>`;
 }

@@ -384,6 +384,11 @@ declare module "react" {
 
 This prevents TypeScript build errors when using Web Components in React/Next.js projects.
 
+## Rate Limiting
+
+- **Submit interval**: 5 seconds between score submissions from the same user
+- Returns HTTP 429 with remaining wait time when rate limited
+
 ## Security Notes
 
 - Anyone can submit scores using the public ID
