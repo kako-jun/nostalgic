@@ -8,6 +8,23 @@ import { callApi } from "../utils/apiHelpers";
 import { bbsSteps } from "../config/services/bbsSteps";
 import { bbsEmbedConfig } from "../config/embedConfigs";
 
+// 埋め込みページ用の多言語テキスト
+const embedTexts = {
+  ja: {
+    title: "このプロジェクトにコメントを書き込んでください！",
+    note: "※GitHubアカウント不要で誰でも書き込めます",
+  },
+  en: {
+    title: "Leave a comment on this project!",
+    note: "*No GitHub account required - anyone can post",
+  },
+};
+
+function getEmbedLang(): "ja" | "en" {
+  const lang = navigator.language || "";
+  return lang.startsWith("ja") ? "ja" : "en";
+}
+
 export default function BBSPage() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -436,38 +453,47 @@ export default function BBSPage() {
     </>
   );
 
-  const renderEmbedPage = () => (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        backgroundColor: "#fff",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: "20px",
-        padding: "20px",
-        boxSizing: "border-box",
-      }}
-    >
-      <nostalgic-bbs id={embedId!} theme="light" />
-      <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>
-        Powered by{" "}
-        <a
-          href="https://nostalgic.llll-ll.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: "#666" }}
-        >
-          Nostalgic
-        </a>
-      </p>
-    </div>
-  );
+  const renderEmbedPage = () => {
+    const lang = getEmbedLang();
+    const t = embedTexts[lang];
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          backgroundColor: "#fff",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "20px",
+          padding: "20px",
+          boxSizing: "border-box",
+        }}
+      >
+        <p style={{ margin: 0, textAlign: "center", color: "#333" }}>
+          {t.title}
+          <br />
+          <span style={{ fontSize: "12px", color: "#666" }}>{t.note}</span>
+        </p>
+        <nostalgic-bbs id={embedId!} theme="light" lang={lang} />
+        <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>
+          Powered by{" "}
+          <a
+            href="https://nostalgic.llll-ll.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "#666" }}
+          >
+            Nostalgic
+          </a>
+        </p>
+      </div>
+    );
+  };
 
   if (currentPage === "embed") {
     return renderEmbedPage();

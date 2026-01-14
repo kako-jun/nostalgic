@@ -8,6 +8,23 @@ import { callApi, callApiWithFormat } from "../utils/apiHelpers";
 import { likeSteps } from "../config/services/likeSteps";
 import { likeEmbedConfig } from "../config/embedConfigs";
 
+// 埋め込みページ用の多言語テキスト
+const embedTexts = {
+  ja: {
+    title: "このプロジェクトにいいねを押してください！",
+    note: "※GitHubアカウント不要で誰でも押せます",
+  },
+  en: {
+    title: "Please like this project!",
+    note: "*No GitHub account required - anyone can like",
+  },
+};
+
+function getEmbedLang(): "ja" | "en" {
+  const lang = navigator.language || "";
+  return lang.startsWith("ja") ? "ja" : "en";
+}
+
 export default function LikePage() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -453,43 +470,45 @@ export default function LikePage() {
     </>
   );
 
-  const renderEmbedPage = () => (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        backgroundColor: "#fff",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: "20px",
-      }}
-    >
-      <p style={{ margin: 0, textAlign: "center", color: "#333" }}>
-        このプロジェクトにいいねを押してください！
-        <br />
-        <span style={{ fontSize: "12px", color: "#666" }}>
-          ※GitHubアカウント不要で誰でも押せます
-        </span>
-      </p>
-      <nostalgic-like id={embedId!} theme="light" icon="heart" />
-      <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>
-        Powered by{" "}
-        <a
-          href="https://nostalgic.llll-ll.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: "#666" }}
-        >
-          Nostalgic
-        </a>
-      </p>
-    </div>
-  );
+  const renderEmbedPage = () => {
+    const lang = getEmbedLang();
+    const t = embedTexts[lang];
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          backgroundColor: "#fff",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "20px",
+        }}
+      >
+        <p style={{ margin: 0, textAlign: "center", color: "#333" }}>
+          {t.title}
+          <br />
+          <span style={{ fontSize: "12px", color: "#666" }}>{t.note}</span>
+        </p>
+        <nostalgic-like id={embedId!} theme="light" icon="heart" lang={lang} />
+        <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>
+          Powered by{" "}
+          <a
+            href="https://nostalgic.llll-ll.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "#666" }}
+          >
+            Nostalgic
+          </a>
+        </p>
+      </div>
+    );
+  };
 
   if (currentPage === "embed") {
     return renderEmbedPage();
