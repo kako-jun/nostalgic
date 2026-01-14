@@ -723,10 +723,9 @@ function generateBBSSVG(messages: BBSMessage[], totalMessages: number): string {
   const totalWidth = labelWidth + contentWidth;
   const lineHeight = 20; // 行間広め
   const padding = 12; // Yokosoカードと同じ上下余白
-  const headerHeight = 20;
   const contentHeight =
     messages.length > 0 ? messages.length * lineHeight + padding * 2 : lineHeight + padding * 2;
-  const totalHeight = headerHeight + contentHeight;
+  const totalHeight = contentHeight;
 
   const labelBg = "#555";
   const contentBg = "#fff";
@@ -750,7 +749,7 @@ function generateBBSSVG(messages: BBSMessage[], totalMessages: number): string {
     <text x="${labelWidth / 2}" y="${totalHeight / 2 + 4}" fill="${headerTextColor}">BBS</text>
   </g>
   <g fill="#999" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12">
-    <text x="${labelWidth + 8}" y="${headerHeight + lineHeight - 2}">No messages yet</text>
+    <text x="${labelWidth + 8}" y="${padding + lineHeight - 4}">No messages yet</text>
   </g>
 </svg>`;
   }

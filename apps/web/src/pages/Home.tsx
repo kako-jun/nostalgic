@@ -1272,7 +1272,7 @@ export default function HomePage() {
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <nostalgic-bbs id="nostalgic-4e2986a2" theme="kawaii" />
+                <nostalgic-bbs id="nostalgic-1cc54837" theme="kawaii" />
               </div>
             </div>
 
@@ -1283,7 +1283,7 @@ export default function HomePage() {
                 </span>
               </p>
               <div style={{ margin: "20px 0", textAlign: "center" }}>
-                <nostalgic-bbs id="nostalgic-b89803bb" theme="mom" />
+                <nostalgic-bbs id="nostalgic-4e2986a2" theme="mom" />
               </div>
             </div>
 
@@ -1304,7 +1304,7 @@ export default function HomePage() {
                     maxWidth: "100%",
                   }}
                 >
-                  <nostalgic-bbs id="nostalgic-b89803bb" theme="final" />
+                  <nostalgic-bbs id="nostalgic-2ba2b326" theme="final" />
                 </div>
               </div>
             </div>
