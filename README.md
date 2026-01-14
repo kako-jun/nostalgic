@@ -35,6 +35,14 @@ A comprehensive nostalgic web tools platform that brings back the 90s internet c
 - Author-based message editing
 - Icon selection for posts
 
+### 🐱 Yokoso (Lucky Cat) Service
+
+- Lucky cat widget that speaks your message
+- Update just one part of your page independently
+- Perfect for announcements on static pages
+- A modern alternative to X (Twitter) embeds
+- SVG images for GitHub README embedding
+
 ## ✨ Common Features
 
 - 🚫 **No registration required**: Just provide a URL and secret token
@@ -102,6 +110,21 @@ https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://yoursite.com&tok
 https://api.nostalgic.llll-ll.com/bbs?action=post&url=https://yoursite.com&token=your-secret-token&author=User&message=Hello!
 ```
 
+### Yokoso Service
+
+1. **Create Yokoso**:
+
+```
+https://api.nostalgic.llll-ll.com/yokoso?action=create&url=https://yoursite.com&token=your-secret-token
+```
+
+2. **Embed in your site**:
+
+```html
+<script src="https://nostalgic.llll-ll.com/components/yokoso.js"></script>
+<nostalgic-yokoso id="yoursite-a7b9c3d4"></nostalgic-yokoso>
+```
+
 ## 🎮 Try the Demos
 
 Visit our interactive demo pages:
@@ -110,6 +133,7 @@ Visit our interactive demo pages:
 - **[Like Demo](https://nostalgic.llll-ll.com/like)** - Try the like/unlike functionality
 - **[Ranking Demo](https://nostalgic.llll-ll.com/ranking)** - Submit and manage scores
 - **[BBS Demo](https://nostalgic.llll-ll.com/bbs)** - Post and edit messages
+- **[Yokoso Demo](https://nostalgic.llll-ll.com/yokoso)** - Try the lucky cat widget
 
 ## 🔧 API Architecture
 
@@ -137,6 +161,7 @@ Just like the original 1990s web tools, everything can be operated directly from
 | **Like**    | `create`, `toggle`, `get`                              | Like/unlike button          |
 | **Ranking** | `create`, `submit`, `update`, `remove`, `clear`, `get` | Score leaderboard           |
 | **BBS**     | `create`, `post`, `update`, `remove`, `clear`, `get`   | Message board               |
+| **Yokoso**  | `create`, `update`, `get`                              | Lucky cat widget            |
 
 ## 📖 Documentation
 

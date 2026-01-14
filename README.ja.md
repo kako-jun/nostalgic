@@ -35,6 +35,14 @@ _[English version here](README.md)_
 - 投稿者による自分のメッセージ編集
 - 投稿用アイコン選択
 
+### 🐱 Yokoso（招き猫）サービス
+
+- 招き猫がメッセージを喋るウィジェット
+- ページ自体の更新と切り離して一部分だけを更新可能
+- 静的ページでもアナウンスやお知らせに活用
+- X（Twitter）の埋め込みが難しい今、代わりに使える
+- SVG画像でGitHub READMEにも埋め込み可能
+
 ## ✨ 共通機能
 
 - 🚫 **登録不要**: URLと秘密トークンだけで利用開始
@@ -102,6 +110,21 @@ https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://yoursite.com&tok
 https://api.nostalgic.llll-ll.com/bbs?action=post&url=https://yoursite.com&token=your-secret-token&author=User&message=こんにちは！
 ```
 
+### Yokosoサービス
+
+1. **Yokoso作成**:
+
+```
+https://api.nostalgic.llll-ll.com/yokoso?action=create&url=https://yoursite.com&token=your-secret-token
+```
+
+2. **サイトに埋め込み**:
+
+```html
+<script src="https://nostalgic.llll-ll.com/components/yokoso.js"></script>
+<nostalgic-yokoso id="yoursite-a7b9c3d4"></nostalgic-yokoso>
+```
+
 ## 🎮 デモを試す
 
 インタラクティブデモページで各サービスをテスト:
@@ -110,6 +133,7 @@ https://api.nostalgic.llll-ll.com/bbs?action=post&url=https://yoursite.com&token
 - **[いいねデモ](https://nostalgic.llll-ll.com/like)** - いいね/取り消し機能を試す
 - **[ランキングデモ](https://nostalgic.llll-ll.com/ranking)** - スコア送信と管理
 - **[BBSデモ](https://nostalgic.llll-ll.com/bbs)** - メッセージ投稿と編集
+- **[Yokosoデモ](https://nostalgic.llll-ll.com/yokoso)** - 招き猫ウィジェットを試す
 
 ## 🔧 API アーキテクチャ
 
@@ -137,6 +161,7 @@ https://api.nostalgic.llll-ll.com/bbs?action=post&url=https://yoursite.com&token
 | **Like**    | `create`, `toggle`, `get`                              | いいね/取り消しボタン  |
 | **Ranking** | `create`, `submit`, `update`, `remove`, `clear`, `get` | スコアリーダーボード   |
 | **BBS**     | `create`, `post`, `update`, `remove`, `clear`, `get`   | メッセージボード       |
+| **Yokoso**  | `create`, `update`, `get`                              | 招き猫ウィジェット     |
 
 ## 📖 ドキュメント
 
