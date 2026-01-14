@@ -5,7 +5,7 @@ export default function GitHubPage() {
   const [counterId] = useState("nostalgic-b89803bb");
   const [likeId] = useState("nostalgic-b89803bb");
   const [bbsId] = useState("nostalgic-1cc54837");
-  const [yokosoId] = useState("nostalgic-demo-yokoso");
+  const [yokosoId] = useState("nostalgic-0f5ead1d");
 
   const counterUrl = `https://api.nostalgic.llll-ll.com/visit?action=increment&id=${counterId}&format=image&theme=github`;
   const likeUrl = `https://api.nostalgic.llll-ll.com/like?action=get&id=${likeId}&format=image`;

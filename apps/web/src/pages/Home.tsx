@@ -1034,6 +1034,31 @@ export default function HomePage() {
                   <br />
                   <small style={{ fontWeight: "normal" }}>掲示板システム</small>
                 </button>
+
+                <button
+                  onClick={() => voteForService("Yokoso")}
+                  style={{
+                    padding: "15px",
+                    backgroundColor: "#fff8e1",
+                    border: "2px solid #ffa000",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    transition: "all 0.2s",
+                    fontFamily: "inherit",
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = "#ffecb3";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = "#fff8e1";
+                  }}
+                >
+                  🐱 Yokoso
+                  <br />
+                  <small style={{ fontWeight: "normal" }}>招き猫メッセージ</small>
+                </button>
               </div>
 
               {votingMessage && (
