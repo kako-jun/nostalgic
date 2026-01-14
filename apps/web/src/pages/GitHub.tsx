@@ -17,9 +17,9 @@ export default function GitHubPage() {
   return (
     <NostalgicLayout serviceName="GitHub" serviceIcon="📝">
       <div className="nostalgic-title-bar">
-        ★ GitHub README プレビュー ★
+        ★ GitHubのREADME埋め込み用 ★
         <br />
-        設置イメージ
+        プレビュー
       </div>
 
       <div className="nostalgic-section">
@@ -191,7 +191,7 @@ export default function GitHubPage() {
           <li>
             <b>Like</b>: 画像クリックでいいねページに移動し、そこでいいねを押せます
             <br />
-            <span style={{ fontSize: "14px", color: "#666", marginLeft: "1em" }}>
+            <span style={{ color: "#666", marginLeft: "1em" }}>
               ※GitHub Starとは別のいいね機能です（アカウント不要）
             </span>
           </li>
