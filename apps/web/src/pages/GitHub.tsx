@@ -28,7 +28,7 @@ export default function GitHubPage() {
             <b>◆README.md での表示イメージ◆</b>
           </span>
         </p>
-        <p style={{ fontSize: "14px", color: "#666", marginBottom: "15px" }}>
+        <p style={{ marginBottom: "15px" }}>
           GitHubのREADME.mdに以下のコードを貼ると、このように表示されます。
         </p>
 
@@ -129,7 +129,9 @@ export default function GitHubPage() {
             borderRadius: "6px",
           }}
         >
-          {`![visitors](https://api.nostalgic.llll-ll.com/visit?action=increment&id=YOUR_ID&format=image&theme=github)`}
+          ![visitors](https://api.nostalgic.llll-ll.com/visit?action=increment&id=
+          <span style={{ color: "#008000" }}>YOUR_ID</span>
+          &format=image&theme=github)
         </pre>
 
         <p style={{ marginTop: "15px", marginBottom: "5px" }}>
@@ -145,7 +147,10 @@ export default function GitHubPage() {
             borderRadius: "6px",
           }}
         >
-          {`[![Like](https://api.nostalgic.llll-ll.com/like?action=get&id=YOUR_ID&format=image)](https://nostalgic.llll-ll.com/like?id=YOUR_ID)`}
+          [![Like](https://api.nostalgic.llll-ll.com/like?action=get&id=
+          <span style={{ color: "#008000" }}>YOUR_ID</span>
+          &format=image)](https://nostalgic.llll-ll.com/like?id=
+          <span style={{ color: "#008000" }}>YOUR_ID</span>)
         </pre>
 
         <p style={{ marginTop: "15px", marginBottom: "5px" }}>
@@ -161,11 +166,15 @@ export default function GitHubPage() {
             borderRadius: "6px",
           }}
         >
-          {`[![BBS](https://api.nostalgic.llll-ll.com/bbs?action=get&id=YOUR_ID&format=image&limit=3)](https://nostalgic.llll-ll.com/bbs?id=YOUR_ID)`}
+          [![BBS](https://api.nostalgic.llll-ll.com/bbs?action=get&id=
+          <span style={{ color: "#008000" }}>YOUR_ID</span>
+          &format=image&limit=3)](https://nostalgic.llll-ll.com/bbs?id=
+          <span style={{ color: "#008000" }}>YOUR_ID</span>)
         </pre>
 
-        <p style={{ marginTop: "15px", fontSize: "14px", color: "#666" }}>
-          ※ <code>YOUR_ID</code> を各サービスで作成した公開IDに置き換えてください。
+        <p style={{ marginTop: "15px" }}>
+          ※ <span style={{ color: "#008000" }}>YOUR_ID</span>{" "}
+          を各サービスで作成した公開IDに置き換えてください。
         </p>
       </div>
 
@@ -182,7 +191,7 @@ export default function GitHubPage() {
           <li>
             <b>Like</b>: 画像クリックでいいねページに移動し、そこでいいねを押せます
             <br />
-            <span style={{ fontSize: "12px", color: "#666", marginLeft: "1em" }}>
+            <span style={{ fontSize: "14px", color: "#666", marginLeft: "1em" }}>
               ※GitHub Starとは別のいいね機能です（アカウント不要）
             </span>
           </li>

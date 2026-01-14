@@ -442,7 +442,7 @@ function generateLikeSVG(count: string): string {
   const totalWidth = labelWidth + valueWidth;
   const height = 20;
   const labelBg = "#555";
-  const valueBg = "#e05d44"; // Shields.io red
+  const valueBg = "#e91e63"; // pink
   const textColor = "#fff";
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${height}">
