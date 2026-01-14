@@ -1312,74 +1312,93 @@ export default function HomePage() {
             <div className="nostalgic-section">
               <p>
                 <span className="nostalgic-section-title">
-                  <b>◆Yokosoのサンプル◆</b>
+                  <b>◆Yokosoのサンプル - Light◆</b>
                 </span>
               </p>
               <p style={{ marginBottom: "10px" }}>アバター + 名前 + 日付 + メッセージ（140文字）</p>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "20px",
-                  flexWrap: "wrap",
-                  margin: "20px 0",
-                }}
-              >
-                <div>
-                  <p style={{ fontSize: "12px", marginBottom: "5px" }}>Light</p>
-                  <nostalgic-yokoso id="nostalgic-11f690b3" theme="light" />
-                </div>
-                <div>
-                  <p style={{ fontSize: "12px", marginBottom: "5px" }}>Dark</p>
-                  <div
-                    style={{
-                      background:
-                        "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
-                      padding: "10px",
-                    }}
-                  >
-                    <nostalgic-yokoso id="nostalgic-11f690b3" theme="dark" />
-                  </div>
-                </div>
-                <div>
-                  <p style={{ fontSize: "12px", marginBottom: "5px" }}>Retro</p>
-                  <div
-                    style={{
-                      background:
-                        "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
-                      padding: "10px",
-                    }}
-                  >
-                    <nostalgic-yokoso id="nostalgic-11f690b3" theme="retro" />
-                  </div>
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
+                <nostalgic-yokoso id="nostalgic-11f690b3" theme="light" />
+              </div>
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆Yokosoのサンプル - Dark◆</b>
+                </span>
+              </p>
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
+                <div
+                  style={{
+                    background:
+                      "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
+                    padding: "10px",
+                    display: "inline-block",
+                  }}
+                >
+                  <nostalgic-yokoso id="nostalgic-11f690b3" theme="dark" />
                 </div>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "20px",
-                  flexWrap: "wrap",
-                  margin: "20px 0",
-                }}
-              >
-                <div>
-                  <p style={{ fontSize: "12px", marginBottom: "5px" }}>Kawaii</p>
-                  <nostalgic-yokoso id="nostalgic-11f690b3" theme="kawaii" />
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆Yokosoのサンプル - Retro◆</b>
+                </span>
+              </p>
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
+                <div
+                  style={{
+                    background:
+                      "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
+                    padding: "10px",
+                    display: "inline-block",
+                  }}
+                >
+                  <nostalgic-yokoso id="nostalgic-11f690b3" theme="retro" />
                 </div>
-                <div>
-                  <p style={{ fontSize: "12px", marginBottom: "5px" }}>Mother味</p>
-                  <nostalgic-yokoso id="nostalgic-11f690b3" theme="mom" />
-                </div>
-                <div>
-                  <p style={{ fontSize: "12px", marginBottom: "5px" }}>FF味</p>
-                  <div
-                    style={{
-                      background:
-                        "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
-                      padding: "10px",
-                    }}
-                  >
-                    <nostalgic-yokoso id="nostalgic-11f690b3" theme="final" />
-                  </div>
+              </div>
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆Yokosoのサンプル - Kawaii◆</b>
+                </span>
+              </p>
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
+                <nostalgic-yokoso id="nostalgic-11f690b3" theme="kawaii" />
+              </div>
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆Yokosoのサンプル - Mother味◆</b>
+                </span>
+              </p>
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
+                <nostalgic-yokoso id="nostalgic-11f690b3" theme="mom" />
+              </div>
+            </div>
+
+            <div className="nostalgic-section">
+              <p>
+                <span className="nostalgic-section-title">
+                  <b>◆Yokosoのサンプル - FF味◆</b>
+                </span>
+              </p>
+              <div style={{ margin: "20px 0", textAlign: "center" }}>
+                <div
+                  style={{
+                    background:
+                      "radial-gradient(ellipse, #666666 60%, rgba(102, 102, 102, 0.3) 100%)",
+                    padding: "10px",
+                    display: "inline-block",
+                  }}
+                >
+                  <nostalgic-yokoso id="nostalgic-11f690b3" theme="final" />
                 </div>
               </div>
             </div>
