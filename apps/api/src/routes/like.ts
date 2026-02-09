@@ -85,12 +85,26 @@ app.get("/", async (c) => {
       return c.json({ error: "Invalid icon. Use: heart, star, thumb, peta" }, 400);
     }
 
+    const customId = c.req.query("id");
+
     const existing = await getLikeByUrl(db, url);
     if (existing) {
       return c.json({ error: "Like service already exists for this URL" }, 400);
     }
 
-    const publicId = await generatePublicId(url);
+    let publicId: string;
+    if (customId) {
+      if (!/^[a-zA-Z0-9_-]+$/.test(customId) || customId.length > 128) {
+        return c.json({ error: "Invalid custom id format" }, 400);
+      }
+      const existingById = await getLikeById(db, customId);
+      if (existingById) {
+        return c.json({ error: "Like service with this id already exists" }, 400);
+      }
+      publicId = customId;
+    } else {
+      publicId = await generatePublicId(url);
+    }
     const hashedToken = await hashToken(token);
     const metadata = JSON.stringify({
       webhookUrl: webhookUrl || null,
@@ -363,7 +377,28 @@ app.get("/", async (c) => {
     return c.json({ success: true, message: "Like service deleted" });
   }
 
-  return c.json({ error: "Invalid action. Use: create, toggle, get, update, delete" }, 400);
+  // SUM BY PREFIX
+  if (action === "sumByPrefix") {
+    const prefix = c.req.query("prefix");
+    if (!prefix) {
+      return c.json({ error: "prefix is required" }, 400);
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(prefix)) {
+      return c.json({ error: "Invalid prefix format" }, 400);
+    }
+
+    const row = await db
+      .prepare("SELECT COALESCE(SUM(total), 0) as total FROM likes WHERE service_id LIKE ?")
+      .bind(`like:${prefix}%:total`)
+      .first<{ total: number }>();
+
+    return c.json({ success: true, total: row?.total ?? 0 });
+  }
+
+  return c.json(
+    { error: "Invalid action. Use: create, toggle, get, update, delete, sumByPrefix" },
+    400
+  );
 });
 
 // === POST Routes (for batch operations) ===
@@ -371,6 +406,87 @@ app.get("/", async (c) => {
 app.post("/", async (c) => {
   const action = c.req.query("action");
   const db = c.env.DB;
+
+  // BATCH CREATE - 複数のlikeサービスを一括登録
+  if (action === "batchCreate") {
+    let token: string;
+    let items: Array<{ id: string; url: string }>;
+    try {
+      const body = await c.req.json<{ token: string; items: Array<{ id: string; url: string }> }>();
+      token = body.token;
+      items = body.items;
+    } catch {
+      return c.json(
+        {
+          error:
+            "Invalid JSON body. Expected: { token: string, items: Array<{ id: string, url: string }> }",
+        },
+        400
+      );
+    }
+
+    if (!token || !validateOwnerToken(token)) {
+      return c.json({ error: "Valid token is required" }, 400);
+    }
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return c.json({ error: "items array is required and must not be empty" }, 400);
+    }
+
+    const MAX_BATCH_SIZE = 100;
+    if (items.length > MAX_BATCH_SIZE) {
+      return c.json({ error: `Maximum ${MAX_BATCH_SIZE} items per request` }, 400);
+    }
+
+    const validIdPattern = /^[a-zA-Z0-9_-]+$/;
+    for (const item of items) {
+      if (!item.id || !item.url) {
+        return c.json({ error: "Each item must have id and url" }, 400);
+      }
+      if (!validIdPattern.test(item.id) || item.id.length > 128) {
+        return c.json({ error: `Invalid id format: ${item.id}` }, 400);
+      }
+    }
+
+    const hashedToken = await hashToken(token);
+    let created = 0;
+    let skipped = 0;
+
+    for (const item of items) {
+      const existingById = await getLikeById(db, item.id);
+      if (existingById) {
+        skipped++;
+        continue;
+      }
+      const existingByUrl = await getLikeByUrl(db, item.url);
+      if (existingByUrl) {
+        skipped++;
+        continue;
+      }
+
+      const metadata = JSON.stringify({ webhookUrl: null, icon: "heart" });
+
+      await db.batch([
+        db
+          .prepare(
+            'INSERT INTO services (id, type, url, metadata, created_at) VALUES (?, ?, ?, ?, datetime("now"))'
+          )
+          .bind(`like:${item.id}`, "like", item.url, metadata),
+        db
+          .prepare("INSERT INTO url_mappings (type, url, service_id) VALUES (?, ?, ?)")
+          .bind("like", item.url, item.id),
+        db
+          .prepare("INSERT INTO owner_tokens (service_id, token_hash) VALUES (?, ?)")
+          .bind(`like:${item.id}`, hashedToken),
+        db
+          .prepare("INSERT INTO likes (service_id, total) VALUES (?, 0)")
+          .bind(`like:${item.id}:total`),
+      ]);
+      created++;
+    }
+
+    return c.json({ success: true, created, skipped });
+  }
 
   // BATCH GET - 複数IDのlike数を一括取得
   if (action === "batchGet") {
@@ -393,7 +509,7 @@ app.post("/", async (c) => {
     }
 
     // IDバリデーション（英数字とハイフンのみ許可）
-    const validIdPattern = /^[a-zA-Z0-9-]+$/;
+    const validIdPattern = /^[a-zA-Z0-9_-]+$/;
     for (const id of ids) {
       if (!validIdPattern.test(id)) {
         return c.json({ error: `Invalid id format: ${id}` }, 400);
@@ -430,7 +546,7 @@ app.post("/", async (c) => {
     return c.json({ success: true, data });
   }
 
-  return c.json({ error: "Invalid action for POST. Use: batchGet" }, 400);
+  return c.json({ error: "Invalid action for POST. Use: batchGet, batchCreate" }, 400);
 });
 
 // === SVG Generator ===
