@@ -14,12 +14,17 @@ type Bindings = {
 const app = new Hono<{ Bindings: Bindings }>();
 
 // CORS設定
-app.use(
-  "*",
-  cors({
+// GET requests: allow any origin (web components are embedded on third-party sites)
+// Mutation requests (POST/PUT/DELETE): restrict to nostalgic.llll-ll.com only
+app.use("*", async (c, next) => {
+  const method = c.req.method;
+  if (method === "GET" || method === "HEAD" || method === "OPTIONS") {
+    return cors({ origin: "*" })(c, next);
+  }
+  return cors({
     origin: ["https://nostalgic.llll-ll.com", "http://localhost:5173", "http://localhost:3000"],
-  })
-);
+  })(c, next);
+});
 
 // --- Simple in-memory rate limiter (per-isolate) ---
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
