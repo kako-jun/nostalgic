@@ -1,3 +1,5 @@
+import { sanitizeSVG } from "../utils/sanitize";
+
 interface ResponseDisplayProps {
   response: string;
   responseType: "json" | "text" | "svg" | "auto";
@@ -23,7 +25,7 @@ export default function ResponseDisplay({
               backgroundColor: "#f9f9f9",
             }}
           >
-            <div dangerouslySetInnerHTML={{ __html: response }} />
+            <div dangerouslySetInnerHTML={{ __html: sanitizeSVG(response) }} />
           </div>
         );
 

@@ -6,6 +6,7 @@ import StepRenderer from "../components/StepRenderer";
 import { PageFooter } from "../components/common";
 import { highlightPublicId } from "../components/ApiUrlDisplay";
 import { callApi } from "../utils/apiHelpers";
+import { sanitizeWebComponent } from "../utils/sanitize";
 import { rankingSteps } from "../config/services/rankingSteps";
 import { rankingEmbedConfig } from "../config/embedConfigs";
 
@@ -369,7 +370,9 @@ export default function RankingPage() {
                   </p>
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: `<${rankingEmbedConfig.componentName} id="${publicId}" theme="${theme.value}" limit="5"></${rankingEmbedConfig.componentName}>`,
+                      __html: sanitizeWebComponent(
+                        `<${rankingEmbedConfig.componentName} id="${encodeURIComponent(publicId)}" theme="${theme.value}" limit="5"></${rankingEmbedConfig.componentName}>`
+                      ),
                     }}
                   />
                 </div>

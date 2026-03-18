@@ -1,9 +1,18 @@
 /**
  * BBS API Routes
+ *
+ * GET  /?action=get     - Public read (by id)
+ * POST /?action=get     - Owner read (body: url, token) - token never in URL
+ * POST /?action=create  - Create a new BBS (body: url, token, ...)
+ * POST /?action=post    - Post a message (body: id, message, author?, ...)
+ * POST /?action=update  - Update settings or message (body: url+token or id+messageId)
+ * POST /?action=remove  - Remove a message (body: url+token+messageId or id+messageId)
+ * POST /?action=clear   - Clear all messages (body: url, token)
+ * POST /?action=delete  - Delete BBS (body: url, token)
  */
 
 import { Hono } from "hono";
-import { hashToken, validateOwnerToken } from "../lib/core/auth";
+import { hashToken, verifyToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
 import { generateUserHash } from "../lib/core/crypto";
 import { BBS } from "../lib/core/constants";
@@ -78,28 +87,180 @@ async function getMessageCount(db: D1Database, id: string): Promise<number> {
   return result?.count || 0;
 }
 
-// === Routes ===
+/** Verify owner token against DB */
+async function verifyOwnerToken(
+  db: D1Database,
+  serviceId: string,
+  token: string
+): Promise<boolean> {
+  const row = await db
+    .prepare("SELECT token_hash FROM owner_tokens WHERE service_id = ?")
+    .bind(serviceId)
+    .first<{ token_hash: string }>();
+  if (!row) return false;
+  return await verifyToken(token, row.token_hash);
+}
+
+// === GET Routes ===
 
 app.get("/", async (c) => {
   const action = c.req.query("action");
   const db = c.env.DB;
 
+  // GET (public mode only - owner mode uses POST)
+  if (action === "get") {
+    const id = c.req.query("id");
+    const limit = Math.min(Number(c.req.query("limit")) || 100, 1000);
+
+    // Public mode (by id)
+    if (!id) {
+      return c.json({ error: "id is required" }, 400);
+    }
+
+    const bbs = await db.prepare("SELECT * FROM services WHERE id = ?").bind(`bbs:${id}`).first();
+    if (!bbs) {
+      return c.json({ error: "BBS not found" }, 404);
+    }
+
+    const metadata = JSON.parse((bbs as BBSRecord).metadata || "{}");
+    const format = c.req.query("format") || "json";
+
+    // 画像形式で返す場合（GitHub README用）
+    if (format === "image") {
+      const imageLimit = Math.min(Number(c.req.query("limit")) || 3, 10);
+      const messages = await getMessages(db, id, imageLimit);
+      const totalMessages = await getMessageCount(db, id);
+      const svg = generateBBSSVG(messages, totalMessages);
+      return c.body(svg, 200, {
+        "Content-Type": "image/svg+xml",
+        "Cache-Control": "no-cache",
+      });
+    }
+
+    const messages = await getMessages(db, id, limit);
+    const totalMessages = await getMessageCount(db, id);
+
+    // Add user hash for edit permission check
+    const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
+    const userAgent = c.req.header("User-Agent") || "";
+    const currentUserHash = await generateUserHash(ip, userAgent);
+
+    return c.json({
+      success: true,
+      data: {
+        id,
+        title: metadata.title,
+        maxMessages: metadata.maxMessages,
+        messagesPerPage: metadata.messagesPerPage || 20,
+        totalMessages,
+        messages,
+        currentUserHash,
+        settings: {
+          standardSelect: metadata.standardSelect || null,
+          incrementalSelect: metadata.incrementalSelect || null,
+          emoteSelect: metadata.emoteSelect || null,
+        },
+      },
+    });
+  }
+
+  return c.json({ error: "Invalid action for GET. Use: get" }, 400);
+});
+
+// === POST Routes ===
+
+app.post("/", async (c) => {
+  const action = c.req.query("action");
+  const db = c.env.DB;
+
+  let body: Record<string, unknown>;
+  try {
+    body = await c.req.json();
+  } catch {
+    body = {};
+  }
+
+  const getParam = (name: string): string | undefined => {
+    const val = body[name];
+    if (typeof val === "string") return val;
+    if (typeof val === "number") return String(val);
+    return c.req.query(name);
+  };
+
+  // Get sensitive param from body only (never from query string to avoid URL exposure)
+  const getSecureParam = (name: string): string | undefined => {
+    const val = body[name];
+    if (typeof val === "string") return val;
+    return undefined;
+  };
+
+  // GET (owner mode - token in body, not URL)
+  if (action === "get") {
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const limit = Math.min(Number(getParam("limit")) || 100, 1000);
+
+    if (!url || !token) {
+      return c.json({ error: "url and token are required for owner-mode get via POST" }, 400);
+    }
+
+    const bbs = await getBBSByUrl(db, url);
+    if (!bbs) {
+      return c.json({ error: "BBS not found" }, 404);
+    }
+
+    const bbsId = (bbs as BBSRecord).id.replace("bbs:", "");
+    const isOwner = await verifyOwnerToken(db, `bbs:${bbsId}`, token);
+
+    if (!isOwner) {
+      return c.json({ error: "Invalid token" }, 403);
+    }
+
+    const metadata = JSON.parse((bbs as BBSRecord).metadata || "{}");
+    const messages = await getMessages(db, bbsId, limit);
+    const totalMessages = await getMessageCount(db, bbsId);
+
+    const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
+    const userAgent = c.req.header("User-Agent") || "";
+    const currentUserHash = await generateUserHash(ip, userAgent);
+
+    return c.json({
+      success: true,
+      data: {
+        id: bbsId,
+        url,
+        title: metadata.title,
+        maxMessages: metadata.maxMessages,
+        messagesPerPage: metadata.messagesPerPage || 20,
+        totalMessages,
+        messages,
+        currentUserHash,
+        settings: {
+          webhookUrl: metadata.webhookUrl || null,
+          standardSelect: metadata.standardSelect || null,
+          incrementalSelect: metadata.incrementalSelect || null,
+          emoteSelect: metadata.emoteSelect || null,
+        },
+      },
+    });
+  }
+
   // CREATE
   if (action === "create") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const title = c.req.query("title") || "BBS";
-    const maxMessages = Number(c.req.query("maxMessages")) || 100;
-    const messagesPerPage = Number(c.req.query("messagesPerPage")) || 20;
-    const webhookUrl = c.req.query("webhookUrl");
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const title = getParam("title") || "BBS";
+    const maxMessages = Number(getParam("maxMessages")) || 100;
+    const messagesPerPage = Number(getParam("messagesPerPage")) || 20;
+    const webhookUrl = getParam("webhookUrl");
 
     // Select configuration
-    const standardSelectLabel = c.req.query("standardSelectLabel");
-    const standardSelectOptions = c.req.query("standardSelectOptions");
-    const incrementalSelectLabel = c.req.query("incrementalSelectLabel");
-    const incrementalSelectOptions = c.req.query("incrementalSelectOptions");
-    const emoteSelectLabel = c.req.query("emoteSelectLabel");
-    const emoteSelectOptions = c.req.query("emoteSelectOptions");
+    const standardSelectLabel = getParam("standardSelectLabel");
+    const standardSelectOptions = getParam("standardSelectOptions");
+    const incrementalSelectLabel = getParam("incrementalSelectLabel");
+    const incrementalSelectOptions = getParam("incrementalSelectOptions");
+    const emoteSelectLabel = getParam("emoteSelectLabel");
+    const emoteSelectOptions = getParam("emoteSelectOptions");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -158,14 +319,14 @@ app.get("/", async (c) => {
     return c.json({ success: true, id: publicId, url, title, maxMessages, messagesPerPage });
   }
 
-  // POST
+  // POST (message)
   if (action === "post") {
-    const id = c.req.query("id");
-    const author = c.req.query("author") || BBS.AUTHOR.DEFAULT_VALUE;
-    const message = c.req.query("message");
-    const standardValue = c.req.query("standardValue");
-    const incrementalValue = c.req.query("incrementalValue");
-    const emoteValue = c.req.query("emoteValue");
+    const id = getParam("id");
+    const author = getParam("author") || BBS.AUTHOR.DEFAULT_VALUE;
+    const message = getParam("message");
+    const standardValue = getParam("standardValue");
+    const incrementalValue = getParam("incrementalValue");
+    const emoteValue = getParam("emoteValue");
 
     if (!id || !message) {
       return c.json({ error: "id and message are required" }, 400);
@@ -266,133 +427,27 @@ app.get("/", async (c) => {
     return c.json({ success: true, data: { id, messages } });
   }
 
-  // GET
-  if (action === "get") {
-    const id = c.req.query("id");
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const limit = Math.min(Number(c.req.query("limit")) || 100, 1000);
-
-    // Owner mode (url + token) - returns settings including webhookUrl
-    if (url && token) {
-      const bbs = await getBBSByUrl(db, url);
-      if (!bbs) {
-        return c.json({ error: "BBS not found" }, 404);
-      }
-
-      const bbsId = (bbs as BBSRecord).id.replace("bbs:", "");
-      const hashedToken = await hashToken(token);
-      const owner = await db
-        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-        .bind(`bbs:${bbsId}`, hashedToken)
-        .first();
-
-      if (!owner) {
-        return c.json({ error: "Invalid token" }, 403);
-      }
-
-      const metadata = JSON.parse((bbs as BBSRecord).metadata || "{}");
-      const messages = await getMessages(db, bbsId, limit);
-      const totalMessages = await getMessageCount(db, bbsId);
-
-      const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
-      const userAgent = c.req.header("User-Agent") || "";
-      const currentUserHash = await generateUserHash(ip, userAgent);
-
-      return c.json({
-        success: true,
-        data: {
-          id: bbsId,
-          url,
-          title: metadata.title,
-          maxMessages: metadata.maxMessages,
-          messagesPerPage: metadata.messagesPerPage || 20,
-          totalMessages,
-          messages,
-          currentUserHash,
-          settings: {
-            webhookUrl: metadata.webhookUrl || null,
-            standardSelect: metadata.standardSelect || null,
-            incrementalSelect: metadata.incrementalSelect || null,
-            emoteSelect: metadata.emoteSelect || null,
-          },
-        },
-      });
-    }
-
-    // Public mode (by id)
-    if (!id) {
-      return c.json({ error: "id is required" }, 400);
-    }
-
-    const bbs = await db.prepare("SELECT * FROM services WHERE id = ?").bind(`bbs:${id}`).first();
-    if (!bbs) {
-      return c.json({ error: "BBS not found" }, 404);
-    }
-
-    const metadata = JSON.parse((bbs as BBSRecord).metadata || "{}");
-    const format = c.req.query("format") || "json";
-
-    // 画像形式で返す場合（GitHub README用）
-    if (format === "image") {
-      const imageLimit = Math.min(Number(c.req.query("limit")) || 3, 10);
-      const messages = await getMessages(db, id, imageLimit);
-      const totalMessages = await getMessageCount(db, id);
-      const svg = generateBBSSVG(messages, totalMessages);
-      return c.body(svg, 200, {
-        "Content-Type": "image/svg+xml",
-        "Cache-Control": "no-cache",
-      });
-    }
-
-    const messages = await getMessages(db, id, limit);
-    const totalMessages = await getMessageCount(db, id);
-
-    // Add user hash for edit permission check
-    const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
-    const userAgent = c.req.header("User-Agent") || "";
-    const currentUserHash = await generateUserHash(ip, userAgent);
-
-    return c.json({
-      success: true,
-      data: {
-        id,
-        title: metadata.title,
-        maxMessages: metadata.maxMessages,
-        messagesPerPage: metadata.messagesPerPage || 20,
-        totalMessages,
-        messages,
-        currentUserHash,
-        settings: {
-          standardSelect: metadata.standardSelect || null,
-          incrementalSelect: metadata.incrementalSelect || null,
-          emoteSelect: metadata.emoteSelect || null,
-        },
-      },
-    });
-  }
-
   // UPDATE
   // - Message update: user mode (id + messageId) or owner mode (url + token + messageId)
   // - Settings update: owner mode (url + token) without messageId
   if (action === "update") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const idParam = c.req.query("id");
-    const messageId = c.req.query("messageId");
-    const newMessage = c.req.query("message");
-    const newTitle = c.req.query("title");
-    const newMaxMessages = c.req.query("maxMessages");
-    const newMessagesPerPage = c.req.query("messagesPerPage");
-    const webhookUrl = c.req.query("webhookUrl");
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const idParam = getParam("id");
+    const messageId = getParam("messageId");
+    const newMessage = getParam("message");
+    const newTitle = getParam("title");
+    const newMaxMessages = getParam("maxMessages");
+    const newMessagesPerPage = getParam("messagesPerPage");
+    const webhookUrl = getParam("webhookUrl");
 
     // Select configuration
-    const standardSelectLabel = c.req.query("standardSelectLabel");
-    const standardSelectOptions = c.req.query("standardSelectOptions");
-    const incrementalSelectLabel = c.req.query("incrementalSelectLabel");
-    const incrementalSelectOptions = c.req.query("incrementalSelectOptions");
-    const emoteSelectLabel = c.req.query("emoteSelectLabel");
-    const emoteSelectOptions = c.req.query("emoteSelectOptions");
+    const standardSelectLabel = getParam("standardSelectLabel");
+    const standardSelectOptions = getParam("standardSelectOptions");
+    const incrementalSelectLabel = getParam("incrementalSelectLabel");
+    const incrementalSelectOptions = getParam("incrementalSelectOptions");
+    const emoteSelectLabel = getParam("emoteSelectLabel");
+    const emoteSelectOptions = getParam("emoteSelectOptions");
 
     // Settings update mode (url + token, no messageId)
     if (url && token && !messageId) {
@@ -402,13 +457,9 @@ app.get("/", async (c) => {
       }
 
       const id = (bbs as BBSRecord).id.replace("bbs:", "");
-      const hashedToken = await hashToken(token);
-      const owner = await db
-        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-        .bind(`bbs:${id}`, hashedToken)
-        .first();
+      const isOwner = await verifyOwnerToken(db, `bbs:${id}`, token);
 
-      if (!owner) {
+      if (!isOwner) {
         return c.json({ error: "Invalid token" }, 403);
       }
 
@@ -490,12 +541,8 @@ app.get("/", async (c) => {
         return c.json({ error: "BBS not found" }, 404);
       }
       id = (bbs as BBSRecord).id.replace("bbs:", "");
-      const hashedToken = await hashToken(token);
-      const owner = await db
-        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-        .bind(`bbs:${id}`, hashedToken)
-        .first();
-      if (!owner) {
+      const ownerVerified = await verifyOwnerToken(db, `bbs:${id}`, token);
+      if (!ownerVerified) {
         return c.json({ error: "Invalid token" }, 403);
       }
       isOwner = true;
@@ -541,10 +588,10 @@ app.get("/", async (c) => {
 
   // REMOVE (user mode: id + messageId, owner mode: url + token + messageId)
   if (action === "remove") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const idParam = c.req.query("id");
-    const messageId = c.req.query("messageId");
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const idParam = getParam("id");
+    const messageId = getParam("messageId");
 
     if (!messageId) {
       return c.json({ error: "messageId is required" }, 400);
@@ -560,12 +607,8 @@ app.get("/", async (c) => {
         return c.json({ error: "BBS not found" }, 404);
       }
       id = (bbs as BBSRecord).id.replace("bbs:", "");
-      const hashedToken = await hashToken(token);
-      const owner = await db
-        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-        .bind(`bbs:${id}`, hashedToken)
-        .first();
-      if (!owner) {
+      const ownerVerified = await verifyOwnerToken(db, `bbs:${id}`, token);
+      if (!ownerVerified) {
         return c.json({ error: "Invalid token" }, 403);
       }
       isOwner = true;
@@ -608,8 +651,8 @@ app.get("/", async (c) => {
 
   // CLEAR
   if (action === "clear") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
+    const url = getParam("url");
+    const token = getSecureParam("token");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -621,13 +664,9 @@ app.get("/", async (c) => {
     }
 
     const id = (bbs as BBSRecord).id.replace("bbs:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`bbs:${id}`, hashedToken)
-      .first();
+    const isOwner = await verifyOwnerToken(db, `bbs:${id}`, token);
 
-    if (!owner) {
+    if (!isOwner) {
       return c.json({ error: "Invalid token" }, 403);
     }
 
@@ -641,8 +680,8 @@ app.get("/", async (c) => {
 
   // DELETE
   if (action === "delete") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
+    const url = getParam("url");
+    const token = getSecureParam("token");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -654,13 +693,9 @@ app.get("/", async (c) => {
     }
 
     const id = (bbs as BBSRecord).id.replace("bbs:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`bbs:${id}`, hashedToken)
-      .first();
+    const isOwner = await verifyOwnerToken(db, `bbs:${id}`, token);
 
-    if (!owner) {
+    if (!isOwner) {
       return c.json({ error: "Invalid token" }, 403);
     }
 
@@ -675,7 +710,10 @@ app.get("/", async (c) => {
   }
 
   return c.json(
-    { error: "Invalid action. Use: create, post, get, update, remove, clear, delete" },
+    {
+      error:
+        "Invalid action for POST. Use: get (owner), create, post, update, remove, clear, delete",
+    },
     400
   );
 });
@@ -709,7 +747,7 @@ function truncateByWidth(text: string, maxWidth: number): string {
     const code = char.charCodeAt(0);
     const charWidth = code > 0x7f ? 2 : 1;
     if (width + charWidth > maxWidth - 1) {
-      return result + "…";
+      return result + "...";
     }
     width += charWidth;
     result += char;
@@ -719,10 +757,10 @@ function truncateByWidth(text: string, maxWidth: number): string {
 
 function generateBBSSVG(messages: BBSMessage[], totalMessages: number): string {
   const labelWidth = 50;
-  const contentWidth = 350; // スマホ/GitHub対応の広め幅
+  const contentWidth = 350;
   const totalWidth = labelWidth + contentWidth;
-  const lineHeight = 20; // 行間広め
-  const padding = 12; // Yokosoカードと同じ上下余白
+  const lineHeight = 20;
+  const padding = 12;
   const contentHeight =
     messages.length > 0 ? messages.length * lineHeight + padding * 2 : lineHeight + padding * 2;
   const totalHeight = contentHeight;
@@ -732,7 +770,6 @@ function generateBBSSVG(messages: BBSMessage[], totalMessages: number): string {
   const textColor = "#333";
   const headerTextColor = "#fff";
 
-  // メッセージがない場合
   if (messages.length === 0) {
     return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}">
   <defs>
@@ -754,16 +791,12 @@ function generateBBSSVG(messages: BBSMessage[], totalMessages: number): string {
 </svg>`;
   }
 
-  // メッセージ行を生成（新しい順、番号付き）- APIは既にDESC順
-  // totalMessages = DB上の総数、最新が totalMessages 番
   const messageLines = messages
     .map((msg, index) => {
-      const msgNum = totalMessages - index; // 最新=totalMessages, 2番目=totalMessages-1, ...
-      // 全角半角考慮: #9999(6) + author(10) + ": "(2) + content(36) = 54幅
+      const msgNum = totalMessages - index;
       const author = truncateByWidth(msg.author || "Anonymous", 10);
       const content = truncateByWidth(msg.message.replace(/\n/g, " "), 36);
       const y = padding + (index + 1) * lineHeight - 4;
-      // #番号=グレー、投稿者=太字、内容=通常
       return `<text x="${labelWidth + 8}" y="${y}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12"><tspan fill="#999">#${msgNum}</tspan> <tspan font-weight="bold" fill="${textColor}">${escapeXml(author)}</tspan><tspan fill="${textColor}">: ${escapeXml(content)}</tspan></text>`;
     })
     .join("\n    ");

@@ -1,3 +1,5 @@
+import { sanitizeHTML } from "../../utils/sanitize";
+
 interface FeaturesIntroProps {
   serviceName: string;
   serviceIcon: string;
@@ -26,7 +28,7 @@ export default function FeaturesIntro({ serviceName, serviceIcon, features }: Fe
               </b>
             </span>
           </p>
-          <p dangerouslySetInnerHTML={{ __html: feature.description }} />
+          <p dangerouslySetInnerHTML={{ __html: sanitizeHTML(feature.description) }} />
         </div>
       ))}
     </div>

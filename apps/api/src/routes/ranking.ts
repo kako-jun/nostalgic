@@ -1,9 +1,18 @@
 /**
  * Ranking API Routes
+ *
+ * GET  /?action=get     - Public read (by id)
+ * POST /?action=get     - Owner read (body: url, token) - token never in URL
+ * POST /?action=create  - Create a new ranking (body: url, token, ...)
+ * POST /?action=submit  - Submit a score (body: id, score, name?, displayScore?)
+ * POST /?action=update  - Update settings (body: url, token, ...)
+ * POST /?action=remove  - Remove a score entry (body: url, token, name)
+ * POST /?action=clear   - Clear all scores (body: url, token)
+ * POST /?action=delete  - Delete ranking (body: url, token)
  */
 
 import { Hono } from "hono";
-import { hashToken, validateOwnerToken } from "../lib/core/auth";
+import { hashToken, verifyToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
 import { generateUserHash } from "../lib/core/crypto";
 import { RANKING } from "../lib/core/constants";
@@ -107,20 +116,134 @@ async function getTopEntries(
   }));
 }
 
-// === Routes ===
+/** Verify owner token against DB */
+async function verifyOwnerToken(
+  db: D1Database,
+  serviceId: string,
+  token: string
+): Promise<boolean> {
+  const row = await db
+    .prepare("SELECT token_hash FROM owner_tokens WHERE service_id = ?")
+    .bind(serviceId)
+    .first<{ token_hash: string }>();
+  if (!row) return false;
+  return await verifyToken(token, row.token_hash);
+}
+
+// === GET Routes ===
 
 app.get("/", async (c) => {
   const action = c.req.query("action");
   const db = c.env.DB;
 
+  // GET (public mode only - owner mode uses POST)
+  if (action === "get") {
+    const id = c.req.query("id");
+    const limit = Math.min(
+      Number(c.req.query("limit")) || RANKING.LIMIT.DEFAULT,
+      RANKING.LIMIT.MAX
+    );
+
+    // Public mode (by id)
+    if (!id) {
+      return c.json({ error: "id is required" }, 400);
+    }
+
+    const ranking = await getRankingById(db, id);
+    if (!ranking) {
+      return c.json({ error: "Ranking not found" }, 404);
+    }
+
+    const metadata = JSON.parse((ranking as RankingRecord).metadata || "{}");
+    const sortOrder = metadata.sortOrder || "desc";
+
+    const entries = await getTopEntries(db, id, limit, sortOrder);
+    return c.json({
+      success: true,
+      data: { id, entries, title: metadata.title, sortOrder, maxEntries: metadata.maxEntries },
+    });
+  }
+
+  return c.json({ error: "Invalid action for GET. Use: get" }, 400);
+});
+
+// === POST Routes ===
+
+app.post("/", async (c) => {
+  const action = c.req.query("action");
+  const db = c.env.DB;
+
+  let body: Record<string, unknown>;
+  try {
+    body = await c.req.json();
+  } catch {
+    body = {};
+  }
+
+  const getParam = (name: string): string | undefined => {
+    const val = body[name];
+    if (typeof val === "string") return val;
+    if (typeof val === "number") return String(val);
+    return c.req.query(name);
+  };
+
+  // Get sensitive param from body only (never from query string to avoid URL exposure)
+  const getSecureParam = (name: string): string | undefined => {
+    const val = body[name];
+    if (typeof val === "string") return val;
+    return undefined;
+  };
+
+  // GET (owner mode - token in body, not URL)
+  if (action === "get") {
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const limit = Math.min(Number(getParam("limit")) || RANKING.LIMIT.DEFAULT, RANKING.LIMIT.MAX);
+
+    if (!url || !token) {
+      return c.json({ error: "url and token are required for owner-mode get via POST" }, 400);
+    }
+
+    const ranking = await getRankingByUrl(db, url);
+    if (!ranking) {
+      return c.json({ error: "Ranking not found" }, 404);
+    }
+
+    const rankingId = (ranking as RankingRecord).id.replace("ranking:", "");
+    const isOwner = await verifyOwnerToken(db, `ranking:${rankingId}`, token);
+
+    if (!isOwner) {
+      return c.json({ error: "Invalid token" }, 403);
+    }
+
+    const metadata = JSON.parse((ranking as RankingRecord).metadata || "{}");
+    const sortOrder = metadata.sortOrder || "desc";
+    const entries = await getTopEntries(db, rankingId, limit, sortOrder);
+
+    return c.json({
+      success: true,
+      data: {
+        id: rankingId,
+        url,
+        entries,
+        title: metadata.title,
+        sortOrder,
+        maxEntries: metadata.maxEntries,
+        settings: {
+          webhookUrl: metadata.webhookUrl || null,
+        },
+      },
+    });
+  }
+
   // CREATE
   if (action === "create") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const title = c.req.query("title") || "RANKING";
-    const sortOrder = c.req.query("sortOrder") || RANKING.SORT_ORDER.DEFAULT;
-    const maxEntries = Number(c.req.query("maxEntries")) || 100;
-    const webhookUrl = c.req.query("webhookUrl");
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const title = getParam("title") || "RANKING";
+    const sortOrder = getParam("sortOrder") || RANKING.SORT_ORDER.DEFAULT;
+    const maxEntries = Number(getParam("maxEntries")) || 100;
+    const webhookUrl = getParam("webhookUrl");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -163,10 +286,10 @@ app.get("/", async (c) => {
 
   // SUBMIT
   if (action === "submit") {
-    const id = c.req.query("id");
-    let name = c.req.query("name");
-    const scoreStr = c.req.query("score");
-    const displayScore = c.req.query("displayScore");
+    const id = getParam("id");
+    let name = getParam("name");
+    const scoreStr = getParam("score");
+    const displayScore = getParam("displayScore");
 
     if (!id || !scoreStr) {
       return c.json({ error: "id and score are required" }, 400);
@@ -307,12 +430,12 @@ app.get("/", async (c) => {
 
   // UPDATE (settings only - owner)
   if (action === "update") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const newTitle = c.req.query("title");
-    const newMaxEntries = c.req.query("maxEntries");
-    const newSortOrder = c.req.query("sortOrder");
-    const webhookUrl = c.req.query("webhookUrl");
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const newTitle = getParam("title");
+    const newMaxEntries = getParam("maxEntries");
+    const newSortOrder = getParam("sortOrder");
+    const webhookUrl = getParam("webhookUrl");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -336,13 +459,9 @@ app.get("/", async (c) => {
     }
 
     const id = (ranking as RankingRecord).id.replace("ranking:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`ranking:${id}`, hashedToken)
-      .first();
+    const isOwner = await verifyOwnerToken(db, `ranking:${id}`, token);
 
-    if (!owner) {
+    if (!isOwner) {
       return c.json({ error: "Invalid token" }, 403);
     }
 
@@ -378,79 +497,11 @@ app.get("/", async (c) => {
     });
   }
 
-  // GET
-  if (action === "get") {
-    const id = c.req.query("id");
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const limit = Math.min(
-      Number(c.req.query("limit")) || RANKING.LIMIT.DEFAULT,
-      RANKING.LIMIT.MAX
-    );
-
-    // Owner mode (url + token) - returns settings including webhookUrl
-    if (url && token) {
-      const ranking = await getRankingByUrl(db, url);
-      if (!ranking) {
-        return c.json({ error: "Ranking not found" }, 404);
-      }
-
-      const rankingId = (ranking as RankingRecord).id.replace("ranking:", "");
-      const hashedToken = await hashToken(token);
-      const owner = await db
-        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-        .bind(`ranking:${rankingId}`, hashedToken)
-        .first();
-
-      if (!owner) {
-        return c.json({ error: "Invalid token" }, 403);
-      }
-
-      const metadata = JSON.parse((ranking as RankingRecord).metadata || "{}");
-      const sortOrder = metadata.sortOrder || "desc";
-      const entries = await getTopEntries(db, rankingId, limit, sortOrder);
-
-      return c.json({
-        success: true,
-        data: {
-          id: rankingId,
-          url,
-          entries,
-          title: metadata.title,
-          sortOrder,
-          maxEntries: metadata.maxEntries,
-          settings: {
-            webhookUrl: metadata.webhookUrl || null,
-          },
-        },
-      });
-    }
-
-    // Public mode (by id)
-    if (!id) {
-      return c.json({ error: "id is required" }, 400);
-    }
-
-    const ranking = await getRankingById(db, id);
-    if (!ranking) {
-      return c.json({ error: "Ranking not found" }, 404);
-    }
-
-    const metadata = JSON.parse((ranking as RankingRecord).metadata || "{}");
-    const sortOrder = metadata.sortOrder || "desc";
-
-    const entries = await getTopEntries(db, id, limit, sortOrder);
-    return c.json({
-      success: true,
-      data: { id, entries, title: metadata.title, sortOrder, maxEntries: metadata.maxEntries },
-    });
-  }
-
   // REMOVE
   if (action === "remove") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const name = c.req.query("name");
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const name = getParam("name");
 
     if (!url || !token || !name) {
       return c.json({ error: "url, token, and name are required" }, 400);
@@ -462,13 +513,9 @@ app.get("/", async (c) => {
     }
 
     const id = (ranking as RankingRecord).id.replace("ranking:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`ranking:${id}`, hashedToken)
-      .first();
+    const isOwner = await verifyOwnerToken(db, `ranking:${id}`, token);
 
-    if (!owner) {
+    if (!isOwner) {
       return c.json({ error: "Invalid token" }, 403);
     }
 
@@ -483,8 +530,8 @@ app.get("/", async (c) => {
 
   // CLEAR
   if (action === "clear") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
+    const url = getParam("url");
+    const token = getSecureParam("token");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -496,13 +543,9 @@ app.get("/", async (c) => {
     }
 
     const id = (ranking as RankingRecord).id.replace("ranking:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`ranking:${id}`, hashedToken)
-      .first();
+    const isOwner = await verifyOwnerToken(db, `ranking:${id}`, token);
 
-    if (!owner) {
+    if (!isOwner) {
       return c.json({ error: "Invalid token" }, 403);
     }
 
@@ -516,8 +559,8 @@ app.get("/", async (c) => {
 
   // DELETE
   if (action === "delete") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
+    const url = getParam("url");
+    const token = getSecureParam("token");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -529,13 +572,9 @@ app.get("/", async (c) => {
     }
 
     const id = (ranking as RankingRecord).id.replace("ranking:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`ranking:${id}`, hashedToken)
-      .first();
+    const isOwner = await verifyOwnerToken(db, `ranking:${id}`, token);
 
-    if (!owner) {
+    if (!isOwner) {
       return c.json({ error: "Invalid token" }, 403);
     }
 
@@ -550,7 +589,10 @@ app.get("/", async (c) => {
   }
 
   return c.json(
-    { error: "Invalid action. Use: create, submit, update, get, remove, clear, delete" },
+    {
+      error:
+        "Invalid action for POST. Use: get (owner), create, submit, update, remove, clear, delete",
+    },
     400
   );
 });

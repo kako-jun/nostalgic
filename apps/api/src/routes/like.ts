@@ -1,9 +1,19 @@
 /**
  * Like API Routes
+ *
+ * GET  /?action=get          - Public read (by id)
+ * GET  /?action=sumByPrefix  - Sum likes by prefix
+ * POST /?action=get          - Owner read (body: url, token) - token never in URL
+ * POST /?action=create       - Create a new like service (body: url, token, ...)
+ * POST /?action=toggle       - Toggle like (body: id)
+ * POST /?action=update       - Update settings (body: url, token, ...)
+ * POST /?action=delete       - Delete like service (body: url, token)
+ * POST /?action=batchCreate  - Batch create (body: token, items)
+ * POST /?action=batchGet     - Batch get (body: ids)
  */
 
 import { Hono } from "hono";
-import { hashToken, validateOwnerToken } from "../lib/core/auth";
+import { hashToken, verifyToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
 import { generateUserHash } from "../lib/core/crypto";
 import { getTodayDateString } from "../lib/core/db";
@@ -58,18 +68,171 @@ async function getUserLikeState(
   return row?.value === "liked";
 }
 
-// === Routes ===
+/** Verify owner token against DB */
+async function verifyOwnerToken(
+  db: D1Database,
+  serviceId: string,
+  token: string
+): Promise<boolean> {
+  const row = await db
+    .prepare("SELECT token_hash FROM owner_tokens WHERE service_id = ?")
+    .bind(serviceId)
+    .first<{ token_hash: string }>();
+  if (!row) return false;
+  return await verifyToken(token, row.token_hash);
+}
+
+// === GET Routes ===
 
 app.get("/", async (c) => {
   const action = c.req.query("action");
   const db = c.env.DB;
 
+  // GET (public mode only - owner mode uses POST)
+  if (action === "get") {
+    const id = c.req.query("id");
+
+    // Public mode (by id)
+    if (!id) {
+      return c.json({ error: "id is required" }, 400);
+    }
+
+    const like = await getLikeById(db, id);
+    if (!like) {
+      return c.json({ error: "Like service not found" }, 404);
+    }
+
+    const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
+    const userAgent = c.req.header("User-Agent") || "";
+    const userHash = await generateUserHash(ip, userAgent);
+    const today = getTodayDateString();
+
+    const [total, isLiked] = await Promise.all([
+      getTotalLikes(db, id),
+      getUserLikeState(db, id, userHash, today),
+    ]);
+
+    const format = c.req.query("format") || "json";
+
+    if (format === "text") {
+      return c.text(String(total));
+    }
+
+    if (format === "image") {
+      const svg = generateLikeSVG(String(total));
+      return c.body(svg, 200, {
+        "Content-Type": "image/svg+xml",
+        "Cache-Control": "no-cache",
+      });
+    }
+
+    const metadata = JSON.parse((like as { metadata: string }).metadata || "{}");
+    return c.json({
+      success: true,
+      data: { id, total, liked: isLiked, icon: metadata.icon || "heart" },
+    });
+  }
+
+  // SUM BY PREFIX
+  if (action === "sumByPrefix") {
+    const prefix = c.req.query("prefix");
+    if (!prefix) {
+      return c.json({ error: "prefix is required" }, 400);
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(prefix)) {
+      return c.json({ error: "Invalid prefix format" }, 400);
+    }
+
+    const row = await db
+      .prepare("SELECT COALESCE(SUM(total), 0) as total FROM likes WHERE service_id LIKE ?")
+      .bind(`like:${prefix}%:total`)
+      .first<{ total: number }>();
+
+    return c.json({ success: true, total: row?.total ?? 0 });
+  }
+
+  return c.json({ error: "Invalid action for GET. Use: get, sumByPrefix" }, 400);
+});
+
+// === POST Routes ===
+
+app.post("/", async (c) => {
+  const action = c.req.query("action");
+  const db = c.env.DB;
+
+  let body: Record<string, unknown>;
+  try {
+    body = await c.req.json();
+  } catch {
+    body = {};
+  }
+
+  const getParam = (name: string): string | undefined => {
+    const val = body[name];
+    if (typeof val === "string") return val;
+    return c.req.query(name);
+  };
+
+  // Get sensitive param from body only (never from query string to avoid URL exposure)
+  const getSecureParam = (name: string): string | undefined => {
+    const val = body[name];
+    if (typeof val === "string") return val;
+    return undefined;
+  };
+
+  // GET (owner mode - token in body, not URL)
+  if (action === "get") {
+    const url = getParam("url");
+    const token = getSecureParam("token");
+
+    if (!url || !token) {
+      return c.json({ error: "url and token are required for owner-mode get via POST" }, 400);
+    }
+
+    const like = await getLikeByUrl(db, url);
+    if (!like) {
+      return c.json({ error: "Like service not found" }, 404);
+    }
+
+    const likeId = (like as LikeRecord).id.replace("like:", "");
+    const isOwner = await verifyOwnerToken(db, `like:${likeId}`, token);
+
+    if (!isOwner) {
+      return c.json({ error: "Invalid token" }, 403);
+    }
+
+    const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
+    const userAgent = c.req.header("User-Agent") || "";
+    const userHash = await generateUserHash(ip, userAgent);
+    const today = getTodayDateString();
+
+    const [total, isLiked] = await Promise.all([
+      getTotalLikes(db, likeId),
+      getUserLikeState(db, likeId, userHash, today),
+    ]);
+
+    const metadata = JSON.parse((like as { metadata: string }).metadata || "{}");
+    return c.json({
+      success: true,
+      data: {
+        id: likeId,
+        url,
+        total,
+        liked: isLiked,
+        settings: {
+          webhookUrl: metadata.webhookUrl || null,
+          icon: metadata.icon || "heart",
+        },
+      },
+    });
+  }
+
   // CREATE
   if (action === "create") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const webhookUrl = c.req.query("webhookUrl");
-    const icon = c.req.query("icon");
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const webhookUrl = getParam("webhookUrl");
+    const icon = getParam("icon");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -85,7 +248,7 @@ app.get("/", async (c) => {
       return c.json({ error: "Invalid icon. Use: heart, star, thumb, peta" }, 400);
     }
 
-    const customId = c.req.query("id");
+    const customId = getParam("id");
 
     const existing = await getLikeByUrl(db, url);
     if (existing) {
@@ -133,7 +296,7 @@ app.get("/", async (c) => {
 
   // TOGGLE
   if (action === "toggle") {
-    const id = c.req.query("id");
+    const id = getParam("id");
 
     if (!id) {
       return c.json({ error: "id is required" }, 400);
@@ -194,103 +357,12 @@ app.get("/", async (c) => {
     return c.json({ success: true, data: { id, total, liked: newState } });
   }
 
-  // GET
-  if (action === "get") {
-    const id = c.req.query("id");
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-
-    // Owner mode (url + token) - returns settings including webhookUrl
-    if (url && token) {
-      const like = await getLikeByUrl(db, url);
-      if (!like) {
-        return c.json({ error: "Like service not found" }, 404);
-      }
-
-      const likeId = (like as LikeRecord).id.replace("like:", "");
-      const hashedToken = await hashToken(token);
-      const owner = await db
-        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-        .bind(`like:${likeId}`, hashedToken)
-        .first();
-
-      if (!owner) {
-        return c.json({ error: "Invalid token" }, 403);
-      }
-
-      const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
-      const userAgent = c.req.header("User-Agent") || "";
-      const userHash = await generateUserHash(ip, userAgent);
-      const today = getTodayDateString();
-
-      const [total, isLiked] = await Promise.all([
-        getTotalLikes(db, likeId),
-        getUserLikeState(db, likeId, userHash, today),
-      ]);
-
-      const metadata = JSON.parse((like as { metadata: string }).metadata || "{}");
-      return c.json({
-        success: true,
-        data: {
-          id: likeId,
-          url,
-          total,
-          liked: isLiked,
-          settings: {
-            webhookUrl: metadata.webhookUrl || null,
-            icon: metadata.icon || "heart",
-          },
-        },
-      });
-    }
-
-    // Public mode (by id)
-    if (!id) {
-      return c.json({ error: "id is required" }, 400);
-    }
-
-    const like = await getLikeById(db, id);
-    if (!like) {
-      return c.json({ error: "Like service not found" }, 404);
-    }
-
-    const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
-    const userAgent = c.req.header("User-Agent") || "";
-    const userHash = await generateUserHash(ip, userAgent);
-    const today = getTodayDateString();
-
-    const [total, isLiked] = await Promise.all([
-      getTotalLikes(db, id),
-      getUserLikeState(db, id, userHash, today),
-    ]);
-
-    const format = c.req.query("format") || "json";
-
-    if (format === "text") {
-      return c.text(String(total));
-    }
-
-    if (format === "image") {
-      const svg = generateLikeSVG(String(total));
-      return c.body(svg, 200, {
-        "Content-Type": "image/svg+xml",
-        "Cache-Control": "no-cache",
-      });
-    }
-
-    const metadata = JSON.parse((like as { metadata: string }).metadata || "{}");
-    return c.json({
-      success: true,
-      data: { id, total, liked: isLiked, icon: metadata.icon || "heart" },
-    });
-  }
-
   // UPDATE (owner only) - update settings
   if (action === "update") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const webhookUrl = c.req.query("webhookUrl");
-    const icon = c.req.query("icon");
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const webhookUrl = getParam("webhookUrl");
+    const icon = getParam("icon");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -312,13 +384,9 @@ app.get("/", async (c) => {
     }
 
     const id = (like as LikeRecord).id.replace("like:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`like:${id}`, hashedToken)
-      .first();
+    const isOwner = await verifyOwnerToken(db, `like:${id}`, token);
 
-    if (!owner) {
+    if (!isOwner) {
       return c.json({ error: "Invalid token" }, 403);
     }
 
@@ -343,8 +411,8 @@ app.get("/", async (c) => {
 
   // DELETE
   if (action === "delete") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
+    const url = getParam("url");
+    const token = getSecureParam("token");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -356,13 +424,9 @@ app.get("/", async (c) => {
     }
 
     const id = (like as LikeRecord).id.replace("like:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`like:${id}`, hashedToken)
-      .first();
+    const isOwner = await verifyOwnerToken(db, `like:${id}`, token);
 
-    if (!owner) {
+    if (!isOwner) {
       return c.json({ error: "Invalid token" }, 403);
     }
 
@@ -377,53 +441,10 @@ app.get("/", async (c) => {
     return c.json({ success: true, message: "Like service deleted" });
   }
 
-  // SUM BY PREFIX
-  if (action === "sumByPrefix") {
-    const prefix = c.req.query("prefix");
-    if (!prefix) {
-      return c.json({ error: "prefix is required" }, 400);
-    }
-    if (!/^[a-zA-Z0-9_-]+$/.test(prefix)) {
-      return c.json({ error: "Invalid prefix format" }, 400);
-    }
-
-    const row = await db
-      .prepare("SELECT COALESCE(SUM(total), 0) as total FROM likes WHERE service_id LIKE ?")
-      .bind(`like:${prefix}%:total`)
-      .first<{ total: number }>();
-
-    return c.json({ success: true, total: row?.total ?? 0 });
-  }
-
-  return c.json(
-    { error: "Invalid action. Use: create, toggle, get, update, delete, sumByPrefix" },
-    400
-  );
-});
-
-// === POST Routes (for batch operations) ===
-
-app.post("/", async (c) => {
-  const action = c.req.query("action");
-  const db = c.env.DB;
-
-  // BATCH CREATE - 複数のlikeサービスを一括登録
+  // BATCH CREATE
   if (action === "batchCreate") {
-    let token: string;
-    let items: Array<{ id: string; url: string }>;
-    try {
-      const body = await c.req.json<{ token: string; items: Array<{ id: string; url: string }> }>();
-      token = body.token;
-      items = body.items;
-    } catch {
-      return c.json(
-        {
-          error:
-            "Invalid JSON body. Expected: { token: string, items: Array<{ id: string, url: string }> }",
-        },
-        400
-      );
-    }
+    const token = body.token as string | undefined;
+    const items = body.items as Array<{ id: string; url: string }> | undefined;
 
     if (!token || !validateOwnerToken(token)) {
       return c.json({ error: "Valid token is required" }, 400);
@@ -488,15 +509,9 @@ app.post("/", async (c) => {
     return c.json({ success: true, created, skipped });
   }
 
-  // BATCH GET - 複数IDのlike数を一括取得
+  // BATCH GET
   if (action === "batchGet") {
-    let ids: string[];
-    try {
-      const body = await c.req.json<{ ids: string[] }>();
-      ids = body.ids;
-    } catch {
-      return c.json({ error: "Invalid JSON body. Expected: { ids: string[] }" }, 400);
-    }
+    const ids = body.ids as string[] | undefined;
 
     if (!Array.isArray(ids) || ids.length === 0) {
       return c.json({ error: "ids array is required and must not be empty" }, 400);
@@ -546,7 +561,13 @@ app.post("/", async (c) => {
     return c.json({ success: true, data });
   }
 
-  return c.json({ error: "Invalid action for POST. Use: batchGet, batchCreate" }, 400);
+  return c.json(
+    {
+      error:
+        "Invalid action for POST. Use: get (owner), create, toggle, update, delete, batchGet, batchCreate",
+    },
+    400
+  );
 });
 
 // === SVG Generator ===

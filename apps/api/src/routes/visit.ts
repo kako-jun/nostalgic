@@ -1,10 +1,18 @@
 /**
  * Visit (Counter) API Routes
+ *
+ * GET  /?action=get        - Public read (by id)
+ * GET  /?action=increment  - Increment counter (by id)
+ * POST /?action=get        - Owner read (body: url, token) - token never in URL
+ * POST /?action=create     - Create a new counter (body: url, token, webhookUrl?)
+ * POST /?action=update     - Update counter settings (body: url, token, value?, webhookUrl?)
+ * POST /?action=set        - Set counter value (deprecated, use update) (body: url, token, value)
+ * POST /?action=delete     - Delete counter (body: url, token)
  */
 
 import { Hono } from "hono";
 import { z } from "zod";
-import { hashToken, validateOwnerToken } from "../lib/core/auth";
+import { hashToken, verifyToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
 import { generateUserHash } from "../lib/core/crypto";
 import { getTodayDateString, getYesterdayDateString, getDateRange } from "../lib/core/db";
@@ -87,63 +95,28 @@ async function getCounterData(db: D1Database, id: string) {
   return { id, total, today, yesterday, week, month };
 }
 
+/** Verify owner token against DB */
+async function verifyOwnerToken(
+  db: D1Database,
+  serviceId: string,
+  token: string
+): Promise<boolean> {
+  const row = await db
+    .prepare("SELECT token_hash FROM owner_tokens WHERE service_id = ?")
+    .bind(serviceId)
+    .first<{ token_hash: string }>();
+  if (!row) return false;
+  return await verifyToken(token, row.token_hash);
+}
+
 // === Routes ===
 
+// GET: read-only operations
 app.get("/", async (c) => {
   const action = c.req.query("action");
   const db = c.env.DB;
 
-  // CREATE
-  if (action === "create") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const webhookUrl = c.req.query("webhookUrl");
-
-    if (!url || !token) {
-      return c.json({ error: "url and token are required" }, 400);
-    }
-
-    if (!validateOwnerToken(token)) {
-      return c.json({ error: "Token must be 8-16 characters" }, 400);
-    }
-
-    // Check if already exists
-    const existing = await getCounterByUrl(db, url);
-    if (existing) {
-      return c.json({ error: "Counter already exists for this URL" }, 400);
-    }
-
-    // Generate IDs
-    const publicId = await generatePublicId(url);
-    const hashedToken = await hashToken(token);
-
-    // Create counter
-    await db.batch([
-      db
-        .prepare(
-          'INSERT INTO services (id, type, url, metadata, created_at) VALUES (?, ?, ?, ?, datetime("now"))'
-        )
-        .bind(`counter:${publicId}`, "counter", url, JSON.stringify({ webhookUrl })),
-      db
-        .prepare("INSERT INTO url_mappings (type, url, service_id) VALUES (?, ?, ?)")
-        .bind("counter", url, publicId),
-      db
-        .prepare("INSERT INTO owner_tokens (service_id, token_hash) VALUES (?, ?)")
-        .bind(`counter:${publicId}`, hashedToken),
-      db
-        .prepare("INSERT INTO counters (service_id, total) VALUES (?, 0)")
-        .bind(`counter:${publicId}:total`),
-    ]);
-
-    return c.json({
-      success: true,
-      id: publicId,
-      url,
-      message: "Counter created successfully",
-    });
-  }
-
-  // INCREMENT
+  // INCREMENT (kept as GET for <img> tag compatibility)
   if (action === "increment") {
     const id = c.req.query("id");
     const format = c.req.query("format") || "json";
@@ -233,11 +206,9 @@ app.get("/", async (c) => {
     return c.json({ success: true, data: { ...data, duplicate: !!visited } });
   }
 
-  // GET
+  // GET (public mode only - owner mode uses POST)
   if (action === "get") {
     const id = c.req.query("id");
-    const url = c.req.query("url");
-    const token = c.req.query("token");
     const type = (c.req.query("type") || "total") as keyof ReturnType<
       typeof getCounterData
     > extends Promise<infer T>
@@ -246,38 +217,6 @@ app.get("/", async (c) => {
     const format = c.req.query("format") || "json";
     const theme = c.req.query("theme") || DEFAULT_THEME;
     const digits = c.req.query("digits");
-
-    // Owner mode (url + token) - returns settings including webhookUrl
-    if (url && token) {
-      const counter = await getCounterByUrl(db, url);
-      if (!counter) {
-        return c.json({ error: "Counter not found" }, 404);
-      }
-
-      const counterId = (counter as CounterRecord).id.replace("counter:", "");
-      const hashedToken = await hashToken(token);
-      const owner = await db
-        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-        .bind(`counter:${counterId}`, hashedToken)
-        .first();
-
-      if (!owner) {
-        return c.json({ error: "Invalid token" }, 403);
-      }
-
-      const data = await getCounterData(db, counterId);
-      const metadata = JSON.parse((counter as { metadata: string }).metadata || "{}");
-      return c.json({
-        success: true,
-        data: {
-          ...data,
-          url,
-          settings: {
-            webhookUrl: metadata.webhookUrl || null,
-          },
-        },
-      });
-    }
 
     // Public mode (by id)
     if (!id) {
@@ -311,12 +250,128 @@ app.get("/", async (c) => {
     return c.json({ success: true, data });
   }
 
+  return c.json(
+    {
+      error:
+        "Invalid action. Use GET: get, increment. Use POST: get (owner), create, update, set, delete",
+    },
+    400
+  );
+});
+
+// POST: mutating operations
+app.post("/", async (c) => {
+  const action = c.req.query("action");
+  const db = c.env.DB;
+
+  let body: Record<string, string | undefined>;
+  try {
+    body = await c.req.json();
+  } catch {
+    body = {};
+  }
+
+  // Get param from body first, then query string (non-sensitive params only)
+  const getParam = (name: string): string | undefined => {
+    return (body[name] as string | undefined) ?? c.req.query(name);
+  };
+
+  // Get sensitive param from body only (never from query string to avoid URL exposure)
+  const getSecureParam = (name: string): string | undefined => {
+    return body[name] as string | undefined;
+  };
+
+  // GET (owner mode - token in body, not URL)
+  if (action === "get") {
+    const url = getParam("url");
+    const token = getSecureParam("token");
+
+    if (!url || !token) {
+      return c.json({ error: "url and token are required for owner-mode get via POST" }, 400);
+    }
+
+    const counter = await getCounterByUrl(db, url);
+    if (!counter) {
+      return c.json({ error: "Counter not found" }, 404);
+    }
+
+    const counterId = (counter as CounterRecord).id.replace("counter:", "");
+    const isOwner = await verifyOwnerToken(db, `counter:${counterId}`, token);
+
+    if (!isOwner) {
+      return c.json({ error: "Invalid token" }, 403);
+    }
+
+    const data = await getCounterData(db, counterId);
+    const metadata = JSON.parse((counter as { metadata: string }).metadata || "{}");
+    return c.json({
+      success: true,
+      data: {
+        ...data,
+        url,
+        settings: {
+          webhookUrl: metadata.webhookUrl || null,
+        },
+      },
+    });
+  }
+
+  // CREATE
+  if (action === "create") {
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const webhookUrl = getParam("webhookUrl");
+
+    if (!url || !token) {
+      return c.json({ error: "url and token are required" }, 400);
+    }
+
+    if (!validateOwnerToken(token)) {
+      return c.json({ error: "Token must be 8-16 characters" }, 400);
+    }
+
+    // Check if already exists
+    const existing = await getCounterByUrl(db, url);
+    if (existing) {
+      return c.json({ error: "Counter already exists for this URL" }, 400);
+    }
+
+    // Generate IDs
+    const publicId = await generatePublicId(url);
+    const hashedToken = await hashToken(token);
+
+    // Create counter
+    await db.batch([
+      db
+        .prepare(
+          'INSERT INTO services (id, type, url, metadata, created_at) VALUES (?, ?, ?, ?, datetime("now"))'
+        )
+        .bind(`counter:${publicId}`, "counter", url, JSON.stringify({ webhookUrl })),
+      db
+        .prepare("INSERT INTO url_mappings (type, url, service_id) VALUES (?, ?, ?)")
+        .bind("counter", url, publicId),
+      db
+        .prepare("INSERT INTO owner_tokens (service_id, token_hash) VALUES (?, ?)")
+        .bind(`counter:${publicId}`, hashedToken),
+      db
+        .prepare("INSERT INTO counters (service_id, total) VALUES (?, 0)")
+        .bind(`counter:${publicId}:total`),
+    ]);
+
+    return c.json({
+      success: true,
+      id: publicId,
+      url,
+      message: "Counter created successfully",
+    });
+  }
+
   // UPDATE (owner only) - update value and/or settings
   if (action === "update") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const value = c.req.query("value");
-    const webhookUrl = c.req.query("webhookUrl");
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const value = getParam("value");
+    const webhookUrl = getParam("webhookUrl");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -332,13 +387,9 @@ app.get("/", async (c) => {
     }
 
     const id = (counter as CounterRecord).id.replace("counter:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`counter:${id}`, hashedToken)
-      .first();
+    const isOwner = await verifyOwnerToken(db, `counter:${id}`, token);
 
-    if (!owner) {
+    if (!isOwner) {
       return c.json({ error: "Invalid token" }, 403);
     }
 
@@ -383,9 +434,9 @@ app.get("/", async (c) => {
 
   // SET (owner only) - deprecated, use update instead
   if (action === "set") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const value = c.req.query("value");
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const value = getParam("value");
 
     if (!url || !token || value === undefined) {
       return c.json({ error: "url, token, and value are required" }, 400);
@@ -398,13 +449,9 @@ app.get("/", async (c) => {
 
     // Verify ownership
     const id = (counter as CounterRecord).id.replace("counter:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`counter:${id}`, hashedToken)
-      .first();
+    const isOwner = await verifyOwnerToken(db, `counter:${id}`, token);
 
-    if (!owner) {
+    if (!isOwner) {
       return c.json({ error: "Invalid token" }, 403);
     }
 
@@ -426,8 +473,8 @@ app.get("/", async (c) => {
 
   // DELETE (owner only)
   if (action === "delete") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
+    const url = getParam("url");
+    const token = getSecureParam("token");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -439,13 +486,9 @@ app.get("/", async (c) => {
     }
 
     const id = (counter as CounterRecord).id.replace("counter:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`counter:${id}`, hashedToken)
-      .first();
+    const isOwner = await verifyOwnerToken(db, `counter:${id}`, token);
 
-    if (!owner) {
+    if (!isOwner) {
       return c.json({ error: "Invalid token" }, 403);
     }
 
@@ -461,7 +504,10 @@ app.get("/", async (c) => {
     return c.json({ success: true, message: "Counter deleted" });
   }
 
-  return c.json({ error: "Invalid action. Use: create, increment, get, update, delete" }, 400);
+  return c.json(
+    { error: "Invalid action for POST. Use: get (owner), create, update, set, delete" },
+    400
+  );
 });
 
 // === SVG Generator ===

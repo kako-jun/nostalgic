@@ -2,6 +2,53 @@ import { useState } from "react";
 
 export type ResponseType = "json" | "text" | "svg";
 
+/**
+ * Mutating actions that must use POST instead of GET.
+ * Tokens and sensitive data are sent in the request body, not URL.
+ */
+const MUTATING_ACTIONS = new Set([
+  "create",
+  "update",
+  "set",
+  "delete",
+  "toggle",
+  "post",
+  "submit",
+  "remove",
+  "clear",
+  "batchCreate",
+  "batchGet",
+]);
+
+function isMutatingAction(url: string): boolean {
+  const urlObj = new URL(url, window.location.origin);
+  const action = urlObj.searchParams.get("action");
+  return action !== null && MUTATING_ACTIONS.has(action);
+}
+
+/**
+ * For POST requests, move all params except 'action' from URL to JSON body.
+ */
+function extractBodyParams(url: string): { cleanUrl: string; bodyParams: Record<string, string> } {
+  const urlObj = new URL(url, window.location.origin);
+  const bodyParams: Record<string, string> = {};
+  const paramsToMove: string[] = [];
+
+  urlObj.searchParams.forEach((_value, key) => {
+    if (key !== "action") paramsToMove.push(key);
+  });
+
+  for (const key of paramsToMove) {
+    const value = urlObj.searchParams.get(key);
+    if (value !== null) {
+      bodyParams[key] = value;
+      urlObj.searchParams.delete(key);
+    }
+  }
+
+  return { cleanUrl: urlObj.toString(), bodyParams };
+}
+
 interface UseFetchApiReturn {
   response: string;
   responseType: ResponseType;
@@ -20,7 +67,19 @@ export default function useFetchApi(initialType: ResponseType = "json"): UseFetc
     const typeToUse = expectedType || responseType;
 
     try {
-      const res = await fetch(url, { method: "GET" });
+      let res: Response;
+
+      if (isMutatingAction(url)) {
+        const { cleanUrl, bodyParams } = extractBodyParams(url);
+        res = await fetch(cleanUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bodyParams),
+        });
+      } else {
+        res = await fetch(url, { method: "GET" });
+      }
+
       let responseText = "";
 
       if (typeToUse === "svg") {

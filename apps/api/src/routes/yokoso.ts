@@ -1,10 +1,16 @@
 /**
  * Yokoso API Routes
  * 招き猫が喋るウェルカムメッセージ
+ *
+ * GET  /?action=get     - Public read (by id)
+ * POST /?action=get     - Owner read (body: url, token) - token never in URL
+ * POST /?action=create  - Create a new yokoso (body: url, token, message, ...)
+ * POST /?action=update  - Update message/settings (body: url, token, ...)
+ * POST /?action=delete  - Delete yokoso (body: url, token)
  */
 
 import { Hono } from "hono";
-import { hashToken, validateOwnerToken } from "../lib/core/auth";
+import { hashToken, verifyToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
 import { sendWebHook, WebHookMessages } from "../lib/core/webhook";
 
@@ -52,7 +58,21 @@ function escapeXml(str: string): string {
 
 function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength - 1) + "…";
+  return text.slice(0, maxLength - 1) + "...";
+}
+
+/** Verify owner token against DB */
+async function verifyOwnerToken(
+  db: D1Database,
+  serviceId: string,
+  token: string
+): Promise<boolean> {
+  const row = await db
+    .prepare("SELECT token_hash FROM owner_tokens WHERE service_id = ?")
+    .bind(serviceId)
+    .first<{ token_hash: string }>();
+  if (!row) return false;
+  return await verifyToken(token, row.token_hash);
 }
 
 // === Maneki-neko SVG Icon (inline) ===
@@ -129,15 +149,14 @@ function splitByWidth(text: string, maxWidth: number): string[] {
 function generateBadgeSVG(message: string): string {
   const label = "Yokoso";
   const labelWidth = 50;
-  const iconWidth = 20; // 招き猫アイコン用スペース
-  // 全角半角考慮: 全角12px、半角7px相当
+  const iconWidth = 20;
   const displayWidth = getDisplayWidth(message);
   const textWidth = Math.max(displayWidth * 6 + 24, 60);
   const messageWidth = iconWidth + textWidth;
   const totalWidth = labelWidth + messageWidth;
   const height = 20;
   const labelBg = "#555";
-  const valueBg = "#d32f2f"; // 赤（縁起の良い色）
+  const valueBg = "#d32f2f";
   const textColor = "#fff";
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${height}">
@@ -193,13 +212,12 @@ function generateCardSVG(
   lang: string = "ja"
 ): string {
   const labelWidth = 50;
-  const contentWidth = 350; // スマホ/GitHub対応の広め幅
+  const contentWidth = 350;
   const totalWidth = labelWidth + contentWidth;
   const lineHeight = 16;
   const padding = 12;
   const avatarSize = 28;
 
-  // 全角半角考慮で行分割（50半角幅 ≈ 全角25文字）
   const maxLineWidth = 50;
   const lines = splitByWidth(message, maxLineWidth);
 
@@ -213,28 +231,23 @@ function generateCardSVG(
   const textColor = "#333";
   const dateColor = "#999";
 
-  // Format date based on language
   const date = new Date(updatedAt);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   const dateStr = lang === "en" ? `${month}-${day}-${year}` : `${year}-${month}-${day}`;
 
-  // アバターとネームはデフォルト値を持つ
   const displayAvatar = avatar || getDefaultAvatarSVG();
   const displayName = name || "Lucky Cat";
 
-  // アバター: 左上に配置
   const avatarX = labelWidth + padding;
   const avatarY = padding;
   const avatarSection = `<image href="${escapeXml(displayAvatar)}" x="${avatarX}" y="${avatarY}" width="${avatarSize}" height="${avatarSize}" clip-path="url(#avatarClip)"/>`;
 
-  // 名前: アバターの右側
   const nameX = avatarX + avatarSize + 8;
-  const nameY = avatarY + 12; // アバター上辺に揃える
+  const nameY = avatarY + 12;
   const nameSection = `<text x="${nameX}" y="${nameY}" fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12" font-weight="bold">${escapeXml(displayName)}</text>`;
 
-  // 日付: 名前の下、アバター下辺に揃える
   const dateY = avatarY + avatarSize - 2;
   const dateSection = `<text x="${nameX}" y="${dateY}" fill="${dateColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10">${dateStr}</text>`;
 
@@ -269,21 +282,144 @@ function generateCardSVG(
 </svg>`;
 }
 
-// === Routes ===
+// === GET Routes ===
 
 app.get("/", async (c) => {
   const action = c.req.query("action");
   const db = c.env.DB;
 
+  // GET (public mode only - owner mode uses POST)
+  if (action === "get") {
+    const id = c.req.query("id");
+    const format = c.req.query("format") || "json";
+
+    // Public mode (by id)
+    if (!id) {
+      return c.json({ error: "id is required" }, 400);
+    }
+
+    const yokoso = await getYokosoById(db, id);
+    if (!yokoso) {
+      return c.json({ error: "Yokoso not found" }, 404);
+    }
+
+    const metadata = JSON.parse((yokoso as YokosoRecord).metadata || "{}");
+
+    // Image format
+    if (format === "image") {
+      const lang = c.req.query("lang") || "ja";
+      const svg =
+        metadata.mode === "card"
+          ? generateCardSVG(
+              metadata.message,
+              metadata.name,
+              metadata.avatar,
+              metadata.updatedAt,
+              lang
+            )
+          : generateBadgeSVG(truncateText(metadata.message, MAX_MESSAGE_BADGE));
+      return c.body(svg, 200, {
+        "Content-Type": "image/svg+xml",
+        "Cache-Control": "no-cache",
+      });
+    }
+
+    // Text format
+    if (format === "text") {
+      return c.text(metadata.message);
+    }
+
+    // JSON format (default)
+    return c.json({
+      success: true,
+      data: {
+        id,
+        message: metadata.message,
+        mode: metadata.mode,
+        name: metadata.name,
+        avatar: metadata.avatar,
+        updatedAt: metadata.updatedAt,
+      },
+    });
+  }
+
+  return c.json({ error: "Invalid action for GET. Use: get" }, 400);
+});
+
+// === POST Routes ===
+
+app.post("/", async (c) => {
+  const action = c.req.query("action");
+  const db = c.env.DB;
+
+  let body: Record<string, unknown>;
+  try {
+    body = await c.req.json();
+  } catch {
+    body = {};
+  }
+
+  const getParam = (name: string): string | undefined => {
+    const val = body[name];
+    if (typeof val === "string") return val;
+    return c.req.query(name);
+  };
+
+  // Get sensitive param from body only (never from query string to avoid URL exposure)
+  const getSecureParam = (name: string): string | undefined => {
+    const val = body[name];
+    if (typeof val === "string") return val;
+    return undefined;
+  };
+
+  // GET (owner mode - token in body, not URL)
+  if (action === "get") {
+    const url = getParam("url");
+    const token = getSecureParam("token");
+
+    if (!url || !token) {
+      return c.json({ error: "url and token are required for owner-mode get via POST" }, 400);
+    }
+
+    const yokoso = await getYokosoByUrl(db, url);
+    if (!yokoso) {
+      return c.json({ error: "Yokoso not found" }, 404);
+    }
+
+    const yokosoId = (yokoso as YokosoRecord).id.replace("yokoso:", "");
+    const isOwner = await verifyOwnerToken(db, `yokoso:${yokosoId}`, token);
+
+    if (!isOwner) {
+      return c.json({ error: "Invalid token" }, 403);
+    }
+
+    const metadata = JSON.parse((yokoso as YokosoRecord).metadata || "{}");
+    return c.json({
+      success: true,
+      data: {
+        id: yokosoId,
+        url,
+        message: metadata.message,
+        mode: metadata.mode,
+        name: metadata.name,
+        avatar: metadata.avatar,
+        updatedAt: metadata.updatedAt,
+        settings: {
+          webhookUrl: metadata.webhookUrl || null,
+        },
+      },
+    });
+  }
+
   // CREATE
   if (action === "create") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const message = c.req.query("message");
-    const mode = c.req.query("mode") || "badge";
-    const name = c.req.query("name");
-    const avatar = c.req.query("avatar");
-    const webhookUrl = c.req.query("webhookUrl");
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const message = getParam("message");
+    const mode = getParam("mode") || "badge";
+    const name = getParam("name");
+    const avatar = getParam("avatar");
+    const webhookUrl = getParam("webhookUrl");
 
     if (!url || !token || !message) {
       return c.json({ error: "url, token, and message are required" }, 400);
@@ -348,108 +484,15 @@ app.get("/", async (c) => {
     });
   }
 
-  // GET
-  if (action === "get") {
-    const id = c.req.query("id");
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const format = c.req.query("format") || "json";
-
-    // Owner mode (url + token)
-    if (url && token) {
-      const yokoso = await getYokosoByUrl(db, url);
-      if (!yokoso) {
-        return c.json({ error: "Yokoso not found" }, 404);
-      }
-
-      const yokosoId = (yokoso as YokosoRecord).id.replace("yokoso:", "");
-      const hashedToken = await hashToken(token);
-      const owner = await db
-        .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-        .bind(`yokoso:${yokosoId}`, hashedToken)
-        .first();
-
-      if (!owner) {
-        return c.json({ error: "Invalid token" }, 403);
-      }
-
-      const metadata = JSON.parse((yokoso as YokosoRecord).metadata || "{}");
-      return c.json({
-        success: true,
-        data: {
-          id: yokosoId,
-          url,
-          message: metadata.message,
-          mode: metadata.mode,
-          name: metadata.name,
-          avatar: metadata.avatar,
-          updatedAt: metadata.updatedAt,
-          settings: {
-            webhookUrl: metadata.webhookUrl || null,
-          },
-        },
-      });
-    }
-
-    // Public mode (by id)
-    if (!id) {
-      return c.json({ error: "id is required" }, 400);
-    }
-
-    const yokoso = await getYokosoById(db, id);
-    if (!yokoso) {
-      return c.json({ error: "Yokoso not found" }, 404);
-    }
-
-    const metadata = JSON.parse((yokoso as YokosoRecord).metadata || "{}");
-
-    // Image format
-    if (format === "image") {
-      const lang = c.req.query("lang") || "ja";
-      const svg =
-        metadata.mode === "card"
-          ? generateCardSVG(
-              metadata.message,
-              metadata.name,
-              metadata.avatar,
-              metadata.updatedAt,
-              lang
-            )
-          : generateBadgeSVG(truncateText(metadata.message, MAX_MESSAGE_BADGE));
-      return c.body(svg, 200, {
-        "Content-Type": "image/svg+xml",
-        "Cache-Control": "no-cache",
-      });
-    }
-
-    // Text format
-    if (format === "text") {
-      return c.text(metadata.message);
-    }
-
-    // JSON format (default)
-    return c.json({
-      success: true,
-      data: {
-        id,
-        message: metadata.message,
-        mode: metadata.mode,
-        name: metadata.name,
-        avatar: metadata.avatar,
-        updatedAt: metadata.updatedAt,
-      },
-    });
-  }
-
   // UPDATE
   if (action === "update") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
-    const message = c.req.query("message");
-    const mode = c.req.query("mode");
-    const name = c.req.query("name");
-    const avatar = c.req.query("avatar");
-    const webhookUrl = c.req.query("webhookUrl");
+    const url = getParam("url");
+    const token = getSecureParam("token");
+    const message = getParam("message");
+    const mode = getParam("mode");
+    const name = getParam("name");
+    const avatar = getParam("avatar");
+    const webhookUrl = getParam("webhookUrl");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -461,13 +504,9 @@ app.get("/", async (c) => {
     }
 
     const yokosoId = (yokoso as YokosoRecord).id.replace("yokoso:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`yokoso:${yokosoId}`, hashedToken)
-      .first();
+    const isOwner = await verifyOwnerToken(db, `yokoso:${yokosoId}`, token);
 
-    if (!owner) {
+    if (!isOwner) {
       return c.json({ error: "Invalid token" }, 403);
     }
 
@@ -534,8 +573,8 @@ app.get("/", async (c) => {
 
   // DELETE
   if (action === "delete") {
-    const url = c.req.query("url");
-    const token = c.req.query("token");
+    const url = getParam("url");
+    const token = getSecureParam("token");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -547,13 +586,9 @@ app.get("/", async (c) => {
     }
 
     const yokosoId = (yokoso as YokosoRecord).id.replace("yokoso:", "");
-    const hashedToken = await hashToken(token);
-    const owner = await db
-      .prepare("SELECT 1 FROM owner_tokens WHERE service_id = ? AND token_hash = ?")
-      .bind(`yokoso:${yokosoId}`, hashedToken)
-      .first();
+    const isOwner = await verifyOwnerToken(db, `yokoso:${yokosoId}`, token);
 
-    if (!owner) {
+    if (!isOwner) {
       return c.json({ error: "Invalid token" }, 403);
     }
 
@@ -566,7 +601,10 @@ app.get("/", async (c) => {
     return c.json({ success: true, message: "Yokoso deleted" });
   }
 
-  return c.json({ error: "Invalid action. Use: create, get, update, delete" }, 400);
+  return c.json(
+    { error: "Invalid action for POST. Use: get (owner), create, update, delete" },
+    400
+  );
 });
 
 export default app;
