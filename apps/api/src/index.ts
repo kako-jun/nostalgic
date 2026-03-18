@@ -21,6 +21,7 @@ app.use("*", async (c, next) => {
   if (method === "GET" || method === "HEAD" || method === "OPTIONS") {
     return cors({ origin: "*" })(c, next);
   }
+  // localhost origins are intentionally included for local development of embedded widgets
   return cors({
     origin: ["https://nostalgic.llll-ll.com", "http://localhost:5173", "http://localhost:3000"],
   })(c, next);
