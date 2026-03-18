@@ -49,19 +49,33 @@ A comprehensive nostalgic web tools platform that brings back the 90s internet c
 - 🔒 **Secure ownership**: SHA256 hashed tokens, public ID system
 - 🌐 **Easy integration**: RESTful APIs with action parameters
 - ⚡ **Fast & reliable**: Built on Cloudflare Workers + D1
-- 🔗 **Pure GET APIs**: All operations via browser URL bar (1990s web culture revival)
+- 🔗 **RESTful APIs**: Read operations via GET, mutations via POST
 
 ## 🚀 Quick Start
 
 ### Counter Service
 
-1. **Create your counter**:
+1. **Create your counter** (POST):
+
+```js
+fetch("https://api.nostalgic.llll-ll.com/visit", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    action: "create",
+    url: "https://yoursite.com",
+    token: "your-secret-token",
+  }),
+});
+```
+
+2. **Display counter** (GET):
 
 ```
-https://api.nostalgic.llll-ll.com/visit?action=create&url=https://yoursite.com&token=your-secret-token
+https://api.nostalgic.llll-ll.com/visit?action=display&url=https://yoursite.com
 ```
 
-2. **Embed in your site**:
+3. **Embed in your site**:
 
 ```html
 <script src="https://nostalgic.llll-ll.com/components/visit.js"></script>
@@ -70,52 +84,104 @@ https://api.nostalgic.llll-ll.com/visit?action=create&url=https://yoursite.com&t
 
 ### Like Service
 
-1. **Create like button**:
+1. **Create like button** (POST):
 
-```
-https://api.nostalgic.llll-ll.com/like?action=create&url=https://yoursite.com&token=your-secret-token
+```js
+fetch("https://api.nostalgic.llll-ll.com/like", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    action: "create",
+    url: "https://yoursite.com",
+    token: "your-secret-token",
+  }),
+});
 ```
 
-2. **Toggle like**:
+2. **Toggle like** (POST):
 
-```
-https://api.nostalgic.llll-ll.com/like?action=toggle&url=https://yoursite.com&token=your-secret-token
+```js
+fetch("https://api.nostalgic.llll-ll.com/like", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    action: "toggle",
+    url: "https://yoursite.com",
+    token: "your-secret-token",
+  }),
+});
 ```
 
 ### Ranking Service
 
-1. **Create ranking**:
+1. **Create ranking** (POST):
+
+```js
+fetch("https://api.nostalgic.llll-ll.com/ranking", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    action: "create",
+    url: "https://yoursite.com",
+    token: "your-secret-token",
+    maxEntries: 100,
+  }),
+});
+```
+
+2. **Get ranking** (GET):
 
 ```
-https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret-token&maxEntries=100
-```
-
-2. **Submit scores**:
-
-```
-https://api.nostalgic.llll-ll.com/ranking?action=submit&url=https://yoursite.com&token=your-secret-token&name=Player1&score=1000
+https://api.nostalgic.llll-ll.com/ranking?action=get&url=https://yoursite.com
 ```
 
 ### BBS Service
 
-1. **Create BBS**:
+1. **Create BBS** (POST):
 
-```
-https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://yoursite.com&token=your-secret-token&maxMessages=1000
+```js
+fetch("https://api.nostalgic.llll-ll.com/bbs", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    action: "create",
+    url: "https://yoursite.com",
+    token: "your-secret-token",
+    maxMessages: 1000,
+  }),
+});
 ```
 
-2. **Post messages** (pure GET, 1990s style):
+2. **Post messages** (POST):
 
-```
-https://api.nostalgic.llll-ll.com/bbs?action=post&url=https://yoursite.com&token=your-secret-token&author=User&message=Hello!
+```js
+fetch("https://api.nostalgic.llll-ll.com/bbs", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    action: "post",
+    url: "https://yoursite.com",
+    token: "your-secret-token",
+    author: "User",
+    message: "Hello!",
+  }),
+});
 ```
 
 ### Yokoso Service
 
-1. **Create Yokoso**:
+1. **Create Yokoso** (POST):
 
-```
-https://api.nostalgic.llll-ll.com/yokoso?action=create&url=https://yoursite.com&token=your-secret-token
+```js
+fetch("https://api.nostalgic.llll-ll.com/yokoso", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    action: "create",
+    url: "https://yoursite.com",
+    token: "your-secret-token",
+  }),
+});
 ```
 
 2. **Embed in your site**:
@@ -137,21 +203,24 @@ Visit our interactive demo pages:
 
 ## 🔧 API Architecture
 
-All services follow a unified action-based API pattern using **GET requests only**:
+All services follow a unified action-based API pattern:
+
+- **GET** for read-only operations (display, get)
+- **POST** for mutations (create, update, delete, toggle, submit, post)
 
 ```
-/api/{service}?action={action}&url={your-site}&token={your-token}&...params
+GET  /api/{service}?action=get&url={your-site}
+POST /api/{service}  { "action": "create", "url": "...", "token": "..." }
 ```
 
-### 🌐 Why GET-only? 1990s Web Culture Revival
+### 🌐 Nostalgic Yet Modern
 
-Just like the original 1990s web tools, everything can be operated directly from the browser URL bar:
+Inspired by 1990s web culture, but with modern best practices:
 
-1. **Click-to-create**: Share a link and instantly create a counter
-2. **URL-based operations**: All actions are simple GET links
-3. **Nostalgic simplicity**: No complex forms or POST requests needed
-4. **Easy sharing**: Every operation is a shareable URL
-5. **BBS culture**: Even message posting uses GET parameters, just like the old days
+1. **Simple APIs**: Action-based routing keeps things straightforward
+2. **Secure mutations**: POST requests protect tokens from URL leakage
+3. **Easy embedding**: Web Components for drop-in integration
+4. **No registration**: Just a URL and a secret token
 
 ### Available Actions by Service:
 

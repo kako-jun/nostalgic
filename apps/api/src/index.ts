@@ -14,7 +14,54 @@ type Bindings = {
 const app = new Hono<{ Bindings: Bindings }>();
 
 // CORS設定
-app.use("*", cors());
+app.use(
+  "*",
+  cors({
+    origin: ["https://nostalgic.llll-ll.com", "http://localhost:5173", "http://localhost:3000"],
+  })
+);
+
+// --- Simple in-memory rate limiter (per-isolate) ---
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX = 60; // requests per window per IP
+
+app.use("/visit/*", rateLimiter);
+app.use("/like/*", rateLimiter);
+app.use("/ranking/*", rateLimiter);
+app.use("/bbs/*", rateLimiter);
+app.use("/yokoso/*", rateLimiter);
+// Also match the route roots (no trailing path)
+app.use("/visit", rateLimiter);
+app.use("/like", rateLimiter);
+app.use("/ranking", rateLimiter);
+app.use("/bbs", rateLimiter);
+app.use("/yokoso", rateLimiter);
+
+import type { Context, Next } from "hono";
+async function rateLimiter(c: Context, next: Next) {
+  const ip = c.req.header("cf-connecting-ip") || c.req.header("x-forwarded-for") || "unknown";
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+  } else {
+    entry.count++;
+    if (entry.count > RATE_LIMIT_MAX) {
+      return c.json({ error: "Rate limit exceeded. Please try again later." }, 429);
+    }
+  }
+
+  // Periodic cleanup (every ~100 requests, evict expired entries)
+  if (Math.random() < 0.01) {
+    for (const [key, val] of rateLimitMap) {
+      if (now > val.resetAt) rateLimitMap.delete(key);
+    }
+  }
+
+  await next();
+}
 
 // ヘルスチェック
 app.get("/", (c) => c.json({ status: "ok", service: "nostalgic-api" }));
