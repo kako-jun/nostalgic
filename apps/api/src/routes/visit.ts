@@ -263,14 +263,17 @@ app.get("/", async (c) => {
       return c.json({ error: "Invalid prefix format" }, 400);
     }
 
-    // LIKE ワイルドカードとしての _ をエスケープ（D1互換のため ! を使用）
-    const escapedPrefix = prefix.replace(/_/g, "!_");
+    // LIKE + ESCAPE はD1で "pattern too complex" エラーになるため範囲検索を使用
+    const servicePrefix = `counter:${prefix}`;
+    const upperBound =
+      servicePrefix.slice(0, -1) +
+      String.fromCharCode(servicePrefix.charCodeAt(servicePrefix.length - 1) + 1);
 
     const row = await db
       .prepare(
-        "SELECT COALESCE(SUM(total), 0) as total FROM counters WHERE service_id LIKE ? ESCAPE '!'"
+        "SELECT COALESCE(SUM(total), 0) as total FROM counters WHERE service_id >= ? AND service_id < ?"
       )
-      .bind(`counter:${escapedPrefix}%:total`)
+      .bind(`${servicePrefix}`, upperBound)
       .first<{ total: number }>();
 
     return c.json({ success: true, total: row?.total ?? 0 });
