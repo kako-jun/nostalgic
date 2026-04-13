@@ -28,3 +28,8 @@ apps/api/     # Cloudflare Workers API
 apps/web/     # フロントエンド + Web Components
 docs/         # ドキュメント（正）
 ```
+
+
+## デザインシステム
+
+UIの生成・修正時は `DESIGN.md` に定義されたデザインシステムに従うこと。定義外の色・フォント・スペーシングを勝手に使わない。
