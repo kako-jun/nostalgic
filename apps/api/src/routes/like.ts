@@ -17,6 +17,7 @@ import { hashToken, verifyToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
 import { generateUserHash } from "../lib/core/crypto";
 import { getTodayDateString } from "../lib/core/db";
+import { URL_CONST } from "../lib/core/constants";
 import { sendWebHook, WebHookMessages } from "../lib/core/webhook";
 
 type Bindings = { DB: D1Database };
@@ -143,9 +144,14 @@ app.get("/", async (c) => {
       return c.json({ error: "Invalid prefix format" }, 400);
     }
 
+    // LIKE ワイルドカードとしての _ をエスケープ
+    const escapedPrefix = prefix.replace(/_/g, "\\_");
+
     const row = await db
-      .prepare("SELECT COALESCE(SUM(total), 0) as total FROM likes WHERE service_id LIKE ?")
-      .bind(`like:${prefix}%:total`)
+      .prepare(
+        "SELECT COALESCE(SUM(total), 0) as total FROM likes WHERE service_id LIKE ? ESCAPE '\\'"
+      )
+      .bind(`like:${escapedPrefix}%:total`)
       .first<{ total: number }>();
 
     return c.json({ success: true, total: row?.total ?? 0 });
@@ -466,6 +472,12 @@ app.post("/", async (c) => {
       }
       if (!validIdPattern.test(item.id) || item.id.length > 128) {
         return c.json({ error: `Invalid id format: ${item.id}` }, 400);
+      }
+      if (!item.url.startsWith(URL_CONST.REQUIRED_PROTOCOL)) {
+        return c.json(
+          { error: `URL must start with ${URL_CONST.REQUIRED_PROTOCOL}: ${item.url}` },
+          400
+        );
       }
     }
 
