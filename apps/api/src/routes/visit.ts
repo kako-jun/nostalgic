@@ -271,7 +271,7 @@ app.get("/", async (c) => {
 
     const row = await db
       .prepare(
-        "SELECT COALESCE(SUM(total), 0) as total FROM counters WHERE service_id >= ? AND service_id < ?"
+        "SELECT COALESCE(SUM(total), 0) as total FROM counters WHERE service_id >= ? AND service_id < ? AND service_id LIKE '%:total'"
       )
       .bind(`${servicePrefix}`, upperBound)
       .first<{ total: number }>();
