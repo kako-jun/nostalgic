@@ -1,13 +1,16 @@
 /**
  * Visit (Counter) API Routes
  *
- * GET  /?action=get        - Public read (by id)
- * GET  /?action=increment  - Increment counter (by id)
- * POST /?action=get        - Owner read (body: url, token) - token never in URL
- * POST /?action=create     - Create a new counter (body: url, token, webhookUrl?)
- * POST /?action=update     - Update counter settings (body: url, token, value?, webhookUrl?)
- * POST /?action=set        - Set counter value (deprecated, use update) (body: url, token, value)
- * POST /?action=delete     - Delete counter (body: url, token)
+ * GET  /?action=get          - Public read (by id)
+ * GET  /?action=increment    - Increment counter (by id)
+ * GET  /?action=sumByPrefix  - Sum counters by prefix
+ * POST /?action=get          - Owner read (body: url, token) - token never in URL
+ * POST /?action=create       - Create a new counter (body: url, token, webhookUrl?)
+ * POST /?action=update       - Update counter settings (body: url, token, value?, webhookUrl?)
+ * POST /?action=set          - Set counter value (deprecated, use update) (body: url, token, value)
+ * POST /?action=delete       - Delete counter (body: url, token)
+ * POST /?action=batchCreate  - Batch create (body: token, items)
+ * POST /?action=batchGet     - Batch get (body: ids)
  */
 
 import { Hono } from "hono";
@@ -250,10 +253,33 @@ app.get("/", async (c) => {
     return c.json({ success: true, data });
   }
 
+  // SUM BY PREFIX
+  if (action === "sumByPrefix") {
+    const prefix = c.req.query("prefix");
+    if (!prefix) {
+      return c.json({ error: "prefix is required" }, 400);
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(prefix)) {
+      return c.json({ error: "Invalid prefix format" }, 400);
+    }
+
+    // LIKE ワイルドカードとしての _ をエスケープ
+    const escapedPrefix = prefix.replace(/_/g, "\\_");
+
+    const row = await db
+      .prepare(
+        "SELECT COALESCE(SUM(total), 0) as total FROM counters WHERE service_id LIKE ? ESCAPE '\\'"
+      )
+      .bind(`counter:${escapedPrefix}%:total`)
+      .first<{ total: number }>();
+
+    return c.json({ success: true, total: row?.total ?? 0 });
+  }
+
   return c.json(
     {
       error:
-        "Invalid action. Use GET: get, increment. Use POST: get (owner), create, update, set, delete",
+        "Invalid action. Use GET: get, increment, sumByPrefix. Use POST: get (owner), create, update, set, delete, batchGet, batchCreate",
     },
     400
   );
@@ -504,8 +530,137 @@ app.post("/", async (c) => {
     return c.json({ success: true, message: "Counter deleted" });
   }
 
+  // BATCH CREATE
+  if (action === "batchCreate") {
+    const token = body.token as string | undefined;
+    const items = body.items as Array<{ id: string; url: string }> | undefined;
+
+    if (!token || !validateOwnerToken(token)) {
+      return c.json({ error: "Valid token is required" }, 400);
+    }
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return c.json({ error: "items array is required and must not be empty" }, 400);
+    }
+
+    const MAX_BATCH_SIZE = 100;
+    if (items.length > MAX_BATCH_SIZE) {
+      return c.json({ error: `Maximum ${MAX_BATCH_SIZE} items per request` }, 400);
+    }
+
+    const validIdPattern = /^[a-zA-Z0-9_-]+$/;
+    for (const item of items) {
+      if (!item.id || !item.url) {
+        return c.json({ error: "Each item must have id and url" }, 400);
+      }
+      if (!validIdPattern.test(item.id) || item.id.length > 128) {
+        return c.json({ error: `Invalid id format: ${item.id}` }, 400);
+      }
+      if (!item.url.startsWith(URL_CONST.REQUIRED_PROTOCOL)) {
+        return c.json(
+          { error: `URL must start with ${URL_CONST.REQUIRED_PROTOCOL}: ${item.url}` },
+          400
+        );
+      }
+    }
+
+    const hashedToken = await hashToken(token);
+    let created = 0;
+    let skipped = 0;
+
+    for (const item of items) {
+      const existingById = await getCounterById(db, item.id);
+      if (existingById) {
+        skipped++;
+        continue;
+      }
+      const existingByUrl = await getCounterByUrl(db, item.url);
+      if (existingByUrl) {
+        skipped++;
+        continue;
+      }
+
+      const metadata = JSON.stringify({ webhookUrl: null });
+
+      await db.batch([
+        db
+          .prepare(
+            'INSERT INTO services (id, type, url, metadata, created_at) VALUES (?, ?, ?, ?, datetime("now"))'
+          )
+          .bind(`counter:${item.id}`, "counter", item.url, metadata),
+        db
+          .prepare("INSERT INTO url_mappings (type, url, service_id) VALUES (?, ?, ?)")
+          .bind("counter", item.url, item.id),
+        db
+          .prepare("INSERT INTO owner_tokens (service_id, token_hash) VALUES (?, ?)")
+          .bind(`counter:${item.id}`, hashedToken),
+        db
+          .prepare("INSERT INTO counters (service_id, total) VALUES (?, 0)")
+          .bind(`counter:${item.id}:total`),
+      ]);
+      created++;
+    }
+
+    return c.json({ success: true, created, skipped });
+  }
+
+  // BATCH GET
+  if (action === "batchGet") {
+    const ids = body.ids as string[] | undefined;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return c.json({ error: "ids array is required and must not be empty" }, 400);
+    }
+
+    // 上限チェック（パフォーマンス保護）
+    const MAX_BATCH_SIZE = 1000;
+    if (ids.length > MAX_BATCH_SIZE) {
+      return c.json({ error: `Maximum ${MAX_BATCH_SIZE} ids per request` }, 400);
+    }
+
+    // IDバリデーション（英数字とハイフンのみ許可）
+    const validIdPattern = /^[a-zA-Z0-9_-]+$/;
+    for (const id of ids) {
+      if (!validIdPattern.test(id)) {
+        return c.json({ error: `Invalid id format: ${id}` }, 400);
+      }
+    }
+
+    // service_idのリストを構築
+    const serviceIds = ids.map((id) => `counter:${id}:total`);
+
+    // D1はIN句のプレースホルダを動的に構築する必要がある
+    const placeholders = serviceIds.map(() => "?").join(",");
+    const query = `SELECT service_id, total FROM counters WHERE service_id IN (${placeholders})`;
+
+    const result = await db
+      .prepare(query)
+      .bind(...serviceIds)
+      .all<{ service_id: string; total: number }>();
+
+    // 結果をIDでマップ
+    const data: Record<string, { total: number }> = {};
+    for (const row of result.results || []) {
+      // "counter:xxx:total" から "xxx" を抽出
+      const id = row.service_id.replace(/^counter:/, "").replace(/:total$/, "");
+      data[id] = { total: row.total };
+    }
+
+    // リクエストされたが存在しないIDは0として含める
+    for (const id of ids) {
+      if (!data[id]) {
+        data[id] = { total: 0 };
+      }
+    }
+
+    return c.json({ success: true, data });
+  }
+
   return c.json(
-    { error: "Invalid action for POST. Use: get (owner), create, update, set, delete" },
+    {
+      error:
+        "Invalid action for POST. Use: get (owner), create, update, set, delete, batchGet, batchCreate",
+    },
     400
   );
 });

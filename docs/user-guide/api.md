@@ -22,7 +22,7 @@ Just like the original 1990s web tools, everything can be operated directly from
 4. **Easy sharing**: Every operation is a shareable URL
 5. **BBS culture**: Even message posting uses GET parameters, just like the old days
 
-> **Note**: The only exception is `Like.batchGet` which uses POST to handle large ID arrays (up to 1000) that exceed URL length limits.
+> **Note**: `batchGet` and `batchCreate` use POST to handle large request bodies that exceed URL length limits. This applies to both Counter and Like services.
 
 ## Services
 
