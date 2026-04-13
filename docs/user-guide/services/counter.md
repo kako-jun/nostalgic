@@ -329,6 +329,107 @@ document.querySelector("#counter").src =
   `/api/visit?action=get&id=blog-a7b9c3d4&type=total&theme=light`;
 ```
 
+### sumByPrefix
+
+Sum counter values by ID prefix. Useful for aggregating all counters under a common prefix (e.g., all pages of a site).
+
+```
+GET /api/visit?action=sumByPrefix&prefix={PREFIX}
+```
+
+**Parameters:**
+
+- `prefix` (required): ID prefix to match (alphanumeric, hyphens, underscores only)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "total": 1234
+}
+```
+
+**Usage Example:**
+
+```javascript
+// Sum all counters for osaka-kenpo (e.g., osaka-kenpo-art1, osaka-kenpo-art2, ...)
+const response = await fetch("/api/visit?action=sumByPrefix&prefix=osaka-kenpo");
+const { total } = await response.json();
+console.log("Total views:", total);
+```
+
+### batchGet
+
+> **⚠️ POST Method Required**
+
+Get counter values for multiple IDs in a single request.
+
+```
+POST /api/visit?action=batchGet
+Content-Type: application/json
+
+{
+  "ids": ["id1", "id2", "id3"]
+}
+```
+
+**Request Body:**
+
+- `ids` (required): Array of public counter IDs (max 1000)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id1": { "total": 100 },
+    "id2": { "total": 42 },
+    "id3": { "total": 0 }
+  }
+}
+```
+
+**Notes:**
+
+- IDs that don't exist return `{ "total": 0 }`
+- Maximum 1000 IDs per request
+
+### batchCreate
+
+> **⚠️ POST Method Required**
+
+Create multiple counters in a single request. Existing IDs/URLs are skipped.
+
+```
+POST /api/visit?action=batchCreate
+Content-Type: application/json
+
+{
+  "token": "your-secret",
+  "items": [
+    { "id": "page-1", "url": "https://example.com/page1" },
+    { "id": "page-2", "url": "https://example.com/page2" }
+  ]
+}
+```
+
+**Request Body:**
+
+- `token` (required): Owner token (8-16 characters)
+- `items` (required): Array of `{id, url}` objects (max 100)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "created": 2,
+  "skipped": 0
+}
+```
+
 ## Security Notes
 
 - Owner tokens are stored as SHA256 hashes
