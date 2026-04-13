@@ -144,12 +144,12 @@ app.get("/", async (c) => {
       return c.json({ error: "Invalid prefix format" }, 400);
     }
 
-    // LIKE ワイルドカードとしての _ をエスケープ
-    const escapedPrefix = prefix.replace(/_/g, "\\_");
+    // LIKE ワイルドカードとしての _ をエスケープ（D1互換のため ! を使用）
+    const escapedPrefix = prefix.replace(/_/g, "!_");
 
     const row = await db
       .prepare(
-        "SELECT COALESCE(SUM(total), 0) as total FROM likes WHERE service_id LIKE ? ESCAPE '\\'"
+        "SELECT COALESCE(SUM(total), 0) as total FROM likes WHERE service_id LIKE ? ESCAPE '!'"
       )
       .bind(`like:${escapedPrefix}%:total`)
       .first<{ total: number }>();
