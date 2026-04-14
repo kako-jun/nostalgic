@@ -15,15 +15,20 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 // CORS設定
 // GET requests: allow any origin (web components are embedded on third-party sites)
-// Mutation requests (POST/PUT/DELETE): restrict to nostalgic.llll-ll.com only
+// Mutation requests (POST/PUT/DELETE): restrict to *.llll-ll.com + localhost
 app.use("*", async (c, next) => {
   const method = c.req.method;
   if (method === "GET" || method === "HEAD" || method === "OPTIONS") {
     return cors({ origin: "*" })(c, next);
   }
-  // localhost origins are intentionally included for local development of embedded widgets
+  // All *.llll-ll.com subdomains + localhost for development
   return cors({
-    origin: ["https://nostalgic.llll-ll.com", "http://localhost:5173", "http://localhost:3000"],
+    origin: (origin) => {
+      if (!origin) return "https://nostalgic.llll-ll.com";
+      if (origin.endsWith(".llll-ll.com") || origin === "https://llll-ll.com") return origin;
+      if (origin.startsWith("http://localhost:")) return origin;
+      return null;
+    },
   })(c, next);
 });
 
