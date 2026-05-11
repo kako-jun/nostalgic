@@ -75,34 +75,10 @@ async function verifyOwnerToken(
   return await verifyToken(token, row.token_hash);
 }
 
-// === Maneki-neko SVG Icon (inline) ===
-// 招き猫アイコン（16x16）
+// === Lucky Cat Icon ===
+// 35x36px、拡大縮小なし
 function getManekiNekoIcon(x: number, y: number): string {
-  return `<g transform="translate(${x}, ${y})">
-    <!-- 体 -->
-    <ellipse cx="8" cy="11" rx="6" ry="5" fill="#fff5e6" stroke="#d4a574" stroke-width="0.5"/>
-    <!-- 顔 -->
-    <circle cx="8" cy="6" r="5" fill="#fff5e6" stroke="#d4a574" stroke-width="0.5"/>
-    <!-- 耳 -->
-    <path d="M4 3 L3 0 L5.5 2 Z" fill="#fff5e6" stroke="#d4a574" stroke-width="0.3"/>
-    <path d="M12 3 L13 0 L10.5 2 Z" fill="#fff5e6" stroke="#d4a574" stroke-width="0.3"/>
-    <path d="M4 2.5 L3.5 1 L5 2 Z" fill="#ffb6c1"/>
-    <path d="M12 2.5 L12.5 1 L11 2 Z" fill="#ffb6c1"/>
-    <!-- 目 -->
-    <ellipse cx="6" cy="5.5" rx="1" ry="1.2" fill="#333"/>
-    <ellipse cx="10" cy="5.5" rx="1" ry="1.2" fill="#333"/>
-    <circle cx="6.3" cy="5.2" r="0.3" fill="#fff"/>
-    <circle cx="10.3" cy="5.2" r="0.3" fill="#fff"/>
-    <!-- 鼻 -->
-    <ellipse cx="8" cy="7" rx="0.6" ry="0.4" fill="#ffb6c1"/>
-    <!-- 口 -->
-    <path d="M7 8 Q8 9 9 8" fill="none" stroke="#d4a574" stroke-width="0.4"/>
-    <!-- 挙げた手（右手） -->
-    <ellipse cx="13" cy="5" rx="2" ry="2.5" fill="#fff5e6" stroke="#d4a574" stroke-width="0.5"/>
-    <!-- 小判 -->
-    <ellipse cx="8" cy="12" rx="2.5" ry="1.5" fill="#ffd700" stroke="#daa520" stroke-width="0.3"/>
-    <text x="8" y="12.8" font-size="2" fill="#8b4513" text-anchor="middle">福</text>
-  </g>`;
+  return `<image href="https://nostalgic.llll-ll.com/lucky-cat.webp" x="${x}" y="${y}" width="36" height="36" image-rendering="pixelated"/>`;
 }
 
 // === Helper Functions ===
@@ -149,7 +125,7 @@ function splitByWidth(text: string, maxWidth: number): string[] {
 function generateBadgeSVG(message: string): string {
   const label = "Yokoso";
   const labelWidth = 50;
-  const iconWidth = 20;
+  const iconWidth = 36;
   const displayWidth = getDisplayWidth(message);
   const textWidth = Math.max(displayWidth * 6 + 24, 60);
   const messageWidth = iconWidth + textWidth;
@@ -182,26 +158,9 @@ function generateBadgeSVG(message: string): string {
 </svg>`;
 }
 
-// デフォルト招き猫アバター（カードモード用、32x32）
-function getDefaultAvatarSVG(): string {
-  return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16">
-    <rect width="16" height="16" fill="#fff5e6"/>
-    <ellipse cx="8" cy="11" rx="6" ry="5" fill="#fff5e6" stroke="#d4a574" stroke-width="0.5"/>
-    <circle cx="8" cy="6" r="5" fill="#fff5e6" stroke="#d4a574" stroke-width="0.5"/>
-    <path d="M4 3 L3 0 L5.5 2 Z" fill="#fff5e6" stroke="#d4a574" stroke-width="0.3"/>
-    <path d="M12 3 L13 0 L10.5 2 Z" fill="#fff5e6" stroke="#d4a574" stroke-width="0.3"/>
-    <path d="M4 2.5 L3.5 1 L5 2 Z" fill="#ffb6c1"/>
-    <path d="M12 2.5 L12.5 1 L11 2 Z" fill="#ffb6c1"/>
-    <ellipse cx="6" cy="5.5" rx="1" ry="1.2" fill="#333"/>
-    <ellipse cx="10" cy="5.5" rx="1" ry="1.2" fill="#333"/>
-    <circle cx="6.3" cy="5.2" r="0.3" fill="#fff"/>
-    <circle cx="10.3" cy="5.2" r="0.3" fill="#fff"/>
-    <ellipse cx="8" cy="7" rx="0.6" ry="0.4" fill="#ffb6c1"/>
-    <path d="M7 8 Q8 9 9 8" fill="none" stroke="#d4a574" stroke-width="0.4"/>
-    <ellipse cx="13" cy="5" rx="2" ry="2.5" fill="#fff5e6" stroke="#d4a574" stroke-width="0.5"/>
-    <ellipse cx="8" cy="12" rx="2.5" ry="1.5" fill="#ffd700" stroke="#daa520" stroke-width="0.3"/>
-    <text x="8" y="12.8" font-size="2" fill="#8b4513" text-anchor="middle">福</text>
-  </svg>`)}`;
+// デフォルト招き猫アバターURL（カードモード用）
+function getDefaultAvatarURL(): string {
+  return "https://nostalgic.llll-ll.com/lucky-cat.webp";
 }
 
 function generateCardSVG(
@@ -216,12 +175,13 @@ function generateCardSVG(
   const totalWidth = labelWidth + contentWidth;
   const lineHeight = 16;
   const padding = 12;
-  const avatarSize = 28;
+  const avatarWidth = 36;
+  const avatarHeight = 36;
 
   const maxLineWidth = 50;
   const lines = splitByWidth(message, maxLineWidth);
 
-  const headerHeight = avatarSize + 8;
+  const headerHeight = avatarHeight + 8;
   const messageHeight = lines.length * lineHeight;
   const contentHeight = padding + headerHeight + messageHeight + padding;
   const totalHeight = Math.max(contentHeight, 50);
@@ -237,18 +197,18 @@ function generateCardSVG(
   const day = String(date.getDate()).padStart(2, "0");
   const dateStr = lang === "en" ? `${month}-${day}-${year}` : `${year}-${month}-${day}`;
 
-  const displayAvatar = avatar || getDefaultAvatarSVG();
+  const displayAvatar = avatar || getDefaultAvatarURL();
   const displayName = name || "Lucky Cat";
 
   const avatarX = labelWidth + padding;
   const avatarY = padding;
-  const avatarSection = `<image href="${escapeXml(displayAvatar)}" x="${avatarX}" y="${avatarY}" width="${avatarSize}" height="${avatarSize}" clip-path="url(#avatarClip)"/>`;
+  const avatarSection = `<image href="${escapeXml(displayAvatar)}" x="${avatarX}" y="${avatarY}" width="${avatarWidth}" height="${avatarHeight}" clip-path="url(#avatarClip)" image-rendering="pixelated"/>`;
 
-  const nameX = avatarX + avatarSize + 8;
+  const nameX = avatarX + avatarWidth + 8;
   const nameY = avatarY + 12;
   const nameSection = `<text x="${nameX}" y="${nameY}" fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12" font-weight="bold">${escapeXml(displayName)}</text>`;
 
-  const dateY = avatarY + avatarSize - 2;
+  const dateY = avatarY + avatarHeight - 2;
   const dateSection = `<text x="${nameX}" y="${dateY}" fill="${dateColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10">${dateStr}</text>`;
 
   const messageLines = lines
@@ -261,7 +221,7 @@ function generateCardSVG(
   return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${totalWidth}" height="${totalHeight}">
   <defs>
     <clipPath id="avatarClip">
-      <circle cx="${avatarX + avatarSize / 2}" cy="${avatarY + avatarSize / 2}" r="${avatarSize / 2}"/>
+      <circle cx="${avatarX + avatarWidth / 2}" cy="${avatarY + avatarHeight / 2}" r="${avatarWidth / 2}"/>
     </clipPath>
     <clipPath id="round">
       <rect width="${totalWidth}" height="${totalHeight}" rx="3"/>
