@@ -11,12 +11,12 @@ Dynamic welcome message service featuring a Maneki-neko (Lucky Cat) avatar. "Yok
 
 ## Default Avatar
 
-When no avatar is specified, a cute Maneki-neko (招き猫 / Lucky Cat) icon appears:
+When no avatar is specified, a pixel-art Maneki-neko (招き猫 / Lucky Cat) appears:
 
-- Badge mode: Small cat icon next to the message
-- Card mode: Cat avatar with default name "Lucky Cat"
+- Badge mode: 36x36 cat icon next to the message
+- Card mode: 36x36 cat avatar with default name "Lucky Cat"
 
-You can override with your own avatar URL if desired.
+The default avatar image is served from `https://nostalgic.llll-ll.com/lucky-cat.webp` and rendered with `image-rendering: pixelated` to preserve its pixel-art look. You can override with your own avatar URL if desired.
 
 ## Display Modes
 
