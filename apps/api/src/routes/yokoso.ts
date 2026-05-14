@@ -13,6 +13,7 @@ import { Hono } from "hono";
 import { hashToken, verifyToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
 import { sendWebHook, WebHookMessages } from "../lib/core/webhook";
+import { LUCKY_CAT_DATA_URL } from "../assets/lucky-cat";
 
 type Bindings = { DB: D1Database };
 
@@ -76,9 +77,10 @@ async function verifyOwnerToken(
 }
 
 // === Lucky Cat Icon ===
-// 35x36px、拡大縮小なし
+// 36x36px の webp を base64 で inline する。GitHub Camo 経由でも消えないようにするため
+// 外部URL参照ではなく data URI で埋め込む。
 function getManekiNekoIcon(x: number, y: number): string {
-  return `<image href="https://nostalgic.llll-ll.com/lucky-cat.webp" x="${x}" y="${y}" width="36" height="36" image-rendering="pixelated"/>`;
+  return `<image href="${LUCKY_CAT_DATA_URL}" x="${x}" y="${y}" width="36" height="36" image-rendering="pixelated"/>`;
 }
 
 // === Helper Functions ===
@@ -130,7 +132,10 @@ function generateBadgeSVG(message: string): string {
   const textWidth = Math.max(displayWidth * 6 + 24, 60);
   const messageWidth = iconWidth + textWidth;
   const totalWidth = labelWidth + messageWidth;
-  const height = 20;
+  // バッジ高さ: 36x36 ピクセルアート招き猫の上下に 2px 余白を取って 40
+  const height = 40;
+  const textBaselineY = 25;
+  const shadowBaselineY = 26;
   const labelBg = "#555";
   const valueBg = "#d32f2f";
   const textColor = "#fff";
@@ -149,18 +154,19 @@ function generateBadgeSVG(message: string): string {
     <rect width="${totalWidth}" height="${height}" fill="url(#smooth)"/>
   </g>
   <g text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
-    <text x="${labelWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${label}</text>
-    <text x="${labelWidth / 2}" y="14" fill="${textColor}">${label}</text>
+    <text x="${labelWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3">${label}</text>
+    <text x="${labelWidth / 2}" y="${textBaselineY}" fill="${textColor}">${label}</text>
   </g>
-  ${getManekiNekoIcon(labelWidth + 5, 2)}
-  <text x="${labelWidth + iconWidth + textWidth / 2}" y="15" fill="#010101" fill-opacity=".3" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
-  <text x="${labelWidth + iconWidth + textWidth / 2}" y="14" fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
+  ${getManekiNekoIcon(labelWidth + 2, 2)}
+  <text x="${labelWidth + iconWidth + textWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
+  <text x="${labelWidth + iconWidth + textWidth / 2}" y="${textBaselineY}" fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
 </svg>`;
 }
 
-// デフォルト招き猫アバターURL（カードモード用）
+// デフォルト招き猫アバターURL（カードモード用）。base64 data URI で inline する理由は
+// getManekiNekoIcon のコメント参照。
 function getDefaultAvatarURL(): string {
-  return "https://nostalgic.llll-ll.com/lucky-cat.webp";
+  return LUCKY_CAT_DATA_URL;
 }
 
 function generateCardSVG(

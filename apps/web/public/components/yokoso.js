@@ -244,7 +244,7 @@ class NostalgicYokoso extends HTMLElement {
     // カードモード（SVG版と同じレイアウト）
     const dateStr = updatedAt ? this.formatDate(updatedAt) : "";
 
-    // デフォルトアバター（招き猫）
+    // デフォルトアバター（招き猫）。他サイトへ埋め込まれて動くので絶対URLで配信元を指す。
     const avatarUrl = avatar || "https://nostalgic.llll-ll.com/lucky-cat.webp";
 
     this.shadowRoot.innerHTML = `
