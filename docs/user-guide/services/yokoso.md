@@ -57,10 +57,10 @@ GET /api/yokoso?action=create&url={URL}&token={TOKEN}&message={MESSAGE}&mode={MO
 
 - `url` (required): Target URL for yokoso
 - `token` (required): Owner token (8-16 characters)
-- `message` (required): Welcome message (badge: max 20 chars, card: max 140 chars)
+- `message` (required): Welcome message (badge: max 20 chars, card: max 140 chars). Length is counted by Unicode code points, so emoji and surrogate pairs count as 1. In card mode, `\n` is treated as a forced line break (max 10 lines).
 - `mode` (optional): Display mode (`badge` default, `card`)
 - `name` (optional): Display name for card mode (default: "Lucky Cat")
-- `avatar` (optional): Avatar image URL for card mode (default: Maneki-neko icon)
+- `avatar` (optional): Avatar image URL for card mode (default: Maneki-neko icon). Must be an `http(s)://` URL or a `data:image/{webp,png,jpeg,gif,svg+xml}` URI; other schemes (e.g. `javascript:`) are rejected.
 - `webhookUrl` (optional): Webhook URL for event notifications
 
 **Response:**
