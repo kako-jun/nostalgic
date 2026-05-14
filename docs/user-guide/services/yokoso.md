@@ -22,7 +22,7 @@ The default avatar image is served from `https://nostalgic.llll-ll.com/lucky-cat
 
 ### Badge Mode (Default)
 
-Short message up to 20 characters, displayed as Shields.io-style badge with Maneki-neko icon.
+Short message up to 20 characters, displayed as a 40px-tall Shields.io-style badge with a 36x36 Maneki-neko icon. The lucky cat is embedded as a base64 data URI inside the SVG so it renders correctly even when proxied by GitHub Camo.
 
 ```
 ┌──────────┬──────────────────────────────┐
