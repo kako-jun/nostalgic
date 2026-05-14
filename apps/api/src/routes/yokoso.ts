@@ -79,7 +79,9 @@ async function verifyOwnerToken(
 // === Lucky Cat Icon ===
 // 36x36px の webp を base64 で inline する。GitHub Camo 経由でも消えないようにするため
 // 外部URL参照ではなく data URI で埋め込む。
-function getManekiNekoIcon(x: number, y: number, size: number = 36): string {
+const LUCKY_CAT_SIZE = 36;
+
+function getManekiNekoIcon(x: number, y: number, size: number = LUCKY_CAT_SIZE): string {
   return `<image href="${LUCKY_CAT_DATA_URL}" x="${x}" y="${y}" width="${size}" height="${size}" image-rendering="pixelated"/>`;
 }
 
@@ -127,9 +129,8 @@ function splitByWidth(text: string, maxWidth: number): string[] {
 function generateBadgeSVG(message: string): string {
   const label = "Yokoso";
   const labelWidth = 50;
-  // 36x36 招き猫 + 左右 2px ずつのマージンを含むスロット幅
-  const iconSlotWidth = 40;
-  const iconSize = 36;
+  // 36x36 招き猫 + 上下左右 2px ずつのマージンを含むスロット
+  const iconSlotWidth = LUCKY_CAT_SIZE + 4;
   const iconX = labelWidth + 2;
   const displayWidth = getDisplayWidth(message);
   const textWidth = Math.max(displayWidth * 6 + 24, 60);
@@ -161,16 +162,10 @@ function generateBadgeSVG(message: string): string {
     <text x="${labelWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3">${label}</text>
     <text x="${labelWidth / 2}" y="${textBaselineY}" fill="${textColor}">${label}</text>
   </g>
-  ${getManekiNekoIcon(iconX, 2, iconSize)}
+  ${getManekiNekoIcon(iconX, 2)}
   <text x="${labelWidth + iconSlotWidth + textWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
   <text x="${labelWidth + iconSlotWidth + textWidth / 2}" y="${textBaselineY}" fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
 </svg>`;
-}
-
-// デフォルト招き猫アバターURL（カードモード用）。base64 data URI で inline する理由は
-// getManekiNekoIcon のコメント参照。
-function getDefaultAvatarURL(): string {
-  return LUCKY_CAT_DATA_URL;
 }
 
 function generateCardSVG(
@@ -185,8 +180,8 @@ function generateCardSVG(
   const totalWidth = labelWidth + contentWidth;
   const lineHeight = 16;
   const padding = 12;
-  const avatarWidth = 36;
-  const avatarHeight = 36;
+  const avatarWidth = LUCKY_CAT_SIZE;
+  const avatarHeight = LUCKY_CAT_SIZE;
 
   const maxLineWidth = 50;
   const lines = splitByWidth(message, maxLineWidth);
@@ -207,7 +202,7 @@ function generateCardSVG(
   const day = String(date.getDate()).padStart(2, "0");
   const dateStr = lang === "en" ? `${month}-${day}-${year}` : `${year}-${month}-${day}`;
 
-  const displayAvatar = avatar || getDefaultAvatarURL();
+  const displayAvatar = avatar || LUCKY_CAT_DATA_URL;
   const displayName = name || "Lucky Cat";
 
   const avatarX = labelWidth + padding;
@@ -228,7 +223,7 @@ function generateCardSVG(
     )
     .join("\n    ");
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${totalWidth}" height="${totalHeight}">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}">
   <defs>
     <clipPath id="avatarClip">
       <circle cx="${avatarX + avatarWidth / 2}" cy="${avatarY + avatarHeight / 2}" r="${avatarWidth / 2}"/>
