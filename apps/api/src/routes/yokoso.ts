@@ -57,9 +57,25 @@ function escapeXml(str: string): string {
     .replace(/'/g, "&apos;");
 }
 
+// コードポイント単位で文字数を数える（絵文字のサロゲートペアを 1 文字扱い）。
+function codePointLength(text: string): number {
+  let count = 0;
+  for (const _ of text) count++;
+  return count;
+}
+
 function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength - 1) + "...";
+  const chars = [...text];
+  if (chars.length <= maxLength) return text;
+  return chars.slice(0, maxLength - 1).join("") + "...";
+}
+
+// avatar URL は SVG <image href="..."> に入る。javascript: 等の危険スキームを弾く。
+// 許可: https://, http://, data:image/{webp,png,jpeg,gif,svg+xml}
+function isSafeAvatarUrl(url: string): boolean {
+  if (/^https?:\/\//i.test(url)) return true;
+  if (/^data:image\/(webp|png|jpeg|jpg|gif|svg\+xml);/i.test(url)) return true;
+  return false;
 }
 
 /** Verify owner token against DB */
@@ -104,6 +120,14 @@ function splitByWidth(text: string, maxWidth: number): string[] {
   let currentWidth = 0;
 
   for (const char of text) {
+    // 明示的な改行は強制改行として扱う（SVG <text> は \n を無視するため）
+    if (char === "\n") {
+      lines.push(currentLine);
+      currentLine = "";
+      currentWidth = 0;
+      continue;
+    }
+
     const code = char.charCodeAt(0);
     const charWidth = code > 0x7f ? 2 : 1;
 
@@ -117,9 +141,7 @@ function splitByWidth(text: string, maxWidth: number): string[] {
     }
   }
 
-  if (currentLine) {
-    lines.push(currentLine);
-  }
+  lines.push(currentLine);
 
   return lines;
 }
@@ -184,7 +206,11 @@ function generateCardSVG(
   const avatarHeight = LUCKY_CAT_SIZE;
 
   const maxLineWidth = 50;
-  const lines = splitByWidth(message, maxLineWidth);
+  // 改行を強制改行として扱うため、ユーザーが \n を大量に入れると縦が伸びる。
+  // MAX_MESSAGE_CARD (140) と幅 50 から最大 8 行強で十分なので 10 行で頭打ち。
+  const MAX_LINES = 10;
+  const allLines = splitByWidth(message, maxLineWidth);
+  const lines = allLines.slice(0, MAX_LINES);
 
   const headerHeight = avatarHeight + 8;
   const messageHeight = lines.length * lineHeight;
@@ -399,15 +425,22 @@ app.post("/", async (c) => {
     }
 
     const maxLength = mode === "badge" ? MAX_MESSAGE_BADGE : MAX_MESSAGE_CARD;
-    if (message.length > maxLength) {
+    if (codePointLength(message) > maxLength) {
       return c.json(
         { error: `Message too long. Max ${maxLength} characters for ${mode} mode` },
         400
       );
     }
 
-    if (name && name.length > MAX_NAME_LENGTH) {
+    if (name && codePointLength(name) > MAX_NAME_LENGTH) {
       return c.json({ error: `Name too long. Max ${MAX_NAME_LENGTH} characters` }, 400);
+    }
+
+    if (avatar && !isSafeAvatarUrl(avatar)) {
+      return c.json(
+        { error: "avatar must be an http(s) URL or a data:image/{webp,png,jpeg,gif,svg+xml} URI" },
+        400
+      );
     }
 
     const existing = await getYokosoByUrl(db, url);
@@ -481,7 +514,7 @@ app.post("/", async (c) => {
     // Validate message length if provided
     if (message !== undefined) {
       const maxLength = newMode === "badge" ? MAX_MESSAGE_BADGE : MAX_MESSAGE_CARD;
-      if (message.length > maxLength) {
+      if (codePointLength(message) > maxLength) {
         return c.json(
           { error: `Message too long. Max ${maxLength} characters for ${newMode} mode` },
           400
@@ -489,8 +522,15 @@ app.post("/", async (c) => {
       }
     }
 
-    if (name !== undefined && name.length > MAX_NAME_LENGTH) {
+    if (name !== undefined && name !== null && codePointLength(name) > MAX_NAME_LENGTH) {
       return c.json({ error: `Name too long. Max ${MAX_NAME_LENGTH} characters` }, 400);
+    }
+
+    if (avatar !== undefined && avatar !== "" && avatar !== null && !isSafeAvatarUrl(avatar)) {
+      return c.json(
+        { error: "avatar must be an http(s) URL or a data:image/{webp,png,jpeg,gif,svg+xml} URI" },
+        400
+      );
     }
 
     const now = new Date().toISOString();
