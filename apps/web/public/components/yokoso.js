@@ -245,25 +245,7 @@ class NostalgicYokoso extends HTMLElement {
     const dateStr = updatedAt ? this.formatDate(updatedAt) : "";
 
     // デフォルトアバター（招き猫）
-    const avatarUrl =
-      avatar ||
-      `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16">
-      <rect width="16" height="16" fill="#fff5e6"/>
-      <ellipse cx="8" cy="11" rx="6" ry="5" fill="#fff5e6" stroke="#d4a574" stroke-width="0.5"/>
-      <circle cx="8" cy="6" r="5" fill="#fff5e6" stroke="#d4a574" stroke-width="0.5"/>
-      <path d="M4 3 L3 0 L5.5 2 Z" fill="#fff5e6" stroke="#d4a574" stroke-width="0.3"/>
-      <path d="M12 3 L13 0 L10.5 2 Z" fill="#fff5e6" stroke="#d4a574" stroke-width="0.3"/>
-      <path d="M4 2.5 L3.5 1 L5 2 Z" fill="#ffb6c1"/>
-      <path d="M12 2.5 L12.5 1 L11 2 Z" fill="#ffb6c1"/>
-      <ellipse cx="6" cy="5.5" rx="1" ry="1.2" fill="#333"/>
-      <ellipse cx="10" cy="5.5" rx="1" ry="1.2" fill="#333"/>
-      <circle cx="6.3" cy="5.2" r="0.3" fill="#fff"/>
-      <circle cx="10.3" cy="5.2" r="0.3" fill="#fff"/>
-      <ellipse cx="8" cy="7" rx="0.6" ry="0.4" fill="#ffb6c1"/>
-      <path d="M7 8 Q8 9 9 8" fill="none" stroke="#d4a574" stroke-width="0.4"/>
-      <ellipse cx="13" cy="5" rx="2" ry="2.5" fill="#fff5e6" stroke="#d4a574" stroke-width="0.5"/>
-      <ellipse cx="8" cy="12" rx="2.5" ry="1.5" fill="#ffd700" stroke="#daa520" stroke-width="0.3"/>
-    </svg>`)}`;
+    const avatarUrl = avatar || "https://nostalgic.llll-ll.com/lucky-cat.webp";
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -291,12 +273,13 @@ class NostalgicYokoso extends HTMLElement {
           z-index: 10;
         }
         .yokoso-card-avatar {
-          width: 28px;
-          height: 28px;
+          width: 36px;
+          height: 36px;
           border-radius: 50%;
           margin-right: 8px;
           object-fit: cover;
           flex-shrink: 0;
+          image-rendering: pixelated;
         }
         .yokoso-card-meta {
           display: flex;
