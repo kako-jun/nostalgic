@@ -79,8 +79,8 @@ async function verifyOwnerToken(
 // === Lucky Cat Icon ===
 // 36x36px の webp を base64 で inline する。GitHub Camo 経由でも消えないようにするため
 // 外部URL参照ではなく data URI で埋め込む。
-function getManekiNekoIcon(x: number, y: number): string {
-  return `<image href="${LUCKY_CAT_DATA_URL}" x="${x}" y="${y}" width="36" height="36" image-rendering="pixelated"/>`;
+function getManekiNekoIcon(x: number, y: number, size: number = 36): string {
+  return `<image href="${LUCKY_CAT_DATA_URL}" x="${x}" y="${y}" width="${size}" height="${size}" image-rendering="pixelated"/>`;
 }
 
 // === Helper Functions ===
@@ -127,15 +127,19 @@ function splitByWidth(text: string, maxWidth: number): string[] {
 function generateBadgeSVG(message: string): string {
   const label = "Yokoso";
   const labelWidth = 50;
-  const iconWidth = 36;
+  // 36x36 招き猫 + 左右 2px ずつのマージンを含むスロット幅
+  const iconSlotWidth = 40;
+  const iconSize = 36;
+  const iconX = labelWidth + 2;
   const displayWidth = getDisplayWidth(message);
   const textWidth = Math.max(displayWidth * 6 + 24, 60);
-  const messageWidth = iconWidth + textWidth;
+  const messageWidth = iconSlotWidth + textWidth;
   const totalWidth = labelWidth + messageWidth;
   // バッジ高さ: 36x36 ピクセルアート招き猫の上下に 2px 余白を取って 40
   const height = 40;
-  const textBaselineY = 25;
-  const shadowBaselineY = 26;
+  // font-size=11 を height=40 の中央に置く: baseline ≈ height/2 + font-size/3 = 24
+  const textBaselineY = 24;
+  const shadowBaselineY = 25;
   const labelBg = "#555";
   const valueBg = "#d32f2f";
   const textColor = "#fff";
@@ -157,9 +161,9 @@ function generateBadgeSVG(message: string): string {
     <text x="${labelWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3">${label}</text>
     <text x="${labelWidth / 2}" y="${textBaselineY}" fill="${textColor}">${label}</text>
   </g>
-  ${getManekiNekoIcon(labelWidth + 2, 2)}
-  <text x="${labelWidth + iconWidth + textWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
-  <text x="${labelWidth + iconWidth + textWidth / 2}" y="${textBaselineY}" fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
+  ${getManekiNekoIcon(iconX, 2, iconSize)}
+  <text x="${labelWidth + iconSlotWidth + textWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
+  <text x="${labelWidth + iconSlotWidth + textWidth / 2}" y="${textBaselineY}" fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
 </svg>`;
 }
 
