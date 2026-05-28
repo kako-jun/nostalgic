@@ -156,10 +156,14 @@ function generateBadgeSVG(message: string): string {
   const iconSlotWidth = iconSize + 4;
   const iconX = labelWidth + 2;
   const displayWidth = getDisplayWidth(message);
-  // テキスト左右パディングを -10px 詰めて招き猫とセリフを寄せる (左 -5px)
-  const textWidth = Math.max(displayWidth * 6 + 4, 40);
+  // 招き猫とセリフを寄せるため左パディングを詰める。右パディングは独立
+  const textLeftPadding = 2;
+  const textRightPadding = 12;
+  const textPixelWidth = Math.max(displayWidth * 6, 30);
+  const textWidth = textLeftPadding + textPixelWidth + textRightPadding;
   const messageWidth = iconSlotWidth + textWidth;
   const totalWidth = labelWidth + messageWidth;
+  const textStartX = labelWidth + iconSlotWidth + textLeftPadding;
   // バッジ高さ: 30 (招き猫は 36 なので上下が clip される)
   const height = 30;
   // font-size=11 を height=30 の中央に置く: baseline ≈ height/2 + font-size/3 ≈ 18
@@ -187,8 +191,8 @@ function generateBadgeSVG(message: string): string {
     <text x="${labelWidth / 2}" y="${textBaselineY}" fill="${textColor}">${label}</text>
   </g>
   ${getManekiNekoIcon(iconX, -2, iconSize)}
-  <text x="${labelWidth + iconSlotWidth + textWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
-  <text x="${labelWidth + iconSlotWidth + textWidth / 2}" y="${textBaselineY}" fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
+  <text x="${textStartX}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3" text-anchor="start" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
+  <text x="${textStartX}" y="${textBaselineY}" fill="${textColor}" text-anchor="start" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
 </svg>`;
 }
 
