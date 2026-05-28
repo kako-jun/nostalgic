@@ -151,18 +151,20 @@ function splitByWidth(text: string, maxWidth: number): string[] {
 function generateBadgeSVG(message: string): string {
   const label = "Yokoso";
   const labelWidth = 50;
-  // 36x36 招き猫 + 上下左右 2px ずつのマージンを含むスロット
-  const iconSlotWidth = LUCKY_CAT_SIZE + 4;
+  // 30x30 招き猫 + 上下左右 2px ずつのマージンを含むスロット
+  const iconSize = 30;
+  const iconSlotWidth = iconSize + 4;
   const iconX = labelWidth + 2;
   const displayWidth = getDisplayWidth(message);
-  const textWidth = Math.max(displayWidth * 6 + 24, 60);
+  // テキスト左右パディングを -5px 詰めて招き猫とセリフを寄せる
+  const textWidth = Math.max(displayWidth * 6 + 14, 50);
   const messageWidth = iconSlotWidth + textWidth;
   const totalWidth = labelWidth + messageWidth;
-  // バッジ高さ: 36x36 ピクセルアート招き猫の上下に 2px 余白を取って 40
-  const height = 40;
-  // font-size=11 を height=40 の中央に置く: baseline ≈ height/2 + font-size/3 = 24
-  const textBaselineY = 24;
-  const shadowBaselineY = 25;
+  // バッジ高さ: 30x30 ピクセルアート招き猫の上下に 2px 余白を取って 34
+  const height = 34;
+  // font-size=11 を height=34 の中央に置く: baseline ≈ height/2 + font-size/3 ≈ 21
+  const textBaselineY = 21;
+  const shadowBaselineY = 22;
   const labelBg = "#555";
   const valueBg = "#d32f2f";
   const textColor = "#fff";
@@ -184,7 +186,7 @@ function generateBadgeSVG(message: string): string {
     <text x="${labelWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3">${label}</text>
     <text x="${labelWidth / 2}" y="${textBaselineY}" fill="${textColor}">${label}</text>
   </g>
-  ${getManekiNekoIcon(iconX, 2)}
+  ${getManekiNekoIcon(iconX, 2, iconSize)}
   <text x="${labelWidth + iconSlotWidth + textWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
   <text x="${labelWidth + iconSlotWidth + textWidth / 2}" y="${textBaselineY}" fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
 </svg>`;
