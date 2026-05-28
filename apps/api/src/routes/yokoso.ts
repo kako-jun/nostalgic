@@ -151,7 +151,7 @@ function splitByWidth(text: string, maxWidth: number): string[] {
 function generateBadgeSVG(message: string): string {
   const label = "Yokoso";
   const labelWidth = 50;
-  // 36x36 招き猫 + 左右 2px ずつのマージンを含むスロット (バッジ高さ 34 なので上下は -1px ずつはみ出す)
+  // 36x36 招き猫 + 左右 2px ずつのマージンを含むスロット (バッジ高さ 27 なので上下が clip される)
   const iconSize = LUCKY_CAT_SIZE;
   const iconSlotWidth = iconSize + 4;
   const iconX = labelWidth + 2;
@@ -164,11 +164,12 @@ function generateBadgeSVG(message: string): string {
   const messageWidth = iconSlotWidth + textWidth;
   const totalWidth = labelWidth + messageWidth;
   const textStartX = labelWidth + iconSlotWidth + textLeftPadding;
-  // バッジ高さ: 30 (招き猫は 36 なので上下が clip される)
-  const height = 30;
-  // font-size=11 を height=30 の中央に置く: baseline ≈ height/2 + font-size/3 ≈ 18
-  const textBaselineY = 18;
-  const shadowBaselineY = 19;
+  // バッジ高さ: 27 (招き猫は 36 なので上下が clip される)
+  // height=28 では Yokoso 文字 (descender 無し) の視覚的中心が badge 中心より 1px 上に見えたため、
+  // baseline は据え置きで下を 1px だけ削って視覚的中心を一致させた
+  const height = 27;
+  const textBaselineY = 17;
+  const shadowBaselineY = 18;
   const labelBg = "#555";
   const valueBg = "#d32f2f";
   const textColor = "#fff";
@@ -190,7 +191,7 @@ function generateBadgeSVG(message: string): string {
     <text x="${labelWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3">${label}</text>
     <text x="${labelWidth / 2}" y="${textBaselineY}" fill="${textColor}">${label}</text>
   </g>
-  ${getManekiNekoIcon(iconX, -2, iconSize)}
+  ${getManekiNekoIcon(iconX, -3, iconSize)}
   <text x="${textStartX}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3" text-anchor="start" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
   <text x="${textStartX}" y="${textBaselineY}" fill="${textColor}" text-anchor="start" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
 </svg>`;
