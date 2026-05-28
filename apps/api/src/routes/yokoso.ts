@@ -93,9 +93,12 @@ async function verifyOwnerToken(
 }
 
 // === Lucky Cat Icon ===
-// 36x36px の webp を base64 で inline する。GitHub Camo 経由でも消えないようにするため
-// 外部URL参照ではなく data URI で埋め込む。
-const LUCKY_CAT_SIZE = 36;
+// 22x22px の webp を base64 で inline する。GitHub Camo 経由でも消えないようにするため
+// 外部URL参照ではなく data URI で埋め込む。元 36x36 だったが透明 padding を削った。
+const LUCKY_CAT_SIZE = 22;
+// card モードのユーザーアバタースロット (招き猫以外のアバター URL を渡された時の枠サイズ)。
+// 招き猫を表示する場合は LUCKY_CAT_SIZE でこのスロット内にセンタリング描画する。
+const AVATAR_SLOT_SIZE = 32;
 
 function getManekiNekoIcon(x: number, y: number, size: number = LUCKY_CAT_SIZE): string {
   return `<image href="${LUCKY_CAT_DATA_URL}" x="${x}" y="${y}" width="${size}" height="${size}" image-rendering="pixelated"/>`;
@@ -151,10 +154,12 @@ function splitByWidth(text: string, maxWidth: number): string[] {
 function generateBadgeSVG(message: string): string {
   const label = "Yokoso";
   const labelWidth = 50;
-  // 36x36 招き猫 + 左右 2px ずつのマージンを含むスロット (バッジ高さ 27 なので上下が clip される)
+  // 22x22 招き猫 + 左右 2px ずつのマージンを含むスロット (viewport 内に完全収容)
   const iconSize = LUCKY_CAT_SIZE;
   const iconSlotWidth = iconSize + 4;
   const iconX = labelWidth + 2;
+  // 招き猫 y: バッジ高さ 27 - 招き猫 22 = 余白 5px。上 3px / 下 2px に振り分け。
+  const iconY = 3;
   const displayWidth = getDisplayWidth(message);
   // 招き猫とセリフを寄せるため左パディングを詰める。右パディングは独立
   const textLeftPadding = 2;
@@ -164,7 +169,7 @@ function generateBadgeSVG(message: string): string {
   const messageWidth = iconSlotWidth + textWidth;
   const totalWidth = labelWidth + messageWidth;
   const textStartX = labelWidth + iconSlotWidth + textLeftPadding;
-  // バッジ高さ: 27 (招き猫は 36 なので上下が clip される)
+  // バッジ高さ: 27 (招き猫は 22 なので余白あり、viewport 内完結)
   // height=28 では Yokoso 文字 (descender 無し) の視覚的中心が badge 中心より 1px 上に見えたため、
   // baseline は据え置きで下を 1px だけ削って視覚的中心を一致させた
   const height = 27;
@@ -191,7 +196,7 @@ function generateBadgeSVG(message: string): string {
     <text x="${labelWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3">${label}</text>
     <text x="${labelWidth / 2}" y="${textBaselineY}" fill="${textColor}">${label}</text>
   </g>
-  ${getManekiNekoIcon(iconX, -3, iconSize)}
+  ${getManekiNekoIcon(iconX, iconY, iconSize)}
   <text x="${textStartX}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3" text-anchor="start" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
   <text x="${textStartX}" y="${textBaselineY}" fill="${textColor}" text-anchor="start" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
 </svg>`;
@@ -209,8 +214,9 @@ function generateCardSVG(
   const totalWidth = labelWidth + contentWidth;
   const lineHeight = 16;
   const padding = 12;
-  const avatarWidth = LUCKY_CAT_SIZE;
-  const avatarHeight = LUCKY_CAT_SIZE;
+  // card のアバタースロットは AVATAR_SLOT_SIZE (32) で固定。ユーザー avatar はこのサイズで描画する。
+  // 既定の招き猫 (LUCKY_CAT_SIZE=22) はこのスロット内にセンタリングして native pixel のまま描画する。
+  const avatarSlotSize = AVATAR_SLOT_SIZE;
 
   const maxLineWidth = 50;
   // 改行を強制改行として扱うため、ユーザーが \n を大量に入れると縦が伸びる。
@@ -219,7 +225,7 @@ function generateCardSVG(
   const allLines = splitByWidth(message, maxLineWidth);
   const lines = allLines.slice(0, MAX_LINES);
 
-  const headerHeight = avatarHeight + 8;
+  const headerHeight = avatarSlotSize + 8;
   const messageHeight = lines.length * lineHeight;
   const contentHeight = padding + headerHeight + messageHeight + padding;
   const totalHeight = Math.max(contentHeight, 50);
@@ -235,18 +241,26 @@ function generateCardSVG(
   const day = String(date.getDate()).padStart(2, "0");
   const dateStr = lang === "en" ? `${month}-${day}-${year}` : `${year}-${month}-${day}`;
 
-  const displayAvatar = avatar || LUCKY_CAT_DATA_URL;
+  const isDefaultCat = !avatar;
   const displayName = name || "Lucky Cat";
 
   const avatarX = labelWidth + padding;
   const avatarY = padding;
-  const avatarSection = `<image href="${escapeXml(displayAvatar)}" x="${avatarX}" y="${avatarY}" width="${avatarWidth}" height="${avatarHeight}" clip-path="url(#avatarClip)" image-rendering="pixelated"/>`;
+  // 既定の招き猫は LUCKY_CAT_SIZE で slot にセンタリング (clip-path 不要、pixel art を丸く切らない)。
+  // ユーザー avatar は AVATAR_SLOT_SIZE で slot を埋めて circle clip-path で丸抜きする。
+  const avatarSection = isDefaultCat
+    ? (() => {
+        const catX = avatarX + (avatarSlotSize - LUCKY_CAT_SIZE) / 2;
+        const catY = avatarY + (avatarSlotSize - LUCKY_CAT_SIZE) / 2;
+        return `<image href="${LUCKY_CAT_DATA_URL}" x="${catX}" y="${catY}" width="${LUCKY_CAT_SIZE}" height="${LUCKY_CAT_SIZE}" image-rendering="pixelated"/>`;
+      })()
+    : `<image href="${escapeXml(avatar)}" x="${avatarX}" y="${avatarY}" width="${avatarSlotSize}" height="${avatarSlotSize}" clip-path="url(#avatarClip)" image-rendering="pixelated"/>`;
 
-  const nameX = avatarX + avatarWidth + 8;
+  const nameX = avatarX + avatarSlotSize + 8;
   const nameY = avatarY + 12;
   const nameSection = `<text x="${nameX}" y="${nameY}" fill="${textColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12" font-weight="bold">${escapeXml(displayName)}</text>`;
 
-  const dateY = avatarY + avatarHeight - 2;
+  const dateY = avatarY + avatarSlotSize - 2;
   const dateSection = `<text x="${nameX}" y="${dateY}" fill="${dateColor}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10">${dateStr}</text>`;
 
   const messageLines = lines
@@ -259,7 +273,7 @@ function generateCardSVG(
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}">
   <defs>
     <clipPath id="avatarClip">
-      <circle cx="${avatarX + avatarWidth / 2}" cy="${avatarY + avatarHeight / 2}" r="${avatarWidth / 2}"/>
+      <circle cx="${avatarX + avatarSlotSize / 2}" cy="${avatarY + avatarSlotSize / 2}" r="${avatarSlotSize / 2}"/>
     </clipPath>
     <clipPath id="round">
       <rect width="${totalWidth}" height="${totalHeight}" rx="3"/>
