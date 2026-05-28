@@ -3,7 +3,7 @@
 _[日本語版はこちら](README.ja.md)_
 
 <p>
-  <a href="https://nostalgic.llll-ll.com"><img src="https://api.nostalgic.llll-ll.com/visit?action=get&id=github-0a30fd16&format=image&theme=github" alt="Visitors" align="middle"></a>
+  <a href="https://nostalgic.llll-ll.com"><img src="https://api.nostalgic.llll-ll.com/visit?action=increment&id=github-0a30fd16&format=image&theme=github" alt="Visitors" align="middle"></a>
   <a href="https://nostalgic.llll-ll.com/yokoso"><img src="https://api.nostalgic.llll-ll.com/yokoso?action=get&id=github-0a30fd16&format=image" alt="Welcome" align="middle"></a>
 </p>
 
