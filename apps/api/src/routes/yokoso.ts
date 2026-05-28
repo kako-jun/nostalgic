@@ -158,7 +158,7 @@ function generateBadgeSVG(message: string): string {
   const displayWidth = getDisplayWidth(message);
   // 招き猫とセリフを寄せるため左パディングを詰める。右パディングは独立
   const textLeftPadding = 2;
-  const textRightPadding = 12;
+  const textRightPadding = 7;
   const textPixelWidth = Math.max(displayWidth * 6, 30);
   const textWidth = textLeftPadding + textPixelWidth + textRightPadding;
   const messageWidth = iconSlotWidth + textWidth;
