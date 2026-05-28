@@ -2,6 +2,11 @@
 
 _[English version here](README.md)_
 
+<p align="center">
+  <a href="https://nostalgic.llll-ll.com"><img src="https://api.nostalgic.llll-ll.com/visit?action=get&id=github-0a30fd16&format=image" alt="Visitors"></a>
+  <a href="https://nostalgic.llll-ll.com/yokoso"><img src="https://api.nostalgic.llll-ll.com/yokoso?action=get&id=github-1e01b268&format=image" alt="Welcome"></a>
+</p>
+
 90年代のインターネット文化から懐かしいWebツール（カウンター・いいね・ランキング・BBS・招き猫）を最新技術で復活させた総合プラットフォームです。昔の個人ホームページに必須だった5つのサービスを現代に蘇らせました。
 
 ## ✨ サービス
