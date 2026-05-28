@@ -151,8 +151,8 @@ function splitByWidth(text: string, maxWidth: number): string[] {
 function generateBadgeSVG(message: string): string {
   const label = "Yokoso";
   const labelWidth = 50;
-  // 30x30 招き猫 + 上下左右 2px ずつのマージンを含むスロット
-  const iconSize = 30;
+  // 36x36 招き猫 + 左右 2px ずつのマージンを含むスロット (バッジ高さ 34 なので上下は -1px ずつはみ出す)
+  const iconSize = LUCKY_CAT_SIZE;
   const iconSlotWidth = iconSize + 4;
   const iconX = labelWidth + 2;
   const displayWidth = getDisplayWidth(message);
@@ -186,7 +186,7 @@ function generateBadgeSVG(message: string): string {
     <text x="${labelWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3">${label}</text>
     <text x="${labelWidth / 2}" y="${textBaselineY}" fill="${textColor}">${label}</text>
   </g>
-  ${getManekiNekoIcon(iconX, 2, iconSize)}
+  ${getManekiNekoIcon(iconX, -1, iconSize)}
   <text x="${labelWidth + iconSlotWidth + textWidth / 2}" y="${shadowBaselineY}" fill="#010101" fill-opacity=".3" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
   <text x="${labelWidth + iconSlotWidth + textWidth / 2}" y="${textBaselineY}" fill="${textColor}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">${escapeXml(message)}</text>
 </svg>`;
