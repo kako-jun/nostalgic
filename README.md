@@ -2,8 +2,10 @@
 
 _[日本語版はこちら](README.ja.md)_
 
-<a href="https://nostalgic.llll-ll.com"><img src="https://api.nostalgic.llll-ll.com/visit?action=get&id=github-0a30fd16&format=image&theme=github" alt="Visitors" align="middle"></a>
-<a href="https://nostalgic.llll-ll.com/yokoso"><img src="https://api.nostalgic.llll-ll.com/yokoso?action=get&id=github-0a30fd16&format=image" alt="Welcome" align="middle"></a>
+<p>
+  <a href="https://nostalgic.llll-ll.com"><img src="https://api.nostalgic.llll-ll.com/visit?action=get&id=github-0a30fd16&format=image&theme=github" alt="Visitors" align="middle"></a>
+  <a href="https://nostalgic.llll-ll.com/yokoso"><img src="https://api.nostalgic.llll-ll.com/yokoso?action=get&id=github-0a30fd16&format=image" alt="Welcome" align="middle"></a>
+</p>
 
 A comprehensive nostalgic web tools platform that brings back the 90s internet culture with modern technology. Five essential services that used to be on every personal homepage: Counter, Like, Ranking, BBS, and Yokoso.
 
