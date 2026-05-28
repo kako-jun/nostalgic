@@ -154,21 +154,22 @@ function splitByWidth(text: string, maxWidth: number): string[] {
 function generateBadgeSVG(message: string): string {
   const label = "Yokoso";
   const labelWidth = 50;
-  // 22x22 招き猫 + 左右 2px ずつのマージンを含むスロット (viewport 内に完全収容)
+  // 22x22 招き猫 (内訳: 透明 left=1px + 中身 19px + 透明 right=2px)
   const iconSize = LUCKY_CAT_SIZE;
-  const iconSlotWidth = iconSize + 4;
-  const iconX = labelWidth + 2;
+  const catTransparentLeft = 1;
+  const catTransparentRight = 2;
+  // 可視 cat の左右に確保する余白 (赤枠 / Yokoso ラベルの縁から、テキスト開始まで)
+  const catSideGap = 12;
   // 招き猫 y: バッジ高さ 27 - 招き猫 22 = 余白 5px。上 3px / 下 2px に振り分け。
+  const iconX = labelWidth + catSideGap - catTransparentLeft;
   const iconY = 3;
+  const catVisibleRight = iconX + iconSize - catTransparentRight;
   const displayWidth = getDisplayWidth(message);
-  // 招き猫とセリフを寄せるため左パディングを詰める。右パディングは独立
-  const textLeftPadding = 2;
   const textRightPadding = 7;
   const textPixelWidth = Math.max(displayWidth * 6, 30);
-  const textWidth = textLeftPadding + textPixelWidth + textRightPadding;
-  const messageWidth = iconSlotWidth + textWidth;
-  const totalWidth = labelWidth + messageWidth;
-  const textStartX = labelWidth + iconSlotWidth + textLeftPadding;
+  const textStartX = catVisibleRight + catSideGap;
+  const totalWidth = textStartX + textPixelWidth + textRightPadding;
+  const messageWidth = totalWidth - labelWidth;
   // バッジ高さ: 27 (招き猫は 22 なので余白あり、viewport 内完結)
   // height=28 では Yokoso 文字 (descender 無し) の視覚的中心が badge 中心より 1px 上に見えたため、
   // baseline は据え置きで下を 1px だけ削って視覚的中心を一致させた
