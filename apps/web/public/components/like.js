@@ -150,7 +150,7 @@ class NostalgicLike extends HTMLElement {
         }
 
         for (const id of chunk) {
-          const data = responseData.data?.[id] || { total: 0, liked: false };
+          const data = responseData.data?.[id] || { id, total: 0, liked: false };
           NostalgicLike.setCachedData(baseUrl, id, data);
           for (const resolver of queue.resolvers.get(id) || []) {
             resolver.resolve(data);

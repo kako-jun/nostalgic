@@ -28,7 +28,8 @@ function getCounterTranslations(element) {
 class NostalgicCounter extends HTMLElement {
   // ページ内でカウント済みのIDを記録（同じIDは1回のみカウント）
   static counted = new Set();
-  // カウントアップ後の最新データを保存
+  // カウントアップ後の最新データを保存。TTL は持たず、ページ存続中は保持し続ける
+  // （「1ページ1回だけカウント」の意図どおり、再 render 時に同じ最新値を即表示するため）。
   static latestCounts = new Map();
   static countPromises = new Map();
   static batchDelayMs = 16;
@@ -142,6 +143,18 @@ class NostalgicCounter extends HTMLElement {
     }
   }
 
+  // ピクセルアート系テーマ。これらは API が画像を焼き込んで返すため、
+  // クライアント直描画ではなくサーバー <img> にフォールバックする。
+  // apps/api/src/routes/visit.ts の IMAGE_THEMES と必ず同期させること。
+  static IMAGE_THEME_NAMES = ["mahjong", "segment", "nixie", "dots_f"];
+
+  static isImageTheme(theme) {
+    return NostalgicCounter.IMAGE_THEME_NAMES.includes(theme);
+  }
+
+  // 通常色テーマの SVG 生成。見た目の定数（テーマ色・寸法・フォント）は
+  // apps/api/src/routes/visit.ts の generateCounterSVG / generateShieldsBadgeSVG の
+  // 逐語コピー。どちらか片方を変えると表示が割れるため、必ず両方を同期させること。
   static generateCounterSVG(value, theme) {
     if (theme === "github") {
       return NostalgicCounter.generateShieldsBadgeSVG("visitors", value, "#4c1");
@@ -428,10 +441,10 @@ class NostalgicCounter extends HTMLElement {
             this.shadowRoot.innerHTML = `${textStyle}<span>${this.t.error}</span>`;
           });
       }
-    } else {
-      // 画像形式の場合（デフォルト）。<img>直叩きではなく共有済みデータから描画する。
-      const value = hasLatestData ? latestData[type] : 0;
-      const displayValue = digits ? String(value).padStart(Number(digits), "0") : String(value);
+    } else if (NostalgicCounter.isImageTheme(theme)) {
+      // ピクセルアート系テーマは API が画像を焼き込んで返すため、サーバー <img> に委ねる。
+      // 値も URL 経由でサーバーが算出するため batchGet 集約には乗せない。
+      const apiUrl = `${baseUrl}/visit?action=get&id=${encodeURIComponent(id)}${type ? `&type=${type}` : ""}${theme ? `&theme=${theme}` : ""}${digits ? `&digits=${digits}` : ""}&format=image`;
       this.shadowRoot.innerHTML = `
         <style>
           :host {
@@ -444,6 +457,18 @@ class NostalgicCounter extends HTMLElement {
             image-rendering: crisp-edges;
             max-width: 100%;
             height: auto;
+          }
+        </style>
+        <img src="${apiUrl}" alt="${type} counter" loading="lazy" />
+      `;
+    } else {
+      // 通常の色テーマは <img>直叩きではなく共有済みデータからクライアント描画する。
+      const value = hasLatestData ? latestData[type] : 0;
+      const displayValue = digits ? String(value).padStart(Number(digits), "0") : String(value);
+      this.shadowRoot.innerHTML = `
+        <style>
+          :host {
+            display: inline-block;
           }
         </style>
         ${NostalgicCounter.generateCounterSVG(displayValue, theme)}
