@@ -98,6 +98,16 @@ async function getCounterData(db: D1Database, id: string) {
   return { id, total, today, yesterday, week, month };
 }
 
+type CounterData = Awaited<ReturnType<typeof getCounterData>>;
+
+function stripCounterTotalServiceId(serviceId: string): string {
+  return serviceId.replace(/^counter:/, "").replace(/:total$/, "");
+}
+
+function stripCounterServiceId(serviceId: string): string {
+  return serviceId.replace(/^counter:/, "");
+}
+
 /** Verify owner token against DB */
 async function verifyOwnerToken(
   db: D1Database,
@@ -181,7 +191,7 @@ app.get("/", async (c) => {
           metadata.webhookUrl,
           "counter.increment",
           WebHookMessages.counter.increment(data.total),
-          { id, ...data }
+          data
         );
       }
     }
@@ -629,31 +639,63 @@ app.post("/", async (c) => {
       }
     }
 
+    const uniqueIds = [...new Set(ids)];
+
     // service_idのリストを構築
-    const serviceIds = ids.map((id) => `counter:${id}:total`);
+    const totalServiceIds = uniqueIds.map((id) => `counter:${id}:total`);
+    const dailyServiceIds = uniqueIds.map((id) => `counter:${id}`);
 
     // D1はIN句のプレースホルダを動的に構築する必要がある
-    const placeholders = serviceIds.map(() => "?").join(",");
-    const query = `SELECT service_id, total FROM counters WHERE service_id IN (${placeholders})`;
+    const totalPlaceholders = totalServiceIds.map(() => "?").join(",");
+    const dailyPlaceholders = dailyServiceIds.map(() => "?").join(",");
+    const totalsQuery = `SELECT service_id, total FROM counters WHERE service_id IN (${totalPlaceholders})`;
+    const dailyQuery = `SELECT service_id, date, count FROM counter_daily WHERE service_id IN (${dailyPlaceholders}) AND date >= ?`;
 
-    const result = await db
-      .prepare(query)
-      .bind(...serviceIds)
-      .all<{ service_id: string; total: number }>();
+    const today = getTodayDateString();
+    const yesterday = getYesterdayDateString();
+    const weekStart = getDateRange(7).at(-1) || today;
+    const monthStart = getDateRange(30).at(-1) || today;
+
+    const [totalsResult, dailyResult] = await Promise.all([
+      db
+        .prepare(totalsQuery)
+        .bind(...totalServiceIds)
+        .all<{ service_id: string; total: number }>(),
+      db
+        .prepare(dailyQuery)
+        .bind(...dailyServiceIds, monthStart)
+        .all<{ service_id: string; date: string; count: number }>(),
+    ]);
 
     // 結果をIDでマップ
-    const data: Record<string, { total: number }> = {};
-    for (const row of result.results || []) {
-      // "counter:xxx:total" から "xxx" を抽出
-      const id = row.service_id.replace(/^counter:/, "").replace(/:total$/, "");
-      data[id] = { total: row.total };
+    const data: Record<string, CounterData> = {};
+    for (const id of uniqueIds) {
+      data[id] = { id, total: 0, today: 0, yesterday: 0, week: 0, month: 0 };
     }
 
-    // リクエストされたが存在しないIDは0として含める
-    for (const id of ids) {
-      if (!data[id]) {
-        data[id] = { total: 0 };
+    for (const row of totalsResult.results || []) {
+      // "counter:xxx:total" から "xxx" を抽出
+      const id = stripCounterTotalServiceId(row.service_id);
+      data[id] = {
+        ...(data[id] || { id, today: 0, yesterday: 0, week: 0, month: 0 }),
+        total: row.total,
+      };
+    }
+
+    for (const row of dailyResult.results || []) {
+      const id = stripCounterServiceId(row.service_id);
+      const item = data[id] || { id, total: 0, today: 0, yesterday: 0, week: 0, month: 0 };
+      if (row.date === today) {
+        item.today += row.count;
       }
+      if (row.date === yesterday) {
+        item.yesterday += row.count;
+      }
+      if (row.date >= weekStart) {
+        item.week += row.count;
+      }
+      item.month += row.count;
+      data[id] = item;
     }
 
     return c.json({ success: true, data });

@@ -28,6 +28,12 @@ function getLikeTranslations(element) {
 class NostalgicLike extends HTMLElement {
   // APIのベースURL
   static apiBaseUrl = "https://api.nostalgic.llll-ll.com";
+  static batchDelayMs = 16;
+  static cacheTtlMs = 5000;
+  static maxBatchSize = 1000;
+  static dataCache = new Map();
+  static batchQueues = new Map();
+  static instances = new Map();
 
   constructor() {
     super();
@@ -37,7 +43,155 @@ class NostalgicLike extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ["id", "theme", "icon", "format", "lang"];
+    return ["id", "theme", "icon", "format", "lang", "api-base"];
+  }
+
+  static cacheKey(baseUrl, id) {
+    return `${baseUrl}|${id}`;
+  }
+
+  static getCachedData(key) {
+    const cached = NostalgicLike.dataCache.get(key);
+    if (!cached || cached.expiresAt <= Date.now()) {
+      NostalgicLike.dataCache.delete(key);
+      return null;
+    }
+    return cached.data;
+  }
+
+  static setCachedData(baseUrl, id, data) {
+    const key = NostalgicLike.cacheKey(baseUrl, id);
+    NostalgicLike.dataCache.set(key, {
+      data,
+      expiresAt: Date.now() + NostalgicLike.cacheTtlMs,
+    });
+    NostalgicLike.notifyInstances(key, data);
+  }
+
+  static registerInstance(instance, baseUrl, id) {
+    const key = NostalgicLike.cacheKey(baseUrl, id);
+    instance.likeKey = key;
+    if (!NostalgicLike.instances.has(key)) {
+      NostalgicLike.instances.set(key, new Set());
+    }
+    NostalgicLike.instances.get(key).add(instance);
+  }
+
+  static unregisterInstance(instance) {
+    if (!instance.likeKey) return;
+    const set = NostalgicLike.instances.get(instance.likeKey);
+    if (set) {
+      set.delete(instance);
+      if (set.size === 0) {
+        NostalgicLike.instances.delete(instance.likeKey);
+      }
+    }
+    instance.likeKey = null;
+  }
+
+  static notifyInstances(key, data) {
+    const set = NostalgicLike.instances.get(key);
+    if (!set) return;
+    for (const instance of set) {
+      instance.likeData = data;
+      instance.isLoading = false;
+      instance.render();
+    }
+  }
+
+  static requestLikeData(baseUrl, id) {
+    const key = NostalgicLike.cacheKey(baseUrl, id);
+    const cached = NostalgicLike.getCachedData(key);
+    if (cached) {
+      return Promise.resolve(cached);
+    }
+
+    return new Promise((resolve, reject) => {
+      let queue = NostalgicLike.batchQueues.get(baseUrl);
+      if (!queue) {
+        queue = { ids: new Set(), resolvers: new Map(), timer: null };
+        NostalgicLike.batchQueues.set(baseUrl, queue);
+      }
+
+      queue.ids.add(id);
+      if (!queue.resolvers.has(id)) {
+        queue.resolvers.set(id, []);
+      }
+      queue.resolvers.get(id).push({ resolve, reject });
+
+      if (!queue.timer) {
+        queue.timer = setTimeout(() => {
+          NostalgicLike.flushBatch(baseUrl);
+        }, NostalgicLike.batchDelayMs);
+      }
+    });
+  }
+
+  static async flushBatch(baseUrl) {
+    const queue = NostalgicLike.batchQueues.get(baseUrl);
+    if (!queue) return;
+    NostalgicLike.batchQueues.delete(baseUrl);
+
+    const ids = [...queue.ids];
+    for (let i = 0; i < ids.length; i += NostalgicLike.maxBatchSize) {
+      const chunk = ids.slice(i, i + NostalgicLike.maxBatchSize);
+      try {
+        const response = await fetch(`${baseUrl}/like?action=batchGet`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids: chunk }),
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const responseData = await response.json();
+        if (!responseData.success) {
+          throw new Error(responseData.error || "API returned an error");
+        }
+
+        for (const id of chunk) {
+          const data = responseData.data?.[id] || { id, total: 0, liked: false };
+          NostalgicLike.setCachedData(baseUrl, id, data);
+          for (const resolver of queue.resolvers.get(id) || []) {
+            resolver.resolve(data);
+          }
+        }
+      } catch (error) {
+        for (const id of chunk) {
+          for (const resolver of queue.resolvers.get(id) || []) {
+            resolver.reject(error);
+          }
+        }
+      }
+    }
+  }
+
+  static generateLikeSVG(count) {
+    const label = "♥ likes";
+    const labelWidth = 50;
+    const valueWidth = Math.max(String(count).length * 7 + 10, 30);
+    const totalWidth = labelWidth + valueWidth;
+
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="20">
+  <linearGradient id="smooth" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="round">
+    <rect width="${totalWidth}" height="20" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#round)">
+    <rect width="${labelWidth}" height="20" fill="#555"/>
+    <rect x="${labelWidth}" width="${valueWidth}" height="20" fill="#e91e63"/>
+    <rect width="${totalWidth}" height="20" fill="url(#smooth)"/>
+  </g>
+  <g text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="${labelWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${label}</text>
+    <text x="${labelWidth / 2}" y="14" fill="#fff">${label}</text>
+    <text x="${labelWidth + valueWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${count}</text>
+    <text x="${labelWidth + valueWidth / 2}" y="14" fill="#fff">${count}</text>
+  </g>
+</svg>`;
   }
 
   get t() {
@@ -85,9 +239,18 @@ class NostalgicLike extends HTMLElement {
     this.loadLikeData();
   }
 
-  attributeChangedCallback() {
+  disconnectedCallback() {
+    NostalgicLike.unregisterInstance(this);
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
     if (this.isConnected) {
-      this.loadLikeData();
+      if (name === "id" || name === "api-base") {
+        NostalgicLike.unregisterInstance(this);
+        this.loadLikeData();
+      } else {
+        this.render();
+      }
     }
   }
 
@@ -102,19 +265,8 @@ class NostalgicLike extends HTMLElement {
 
     try {
       const baseUrl = this.safeGetAttribute("api-base") || NostalgicLike.apiBaseUrl;
-      const apiUrl = `${baseUrl}/like?action=get&id=${encodeURIComponent(id)}`;
-
-      const response = await fetch(apiUrl);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const responseData = await response.json();
-      if (responseData.success) {
-        this.likeData = responseData.data;
-      } else {
-        throw new Error(responseData.error || "API returned an error");
-      }
+      NostalgicLike.registerInstance(this, baseUrl, id);
+      this.likeData = await NostalgicLike.requestLikeData(baseUrl, id);
     } catch (error) {
       console.error("nostalgic-like: Failed to load data:", error);
       this.likeData = { total: 0, liked: false };
@@ -143,6 +295,7 @@ class NostalgicLike extends HTMLElement {
       const responseData = await response.json();
       if (responseData.success) {
         this.likeData = responseData.data;
+        NostalgicLike.setCachedData(baseUrl, id, responseData.data);
       } else {
         throw new Error(responseData.error || "API returned an error");
       }
@@ -179,9 +332,7 @@ class NostalgicLike extends HTMLElement {
 
     // SVG画像形式の場合
     if (format === "image") {
-      const baseUrl = this.safeGetAttribute("api-base") || NostalgicLike.apiBaseUrl;
-      const id = this.safeGetAttribute("id");
-      const apiUrl = `${baseUrl}/like?action=get&id=${encodeURIComponent(id)}${theme ? `&theme=${theme}` : ""}&format=image`;
+      const total = this.likeData ? this.likeData.total : 0;
 
       this.shadowRoot.innerHTML = `
         <style>
@@ -194,7 +345,7 @@ class NostalgicLike extends HTMLElement {
             height: auto;
           }
         </style>
-        <img src="${apiUrl}" alt="like count" loading="lazy" />
+        ${NostalgicLike.generateLikeSVG(total)}
       `;
       return;
     }
