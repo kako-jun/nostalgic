@@ -18,7 +18,8 @@ const app = new Hono<{ Bindings: Bindings }>();
 // Mutation requests (POST/PUT/DELETE): restrict to *.llll-ll.com + localhost
 app.use("*", async (c, next) => {
   const method = c.req.method;
-  if (method === "GET" || method === "HEAD" || method === "OPTIONS") {
+  const action = c.req.query("action");
+  if (method === "GET" || method === "HEAD" || method === "OPTIONS" || action === "batchGet") {
     return cors({ origin: "*" })(c, next);
   }
   // All *.llll-ll.com subdomains + localhost for development

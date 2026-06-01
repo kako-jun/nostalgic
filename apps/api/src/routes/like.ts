@@ -69,6 +69,14 @@ async function getUserLikeState(
   return row?.value === "liked";
 }
 
+function stripLikeTotalServiceId(serviceId: string): string {
+  return serviceId.replace(/^like:/, "").replace(/:total$/, "");
+}
+
+function stripLikeServiceId(serviceId: string): string {
+  return serviceId.replace(/^like:/, "");
+}
+
 /** Verify owner token against DB */
 async function verifyOwnerToken(
   db: D1Database,
@@ -546,30 +554,50 @@ app.post("/", async (c) => {
       }
     }
 
+    const uniqueIds = [...new Set(ids)];
+    const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
+    const userAgent = c.req.header("User-Agent") || "";
+    const userHash = await generateUserHash(ip, userAgent);
+    const today = getTodayDateString();
+
     // service_idのリストを構築
-    const serviceIds = ids.map((id) => `like:${id}:total`);
+    const serviceIds = uniqueIds.map((id) => `like:${id}:total`);
+    const actionServiceIds = uniqueIds.map((id) => `like:${id}`);
 
     // D1はIN句のプレースホルダを動的に構築する必要がある
     const placeholders = serviceIds.map(() => "?").join(",");
-    const query = `SELECT service_id, total FROM likes WHERE service_id IN (${placeholders})`;
+    const actionPlaceholders = actionServiceIds.map(() => "?").join(",");
+    const totalsQuery = `SELECT service_id, total FROM likes WHERE service_id IN (${placeholders})`;
+    const likedQuery = `SELECT service_id, value FROM daily_actions WHERE service_id IN (${actionPlaceholders}) AND user_hash = ? AND date = ? AND action_type = ?`;
 
-    const result = await db
-      .prepare(query)
-      .bind(...serviceIds)
-      .all<{ service_id: string; total: number }>();
+    const [totalsResult, likedResult] = await Promise.all([
+      db
+        .prepare(totalsQuery)
+        .bind(...serviceIds)
+        .all<{ service_id: string; total: number }>(),
+      db
+        .prepare(likedQuery)
+        .bind(...actionServiceIds, userHash, today, "like")
+        .all<{ service_id: string; value: string }>(),
+    ]);
 
     // 結果をIDでマップ
-    const data: Record<string, { total: number }> = {};
-    for (const row of result.results || []) {
+    const data: Record<string, { id: string; total: number; liked: boolean }> = {};
+    for (const row of totalsResult.results || []) {
       // "like:xxx:total" から "xxx" を抽出
-      const id = row.service_id.replace(/^like:/, "").replace(/:total$/, "");
-      data[id] = { total: row.total };
+      const id = stripLikeTotalServiceId(row.service_id);
+      data[id] = { id, total: row.total, liked: false };
+    }
+
+    for (const row of likedResult.results || []) {
+      const id = stripLikeServiceId(row.service_id);
+      data[id] = { id, total: data[id]?.total ?? 0, liked: row.value === "liked" };
     }
 
     // リクエストされたが存在しないIDは0として含める
-    for (const id of ids) {
+    for (const id of uniqueIds) {
       if (!data[id]) {
-        data[id] = { total: 0 };
+        data[id] = { id, total: 0, liked: false };
       }
     }
 

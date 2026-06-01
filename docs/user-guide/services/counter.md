@@ -257,16 +257,16 @@ Content-Type: application/json
 {
   "success": true,
   "data": {
-    "id1": { "total": 100 },
-    "id2": { "total": 42 },
-    "id3": { "total": 0 }
+    "id1": { "id": "id1", "total": 100, "today": 3, "yesterday": 2, "week": 18, "month": 42 },
+    "id2": { "id": "id2", "total": 42, "today": 0, "yesterday": 1, "week": 8, "month": 21 },
+    "id3": { "id": "id3", "total": 0, "today": 0, "yesterday": 0, "week": 0, "month": 0 }
   }
 }
 ```
 
 **Notes:**
 
-- IDs that don't exist return `{ "total": 0 }`
+- IDs that don't exist return all counter fields with `0`
 - Maximum 1000 IDs per request
 
 ### batchCreate

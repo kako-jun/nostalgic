@@ -199,18 +199,18 @@ Content-Type: application/json
 {
   "success": true,
   "data": {
-    "id1": { "total": 5 },
-    "id2": { "total": 12 },
-    "id3": { "total": 0 }
+    "id1": { "id": "id1", "total": 5, "liked": true },
+    "id2": { "id": "id2", "total": 12, "liked": false },
+    "id3": { "id": "id3", "total": 0, "liked": false }
   }
 }
 ```
 
 **Notes:**
 
-- IDs that don't exist return `{ "total": 0 }`
+- IDs that don't exist return `{ "id": "...", "total": 0, "liked": false }`
 - Maximum 1000 IDs per request
-- Does not return `liked` state (use individual `get` for that)
+- `liked` is calculated for the current requester, using the same user hash logic as individual `get`
 
 **Usage Example:**
 
@@ -228,7 +228,8 @@ const { data } = await response.json();
 // Display in list
 articles.forEach(article => {
   const likes = data[article.likeId]?.total || 0;
-  console.log(`${article.title}: ${likes} likes`);
+  const liked = data[article.likeId]?.liked || false;
+  console.log(`${article.title}: ${likes} likes, liked=${liked}`);
 });
 ```
 

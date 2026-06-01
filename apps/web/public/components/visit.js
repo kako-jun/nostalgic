@@ -30,6 +30,12 @@ class NostalgicCounter extends HTMLElement {
   static counted = new Set();
   // カウントアップ後の最新データを保存
   static latestCounts = new Map();
+  static countPromises = new Map();
+  static batchDelayMs = 16;
+  static cacheTtlMs = 5000;
+  static maxBatchSize = 1000;
+  static readCache = new Map();
+  static readQueues = new Map();
   // APIのベースURL
   static apiBaseUrl = "https://api.nostalgic.llll-ll.com";
 
@@ -39,7 +45,152 @@ class NostalgicCounter extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ["id", "type", "theme", "digits", "lang"];
+    return ["id", "type", "theme", "digits", "format", "lang", "api-base"];
+  }
+
+  static cacheKey(baseUrl, id) {
+    return `${baseUrl}|${id}`;
+  }
+
+  static getCachedData(key) {
+    const cached = NostalgicCounter.readCache.get(key);
+    if (!cached || cached.expiresAt <= Date.now()) {
+      NostalgicCounter.readCache.delete(key);
+      return null;
+    }
+    return cached.data;
+  }
+
+  static setCachedData(baseUrl, id, data) {
+    NostalgicCounter.latestCounts.set(id, data);
+    NostalgicCounter.readCache.set(NostalgicCounter.cacheKey(baseUrl, id), {
+      data,
+      expiresAt: Date.now() + NostalgicCounter.cacheTtlMs,
+    });
+  }
+
+  static requestCounterData(baseUrl, id) {
+    const cached = NostalgicCounter.getCachedData(NostalgicCounter.cacheKey(baseUrl, id));
+    if (cached) {
+      return Promise.resolve(cached);
+    }
+
+    return new Promise((resolve, reject) => {
+      let queue = NostalgicCounter.readQueues.get(baseUrl);
+      if (!queue) {
+        queue = { ids: new Set(), resolvers: new Map(), timer: null };
+        NostalgicCounter.readQueues.set(baseUrl, queue);
+      }
+
+      queue.ids.add(id);
+      if (!queue.resolvers.has(id)) {
+        queue.resolvers.set(id, []);
+      }
+      queue.resolvers.get(id).push({ resolve, reject });
+
+      if (!queue.timer) {
+        queue.timer = setTimeout(() => {
+          NostalgicCounter.flushReadBatch(baseUrl);
+        }, NostalgicCounter.batchDelayMs);
+      }
+    });
+  }
+
+  static async flushReadBatch(baseUrl) {
+    const queue = NostalgicCounter.readQueues.get(baseUrl);
+    if (!queue) return;
+    NostalgicCounter.readQueues.delete(baseUrl);
+
+    const ids = [...queue.ids];
+    for (let i = 0; i < ids.length; i += NostalgicCounter.maxBatchSize) {
+      const chunk = ids.slice(i, i + NostalgicCounter.maxBatchSize);
+      try {
+        const response = await fetch(`${baseUrl}/visit?action=batchGet`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids: chunk }),
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const responseData = await response.json();
+        if (!responseData.success) {
+          throw new Error(responseData.error || "API returned an error");
+        }
+
+        for (const id of chunk) {
+          const data = responseData.data?.[id] || {
+            id,
+            total: 0,
+            today: 0,
+            yesterday: 0,
+            week: 0,
+            month: 0,
+          };
+          NostalgicCounter.setCachedData(baseUrl, id, data);
+          for (const resolver of queue.resolvers.get(id) || []) {
+            resolver.resolve(data);
+          }
+        }
+      } catch (error) {
+        for (const id of chunk) {
+          for (const resolver of queue.resolvers.get(id) || []) {
+            resolver.reject(error);
+          }
+        }
+      }
+    }
+  }
+
+  static generateCounterSVG(value, theme) {
+    if (theme === "github") {
+      return NostalgicCounter.generateShieldsBadgeSVG("visitors", value, "#4c1");
+    }
+
+    const themes = {
+      light: { bg: "#ffffff", text: "#333333", border: "#cccccc" },
+      dark: { bg: "#1a1a2e", text: "#eaeaea", border: "#4a4a6a" },
+      retro: { bg: "#000000", text: "#00ff00", border: "#00ff00" },
+      kawaii: { bg: "#e0f7fa", text: "#ff69b4", border: "#ff69b4" },
+      mom: { bg: "#98fb98", text: "#2d4a2b", border: "#2d4a2b" },
+      final: { bg: "#0000ff", text: "#ffffff", border: "#ffffff" },
+    };
+
+    const t = themes[theme] || themes.dark;
+    const width = Math.max(60, String(value).length * 12 + 20);
+
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="28">
+  <rect width="100%" height="100%" fill="${t.bg}" stroke="${t.border}" stroke-width="1"/>
+  <text x="50%" y="50%" dy="0.35em" text-anchor="middle"
+        fill="${t.text}" font-family="'BIZ UDGothic', monospace" font-size="14" font-weight="bold">${value}</text>
+</svg>`;
+  }
+
+  static generateShieldsBadgeSVG(label, value, valueColor) {
+    const labelWidth = label.length * 6 + 6;
+    const valueWidth = Math.max(String(value).length * 7 + 10, 30);
+    const totalWidth = labelWidth + valueWidth;
+
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="20">
+  <linearGradient id="smooth" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="round">
+    <rect width="${totalWidth}" height="20" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#round)">
+    <rect width="${labelWidth}" height="20" fill="#555"/>
+    <rect x="${labelWidth}" width="${valueWidth}" height="20" fill="${valueColor}"/>
+    <rect width="${totalWidth}" height="20" fill="url(#smooth)"/>
+  </g>
+  <g text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="${labelWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${label}</text>
+    <text x="${labelWidth / 2}" y="14" fill="#fff">${label}</text>
+    <text x="${labelWidth + valueWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${value}</text>
+    <text x="${labelWidth + valueWidth / 2}" y="14" fill="#fff">${value}</text>
+  </g>
+</svg>`;
   }
 
   get t() {
@@ -91,12 +242,16 @@ class NostalgicCounter extends HTMLElement {
     this.countUpAndRender();
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback(name) {
     // 初回接続前は何もしない（connectedCallbackで処理）
     if (!this.isConnected) {
       return;
     }
-    this.render();
+    if (name === "id" || name === "api-base") {
+      this.countUpAndRender();
+    } else {
+      this.render();
+    }
   }
 
   async countUpAndRender() {
@@ -109,12 +264,6 @@ class NostalgicCounter extends HTMLElement {
     // フォーマットをチェックして初期表示を設定
     const format = this.safeGetAttribute("format");
 
-    // 既にカウント済みの場合は即座にレンダリング
-    if (NostalgicCounter.counted.has(id)) {
-      this.render();
-      return;
-    }
-
     // テキスト形式の場合は先に初期値を表示
     if (format === "text") {
       this.renderInitialText();
@@ -122,6 +271,7 @@ class NostalgicCounter extends HTMLElement {
 
     // カウントアップして結果を待つ
     await this.countUp();
+    await this.ensureCounterData();
     this.render();
   }
 
@@ -135,12 +285,12 @@ class NostalgicCounter extends HTMLElement {
 
     // 同じIDは1回のみカウント（ページ内重複防止）
     if (NostalgicCounter.counted.has(id)) {
-      return;
+      return NostalgicCounter.countPromises.get(id);
     }
 
     NostalgicCounter.counted.add(id);
 
-    try {
+    const promise = (async () => {
       const baseUrl = this.getAttribute("api-base") || NostalgicCounter.apiBaseUrl;
       const countUrl = `${baseUrl}/visit?action=increment&id=${encodeURIComponent(id)}`;
       const response = await fetch(countUrl);
@@ -156,13 +306,35 @@ class NostalgicCounter extends HTMLElement {
         const result = await response.json();
         // カウントアップ後の値で表示を更新
         if (result.success && result.data) {
-          NostalgicCounter.latestCounts.set(id, result.data);
+          NostalgicCounter.setCachedData(baseUrl, id, result.data);
         } else {
-          NostalgicCounter.latestCounts.set(id, result);
+          NostalgicCounter.setCachedData(baseUrl, id, result);
         }
       }
+    })();
+
+    NostalgicCounter.countPromises.set(id, promise);
+
+    try {
+      await promise;
     } catch (error) {
       console.error("nostalgic-counter: Count failed:", error);
+    }
+  }
+
+  async ensureCounterData() {
+    const id = this.safeGetAttribute("id");
+    if (!id) return;
+
+    const baseUrl = this.getAttribute("api-base") || NostalgicCounter.apiBaseUrl;
+    if (NostalgicCounter.latestCounts.has(id)) {
+      return;
+    }
+
+    try {
+      await NostalgicCounter.requestCounterData(baseUrl, id);
+    } catch (error) {
+      console.error("nostalgic-counter: Failed to load data:", error);
     }
   }
 
@@ -189,7 +361,7 @@ class NostalgicCounter extends HTMLElement {
 
   render() {
     const id = this.safeGetAttribute("id");
-    const type = this.safeGetAttribute("type");
+    const type = this.safeGetAttribute("type") || "total";
     const theme = this.safeGetAttribute("theme");
     const digits = this.safeGetAttribute("digits");
     const format = this.safeGetAttribute("format");
@@ -216,8 +388,6 @@ class NostalgicCounter extends HTMLElement {
 
     const baseUrl = this.getAttribute("api-base") || NostalgicCounter.apiBaseUrl;
     const effectiveFormat = format || "text";
-    const apiUrl = `${baseUrl}/visit?action=get&id=${encodeURIComponent(id)}${type ? `&type=${type}` : ""}${theme ? `&theme=${theme}` : ""}${digits ? `&digits=${digits}` : ""}&format=${effectiveFormat}`;
-
     // カウントアップ後の最新データがあれば使用
     const latestData = NostalgicCounter.latestCounts.get(id);
     const hasLatestData = latestData && latestData[type] !== undefined;
@@ -248,26 +418,20 @@ class NostalgicCounter extends HTMLElement {
         // ローディング中は0を桁数分表示
         this.shadowRoot.innerHTML = `${textStyle}<span>${formatValue(0)}</span>`;
 
-        // 値を非同期で取得（action=get&format=textを使用）
-        fetch(
-          `${baseUrl}/visit?action=get&id=${encodeURIComponent(id)}&type=${type}&format=text${digits ? `&digits=${digits}` : ""}`
-        )
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(`HTTP ${response.status}`);
-            }
-            return response.text(); // テキスト形式なのでtextで取得
-          })
+        // 値を非同期で取得（ページ全体でbatchGetに集約）
+        NostalgicCounter.requestCounterData(baseUrl, id)
           .then((data) => {
-            // すでに桁数がパディング済みの文字列なのでそのまま表示
-            this.shadowRoot.innerHTML = `${textStyle}<span>${data}</span>`;
+            const value = data[type] ?? data.total;
+            this.shadowRoot.innerHTML = `${textStyle}<span>${formatValue(value)}</span>`;
           })
           .catch((error) => {
             this.shadowRoot.innerHTML = `${textStyle}<span>${this.t.error}</span>`;
           });
       }
     } else {
-      // 画像形式の場合（デフォルト）
+      // 画像形式の場合（デフォルト）。<img>直叩きではなく共有済みデータから描画する。
+      const value = hasLatestData ? latestData[type] : 0;
+      const displayValue = digits ? String(value).padStart(Number(digits), "0") : String(value);
       this.shadowRoot.innerHTML = `
         <style>
           :host {
@@ -282,8 +446,14 @@ class NostalgicCounter extends HTMLElement {
             height: auto;
           }
         </style>
-        <img src="${apiUrl}" alt="${type} counter" loading="lazy" />
+        ${NostalgicCounter.generateCounterSVG(displayValue, theme)}
       `;
+
+      if (!hasLatestData) {
+        NostalgicCounter.requestCounterData(baseUrl, id)
+          .then(() => this.render())
+          .catch(() => {});
+      }
     }
   }
 }
