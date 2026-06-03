@@ -81,4 +81,10 @@ React 側の `apps/web/src/utils/apiHelpers.ts` と `apps/web/src/hooks/useFetch
 - `visit.ts` / `like.ts` には `batchGet` がある。Web Components はこれを内部利用して読み取りを集約する
 - `like` の `batchGet` は `id` / `total` / 現在ユーザーの `liked` を返す正規の一覧取得 API とする
 - `visit` の `batchGet` は `id` / `total` / `today` / `yesterday` / `week` / `month` を返す正規の一覧取得 API とする
-- `ranking` / `bbs` / `yokoso` には batch API がない。まず同一 ID の in-flight dedupe/cache で足りるか判断する
+- `ranking` / `bbs` / `yokoso` には batch API を設けない。これらは1ページに通常1個（singleton）運用で、
+  複数 ID batch の価値が薄いため。代わりに各 Web Component にクライアント側の
+  **in-flight dedupe + 短期 TTL 読み取りキャッシュ**（静的 `sharedRead(key, url)`）を入れ、同時並行の
+  同一 ID GET を1本に畳む。`ranking` / `yokoso` は読み取り専用なので 5s TTL キャッシュ込み、
+  `bbs` は内容が揮発的（多人数投稿）かつページング有りのため **dedupe のみ（TTL=0）** とし、
+  自分の投稿/削除後は `invalidateId` で in-flight を破棄してリロードを最新化する。
+  将来、同一ページに同種ウィジェットを多数並べる実利用が出たら、そのとき複数 ID batch API を別途検討する

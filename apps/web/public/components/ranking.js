@@ -35,6 +35,42 @@ class NostalgicRanking extends HTMLElement {
   // APIのベースURL
   static apiBaseUrl = "https://api.nostalgic.llll-ll.com";
 
+  // --- 読み取りの in-flight dedupe + 短期 TTL キャッシュ（dev-doctrine Phase 4 / Issue #6）---
+  // ranking は1ページに通常1個（singleton）運用。visit/like の batchGet と違い複数 ID batch の
+  // 価値は薄いので、サーバ API は増やさず、クライアントで「同時並行の同一 GET 畳み込み + 短時間の
+  // 再取得キャッシュ」だけ入れて実在の冗長通信を消す。ranking ウィジェットは読み取り専用
+  // （mutation なし）なので 5s TTL キャッシュも安全。
+  static _readCache = new Map(); // key -> { result, expiresAt }
+  static _inflight = new Map(); // key -> Promise<{ ok, status, data }>
+  static _readCacheTtlMs = 5000; // 0 なら dedupe のみ（キャッシュしない）
+
+  // 同一 key への並行 GET を1本に畳み、成功応答だけ短時間キャッシュして返す。
+  // 戻り値 { ok, status, data } で各コンポーネントの従来の ok/success 判定をそのまま使える。
+  static sharedRead(key, url) {
+    const ttl = this._readCacheTtlMs;
+    if (ttl > 0) {
+      const cached = this._readCache.get(key);
+      if (cached && cached.expiresAt > Date.now()) return Promise.resolve(cached.result);
+      if (cached) this._readCache.delete(key);
+    }
+    const inflight = this._inflight.get(key);
+    if (inflight) return inflight;
+    const promise = fetch(url)
+      .then(async (res) => ({ ok: res.ok, status: res.status, data: await res.json() }))
+      .then((result) => {
+        // 成功応答のみ短期キャッシュ（エラーは即時再試行できるようキャッシュしない）
+        if (ttl > 0 && result.ok && result.data && result.data.success) {
+          this._readCache.set(key, { result, expiresAt: Date.now() + ttl });
+        }
+        return result;
+      })
+      .finally(() => {
+        this._inflight.delete(key);
+      });
+    this._inflight.set(key, promise);
+    return promise;
+  }
+
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -113,8 +149,9 @@ class NostalgicRanking extends HTMLElement {
         url += `&limit=${encodeURIComponent(limit)}`;
       }
 
-      const response = await fetch(url);
-      const data = await response.json();
+      // limit でデータが変わるので key に含める。並行する同一 GET は1本に畳まれる。
+      const key = `${NostalgicRanking.apiBaseUrl}|${id}|${limit || ""}`;
+      const { data } = await NostalgicRanking.sharedRead(key, url);
 
       if (data.success) {
         this.rankingData = data.data;

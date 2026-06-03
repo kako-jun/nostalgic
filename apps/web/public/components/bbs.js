@@ -120,6 +120,50 @@ class NostalgicBBS extends HTMLElement {
   // APIのベースURL
   static apiBaseUrl = "https://api.nostalgic.llll-ll.com";
 
+  // --- 読み取りの in-flight dedupe（dev-doctrine Phase 4 / Issue #6）---
+  // bbs は1ページに通常1個（singleton）かつ内容が多人数の投稿で揮発的・ページング有り。
+  // そのため TTL キャッシュは入れず（他者の投稿直後の stale を避ける）、dedupe のみ（ttl=0）。
+  // 同時並行の同一 (id, page) GET を1本に畳む。投稿/削除など自分の mutation 後は invalidateId で
+  // その id の in-flight を破棄し、リロードが必ず最新を取りに行くようにする。
+  static _readCache = new Map(); // key -> { result, expiresAt }（ttl=0 のため実質未使用）
+  static _inflight = new Map(); // key -> Promise<{ ok, status, data }>
+  static _readCacheTtlMs = 0; // dedupe のみ（キャッシュしない）
+
+  // 同一 key への並行 GET を1本に畳んで返す（ttl>0 のときだけ成功応答を短期キャッシュ）。
+  // 戻り値 { ok, status, data } で従来の success 判定をそのまま使える。
+  static sharedRead(key, url) {
+    const ttl = this._readCacheTtlMs;
+    if (ttl > 0) {
+      const cached = this._readCache.get(key);
+      if (cached && cached.expiresAt > Date.now()) return Promise.resolve(cached.result);
+      if (cached) this._readCache.delete(key);
+    }
+    const inflight = this._inflight.get(key);
+    if (inflight) return inflight;
+    const promise = fetch(url)
+      .then(async (res) => ({ ok: res.ok, status: res.status, data: await res.json() }))
+      .then((result) => {
+        if (ttl > 0 && result.ok && result.data && result.data.success) {
+          this._readCache.set(key, { result, expiresAt: Date.now() + ttl });
+        }
+        return result;
+      })
+      .finally(() => {
+        this._inflight.delete(key);
+      });
+    this._inflight.set(key, promise);
+    return promise;
+  }
+
+  // mutation（投稿/編集/削除）後に、その id の全ページの dedupe/cache を破棄する。
+  // 投稿前から走っていた in-flight GET をリロードが再利用して stale を表示するのを防ぐ。
+  static invalidateId(idKeyPrefix) {
+    for (const k of [...this._readCache.keys()])
+      if (k.startsWith(idKeyPrefix)) this._readCache.delete(k);
+    for (const k of [...this._inflight.keys()])
+      if (k.startsWith(idKeyPrefix)) this._inflight.delete(k);
+  }
+
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -216,13 +260,15 @@ class NostalgicBBS extends HTMLElement {
       this.loading = true;
       this.render();
 
-      const response = await fetch(
-        `${NostalgicBBS.apiBaseUrl}/bbs?action=get&id=${encodeURIComponent(id)}&page=${this.currentPage}`
-      );
-      const data = await response.json();
+      // 並行する同一 (id, page) GET は1本に畳まれる（ttl=0 のため再取得キャッシュはしない）。
+      const url = `${NostalgicBBS.apiBaseUrl}/bbs?action=get&id=${encodeURIComponent(id)}&page=${this.currentPage}`;
+      const key = `${NostalgicBBS.apiBaseUrl}|${id}|${this.currentPage}`;
+      const { data } = await NostalgicBBS.sharedRead(key, url);
 
       if (data.success) {
-        this.bbsData = data.data;
+        // dedupe で同一 (id, page) の複数ウィジェットが同じ parsed オブジェクトを共有しうるため、
+        // totalPages/pagination を書き込む前に浅くコピーして共有オブジェクトを汚さない（messages は読み取りのみ）。
+        this.bbsData = { ...data.data };
         // Calculate pagination from API response
         const messagesPerPage = this.bbsData.messagesPerPage || 20;
         const totalMessages = this.bbsData.totalMessages || this.bbsData.messages.length;
@@ -1274,6 +1320,8 @@ class NostalgicBBS extends HTMLElement {
         // 編集モードをクリア
         this.clearEditMode();
 
+        // 自分の投稿/編集が反映されるよう、この id の dedupe/in-flight を破棄してから再読み込み
+        NostalgicBBS.invalidateId(`${NostalgicBBS.apiBaseUrl}|${this.safeGetAttribute("id")}|`);
         // 新しい投稿が表示される最後のページに移動して再読み込み
         await this.loadBBSData();
         const lastPage = this.bbsData.totalPages || 1;
@@ -1450,6 +1498,8 @@ class NostalgicBBS extends HTMLElement {
       const data = await response.json();
 
       if (data.success) {
+        // 削除を反映させるため、この id の dedupe/in-flight を破棄してから再読み込み
+        NostalgicBBS.invalidateId(`${NostalgicBBS.apiBaseUrl}|${this.safeGetAttribute("id")}|`);
         // BBSデータを再読み込み
         await this.loadBBSData();
         this.showMessage(this.t.messageDeleted, "success");
