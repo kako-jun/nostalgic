@@ -83,8 +83,13 @@ React 側の `apps/web/src/utils/apiHelpers.ts` と `apps/web/src/hooks/useFetch
 - `visit` の `batchGet` は `id` / `total` / `today` / `yesterday` / `week` / `month` を返す正規の一覧取得 API とする
 - `ranking` / `bbs` / `yokoso` には batch API を設けない。これらは1ページに通常1個（singleton）運用で、
   複数 ID batch の価値が薄いため。代わりに各 Web Component にクライアント側の
-  **in-flight dedupe + 短期 TTL 読み取りキャッシュ**（静的 `sharedRead(key, url)`）を入れ、同時並行の
-  同一 ID GET を1本に畳む。`ranking` / `yokoso` は読み取り専用なので 5s TTL キャッシュ込み、
-  `bbs` は内容が揮発的（多人数投稿）かつページング有りのため **dedupe のみ（TTL=0）** とし、
-  自分の投稿/削除後は `invalidateId` で in-flight を破棄してリロードを最新化する。
-  将来、同一ページに同種ウィジェットを多数並べる実利用が出たら、そのとき複数 ID batch API を別途検討する
+  **in-flight dedupe + 短期 TTL 読み取りキャッシュ**（静的 `sharedRead(key, url)`）を入れ、
+  同一 ID の読み取りを1リクエストに畳む。
+- **実トラフィック削減の本体は TTL キャッシュ**。実機検証（Playwright）で、複数ウィジェットは
+  同時並行ではなく**逐次ロード**されると判明したため、in-flight dedupe（同時並行のみ畳む）だけでは
+  別ウィジェットの重複が消えない。逐次の2個目を畳むのは TTL キャッシュ側。よって全 service に
+  TTL を入れる: `ranking` / `yokoso` は読み取り専用で 5s、`bbs` は揮発的（多人数投稿）なので短め 3s。
+- `bbs` は自分の投稿/編集/削除後に `invalidateId` で `(id, *)` の cache/in-flight を破棄してリロードを
+  最新化する（他者投稿による stale は最長 TTL=3s で解消）。
+- 検証: 6ウィジェット（各 service 2個）→ 実 GET 3本（各 service 1本）に畳まれることを実機で確認済み。
+- 将来、同一ページに同種ウィジェットを多数並べる実利用が出たら、そのとき複数 ID batch API を別途検討する

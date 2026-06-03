@@ -120,14 +120,15 @@ class NostalgicBBS extends HTMLElement {
   // APIのベースURL
   static apiBaseUrl = "https://api.nostalgic.llll-ll.com";
 
-  // --- 読み取りの in-flight dedupe（dev-doctrine Phase 4 / Issue #6）---
-  // bbs は1ページに通常1個（singleton）かつ内容が多人数の投稿で揮発的・ページング有り。
-  // そのため TTL キャッシュは入れず（他者の投稿直後の stale を避ける）、dedupe のみ（ttl=0）。
-  // 同時並行の同一 (id, page) GET を1本に畳む。投稿/削除など自分の mutation 後は invalidateId で
-  // その id の in-flight を破棄し、リロードが必ず最新を取りに行くようにする。
-  static _readCache = new Map(); // key -> { result, expiresAt }（ttl=0 のため実質未使用）
+  // --- 読み取りの in-flight dedupe + 短期 TTL キャッシュ（dev-doctrine Phase 4 / Issue #6）---
+  // bbs は内容が多人数の投稿で揮発的・ページング有り。実機検証で「複数ウィジェットは逐次ロード
+  // され同時並行ではない」と判明したため、inflight dedupe だけでは重複が畳まれない。実トラフィック
+  // 削減の本体は TTL キャッシュなので bbs にも入れるが、揮発性に配慮して ranking/yokoso(5s)より短い
+  // 3s に抑える。投稿/編集/削除など自分の mutation 後は invalidateId で (id,*) の cache/in-flight を
+  // 破棄し、リロードが必ず最新を取りに行くようにする（他者投稿の stale は最長 3s で解消）。
+  static _readCache = new Map(); // key -> { result, expiresAt }
   static _inflight = new Map(); // key -> Promise<{ ok, status, data }>
-  static _readCacheTtlMs = 0; // dedupe のみ（キャッシュしない）
+  static _readCacheTtlMs = 3000; // 揮発的なので短め（ranking/yokoso は 5000）
 
   // 同一 key への並行 GET を1本に畳んで返す（ttl>0 のときだけ成功応答を短期キャッシュ）。
   // 戻り値 { ok, status, data } で従来の success 判定をそのまま使える。
