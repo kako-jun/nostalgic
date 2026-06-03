@@ -2,9 +2,12 @@
   "name": "@nostalgic/api",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
+    "test": "node --experimental-strip-types --test 'src/**/*.test.ts'",
+    "typecheck": "tsc --noEmit",
     "db:init": "wrangler d1 execute nostalgic-db --local --file=schema.sql",
     "db:local": "wrangler d1 execute nostalgic-db --local",
     "db:remote": "wrangler d1 execute nostalgic-db --remote"

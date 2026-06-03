@@ -20,6 +20,7 @@ import { generatePublicId } from "../lib/core/id";
 import { generateUserHash } from "../lib/core/crypto";
 import { getTodayDateString, getYesterdayDateString, getDateRange } from "../lib/core/db";
 import { DEFAULT_THEME, URL_CONST } from "../lib/core/constants";
+import { chunkArray, BATCH_GET_CHUNK_SIZE } from "../lib/core/batch";
 import { sendWebHook, WebHookMessages } from "../lib/core/webhook";
 
 type Bindings = {
@@ -641,61 +642,67 @@ app.post("/", async (c) => {
 
     const uniqueIds = [...new Set(ids)];
 
-    // service_idのリストを構築
-    const totalServiceIds = uniqueIds.map((id) => `counter:${id}:total`);
-    const dailyServiceIds = uniqueIds.map((id) => `counter:${id}`);
-
-    // D1はIN句のプレースホルダを動的に構築する必要がある
-    const totalPlaceholders = totalServiceIds.map(() => "?").join(",");
-    const dailyPlaceholders = dailyServiceIds.map(() => "?").join(",");
-    const totalsQuery = `SELECT service_id, total FROM counters WHERE service_id IN (${totalPlaceholders})`;
-    const dailyQuery = `SELECT service_id, date, count FROM counter_daily WHERE service_id IN (${dailyPlaceholders}) AND date >= ?`;
-
     const today = getTodayDateString();
     const yesterday = getYesterdayDateString();
     const weekStart = getDateRange(7).at(-1) || today;
     const monthStart = getDateRange(30).at(-1) || today;
 
-    const [totalsResult, dailyResult] = await Promise.all([
-      db
-        .prepare(totalsQuery)
-        .bind(...totalServiceIds)
-        .all<{ service_id: string; total: number }>(),
-      db
-        .prepare(dailyQuery)
-        .bind(...dailyServiceIds, monthStart)
-        .all<{ service_id: string; date: string; count: number }>(),
-    ]);
-
-    // 結果をIDでマップ
+    // 結果をIDでマップ（存在しない ID も 0 で含める）
     const data: Record<string, CounterData> = {};
     for (const id of uniqueIds) {
       data[id] = { id, total: 0, today: 0, yesterday: 0, week: 0, month: 0 };
     }
 
-    for (const row of totalsResult.results || []) {
-      // "counter:xxx:total" から "xxx" を抽出
-      const id = stripCounterTotalServiceId(row.service_id);
-      data[id] = {
-        ...(data[id] || { id, today: 0, yesterday: 0, week: 0, month: 0 }),
-        total: row.total,
-      };
-    }
+    // D1 (SQLite) は 1 ステートメントあたり 100 バインド変数までしか許可しない。
+    // dailyQuery は IN(...N...) + 1 固定列で N+1 バインドになるため、ids を内部で
+    // サブチャンクして各チャンクごとにクエリし、結果をマージする（直列実行）。
+    const idChunks = chunkArray(uniqueIds, BATCH_GET_CHUNK_SIZE);
+    for (const chunk of idChunks) {
+      // service_idのリストを構築
+      const totalServiceIds = chunk.map((id) => `counter:${id}:total`);
+      const dailyServiceIds = chunk.map((id) => `counter:${id}`);
 
-    for (const row of dailyResult.results || []) {
-      const id = stripCounterServiceId(row.service_id);
-      const item = data[id] || { id, total: 0, today: 0, yesterday: 0, week: 0, month: 0 };
-      if (row.date === today) {
-        item.today += row.count;
+      // D1はIN句のプレースホルダを動的に構築する必要がある
+      const totalPlaceholders = totalServiceIds.map(() => "?").join(",");
+      const dailyPlaceholders = dailyServiceIds.map(() => "?").join(",");
+      const totalsQuery = `SELECT service_id, total FROM counters WHERE service_id IN (${totalPlaceholders})`;
+      const dailyQuery = `SELECT service_id, date, count FROM counter_daily WHERE service_id IN (${dailyPlaceholders}) AND date >= ?`;
+
+      const [totalsResult, dailyResult] = await Promise.all([
+        db
+          .prepare(totalsQuery)
+          .bind(...totalServiceIds)
+          .all<{ service_id: string; total: number }>(),
+        db
+          .prepare(dailyQuery)
+          .bind(...dailyServiceIds, monthStart)
+          .all<{ service_id: string; date: string; count: number }>(),
+      ]);
+
+      for (const row of totalsResult.results || []) {
+        // "counter:xxx:total" から "xxx" を抽出
+        const id = stripCounterTotalServiceId(row.service_id);
+        data[id] = {
+          ...(data[id] || { id, today: 0, yesterday: 0, week: 0, month: 0 }),
+          total: row.total,
+        };
       }
-      if (row.date === yesterday) {
-        item.yesterday += row.count;
+
+      for (const row of dailyResult.results || []) {
+        const id = stripCounterServiceId(row.service_id);
+        const item = data[id] || { id, total: 0, today: 0, yesterday: 0, week: 0, month: 0 };
+        if (row.date === today) {
+          item.today += row.count;
+        }
+        if (row.date === yesterday) {
+          item.yesterday += row.count;
+        }
+        if (row.date >= weekStart) {
+          item.week += row.count;
+        }
+        item.month += row.count;
+        data[id] = item;
       }
-      if (row.date >= weekStart) {
-        item.week += row.count;
-      }
-      item.month += row.count;
-      data[id] = item;
     }
 
     return c.json({ success: true, data });

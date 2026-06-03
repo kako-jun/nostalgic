@@ -18,6 +18,7 @@ import { generatePublicId } from "../lib/core/id";
 import { generateUserHash } from "../lib/core/crypto";
 import { getTodayDateString } from "../lib/core/db";
 import { URL_CONST } from "../lib/core/constants";
+import { chunkArray, BATCH_GET_CHUNK_SIZE } from "../lib/core/batch";
 import { sendWebHook, WebHookMessages } from "../lib/core/webhook";
 
 type Bindings = { DB: D1Database };
@@ -560,44 +561,50 @@ app.post("/", async (c) => {
     const userHash = await generateUserHash(ip, userAgent);
     const today = getTodayDateString();
 
-    // service_idのリストを構築
-    const serviceIds = uniqueIds.map((id) => `like:${id}:total`);
-    const actionServiceIds = uniqueIds.map((id) => `like:${id}`);
-
-    // D1はIN句のプレースホルダを動的に構築する必要がある
-    const placeholders = serviceIds.map(() => "?").join(",");
-    const actionPlaceholders = actionServiceIds.map(() => "?").join(",");
-    const totalsQuery = `SELECT service_id, total FROM likes WHERE service_id IN (${placeholders})`;
-    const likedQuery = `SELECT service_id, value FROM daily_actions WHERE service_id IN (${actionPlaceholders}) AND user_hash = ? AND date = ? AND action_type = ?`;
-
-    const [totalsResult, likedResult] = await Promise.all([
-      db
-        .prepare(totalsQuery)
-        .bind(...serviceIds)
-        .all<{ service_id: string; total: number }>(),
-      db
-        .prepare(likedQuery)
-        .bind(...actionServiceIds, userHash, today, "like")
-        .all<{ service_id: string; value: string }>(),
-    ]);
-
-    // 結果をIDでマップ
     const data: Record<string, { id: string; total: number; liked: boolean }> = {};
-    for (const row of totalsResult.results || []) {
-      // "like:xxx:total" から "xxx" を抽出
-      const id = stripLikeTotalServiceId(row.service_id);
-      data[id] = { id, total: row.total, liked: false };
-    }
 
-    for (const row of likedResult.results || []) {
-      const id = stripLikeServiceId(row.service_id);
-      data[id] = { id, total: data[id]?.total ?? 0, liked: row.value === "liked" };
-    }
-
-    // リクエストされたが存在しないIDは0として含める
+    // 先に全 ID を 0 で初期化（存在しない ID も結果に含める）
     for (const id of uniqueIds) {
-      if (!data[id]) {
-        data[id] = { id, total: 0, liked: false };
+      data[id] = { id, total: 0, liked: false };
+    }
+
+    // D1 (SQLite) は 1 ステートメントあたり 100 バインド変数までしか許可しない。
+    // likedQuery は IN(...N...) + 3 固定列で N+3 バインドになるため、ids を内部で
+    // サブチャンクして各チャンクごとにクエリし、結果をマージする（直列実行で
+    // Workers の subrequest 上限と D1 同時接続に対して安全側に倒す）。
+    const idChunks = chunkArray(uniqueIds, BATCH_GET_CHUNK_SIZE);
+    for (const chunk of idChunks) {
+      // service_idのリストを構築
+      const serviceIds = chunk.map((id) => `like:${id}:total`);
+      const actionServiceIds = chunk.map((id) => `like:${id}`);
+
+      // D1はIN句のプレースホルダを動的に構築する必要がある
+      const placeholders = serviceIds.map(() => "?").join(",");
+      const actionPlaceholders = actionServiceIds.map(() => "?").join(",");
+      const totalsQuery = `SELECT service_id, total FROM likes WHERE service_id IN (${placeholders})`;
+      const likedQuery = `SELECT service_id, value FROM daily_actions WHERE service_id IN (${actionPlaceholders}) AND user_hash = ? AND date = ? AND action_type = ?`;
+
+      const [totalsResult, likedResult] = await Promise.all([
+        db
+          .prepare(totalsQuery)
+          .bind(...serviceIds)
+          .all<{ service_id: string; total: number }>(),
+        db
+          .prepare(likedQuery)
+          .bind(...actionServiceIds, userHash, today, "like")
+          .all<{ service_id: string; value: string }>(),
+      ]);
+
+      // 結果をIDでマップ
+      for (const row of totalsResult.results || []) {
+        // "like:xxx:total" から "xxx" を抽出
+        const id = stripLikeTotalServiceId(row.service_id);
+        data[id] = { id, total: row.total, liked: data[id]?.liked ?? false };
+      }
+
+      for (const row of likedResult.results || []) {
+        const id = stripLikeServiceId(row.service_id);
+        data[id] = { id, total: data[id]?.total ?? 0, liked: row.value === "liked" };
       }
     }
 
