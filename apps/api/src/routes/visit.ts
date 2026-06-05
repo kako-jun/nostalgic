@@ -25,6 +25,7 @@ import { getTodayDateString, getYesterdayDateString, getDateRange } from "../lib
 import { DEFAULT_THEME, URL_CONST } from "../lib/core/constants.ts";
 import { chunkArray, BATCH_GET_CHUNK_SIZE } from "../lib/core/batch.ts";
 import { sendWebHook, WebHookMessages } from "../lib/core/webhook.ts";
+import { runCreateBatch, AlreadyExistsError } from "../lib/core/storage.ts";
 
 type Bindings = {
   DB: D1Database;
@@ -372,22 +373,33 @@ async function handleVisitAction(c: AppContext) {
     const hashedToken = await hashToken(token);
 
     // Create counter
-    await db.batch([
-      db
-        .prepare(
-          'INSERT INTO services (id, type, url, metadata, created_at) VALUES (?, ?, ?, ?, datetime("now"))'
-        )
-        .bind(`counter:${publicId}`, "counter", url, JSON.stringify({ webhookUrl })),
-      db
-        .prepare("INSERT INTO url_mappings (type, url, service_id) VALUES (?, ?, ?)")
-        .bind("counter", url, publicId),
-      db
-        .prepare("INSERT INTO owner_tokens (service_id, token_hash) VALUES (?, ?)")
-        .bind(`counter:${publicId}`, hashedToken),
-      db
-        .prepare("INSERT INTO counters (service_id, total) VALUES (?, 0)")
-        .bind(`counter:${publicId}:total`),
-    ]);
+    try {
+      await runCreateBatch(
+        db,
+        [
+          db
+            .prepare(
+              'INSERT INTO services (id, type, url, metadata, created_at) VALUES (?, ?, ?, ?, datetime("now"))'
+            )
+            .bind(`counter:${publicId}`, "counter", url, JSON.stringify({ webhookUrl })),
+          db
+            .prepare("INSERT INTO url_mappings (type, url, service_id) VALUES (?, ?, ?)")
+            .bind("counter", url, publicId),
+          db
+            .prepare("INSERT INTO owner_tokens (service_id, token_hash) VALUES (?, ?)")
+            .bind(`counter:${publicId}`, hashedToken),
+          db
+            .prepare("INSERT INTO counters (service_id, total) VALUES (?, 0)")
+            .bind(`counter:${publicId}:total`),
+        ],
+        "Counter already exists for this URL"
+      );
+    } catch (err) {
+      if (err instanceof AlreadyExistsError) {
+        return c.json({ error: err.message }, 400);
+      }
+      throw err;
+    }
 
     return c.json({
       success: true,
@@ -591,22 +603,35 @@ async function handleVisitAction(c: AppContext) {
 
       const metadata = JSON.stringify({ webhookUrl: null });
 
-      await db.batch([
-        db
-          .prepare(
-            'INSERT INTO services (id, type, url, metadata, created_at) VALUES (?, ?, ?, ?, datetime("now"))'
-          )
-          .bind(`counter:${item.id}`, "counter", item.url, metadata),
-        db
-          .prepare("INSERT INTO url_mappings (type, url, service_id) VALUES (?, ?, ?)")
-          .bind("counter", item.url, item.id),
-        db
-          .prepare("INSERT INTO owner_tokens (service_id, token_hash) VALUES (?, ?)")
-          .bind(`counter:${item.id}`, hashedToken),
-        db
-          .prepare("INSERT INTO counters (service_id, total) VALUES (?, 0)")
-          .bind(`counter:${item.id}:total`),
-      ]);
+      try {
+        await runCreateBatch(
+          db,
+          [
+            db
+              .prepare(
+                'INSERT INTO services (id, type, url, metadata, created_at) VALUES (?, ?, ?, ?, datetime("now"))'
+              )
+              .bind(`counter:${item.id}`, "counter", item.url, metadata),
+            db
+              .prepare("INSERT INTO url_mappings (type, url, service_id) VALUES (?, ?, ?)")
+              .bind("counter", item.url, item.id),
+            db
+              .prepare("INSERT INTO owner_tokens (service_id, token_hash) VALUES (?, ?)")
+              .bind(`counter:${item.id}`, hashedToken),
+            db
+              .prepare("INSERT INTO counters (service_id, total) VALUES (?, 0)")
+              .bind(`counter:${item.id}:total`),
+          ],
+          `Counter already exists: ${item.id}`
+        );
+      } catch (err) {
+        // 事前チェックと INSERT の間の競合は skip 扱い（既存の skip 意味論に合わせる）
+        if (err instanceof AlreadyExistsError) {
+          skipped++;
+          continue;
+        }
+        throw err;
+      }
       created++;
     }
 

@@ -85,6 +85,13 @@ All services support webhook functionality for real-time event notifications:
 3. **Manage**: URL + token for owner operations
 4. **Lookup**: URL + token → exists/id without loading service content
 
+### Error Responses
+
+All errors are returned as JSON.
+
+- **4xx**: `{"error": "<reason>"}` — e.g. `already exists`, validation failures
+- **500**: `{"error": "Internal Server Error"}` for unexpected server errors (always JSON, never text/plain)
+
 ## Try the Demos
 
 Visit our interactive demo pages to test all services:

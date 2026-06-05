@@ -22,6 +22,7 @@ import { generatePublicId } from "../lib/core/id.ts";
 import { generateUserHash } from "../lib/core/crypto.ts";
 import { BBS } from "../lib/core/constants.ts";
 import { sendWebHook, WebHookMessages } from "../lib/core/webhook.ts";
+import { runCreateBatch, AlreadyExistsError } from "../lib/core/storage.ts";
 import { batchLookupServices, lookupService, MAX_LOOKUP_BATCH_SIZE } from "../lib/core/lookup.ts";
 
 type Bindings = { DB: D1Database };
@@ -334,19 +335,30 @@ async function handleBBSAction(c: AppContext) {
         : null,
     });
 
-    await db.batch([
-      db
-        .prepare(
-          'INSERT INTO services (id, type, url, metadata, created_at) VALUES (?, ?, ?, ?, datetime("now"))'
-        )
-        .bind(`bbs:${publicId}`, "bbs", url, metadata),
-      db
-        .prepare("INSERT INTO url_mappings (type, url, service_id) VALUES (?, ?, ?)")
-        .bind("bbs", url, publicId),
-      db
-        .prepare("INSERT INTO owner_tokens (service_id, token_hash) VALUES (?, ?)")
-        .bind(`bbs:${publicId}`, hashedToken),
-    ]);
+    try {
+      await runCreateBatch(
+        db,
+        [
+          db
+            .prepare(
+              'INSERT INTO services (id, type, url, metadata, created_at) VALUES (?, ?, ?, ?, datetime("now"))'
+            )
+            .bind(`bbs:${publicId}`, "bbs", url, metadata),
+          db
+            .prepare("INSERT INTO url_mappings (type, url, service_id) VALUES (?, ?, ?)")
+            .bind("bbs", url, publicId),
+          db
+            .prepare("INSERT INTO owner_tokens (service_id, token_hash) VALUES (?, ?)")
+            .bind(`bbs:${publicId}`, hashedToken),
+        ],
+        "BBS already exists for this URL"
+      );
+    } catch (err) {
+      if (err instanceof AlreadyExistsError) {
+        return c.json({ error: err.message }, 400);
+      }
+      throw err;
+    }
 
     return c.json({ success: true, id: publicId, url, title, maxMessages, messagesPerPage });
   }

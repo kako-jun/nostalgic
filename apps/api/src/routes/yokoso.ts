@@ -18,6 +18,7 @@ import type { Context } from "hono";
 import { hashToken, verifyToken, validateOwnerToken } from "../lib/core/auth.ts";
 import { generatePublicId } from "../lib/core/id.ts";
 import { sendWebHook, WebHookMessages } from "../lib/core/webhook.ts";
+import { runCreateBatch, AlreadyExistsError } from "../lib/core/storage.ts";
 import { LUCKY_CAT_DATA_URL } from "../assets/lucky-cat.ts";
 import { batchLookupServices, lookupService, MAX_LOOKUP_BATCH_SIZE } from "../lib/core/lookup.ts";
 
@@ -515,19 +516,30 @@ async function handleYokosoAction(c: AppContext) {
       updatedAt: now,
     });
 
-    await db.batch([
-      db
-        .prepare(
-          'INSERT INTO services (id, type, url, metadata, created_at) VALUES (?, ?, ?, ?, datetime("now"))'
-        )
-        .bind(`yokoso:${publicId}`, "yokoso", url, metadata),
-      db
-        .prepare("INSERT INTO url_mappings (type, url, service_id) VALUES (?, ?, ?)")
-        .bind("yokoso", url, publicId),
-      db
-        .prepare("INSERT INTO owner_tokens (service_id, token_hash) VALUES (?, ?)")
-        .bind(`yokoso:${publicId}`, hashedToken),
-    ]);
+    try {
+      await runCreateBatch(
+        db,
+        [
+          db
+            .prepare(
+              'INSERT INTO services (id, type, url, metadata, created_at) VALUES (?, ?, ?, ?, datetime("now"))'
+            )
+            .bind(`yokoso:${publicId}`, "yokoso", url, metadata),
+          db
+            .prepare("INSERT INTO url_mappings (type, url, service_id) VALUES (?, ?, ?)")
+            .bind("yokoso", url, publicId),
+          db
+            .prepare("INSERT INTO owner_tokens (service_id, token_hash) VALUES (?, ?)")
+            .bind(`yokoso:${publicId}`, hashedToken),
+        ],
+        "Yokoso already exists for this URL"
+      );
+    } catch (err) {
+      if (err instanceof AlreadyExistsError) {
+        return c.json({ error: err.message }, 400);
+      }
+      throw err;
+    }
 
     return c.json({
       success: true,

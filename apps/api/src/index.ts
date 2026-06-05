@@ -1,11 +1,11 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 
-import visitRoute from "./routes/visit";
-import likeRoute from "./routes/like";
-import rankingRoute from "./routes/ranking";
-import bbsRoute from "./routes/bbs";
-import yokosoRoute from "./routes/yokoso";
+import visitRoute from "./routes/visit.ts";
+import likeRoute from "./routes/like.ts";
+import rankingRoute from "./routes/ranking.ts";
+import bbsRoute from "./routes/bbs.ts";
+import yokosoRoute from "./routes/yokoso.ts";
 
 type Bindings = {
   DB: D1Database;
@@ -85,5 +85,18 @@ app.route("/like", likeRoute);
 app.route("/ranking", rankingRoute);
 app.route("/bbs", bbsRoute);
 app.route("/yokoso", yokosoRoute);
+
+// 未捕捉エラーの観測性 + レスポンスを JSON に統一（Hono 既定の text/plain をやめる）。
+// token 等の機微 query は丸ごと出さず、method / path / action のみログに残す。err 本体は出す。
+app.onError((err, c) => {
+  console.error(
+    "[nostalgic-api] unhandled error:",
+    c.req.method,
+    c.req.path,
+    c.req.query("action"),
+    err
+  );
+  return c.json({ error: "Internal Server Error" }, 500);
+});
 
 export default app;
