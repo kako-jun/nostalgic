@@ -99,6 +99,14 @@ describe("bbs.js 成功表示の見た目", () => {
     expect(body).toMatch(/border:\s*[^;]*#2e7d32/i);
     expect(body).toMatch(/color:\s*#1b5e20/i);
   });
+
+  // 観点5-b: .message-area が white-space: pre-line を持つ（案内文の \n を文単位改行として反映）
+  test(".message-area が white-space: pre-line を持つ（文単位改行を反映）", () => {
+    const rule = bbsJs.match(/\.message-area\s*\{([\s\S]*?)\}/);
+    expect(rule).not.toBeNull();
+    const body = rule![1];
+    expect(body).toMatch(/white-space:\s*pre-line/i);
+  });
 });
 
 describe("bbs.js メッセージ自動消去タイマー", () => {
@@ -195,12 +203,31 @@ describe("配線: イベント名の相互一致", () => {
 // BBS.tsx: リロード誘導の購読
 // ---------------------------------------------------------------------------
 describe("BBS.tsx リロード誘導", () => {
-  // 観点10: ja / en のリロード誘導文言が定義されている
+  // 観点10: ja / en のリロード誘導文言が定義されている（文単位で行分割した配列）
   test("リロード誘導 posted 文言が ja / en 両方に定義されている", () => {
-    // embedTexts.ja.posted（日本語: 再読み込み誘導）
-    expect(bbsTsx).toMatch(/posted:\s*"[^"]*再読み込み[^"]*"/);
+    // embedTexts.ja.posted（日本語: 再読み込み誘導）— 文単位で配列化されていても拾える
+    expect(bbsTsx).toMatch(/posted:\s*\[[^\]]*再読み込み[^\]]*\]/);
     // embedTexts.en.posted（英語: reload 誘導）
-    expect(bbsTsx).toMatch(/posted:\s*"[^"]*reload[^"]*"/i);
+    expect(bbsTsx).toMatch(/posted:\s*\[[^\]]*reload[^\]]*\]/i);
+  });
+
+  // 観点10-b: posted は文単位で行分割した配列で、行ごとに描画される（途中折返し回避）
+  test("posted が配列（文単位で行分割）で定義されている", () => {
+    // ja / en それぞれ posted が配列リテラルで、2要素（2文）に分かれている
+    const arrays = bbsTsx.match(/posted:\s*\[([\s\S]*?)\]/g);
+    expect(arrays).not.toBeNull();
+    expect(arrays!.length).toBeGreaterThanOrEqual(2);
+    for (const arr of arrays!) {
+      // 各配列に文字列が2つ以上（"…", "…"）含まれる
+      const items = arr.match(/"[^"]*"/g);
+      expect(items).not.toBeNull();
+      expect(items!.length).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  test("posted を行ごとに描画している（map で <br /> を挟む）", () => {
+    expect(bbsTsx).toMatch(/t\.posted\.map\(/);
+    expect(bbsTsx).toMatch(/<br\s*\/>/);
   });
 
   test("embedPosted は useState(false) で初期非表示", () => {
