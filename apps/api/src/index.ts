@@ -86,4 +86,17 @@ app.route("/ranking", rankingRoute);
 app.route("/bbs", bbsRoute);
 app.route("/yokoso", yokosoRoute);
 
+// 未捕捉エラーの観測性 + レスポンスを JSON に統一（Hono 既定の text/plain をやめる）。
+// token 等の機微 query は丸ごと出さず、method / path / action のみログに残す。err 本体は出す。
+app.onError((err, c) => {
+  console.error(
+    "[nostalgic-api] unhandled error:",
+    c.req.method,
+    c.req.path,
+    c.req.query("action"),
+    err
+  );
+  return c.json({ error: "Internal Server Error" }, 500);
+});
+
 export default app;
