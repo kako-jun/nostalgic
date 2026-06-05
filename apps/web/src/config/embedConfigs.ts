@@ -1,3 +1,5 @@
+import { API_BASE } from "./commonSteps";
+
 export const counterEmbedConfig = {
   scriptUrl: "https://nostalgic.llll-ll.com/components/visit.js",
   componentName: "nostalgic-counter",
@@ -20,7 +22,7 @@ export const counterEmbedConfig = {
       { name: "DotsF", value: "dots_f" },
     ],
     getUrl: (publicId: string, theme: string) =>
-      `/api/visit?action=get&id=${publicId}&type=total&theme=${theme}&format=image`,
+      `${API_BASE}/visit?action=get&id=${publicId}&type=total&theme=${theme}&format=image`,
   },
   sections: [
     {

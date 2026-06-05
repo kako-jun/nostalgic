@@ -8,6 +8,7 @@ import { highlightPublicId } from "../components/ApiUrlDisplay";
 import { callApi } from "../utils/apiHelpers";
 import { bbsSteps } from "../config/services/bbsSteps";
 import { bbsEmbedConfig } from "../config/embedConfigs";
+import { API_BASE } from "../config/commonSteps";
 
 // 埋め込みページ用の多言語テキスト
 const embedTexts = {
@@ -119,7 +120,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    let apiUrl = `/api/bbs?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    let apiUrl = `${API_BASE}/bbs?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
     if (maxMessages) apiUrl += `&maxMessages=${maxMessages}`;
     if (messagesPerPage) apiUrl += `&messagesPerPage=${messagesPerPage}`;
@@ -132,7 +133,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    const apiUrl = `/api/bbs?action=lookup&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    const apiUrl = `${API_BASE}/bbs?action=lookup&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setLookupResponse, setPublicId);
   };
 
@@ -140,7 +141,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!publicId || !postMessage) return;
 
-    let apiUrl = `/api/bbs?action=post&id=${encodeURIComponent(publicId)}&message=${encodeURIComponent(postMessage)}`;
+    let apiUrl = `${API_BASE}/bbs?action=post&id=${encodeURIComponent(publicId)}&message=${encodeURIComponent(postMessage)}`;
     if (postAuthor) apiUrl += `&author=${encodeURIComponent(postAuthor)}`;
     if (standardValue) apiUrl += `&standardValue=${encodeURIComponent(standardValue)}`;
     if (incrementalValue) apiUrl += `&incrementalValue=${encodeURIComponent(incrementalValue)}`;
@@ -153,7 +154,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!publicId) return;
 
-    const apiUrl = `/api/bbs?action=get&id=${encodeURIComponent(publicId)}`;
+    const apiUrl = `${API_BASE}/bbs?action=get&id=${encodeURIComponent(publicId)}`;
     await callApi(apiUrl, setGetResponse);
   };
 
@@ -161,7 +162,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!url || !token || !messageId || !editMessage) return;
 
-    const apiUrl = `/api/bbs?action=update&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}&messageId=${messageId}&message=${encodeURIComponent(editMessage)}`;
+    const apiUrl = `${API_BASE}/bbs?action=update&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}&messageId=${messageId}&message=${encodeURIComponent(editMessage)}`;
     await callApi(apiUrl, setUpdateResponse);
   };
 
@@ -169,7 +170,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!url || !token || !messageId) return;
 
-    const apiUrl = `/api/bbs?action=remove&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}&messageId=${messageId}`;
+    const apiUrl = `${API_BASE}/bbs?action=remove&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}&messageId=${messageId}`;
     await callApi(apiUrl, setRemoveResponse);
   };
 
@@ -177,7 +178,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    const apiUrl = `/api/bbs?action=clear&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    const apiUrl = `${API_BASE}/bbs?action=clear&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setClearResponse);
   };
 
@@ -185,7 +186,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    const apiUrl = `/api/bbs?action=delete&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    const apiUrl = `${API_BASE}/bbs?action=delete&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setDeleteResponse);
   };
 
@@ -193,7 +194,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    let apiUrl = `/api/bbs?action=update&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    let apiUrl = `${API_BASE}/bbs?action=update&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     if (settingsTitle) apiUrl += `&title=${encodeURIComponent(settingsTitle)}`;
     if (settingsMaxMessages) apiUrl += `&maxMessages=${settingsMaxMessages}`;
     if (settingsMessagesPerPage) apiUrl += `&messagesPerPage=${settingsMessagesPerPage}`;
@@ -215,7 +216,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!publicId || !messageId || !editMessage) return;
 
-    const apiUrl = `/api/bbs?action=update&id=${encodeURIComponent(publicId)}&messageId=${messageId}&message=${encodeURIComponent(editMessage)}`;
+    const apiUrl = `${API_BASE}/bbs?action=update&id=${encodeURIComponent(publicId)}&messageId=${messageId}&message=${encodeURIComponent(editMessage)}`;
     await callApi(apiUrl, setUpdateResponse);
   };
 
@@ -223,7 +224,7 @@ export default function BBSPage() {
     e.preventDefault();
     if (!publicId || !messageId) return;
 
-    const apiUrl = `/api/bbs?action=remove&id=${encodeURIComponent(publicId)}&messageId=${messageId}`;
+    const apiUrl = `${API_BASE}/bbs?action=remove&id=${encodeURIComponent(publicId)}&messageId=${messageId}`;
     await callApi(apiUrl, setRemoveResponse);
   };
 

@@ -8,6 +8,7 @@ import { highlightPublicId } from "../components/ApiUrlDisplay";
 import { callApi, callApiWithFormat } from "../utils/apiHelpers";
 import { counterSteps } from "../config/services/counterSteps";
 import { counterEmbedConfig } from "../config/embedConfigs";
+import { API_BASE } from "../config/commonSteps";
 
 export default function CounterPage() {
   const location = useLocation();
@@ -50,7 +51,7 @@ export default function CounterPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    let apiUrl = `/api/visit?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    let apiUrl = `${API_BASE}/visit?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setCreateResponse, setPublicId);
@@ -60,7 +61,7 @@ export default function CounterPage() {
     e.preventDefault();
     if (!publicId) return;
 
-    const apiUrl = `/api/visit?action=get&id=${encodeURIComponent(publicId)}&type=total&format=${format}`;
+    const apiUrl = `${API_BASE}/visit?action=get&id=${encodeURIComponent(publicId)}&type=total&format=${format}`;
     await callApiWithFormat(
       apiUrl,
       format as "json" | "text" | "image",
@@ -73,7 +74,7 @@ export default function CounterPage() {
     e.preventDefault();
     if (!publicId) return;
 
-    const apiUrl = `/api/visit?action=increment&id=${encodeURIComponent(publicId)}`;
+    const apiUrl = `${API_BASE}/visit?action=increment&id=${encodeURIComponent(publicId)}`;
     await callApi(apiUrl, setIncrementResponse);
   };
 
@@ -81,7 +82,7 @@ export default function CounterPage() {
     e.preventDefault();
     if (!publicId) return;
 
-    const apiUrl = `/api/visit?action=get&id=${encodeURIComponent(publicId)}`;
+    const apiUrl = `${API_BASE}/visit?action=get&id=${encodeURIComponent(publicId)}`;
     await callApi(apiUrl, setGetResponse);
   };
 
@@ -89,7 +90,7 @@ export default function CounterPage() {
     e.preventDefault();
     if (!url || !token || !setValue) return;
 
-    const apiUrl = `/api/visit?action=set&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}&value=${setValue}`;
+    const apiUrl = `${API_BASE}/visit?action=set&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}&value=${setValue}`;
     await callApi(apiUrl, setSetResponse);
   };
 
@@ -97,7 +98,7 @@ export default function CounterPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    const apiUrl = `/api/visit?action=delete&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    const apiUrl = `${API_BASE}/visit?action=delete&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setDeleteResponse);
   };
 
@@ -105,7 +106,7 @@ export default function CounterPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    let apiUrl = `/api/visit?action=update&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    let apiUrl = `${API_BASE}/visit?action=update&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setUpdateSettingsResponse);

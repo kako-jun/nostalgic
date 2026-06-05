@@ -9,6 +9,7 @@ import { callApi } from "../utils/apiHelpers";
 import { sanitizeWebComponent } from "../utils/sanitize";
 import { rankingSteps } from "../config/services/rankingSteps";
 import { rankingEmbedConfig } from "../config/embedConfigs";
+import { API_BASE } from "../config/commonSteps";
 
 export default function RankingPage() {
   const location = useLocation();
@@ -85,7 +86,7 @@ export default function RankingPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    let apiUrl = `/api/ranking?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    let apiUrl = `${API_BASE}/ranking?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     if (title) apiUrl += `&title=${encodeURIComponent(title)}`;
     if (maxEntries) apiUrl += `&maxEntries=${maxEntries}`;
     if (sortOrder) apiUrl += `&sortOrder=${sortOrder}`;
@@ -98,7 +99,7 @@ export default function RankingPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    const apiUrl = `/api/ranking?action=lookup&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    const apiUrl = `${API_BASE}/ranking?action=lookup&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setLookupResponse, setPublicId);
   };
 
@@ -106,7 +107,7 @@ export default function RankingPage() {
     e.preventDefault();
     if (!publicId || !submitName || !submitScore) return;
 
-    let apiUrl = `/api/ranking?action=submit&id=${encodeURIComponent(publicId)}&name=${encodeURIComponent(submitName)}&score=${submitScore}`;
+    let apiUrl = `${API_BASE}/ranking?action=submit&id=${encodeURIComponent(publicId)}&name=${encodeURIComponent(submitName)}&score=${submitScore}`;
     if (submitDisplayScore) apiUrl += `&displayScore=${encodeURIComponent(submitDisplayScore)}`;
 
     await callApi(apiUrl, setSubmitResponse);
@@ -116,7 +117,7 @@ export default function RankingPage() {
     e.preventDefault();
     if (!publicId) return;
 
-    const apiUrl = `/api/ranking?action=get&id=${encodeURIComponent(publicId)}`;
+    const apiUrl = `${API_BASE}/ranking?action=get&id=${encodeURIComponent(publicId)}`;
     await callApi(apiUrl, setGetResponse);
   };
 
@@ -124,7 +125,7 @@ export default function RankingPage() {
     e.preventDefault();
     if (!publicId || !updateName || !updateScore) return;
 
-    let apiUrl = `/api/ranking?action=submit&id=${encodeURIComponent(publicId)}&name=${encodeURIComponent(updateName)}&score=${updateScore}`;
+    let apiUrl = `${API_BASE}/ranking?action=submit&id=${encodeURIComponent(publicId)}&name=${encodeURIComponent(updateName)}&score=${updateScore}`;
     if (updateDisplayScore) apiUrl += `&displayScore=${encodeURIComponent(updateDisplayScore)}`;
 
     await callApi(apiUrl, setUpdateResponse);
@@ -134,7 +135,7 @@ export default function RankingPage() {
     e.preventDefault();
     if (!url || !token || !removeName) return;
 
-    const apiUrl = `/api/ranking?action=remove&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}&name=${encodeURIComponent(removeName)}`;
+    const apiUrl = `${API_BASE}/ranking?action=remove&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}&name=${encodeURIComponent(removeName)}`;
     await callApi(apiUrl, setRemoveResponse);
   };
 
@@ -142,7 +143,7 @@ export default function RankingPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    const apiUrl = `/api/ranking?action=clear&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    const apiUrl = `${API_BASE}/ranking?action=clear&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setClearResponse);
   };
 
@@ -150,7 +151,7 @@ export default function RankingPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    const apiUrl = `/api/ranking?action=delete&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    const apiUrl = `${API_BASE}/ranking?action=delete&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setDeleteResponse);
   };
 
@@ -158,7 +159,7 @@ export default function RankingPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    let apiUrl = `/api/ranking?action=update&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    let apiUrl = `${API_BASE}/ranking?action=update&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     if (settingsTitle) apiUrl += `&title=${encodeURIComponent(settingsTitle)}`;
     if (settingsMax) apiUrl += `&maxEntries=${settingsMax}`;
     if (settingsSortOrder) apiUrl += `&sortOrder=${settingsSortOrder}`;
