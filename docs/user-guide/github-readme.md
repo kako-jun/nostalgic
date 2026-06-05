@@ -105,16 +105,17 @@ Shields.io 風のバッジデザインで表示されます。
 ### 使い方
 
 ```markdown
-[![BBS](https://api.nostalgic.llll-ll.com/bbs?action=get&id=YOUR_ID&format=image&limit=3)](https://nostalgic.llll-ll.com/bbs?id=YOUR_ID)
+[![BBS](https://api.nostalgic.llll-ll.com/bbs?action=get&id=YOUR_ID&format=image&limit=3&width=760)](https://nostalgic.llll-ll.com/bbs?id=YOUR_ID)
 ```
 
 ### パラメータ
 
-| パラメータ | 必須 | 説明                            |
-| ---------- | ---- | ------------------------------- |
-| `id`       | ○    | BBSの公開ID                     |
-| `format`   | ○    | `image` を指定                  |
-| `limit`    | -    | 表示する投稿数（デフォルト: 3） |
+| パラメータ | 必須 | 説明                                            |
+| ---------- | ---- | ----------------------------------------------- |
+| `id`       | ○    | BBSの公開ID                                     |
+| `format`   | ○    | `image` を指定                                  |
+| `limit`    | -    | 表示する投稿数（デフォルト: 3）                 |
+| `width`    | -    | SVG幅（デフォルト: 400、最小: 240、最大: 1200） |
 
 ### 表示例
 
@@ -133,7 +134,7 @@ Shields.io 風のバッジデザインで表示されます。
 ```markdown
 <!-- BBS（クリックで掲示板ページへ） -->
 
-[![BBS](https://api.nostalgic.llll-ll.com/bbs?action=get&id=YOUR_ID&format=image&limit=3)](https://nostalgic.llll-ll.com/bbs?id=YOUR_ID)
+[![BBS](https://api.nostalgic.llll-ll.com/bbs?action=get&id=YOUR_ID&format=image&limit=3&width=760)](https://nostalgic.llll-ll.com/bbs?id=YOUR_ID)
 ```
 
 ---

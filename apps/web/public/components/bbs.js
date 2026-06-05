@@ -3,7 +3,7 @@
  *
  * Usage / 使用方法:
  * <script src="/components/bbs.js"></script>
- * <nostalgic-bbs id="your-bbs-id" page="1" theme="dark" lang="en"></nostalgic-bbs>
+ * <nostalgic-bbs id="your-bbs-id" page="1" theme="dark" lang="en" width="100%"></nostalgic-bbs>
  */
 
 // i18n translations
@@ -189,7 +189,7 @@ class NostalgicBBS extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ["id", "page", "theme", "format", "lang"];
+    return ["id", "page", "theme", "format", "lang", "width"];
   }
 
   // Get translations for this element
@@ -216,6 +216,15 @@ class NostalgicBBS extends HTMLElement {
 
       case "format":
         return value;
+
+      case "width": {
+        if (!value) return null;
+        const trimmed = value.trim();
+        if (/^\d+(\.\d+)?(px|%|rem|em|vw|ch)?$/.test(trimmed)) {
+          return /^\d+(\.\d+)?$/.test(trimmed) ? `${trimmed}px` : trimmed;
+        }
+        return null;
+      }
 
       default:
         return value;
@@ -302,10 +311,18 @@ class NostalgicBBS extends HTMLElement {
 
   render() {
     const theme = this.getAttribute("theme") || "dark";
+    const configuredWidth = this.safeGetAttribute("width") || "100%";
 
     if (!this.bbsData) {
       this.shadowRoot.innerHTML = `
         <style>
+          :host {
+            display: block;
+            width: min(var(--bbs-width, ${configuredWidth}), 100%);
+            max-width: 100%;
+            box-sizing: border-box;
+            margin: 0 auto;
+          }
           .bbs-container {
             font-family: 'BIZ UDGothic', monospace;
             background: #f0f0f0;
@@ -313,8 +330,8 @@ class NostalgicBBS extends HTMLElement {
             padding: 10px;
             border-radius: 4px;
             box-shadow: 3px 3px 0px #333;
-            min-width: 300px;
-            max-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
           }
           .loading {
             color: #666;
@@ -424,14 +441,14 @@ class NostalgicBBS extends HTMLElement {
           --bbs-scrollbar-thumb: ${style.scrollbarThumb || style.borderColor};
           --bbs-scrollbar-hover: ${style.scrollbarHover || style.textColor};
           --bbs-border-radius: 4px;
-          --bbs-width: 480px;
           --bbs-message-padding: 6px;
           --bbs-message-margin: 4px;
           --bbs-max-height: 400px;
           display: block;
-          width: 480px;
+          width: min(var(--bbs-width, ${configuredWidth}), 100%);
           max-width: 100%;
           margin: 0 auto;
+          box-sizing: border-box;
           /* 水玉パターン変数 */
           --kawaii-dark-bg: #b2ebf2;
           --kawaii-dark-dots: radial-gradient(circle at 15px 5px, rgba(255,255,255,0.4) 9px, transparent 9px),
@@ -471,7 +488,6 @@ class NostalgicBBS extends HTMLElement {
           border-radius: var(--bbs-border-radius);
           box-shadow: 3px 3px 0px var(--bbs-shadow-color);
           width: 100%;
-          width: min(var(--bbs-width), 100%);
           box-sizing: border-box;
           position: relative;
           line-height: normal;

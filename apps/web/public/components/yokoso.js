@@ -33,9 +33,9 @@ class NostalgicYokoso extends HTMLElement {
   static apiBaseUrl = "https://api.nostalgic.llll-ll.com";
 
   // --- 読み取りの in-flight dedupe + 短期 TTL キャッシュ（dev-doctrine Phase 4 / Issue #6）---
-  // yokoso は1ページに通常1個（singleton）。visit/like の batchGet と違い複数 ID batch の価値は
-  // 薄いので、サーバ API は増やさず、クライアントで「同時並行の同一 GET 畳み込み + 短時間の再取得
-  // キャッシュ」だけ入れる。yokoso は読み取り専用（ウィジェットからの mutation なし）の
+  // yokoso は1ページに通常1個（singleton）。URL owner の batchLookup はビルド向けで、
+  // Web Component の内容取得はクライアントで「同時並行の同一 GET 畳み込み + 短時間の再取得
+  // キャッシュ」を入れる。yokoso は読み取り専用（ウィジェットからの mutation なし）の
   // ほぼ静的な歓迎バナーなので 5s TTL キャッシュも安全。`format=image` は <img src> なので対象外。
   static _readCache = new Map(); // key -> { result, expiresAt }
   static _inflight = new Map(); // key -> Promise<{ ok, status, data }>

@@ -12,11 +12,11 @@ import { bbsEmbedConfig } from "../config/embedConfigs";
 // 埋め込みページ用の多言語テキスト
 const embedTexts = {
   ja: {
-    title: "このプロジェクトにコメントを書き込んでください！",
+    title: "ここにコメントを書き込んでください！",
     note: "※GitHubアカウント不要で誰でも書き込めます",
   },
   en: {
-    title: "Leave a comment on this project!",
+    title: "Leave a comment here!",
     note: "*No GitHub account required - anyone can post",
   },
 };

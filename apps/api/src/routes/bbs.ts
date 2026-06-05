@@ -131,9 +131,10 @@ app.get("/", async (c) => {
     // 画像形式で返す場合（GitHub README用）
     if (format === "image") {
       const imageLimit = Math.min(Number(c.req.query("limit")) || 3, 10);
+      const imageWidth = clampImageWidth(c.req.query("width"));
       const messages = await getMessages(db, id, imageLimit);
       const totalMessages = await getMessageCount(db, id);
-      const svg = generateBBSSVG(messages, totalMessages);
+      const svg = generateBBSSVG(messages, totalMessages, imageWidth);
       return c.body(svg, 200, {
         "Content-Type": "image/svg+xml",
         "Cache-Control": "no-cache",
@@ -765,6 +766,23 @@ type BBSMessage = {
   timestamp: string;
 };
 
+const BBS_IMAGE = {
+  WIDTH: { DEFAULT: 400, MIN: 240, MAX: 1200 },
+  LABEL_WIDTH: 50,
+  LINE_HEIGHT: 20,
+  PADDING: 12,
+  TEXT_X_PADDING: 8,
+  AUTHOR_WIDTH: 10,
+  MESSAGE_WIDTH_PADDING: 52,
+  AVG_CHAR_WIDTH: 9,
+};
+
+function clampImageWidth(value: string | undefined): number {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return BBS_IMAGE.WIDTH.DEFAULT;
+  return Math.min(Math.max(Math.round(parsed), BBS_IMAGE.WIDTH.MIN), BBS_IMAGE.WIDTH.MAX);
+}
+
 function escapeXml(text: string): string {
   return text
     .replace(/&/g, "&amp;")
@@ -790,12 +808,16 @@ function truncateByWidth(text: string, maxWidth: number): string {
   return result;
 }
 
-function generateBBSSVG(messages: BBSMessage[], totalMessages: number): string {
-  const labelWidth = 50;
-  const contentWidth = 350;
-  const totalWidth = labelWidth + contentWidth;
-  const lineHeight = 20;
-  const padding = 12;
+function generateBBSSVG(messages: BBSMessage[], totalMessages: number, totalWidth: number): string {
+  const labelWidth = BBS_IMAGE.LABEL_WIDTH;
+  const contentWidth = totalWidth - labelWidth;
+  const lineHeight = BBS_IMAGE.LINE_HEIGHT;
+  const padding = BBS_IMAGE.PADDING;
+  const textX = labelWidth + BBS_IMAGE.TEXT_X_PADDING;
+  const messageWidth = Math.max(
+    8,
+    Math.floor((contentWidth - BBS_IMAGE.MESSAGE_WIDTH_PADDING) / BBS_IMAGE.AVG_CHAR_WIDTH)
+  );
   const contentHeight =
     messages.length > 0 ? messages.length * lineHeight + padding * 2 : lineHeight + padding * 2;
   const totalHeight = contentHeight;
@@ -806,7 +828,7 @@ function generateBBSSVG(messages: BBSMessage[], totalMessages: number): string {
   const headerTextColor = "#fff";
 
   if (messages.length === 0) {
-    return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}">
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}" viewBox="0 0 ${totalWidth} ${totalHeight}">
   <defs>
     <clipPath id="round">
       <rect width="${totalWidth}" height="${totalHeight}" rx="3"/>
@@ -821,7 +843,7 @@ function generateBBSSVG(messages: BBSMessage[], totalMessages: number): string {
     <text x="${labelWidth / 2}" y="${totalHeight / 2 + 4}" fill="${headerTextColor}">BBS</text>
   </g>
   <g fill="#999" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12">
-    <text x="${labelWidth + 8}" y="${padding + lineHeight - 4}">No messages yet</text>
+    <text x="${textX}" y="${padding + lineHeight - 4}">No messages yet</text>
   </g>
 </svg>`;
   }
@@ -829,14 +851,14 @@ function generateBBSSVG(messages: BBSMessage[], totalMessages: number): string {
   const messageLines = messages
     .map((msg, index) => {
       const msgNum = totalMessages - index;
-      const author = truncateByWidth(msg.author || "Anonymous", 10);
-      const content = truncateByWidth(msg.message.replace(/\n/g, " "), 36);
+      const author = truncateByWidth(msg.author || "Anonymous", BBS_IMAGE.AUTHOR_WIDTH);
+      const content = truncateByWidth(msg.message.replace(/\n/g, " "), messageWidth);
       const y = padding + (index + 1) * lineHeight - 4;
-      return `<text x="${labelWidth + 8}" y="${y}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12"><tspan fill="#999">#${msgNum}</tspan> <tspan font-weight="bold" fill="${textColor}">${escapeXml(author)}</tspan><tspan fill="${textColor}">: ${escapeXml(content)}</tspan></text>`;
+      return `<text x="${textX}" y="${y}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12"><tspan fill="#999">#${msgNum}</tspan> <tspan font-weight="bold" fill="${textColor}">${escapeXml(author)}</tspan><tspan fill="${textColor}">: ${escapeXml(content)}</tspan></text>`;
     })
     .join("\n    ");
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}" viewBox="0 0 ${totalWidth} ${totalHeight}">
   <defs>
     <clipPath id="round">
       <rect width="${totalWidth}" height="${totalHeight}" rx="3"/>

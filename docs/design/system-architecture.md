@@ -81,10 +81,12 @@ React 側の `apps/web/src/utils/apiHelpers.ts` と `apps/web/src/hooks/useFetch
 - `visit.ts` / `like.ts` には `batchGet` がある。Web Components はこれを内部利用して読み取りを集約する
 - `like` の `batchGet` は `id` / `total` / 現在ユーザーの `liked` を返す正規の一覧取得 API とする
 - `visit` の `batchGet` は `id` / `total` / `today` / `yesterday` / `week` / `month` を返す正規の一覧取得 API とする
-- `ranking` / `bbs` / `yokoso` には batch API を設けない。これらは1ページに通常1個（singleton）運用で、
-  複数 ID batch の価値が薄いため。代わりに各 Web Component にクライアント側の
-  **in-flight dedupe + 短期 TTL 読み取りキャッシュ**（静的 `sharedRead(key, url)`）を入れ、
-  同一 ID の読み取りを1リクエストに畳む。
+- `ranking` / `bbs` / `yokoso` には、重い内容一覧の `batchGet` ではなく URL owner の存在確認だけを行う
+  `lookup` / `batchLookup` がある。静的サイトのビルド時に「この URL にサービスがあるか」「公開 ID は何か」
+  をまとめて確認するための API で、token は POST body に置く。
+- `ranking` / `bbs` / `yokoso` の Web Components は、通常1ページに1個（singleton）運用なので、
+  同一 ID の読み取りはクライアント側の **in-flight dedupe + 短期 TTL 読み取りキャッシュ**
+  （静的 `sharedRead(key, url)`）で1リクエストに畳む。
 - **実トラフィック削減の本体は TTL キャッシュ**。実機検証（Playwright）で、複数ウィジェットは
   同時並行ではなく**逐次ロード**されると判明したため、in-flight dedupe（同時並行のみ畳む）だけでは
   別ウィジェットの重複が消えない。逐次の2個目を畳むのは TTL キャッシュ側。よって全 service に
@@ -92,4 +94,4 @@ React 側の `apps/web/src/utils/apiHelpers.ts` と `apps/web/src/hooks/useFetch
 - `bbs` は自分の投稿/編集/削除後に `invalidateId` で `(id, *)` の cache/in-flight を破棄してリロードを
   最新化する（他者投稿による stale は最長 TTL=3s で解消）。
 - 検証: 6ウィジェット（各 service 2個）→ 実 GET 3本（各 service 1本）に畳まれることを実機で確認済み。
-- 将来、同一ページに同種ウィジェットを多数並べる実利用が出たら、そのとき複数 ID batch API を別途検討する
+- 将来、同一ページに同種ウィジェットを多数並べる実利用が出たら、そのとき内容一覧の複数 ID batch API を別途検討する

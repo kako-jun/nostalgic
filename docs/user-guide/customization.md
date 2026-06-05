@@ -41,7 +41,7 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
 <style>
   nostalgic-bbs {
     /* サイズ調整 */
-    --bbs-width: 480px;
+    --bbs-width: 760px;
     --bbs-max-height: 400px;
 
     /* メッセージ調整 */
@@ -64,6 +64,12 @@ Nostalgic Web Componentsは複数の方法でスタイルをカスタマイズ�
 </style>
 
 <nostalgic-bbs id="site-def456"></nostalgic-bbs>
+```
+
+BBS の既定幅は親要素いっぱいの `100%` です。`--bbs-width` や `width` 属性で広めの幅を指定しても、実際の表示は親要素の幅を超えません。
+
+```html
+<nostalgic-bbs id="site-def456" width="760"></nostalgic-bbs>
 ```
 
 ### Counter Component
@@ -170,7 +176,7 @@ Counterコンポーネントは`theme`属性でスタイルを切り替えます
 </style>
 ```
 
-> **Note**: 実装では `width: min(var(--ranking-width), 100%)` となっているため、指定した幅か画面幅の小さい方が適用されます。
+> **Note**: Ranking と BBS は指定した幅か親要素幅の小さい方が適用されます。BBS は未指定なら `100%` です。
 
 ## 4. 高度なカスタマイズ例
 
@@ -244,7 +250,7 @@ Counterコンポーネントは`theme`属性でスタイルを切り替えます
 - `--bbs-text-color`: 文字色
 - `--bbs-font-family`: フォント
 - `--bbs-border-radius`: 角丸
-- `--bbs-width`: 幅
+- `--bbs-width`: 幅（未指定時は `100%`。指定しても親要素幅を超えません）
 - `--bbs-message-padding`: メッセージ内余白
 - `--bbs-message-margin`: メッセージ間隔
 - `--bbs-message-border-radius`: メッセージ角丸

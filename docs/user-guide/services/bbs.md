@@ -55,7 +55,7 @@ GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&standardValue
 
 - `id` (required): Public BBS ID
 - `author` (optional): Author name (default: "Anonymous", max 20 characters)
-- `message` (required): Message content (max 200 characters)
+- `message` (required): Message content (max 420 characters)
 - `standardValue` (optional): Value from standard select dropdown
 - `incrementalValue` (optional): Value from incremental select dropdown
 - `emoteValue` (optional): Image URL from emote picker
@@ -229,7 +229,7 @@ Get BBS messages.
 #### Public Mode (by ID)
 
 ```
-GET /api/bbs?action=get&id={ID}&limit={LIMIT}&format={FORMAT}
+GET /api/bbs?action=get&id={ID}&limit={LIMIT}&format={FORMAT}&width={WIDTH}
 ```
 
 **Parameters:**
@@ -237,6 +237,7 @@ GET /api/bbs?action=get&id={ID}&limit={LIMIT}&format={FORMAT}
 - `id` (required): Public BBS ID
 - `limit` (optional): Number of messages to return (default: 100, max: 1000; for image format: default 3, max 10)
 - `format` (optional): Response format (`json` default, `image`)
+- `width` (optional): SVG width for `format=image` (default: 400, min: 240, max: 1200)
 
 **Response:**
 
@@ -246,7 +247,7 @@ GET /api/bbs?action=get&id={ID}&limit={LIMIT}&format={FORMAT}
 **GitHub README Example:**
 
 ```markdown
-[![BBS](https://api.nostalgic.llll-ll.com/bbs?action=get&id=YOUR_ID&format=image&limit=3)](https://nostalgic.llll-ll.com/bbs?id=YOUR_ID)
+[![BBS](https://api.nostalgic.llll-ll.com/bbs?action=get&id=YOUR_ID&format=image&limit=3&width=760)](https://nostalgic.llll-ll.com/bbs?id=YOUR_ID)
 ```
 
 Note: In GitHub README, the image links to a page where users can post messages.
@@ -503,6 +504,9 @@ Messages are stored in D1 (SQLite) database:
 <!-- Interactive BBS display -->
 <nostalgic-bbs id="yoursite-a7b9c3d4" theme="light"></nostalgic-bbs>
 
+<!-- Wider component that still shrinks to its parent width -->
+<nostalgic-bbs id="yoursite-a7b9c3d4" theme="light" width="760"></nostalgic-bbs>
+
 <!-- Text format BBS -->
 <nostalgic-bbs id="yoursite-a7b9c3d4" format="text" theme="dark"></nostalgic-bbs>
 ```
@@ -513,6 +517,7 @@ Messages are stored in D1 (SQLite) database:
 - `theme`: Visual style (light, dark, retro, kawaii, mom, final)
 - `format`: Display format (interactive, text) - default: interactive
 - `lang`: UI language (ja, en) - default: auto-detect from browser (non-Japanese browsers use English)
+- `width`: Component width as a CSS length (for example `760`, `760px`, `100%`). Defaults to `100%` and never exceeds the parent width.
 - `api-base`: Custom API base URL (optional)
 
 ## TypeScript Support
@@ -531,6 +536,7 @@ declare module "react" {
         theme?: "light" | "dark" | "retro" | "kawaii" | "mom" | "final";
         format?: "interactive" | "text";
         lang?: "ja" | "en";
+        width?: string;
       };
     }
   }
@@ -550,4 +556,4 @@ This prevents TypeScript build errors when using Web Components in React/Next.js
 - Owner token required for BBS creation and management
 - Authors can only edit their own messages
 - IP addresses are hashed for privacy
-- Message content length limited to 200 characters
+- Message content length limited to 420 characters

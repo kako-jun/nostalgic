@@ -36,9 +36,9 @@ class NostalgicRanking extends HTMLElement {
   static apiBaseUrl = "https://api.nostalgic.llll-ll.com";
 
   // --- 読み取りの in-flight dedupe + 短期 TTL キャッシュ（dev-doctrine Phase 4 / Issue #6）---
-  // ranking は1ページに通常1個（singleton）運用。visit/like の batchGet と違い複数 ID batch の
-  // 価値は薄いので、サーバ API は増やさず、クライアントで「同時並行の同一 GET 畳み込み + 短時間の
-  // 再取得キャッシュ」だけ入れて実在の冗長通信を消す。ranking ウィジェットは読み取り専用
+  // ranking は1ページに通常1個（singleton）運用。URL owner の batchLookup はビルド向けで、
+  // Web Component の内容取得はクライアントで「同時並行の同一 GET 畳み込み + 短時間の再取得
+  // キャッシュ」を入れて実在の冗長通信を消す。ranking ウィジェットは読み取り専用
   // （mutation なし）なので 5s TTL キャッシュも安全。
   static _readCache = new Map(); // key -> { result, expiresAt }
   static _inflight = new Map(); // key -> Promise<{ ok, status, data }>
