@@ -142,10 +142,10 @@ https://api.nostalgic.llll-ll.com/yokoso?action=create&url=https://yoursite.com&
 
 ## 🔧 API アーキテクチャ
 
-すべてのサービスは**GET リクエストのみ**の統一されたアクション型APIパターンに従います:
+すべてのサービスは**GET リクエストのみ**の統一されたアクション型APIパターンに従います。ベースURLは `https://api.nostalgic.llll-ll.com` です:
 
 ```
-/api/{service}?action={action}&url={your-site}&token={your-token}&...params
+/{service}?action={action}&url={your-site}&token={your-token}&...params
 ```
 
 ### 🌐 なぜGETのみ？ 1990年代Web文化への回帰

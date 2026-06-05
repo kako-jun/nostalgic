@@ -13,7 +13,7 @@ All actions accept GET with query parameters — you can run any of them straigh
 Create a new BBS message board.
 
 ```
-GET /api/bbs?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxMessages=100&messagesPerPage=20
+GET /bbs?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxMessages=100&messagesPerPage=20
 ```
 
 **Parameters:**
@@ -49,7 +49,7 @@ GET /api/bbs?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxMessages=100
 Post a new message to the BBS.
 
 ```
-GET /api/bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&standardValue={VALUE}&incrementalValue={VALUE}&emoteValue={VALUE}
+GET /bbs?action=post&id={ID}&author={AUTHOR}&message={MESSAGE}&standardValue={VALUE}&incrementalValue={VALUE}&emoteValue={VALUE}
 ```
 
 **Parameters:**
@@ -91,13 +91,13 @@ Update a message or BBS settings.
 #### Message Update - User mode (author)
 
 ```
-GET /api/bbs?action=update&id={ID}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
+GET /bbs?action=update&id={ID}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
 ```
 
 #### Message Update - Owner mode (admin)
 
 ```
-GET /api/bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
+GET /bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
 ```
 
 **Parameters:**
@@ -125,7 +125,7 @@ GET /api/bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&messag
 Update BBS settings without messageId parameter.
 
 ```
-GET /api/bbs?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxMessages=200&messagesPerPage=20
+GET /bbs?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxMessages=200&messagesPerPage=20
 ```
 
 **Parameters:**
@@ -165,13 +165,13 @@ Remove a message.
 **User mode (author):**
 
 ```
-GET /api/bbs?action=remove&id={ID}&messageId={MESSAGE_ID}
+GET /bbs?action=remove&id={ID}&messageId={MESSAGE_ID}
 ```
 
 **Owner mode (admin):**
 
 ```
-GET /api/bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
+GET /bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
 ```
 
 **Parameters:**
@@ -198,7 +198,7 @@ GET /api/bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
 Clear all messages (owner only).
 
 ```
-GET /api/bbs?action=clear&url={URL}&token={TOKEN}
+GET /bbs?action=clear&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -226,7 +226,7 @@ Get BBS messages.
 #### Public Mode (by ID)
 
 ```
-GET /api/bbs?action=get&id={ID}&limit={LIMIT}&format={FORMAT}&width={WIDTH}
+GET /bbs?action=get&id={ID}&limit={LIMIT}&format={FORMAT}&width={WIDTH}
 ```
 
 **Parameters:**
@@ -290,7 +290,7 @@ Note: In GitHub README, the image links to a page where users can post messages.
 Get messages and full settings including webhookUrl. Use `lookup` if you only need to know whether a BBS exists for a URL and what its public ID is.
 
 ```
-GET /api/bbs?action=get&url={URL}&token={TOKEN}&limit=100
+GET /bbs?action=get&url={URL}&token={TOKEN}&limit=100
 ```
 
 **Parameters:**
@@ -328,7 +328,7 @@ GET /api/bbs?action=get&url={URL}&token={TOKEN}&limit=100
 Look up the public BBS ID for a URL without loading messages or settings. This is intended for static site build scripts and integrations that only need to know whether the service exists.
 
 ```
-GET /api/bbs?action=lookup&url={URL}&token={TOKEN}
+GET /bbs?action=lookup&url={URL}&token={TOKEN}
 ```
 
 **Response (found and authorized):**
@@ -378,7 +378,7 @@ Invalid tokens are reported per item instead of returning request-level `403`, s
 Look up multiple BBS URLs in request order. Missing URLs are included as `{ "exists": false }`; found URLs with a wrong token are included as `{ "exists": true, "authorized": false }`. A single request accepts up to 1000 URLs and internally chunks D1 queries to stay under SQLite bind limits.
 
 ```
-POST /api/bbs?action=batchLookup
+POST /bbs?action=batchLookup
 Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token" }
 ```
 
@@ -408,7 +408,7 @@ Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token
 Delete a BBS (owner only).
 
 ```
-GET /api/bbs?action=delete&url={URL}&token={TOKEN}
+GET /bbs?action=delete&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -437,14 +437,14 @@ const params = new URLSearchParams({
   title: "My BBS",
   maxMessages: "500",
 });
-const response = await fetch(`/api/bbs?action=create&${params}`);
+const response = await fetch(`https://api.nostalgic.llll-ll.com/bbs?action=create&${params}`);
 
 const data = await response.json();
 console.log("BBS ID:", data.id);
 
 // 2. Post message with selections
 await fetch(
-  "/api/bbs?action=post&id=" +
+  "https://api.nostalgic.llll-ll.com/bbs?action=post&id=" +
     data.id +
     "&author=Alice&message=Hello everyone!&standardValue=Japan&incrementalValue=General&emoteValue=https://example.com/emote.png"
 );
@@ -455,15 +455,17 @@ await fetch(
 ```javascript
 // Update own message (requires same IP+UserAgent)
 await fetch(
-  "/api/bbs?action=update&id=mysite-a7b9c3d4&messageId=abc123def456&message=Updated message!"
+  "https://api.nostalgic.llll-ll.com/bbs?action=update&id=mysite-a7b9c3d4&messageId=abc123def456&message=Updated message!"
 );
 
 // Remove own message (requires same IP+UserAgent)
-await fetch("/api/bbs?action=remove&id=mysite-a7b9c3d4&messageId=abc123def456");
+await fetch(
+  "https://api.nostalgic.llll-ll.com/bbs?action=remove&id=mysite-a7b9c3d4&messageId=abc123def456"
+);
 
 // Clear all messages (owner only)
 const clearParams = new URLSearchParams({ url: "https://mysite.com", token: "my-secret" });
-await fetch(`/api/bbs?action=clear&${clearParams}`);
+await fetch(`https://api.nostalgic.llll-ll.com/bbs?action=clear&${clearParams}`);
 ```
 
 ## Features

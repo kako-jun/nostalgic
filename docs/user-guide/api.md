@@ -6,17 +6,17 @@ Nostalgic is a comprehensive platform that recreates nostalgic web tools (Counte
 
 ## API Architecture
 
-All services use the same URL pattern with action parameters. Every action accepts **GET** with query parameters — you can run any of them straight from the browser address bar, like the old web:
+All services use the same URL pattern with action parameters. Every action accepts **GET** with query parameters — you can run any of them straight from the browser address bar, like the old web. The base URL is `https://api.nostalgic.llll-ll.com`, so paths below resolve to e.g. `https://api.nostalgic.llll-ll.com/visit?action=get&id=...`:
 
 ```
-GET /api/{service}?action=get&id={public-id}
-GET /api/{service}?action={owner-action}&url={URL}&token={TOKEN}&...
+GET /{service}?action=get&id={public-id}
+GET /{service}?action={owner-action}&url={URL}&token={TOKEN}&...
 ```
 
 POST with a JSON body is also supported (body values take precedence over query parameters). POST bodies must be JSON; HTML form bodies (`application/x-www-form-urlencoded`) are not parsed — use GET forms instead. The batch actions (`batchGet`, `batchCreate`, `batchLookup`) are POST-only because they carry array payloads:
 
 ```
-POST /api/{service}?action=batchLookup
+POST /{service}?action=batchLookup
 Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token" }
 ```
 

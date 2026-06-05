@@ -13,7 +13,7 @@ All actions accept GET with query parameters — you can run any of them straigh
 Create a new ranking leaderboard.
 
 ```
-GET /api/ranking?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxEntries=100&sortOrder=desc
+GET /ranking?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxEntries=100&sortOrder=desc
 ```
 
 **Parameters:**
@@ -42,7 +42,7 @@ GET /api/ranking?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxEntries=
 Submit a new score to the ranking (public access).
 
 ```
-GET /api/ranking?action=submit&id={ID}&name={PLAYER_NAME}&score={SCORE}
+GET /ranking?action=submit&id={ID}&name={PLAYER_NAME}&score={SCORE}
 ```
 
 **Parameters:**
@@ -76,7 +76,7 @@ GET /api/ranking?action=submit&id={ID}&name={PLAYER_NAME}&score={SCORE}
 Update ranking settings (owner only).
 
 ```
-GET /api/ranking?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxEntries=50&sortOrder=desc
+GET /ranking?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxEntries=50&sortOrder=desc
 ```
 
 **Parameters:**
@@ -111,7 +111,7 @@ At least one of title, maxEntries, sortOrder, or webhookUrl is required.
 Remove a specific player's score.
 
 ```
-GET /api/ranking?action=remove&url={URL}&token={TOKEN}&name={PLAYER_NAME}
+GET /ranking?action=remove&url={URL}&token={TOKEN}&name={PLAYER_NAME}
 ```
 
 **Parameters:**
@@ -138,7 +138,7 @@ GET /api/ranking?action=remove&url={URL}&token={TOKEN}&name={PLAYER_NAME}
 Clear all scores from the ranking.
 
 ```
-GET /api/ranking?action=clear&url={URL}&token={TOKEN}
+GET /ranking?action=clear&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -166,7 +166,7 @@ Get ranking data.
 #### Public Mode (by ID)
 
 ```
-GET /api/ranking?action=get&id={ID}&limit={LIMIT}
+GET /ranking?action=get&id={ID}&limit={LIMIT}
 ```
 
 **Parameters:**
@@ -209,7 +209,7 @@ GET /api/ranking?action=get&id={ID}&limit={LIMIT}
 Get leaderboard entries and full settings including webhookUrl. Use `lookup` if you only need to know whether a ranking exists for a URL and what its public ID is.
 
 ```
-GET /api/ranking?action=get&url={URL}&token={TOKEN}&limit=10
+GET /ranking?action=get&url={URL}&token={TOKEN}&limit=10
 ```
 
 **Parameters:**
@@ -242,7 +242,7 @@ GET /api/ranking?action=get&url={URL}&token={TOKEN}&limit=10
 Look up the public ranking ID for a URL without loading leaderboard entries or settings. This is intended for static site build scripts and integrations that only need to know whether the service exists.
 
 ```
-GET /api/ranking?action=lookup&url={URL}&token={TOKEN}
+GET /ranking?action=lookup&url={URL}&token={TOKEN}
 ```
 
 **Response (found and authorized):**
@@ -292,7 +292,7 @@ Invalid tokens are reported per item instead of returning request-level `403`, s
 Look up multiple ranking URLs in request order. Missing URLs are included as `{ "exists": false }`; found URLs with a wrong token are included as `{ "exists": true, "authorized": false }`. A single request accepts up to 1000 URLs and internally chunks D1 queries to stay under SQLite bind limits.
 
 ```
-POST /api/ranking?action=batchLookup
+POST /ranking?action=batchLookup
 Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token" }
 ```
 
@@ -322,7 +322,7 @@ Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token
 Delete a ranking (owner only).
 
 ```
-GET /api/ranking?action=delete&url={URL}&token={TOKEN}
+GET /ranking?action=delete&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -351,16 +351,22 @@ const params = new URLSearchParams({
   maxEntries: "50",
   sortOrder: "desc",
 });
-const response = await fetch(`/api/ranking?action=create&${params}`);
+const response = await fetch(`https://api.nostalgic.llll-ll.com/ranking?action=create&${params}`);
 const data = await response.json();
 console.log("Ranking ID:", data.id);
 
 // 2. Submit scores (using public ID)
-await fetch("/api/ranking?action=submit&id=" + data.id + "&name=Alice&score=1000");
-await fetch("/api/ranking?action=submit&id=" + data.id + "&name=Bob&score=1200");
+await fetch(
+  "https://api.nostalgic.llll-ll.com/ranking?action=submit&id=" + data.id + "&name=Alice&score=1000"
+);
+await fetch(
+  "https://api.nostalgic.llll-ll.com/ranking?action=submit&id=" + data.id + "&name=Bob&score=1200"
+);
 
 // 3. Get leaderboard
-const ranking = await fetch("/api/ranking?action=get&id=mygame-a7b9c3d4&limit=10");
+const ranking = await fetch(
+  "https://api.nostalgic.llll-ll.com/ranking?action=get&id=mygame-a7b9c3d4&limit=10"
+);
 const leaderboard = await ranking.json();
 console.log("Top players:", leaderboard.entries);
 ```
@@ -375,16 +381,20 @@ const params = new URLSearchParams({
   maxEntries: "100",
   sortOrder: "asc",
 });
-const response = await fetch(`/api/ranking?action=create&${params}`);
+const response = await fetch(`https://api.nostalgic.llll-ll.com/ranking?action=create&${params}`);
 const data = await response.json();
 console.log("Race Ranking ID:", data.id);
 
 // 2. Submit times (lower is better)
 await fetch(
-  "/api/ranking?action=submit&id=" + data.id + "&name=Speedster&score=1750&displayScore=17.50s"
+  "https://api.nostalgic.llll-ll.com/ranking?action=submit&id=" +
+    data.id +
+    "&name=Speedster&score=1750&displayScore=17.50s"
 );
 await fetch(
-  "/api/ranking?action=submit&id=" + data.id + "&name=Racer&score=1820&displayScore=18.20s"
+  "https://api.nostalgic.llll-ll.com/ranking?action=submit&id=" +
+    data.id +
+    "&name=Racer&score=1820&displayScore=18.20s"
 );
 
 // Better time (17.50s) will rank higher than worse time (18.20s)
@@ -394,7 +404,9 @@ await fetch(
 
 ```javascript
 // Update player score (submit handles UPSERT - inserts new or updates existing)
-await fetch("/api/ranking?action=submit&id=mygame-a7b9c3d4&name=Alice&score=1500");
+await fetch(
+  "https://api.nostalgic.llll-ll.com/ranking?action=submit&id=mygame-a7b9c3d4&name=Alice&score=1500"
+);
 
 // Remove cheating player
 const removeParams = new URLSearchParams({
@@ -402,11 +414,11 @@ const removeParams = new URLSearchParams({
   token: "game-secret",
   name: "Cheater",
 });
-await fetch(`/api/ranking?action=remove&${removeParams}`);
+await fetch(`https://api.nostalgic.llll-ll.com/ranking?action=remove&${removeParams}`);
 
 // Clear all scores (reset season)
 const clearParams = new URLSearchParams({ url: "https://mygame.com", token: "game-secret" });
-await fetch(`/api/ranking?action=clear&${clearParams}`);
+await fetch(`https://api.nostalgic.llll-ll.com/ranking?action=clear&${clearParams}`);
 
 // Update settings
 const updateParams = new URLSearchParams({
@@ -415,7 +427,7 @@ const updateParams = new URLSearchParams({
   maxEntries: "50",
   sortOrder: "asc",
 });
-await fetch(`/api/ranking?action=update&${updateParams}`);
+await fetch(`https://api.nostalgic.llll-ll.com/ranking?action=update&${updateParams}`);
 ```
 
 ## Features

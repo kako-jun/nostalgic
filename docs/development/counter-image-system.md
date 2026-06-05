@@ -33,7 +33,7 @@
 ## API仕様
 
 ```
-GET /api/visit?action=get&id={ID}&format=image&theme={THEME}
+GET /visit?action=get&id={ID}&format=image&theme={THEME}
 ```
 
 ### format パラメータ
