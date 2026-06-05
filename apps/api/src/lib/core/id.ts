@@ -1,4 +1,4 @@
-import { sha256Short } from "./crypto";
+import { sha256Short } from "./crypto.ts";
 
 /**
  * 公開ID生成（ドメイン-ハッシュ8桁）- async version

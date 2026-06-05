@@ -1,25 +1,28 @@
 /**
  * Like API Routes
  *
- * GET  /?action=get          - Public read (by id)
- * GET  /?action=sumByPrefix  - Sum likes by prefix
- * POST /?action=get          - Owner read (body: url, token) - token never in URL
- * POST /?action=create       - Create a new like service (body: url, token, ...)
- * POST /?action=toggle       - Toggle like (body: id)
- * POST /?action=update       - Update settings (body: url, token, ...)
- * POST /?action=delete       - Delete like service (body: url, token)
- * POST /?action=batchCreate  - Batch create (body: token, items)
- * POST /?action=batchGet     - Batch get (body: ids)
+ * 全アクション GET / POST 両対応。GET は query パラメータ、POST は JSON body
+ * （query フォールバックあり、body 優先）。batch 系のみ配列を body で受けるため POST 専用。
+ *
+ * GET/POST /?action=get          - Read (public: id / owner: url + token)
+ * GET/POST /?action=sumByPrefix  - Sum likes by prefix
+ * GET/POST /?action=create       - Create a new like service (url, token, ...)
+ * GET/POST /?action=toggle       - Toggle like (by id)
+ * GET/POST /?action=update       - Update settings (url, token, ...)
+ * GET/POST /?action=delete       - Delete like service (url, token)
+ * POST     /?action=batchCreate  - Batch create (body: token, items)
+ * POST     /?action=batchGet     - Batch get (body: ids)
  */
 
 import { Hono } from "hono";
-import { hashToken, verifyToken, validateOwnerToken } from "../lib/core/auth";
-import { generatePublicId } from "../lib/core/id";
-import { generateUserHash } from "../lib/core/crypto";
-import { getTodayDateString } from "../lib/core/db";
-import { URL_CONST } from "../lib/core/constants";
-import { chunkArray, BATCH_GET_CHUNK_SIZE } from "../lib/core/batch";
-import { sendWebHook, WebHookMessages } from "../lib/core/webhook";
+import type { Context } from "hono";
+import { hashToken, verifyToken, validateOwnerToken } from "../lib/core/auth.ts";
+import { generatePublicId } from "../lib/core/id.ts";
+import { generateUserHash } from "../lib/core/crypto.ts";
+import { getTodayDateString } from "../lib/core/db.ts";
+import { URL_CONST } from "../lib/core/constants.ts";
+import { chunkArray, BATCH_GET_CHUNK_SIZE } from "../lib/core/batch.ts";
+import { sendWebHook, WebHookMessages } from "../lib/core/webhook.ts";
 
 type Bindings = { DB: D1Database };
 
@@ -92,15 +95,82 @@ async function verifyOwnerToken(
   return await verifyToken(token, row.token_hash);
 }
 
-// === GET Routes ===
+// === Routes ===
+//
+// 「URL を組み立てるだけで全操作できる」昔の Web の再現がプロダクト思想のため、
+// 書き込み系アクションも GET（query パラメータ）で動く。POST では JSON body の
+// パラメータが query より優先される（管理 Web UI が使用）。
+// batch 系（batchGet / batchCreate）だけは配列を JSON body で受ける設計のため POST 専用。
 
-app.get("/", async (c) => {
+type AppContext = Context<{ Bindings: Bindings }>;
+
+async function handleLikeAction(c: AppContext) {
   const action = c.req.query("action");
   const db = c.env.DB;
 
-  // GET (public mode only - owner mode uses POST)
+  let body: Record<string, unknown> = {};
+  if (c.req.method === "POST") {
+    try {
+      body = await c.req.json();
+    } catch {
+      body = {};
+    }
+  }
+
+  // body 優先・query フォールバック（GET では常に query から取る）
+  const getParam = (name: string): string | undefined => {
+    const val = body[name];
+    if (typeof val === "string") return val;
+    if (typeof val === "number") return String(val);
+    return c.req.query(name);
+  };
+
+  // GET (owner mode: url + token / public mode: id)
   if (action === "get") {
-    const id = c.req.query("id");
+    const url = getParam("url");
+    const token = getParam("token");
+
+    // Owner mode (url + token) - returns settings including webhookUrl
+    if (url && token) {
+      const like = await getLikeByUrl(db, url);
+      if (!like) {
+        return c.json({ error: "Like service not found" }, 404);
+      }
+
+      const likeId = (like as LikeRecord).id.replace("like:", "");
+      const isOwner = await verifyOwnerToken(db, `like:${likeId}`, token);
+
+      if (!isOwner) {
+        return c.json({ error: "Invalid token" }, 403);
+      }
+
+      const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
+      const userAgent = c.req.header("User-Agent") || "";
+      const userHash = await generateUserHash(ip, userAgent);
+      const today = getTodayDateString();
+
+      const [total, isLiked] = await Promise.all([
+        getTotalLikes(db, likeId),
+        getUserLikeState(db, likeId, userHash, today),
+      ]);
+
+      const metadata = JSON.parse((like as { metadata: string }).metadata || "{}");
+      return c.json({
+        success: true,
+        data: {
+          id: likeId,
+          url,
+          total,
+          liked: isLiked,
+          settings: {
+            webhookUrl: metadata.webhookUrl || null,
+            icon: metadata.icon || "heart",
+          },
+        },
+      });
+    }
+
+    const id = getParam("id");
 
     // Public mode (by id)
     if (!id) {
@@ -122,7 +192,7 @@ app.get("/", async (c) => {
       getUserLikeState(db, id, userHash, today),
     ]);
 
-    const format = c.req.query("format") || "json";
+    const format = getParam("format") || "json";
 
     if (format === "text") {
       return c.text(String(total));
@@ -145,7 +215,7 @@ app.get("/", async (c) => {
 
   // SUM BY PREFIX
   if (action === "sumByPrefix") {
-    const prefix = c.req.query("prefix");
+    const prefix = getParam("prefix");
     if (!prefix) {
       return c.json({ error: "prefix is required" }, 400);
     }
@@ -169,86 +239,10 @@ app.get("/", async (c) => {
     return c.json({ success: true, total: row?.total ?? 0 });
   }
 
-  return c.json({ error: "Invalid action for GET. Use: get, sumByPrefix" }, 400);
-});
-
-// === POST Routes ===
-
-app.post("/", async (c) => {
-  const action = c.req.query("action");
-  const db = c.env.DB;
-
-  let body: Record<string, unknown>;
-  try {
-    body = await c.req.json();
-  } catch {
-    body = {};
-  }
-
-  const getParam = (name: string): string | undefined => {
-    const val = body[name];
-    if (typeof val === "string") return val;
-    return c.req.query(name);
-  };
-
-  // Get sensitive param from body only (never from query string to avoid URL exposure)
-  const getSecureParam = (name: string): string | undefined => {
-    const val = body[name];
-    if (typeof val === "string") return val;
-    return undefined;
-  };
-
-  // GET (owner mode - token in body, not URL)
-  if (action === "get") {
-    const url = getParam("url");
-    const token = getSecureParam("token");
-
-    if (!url || !token) {
-      return c.json({ error: "url and token are required for owner-mode get via POST" }, 400);
-    }
-
-    const like = await getLikeByUrl(db, url);
-    if (!like) {
-      return c.json({ error: "Like service not found" }, 404);
-    }
-
-    const likeId = (like as LikeRecord).id.replace("like:", "");
-    const isOwner = await verifyOwnerToken(db, `like:${likeId}`, token);
-
-    if (!isOwner) {
-      return c.json({ error: "Invalid token" }, 403);
-    }
-
-    const ip = c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || "0.0.0.0";
-    const userAgent = c.req.header("User-Agent") || "";
-    const userHash = await generateUserHash(ip, userAgent);
-    const today = getTodayDateString();
-
-    const [total, isLiked] = await Promise.all([
-      getTotalLikes(db, likeId),
-      getUserLikeState(db, likeId, userHash, today),
-    ]);
-
-    const metadata = JSON.parse((like as { metadata: string }).metadata || "{}");
-    return c.json({
-      success: true,
-      data: {
-        id: likeId,
-        url,
-        total,
-        liked: isLiked,
-        settings: {
-          webhookUrl: metadata.webhookUrl || null,
-          icon: metadata.icon || "heart",
-        },
-      },
-    });
-  }
-
   // CREATE
   if (action === "create") {
     const url = getParam("url");
-    const token = getSecureParam("token");
+    const token = getParam("token");
     const webhookUrl = getParam("webhookUrl");
     const icon = getParam("icon");
 
@@ -378,7 +372,7 @@ app.post("/", async (c) => {
   // UPDATE (owner only) - update settings
   if (action === "update") {
     const url = getParam("url");
-    const token = getSecureParam("token");
+    const token = getParam("token");
     const webhookUrl = getParam("webhookUrl");
     const icon = getParam("icon");
 
@@ -430,7 +424,7 @@ app.post("/", async (c) => {
   // DELETE
   if (action === "delete") {
     const url = getParam("url");
-    const token = getSecureParam("token");
+    const token = getParam("token");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -459,8 +453,12 @@ app.post("/", async (c) => {
     return c.json({ success: true, message: "Like service deleted" });
   }
 
-  // BATCH CREATE
+  // BATCH CREATE (POST 専用: items 配列を JSON body で受ける)
   if (action === "batchCreate") {
+    if (c.req.method !== "POST") {
+      return c.json({ error: "batchCreate requires POST with a JSON body" }, 400);
+    }
+
     const token = body.token as string | undefined;
     const items = body.items as Array<{ id: string; url: string }> | undefined;
 
@@ -533,8 +531,12 @@ app.post("/", async (c) => {
     return c.json({ success: true, created, skipped });
   }
 
-  // BATCH GET
+  // BATCH GET (POST 専用: ids 配列を JSON body で受ける)
   if (action === "batchGet") {
+    if (c.req.method !== "POST") {
+      return c.json({ error: "batchGet requires POST with a JSON body" }, 400);
+    }
+
     const ids = body.ids as string[] | undefined;
 
     if (!Array.isArray(ids) || ids.length === 0) {
@@ -614,11 +616,14 @@ app.post("/", async (c) => {
   return c.json(
     {
       error:
-        "Invalid action for POST. Use: get (owner), create, toggle, update, delete, batchGet, batchCreate",
+        "Invalid action. Use: get, sumByPrefix, create, toggle, update, delete (GET or POST), batchGet, batchCreate (POST only)",
     },
     400
   );
-});
+}
+
+app.get("/", handleLikeAction);
+app.post("/", handleLikeAction);
 
 // === SVG Generator ===
 // Shields.io風のバッジSVG生成（format=image用）

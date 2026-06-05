@@ -1,27 +1,30 @@
 /**
  * Visit (Counter) API Routes
  *
- * GET  /?action=get          - Public read (by id)
- * GET  /?action=increment    - Increment counter (by id)
- * GET  /?action=sumByPrefix  - Sum counters by prefix
- * POST /?action=get          - Owner read (body: url, token) - token never in URL
- * POST /?action=create       - Create a new counter (body: url, token, webhookUrl?)
- * POST /?action=update       - Update counter settings (body: url, token, value?, webhookUrl?)
- * POST /?action=set          - Set counter value (deprecated, use update) (body: url, token, value)
- * POST /?action=delete       - Delete counter (body: url, token)
- * POST /?action=batchCreate  - Batch create (body: token, items)
- * POST /?action=batchGet     - Batch get (body: ids)
+ * 全アクション GET / POST 両対応。GET は query パラメータ、POST は JSON body
+ * （query フォールバックあり、body 優先）。batch 系のみ配列を body で受けるため POST 専用。
+ *
+ * GET/POST /?action=get          - Read (public: id / owner: url + token)
+ * GET/POST /?action=increment    - Increment counter (by id)
+ * GET/POST /?action=sumByPrefix  - Sum counters by prefix
+ * GET/POST /?action=create       - Create a new counter (url, token, webhookUrl?)
+ * GET/POST /?action=update       - Update counter settings (url, token, value?, webhookUrl?)
+ * GET/POST /?action=set          - Set counter value (deprecated, use update) (url, token, value)
+ * GET/POST /?action=delete       - Delete counter (url, token)
+ * POST     /?action=batchCreate  - Batch create (body: token, items)
+ * POST     /?action=batchGet     - Batch get (body: ids)
  */
 
 import { Hono } from "hono";
+import type { Context } from "hono";
 import { z } from "zod";
-import { hashToken, verifyToken, validateOwnerToken } from "../lib/core/auth";
-import { generatePublicId } from "../lib/core/id";
-import { generateUserHash } from "../lib/core/crypto";
-import { getTodayDateString, getYesterdayDateString, getDateRange } from "../lib/core/db";
-import { DEFAULT_THEME, URL_CONST } from "../lib/core/constants";
-import { chunkArray, BATCH_GET_CHUNK_SIZE } from "../lib/core/batch";
-import { sendWebHook, WebHookMessages } from "../lib/core/webhook";
+import { hashToken, verifyToken, validateOwnerToken } from "../lib/core/auth.ts";
+import { generatePublicId } from "../lib/core/id.ts";
+import { generateUserHash } from "../lib/core/crypto.ts";
+import { getTodayDateString, getYesterdayDateString, getDateRange } from "../lib/core/db.ts";
+import { DEFAULT_THEME, URL_CONST } from "../lib/core/constants.ts";
+import { chunkArray, BATCH_GET_CHUNK_SIZE } from "../lib/core/batch.ts";
+import { sendWebHook, WebHookMessages } from "../lib/core/webhook.ts";
 
 type Bindings = {
   DB: D1Database;
@@ -124,19 +127,42 @@ async function verifyOwnerToken(
 }
 
 // === Routes ===
+//
+// 「URL を組み立てるだけで全操作できる」昔の Web の再現がプロダクト思想のため、
+// 書き込み系アクションも GET（query パラメータ）で動く。POST では JSON body の
+// パラメータが query より優先される（管理 Web UI が使用）。
+// batch 系（batchGet / batchCreate）だけは配列を JSON body で受ける設計のため POST 専用。
 
-// GET: read-only operations
-app.get("/", async (c) => {
+type AppContext = Context<{ Bindings: Bindings }>;
+
+async function handleVisitAction(c: AppContext) {
   const action = c.req.query("action");
   const db = c.env.DB;
 
-  // INCREMENT (kept as GET for <img> tag compatibility)
+  let body: Record<string, unknown> = {};
+  if (c.req.method === "POST") {
+    try {
+      body = await c.req.json();
+    } catch {
+      body = {};
+    }
+  }
+
+  // body 優先・query フォールバック（GET では常に query から取る）
+  const getParam = (name: string): string | undefined => {
+    const val = body[name];
+    if (typeof val === "string") return val;
+    if (typeof val === "number") return String(val);
+    return c.req.query(name);
+  };
+
+  // INCREMENT (<img> タグからの GET 呼び出しが主)
   if (action === "increment") {
-    const id = c.req.query("id");
-    const format = c.req.query("format") || "json";
-    const theme = c.req.query("theme") || DEFAULT_THEME;
-    const type = c.req.query("type") || "total";
-    const digits = c.req.query("digits");
+    const id = getParam("id");
+    const format = getParam("format") || "json";
+    const theme = getParam("theme") || DEFAULT_THEME;
+    const type = getParam("type") || "total";
+    const digits = getParam("digits");
 
     if (!id) {
       return c.json({ error: "id is required" }, 400);
@@ -220,17 +246,48 @@ app.get("/", async (c) => {
     return c.json({ success: true, data: { ...data, duplicate: !!visited } });
   }
 
-  // GET (public mode only - owner mode uses POST)
+  // GET (owner mode: url + token / public mode: id)
   if (action === "get") {
-    const id = c.req.query("id");
-    const type = (c.req.query("type") || "total") as keyof ReturnType<
+    const url = getParam("url");
+    const token = getParam("token");
+
+    // Owner mode (url + token) - returns settings including webhookUrl
+    if (url && token) {
+      const counter = await getCounterByUrl(db, url);
+      if (!counter) {
+        return c.json({ error: "Counter not found" }, 404);
+      }
+
+      const counterId = (counter as CounterRecord).id.replace("counter:", "");
+      const isOwner = await verifyOwnerToken(db, `counter:${counterId}`, token);
+
+      if (!isOwner) {
+        return c.json({ error: "Invalid token" }, 403);
+      }
+
+      const data = await getCounterData(db, counterId);
+      const metadata = JSON.parse((counter as { metadata: string }).metadata || "{}");
+      return c.json({
+        success: true,
+        data: {
+          ...data,
+          url,
+          settings: {
+            webhookUrl: metadata.webhookUrl || null,
+          },
+        },
+      });
+    }
+
+    const id = getParam("id");
+    const type = (getParam("type") || "total") as keyof ReturnType<
       typeof getCounterData
     > extends Promise<infer T>
       ? keyof T
       : never;
-    const format = c.req.query("format") || "json";
-    const theme = c.req.query("theme") || DEFAULT_THEME;
-    const digits = c.req.query("digits");
+    const format = getParam("format") || "json";
+    const theme = getParam("theme") || DEFAULT_THEME;
+    const digits = getParam("digits");
 
     // Public mode (by id)
     if (!id) {
@@ -266,7 +323,7 @@ app.get("/", async (c) => {
 
   // SUM BY PREFIX
   if (action === "sumByPrefix") {
-    const prefix = c.req.query("prefix");
+    const prefix = getParam("prefix");
     if (!prefix) {
       return c.json({ error: "prefix is required" }, 400);
     }
@@ -290,76 +347,10 @@ app.get("/", async (c) => {
     return c.json({ success: true, total: row?.total ?? 0 });
   }
 
-  return c.json(
-    {
-      error:
-        "Invalid action. Use GET: get, increment, sumByPrefix. Use POST: get (owner), create, update, set, delete, batchGet, batchCreate",
-    },
-    400
-  );
-});
-
-// POST: mutating operations
-app.post("/", async (c) => {
-  const action = c.req.query("action");
-  const db = c.env.DB;
-
-  let body: Record<string, string | undefined>;
-  try {
-    body = await c.req.json();
-  } catch {
-    body = {};
-  }
-
-  // Get param from body first, then query string (non-sensitive params only)
-  const getParam = (name: string): string | undefined => {
-    return (body[name] as string | undefined) ?? c.req.query(name);
-  };
-
-  // Get sensitive param from body only (never from query string to avoid URL exposure)
-  const getSecureParam = (name: string): string | undefined => {
-    return body[name] as string | undefined;
-  };
-
-  // GET (owner mode - token in body, not URL)
-  if (action === "get") {
-    const url = getParam("url");
-    const token = getSecureParam("token");
-
-    if (!url || !token) {
-      return c.json({ error: "url and token are required for owner-mode get via POST" }, 400);
-    }
-
-    const counter = await getCounterByUrl(db, url);
-    if (!counter) {
-      return c.json({ error: "Counter not found" }, 404);
-    }
-
-    const counterId = (counter as CounterRecord).id.replace("counter:", "");
-    const isOwner = await verifyOwnerToken(db, `counter:${counterId}`, token);
-
-    if (!isOwner) {
-      return c.json({ error: "Invalid token" }, 403);
-    }
-
-    const data = await getCounterData(db, counterId);
-    const metadata = JSON.parse((counter as { metadata: string }).metadata || "{}");
-    return c.json({
-      success: true,
-      data: {
-        ...data,
-        url,
-        settings: {
-          webhookUrl: metadata.webhookUrl || null,
-        },
-      },
-    });
-  }
-
   // CREATE
   if (action === "create") {
     const url = getParam("url");
-    const token = getSecureParam("token");
+    const token = getParam("token");
     const webhookUrl = getParam("webhookUrl");
 
     if (!url || !token) {
@@ -409,7 +400,7 @@ app.post("/", async (c) => {
   // UPDATE (owner only) - update value and/or settings
   if (action === "update") {
     const url = getParam("url");
-    const token = getSecureParam("token");
+    const token = getParam("token");
     const value = getParam("value");
     const webhookUrl = getParam("webhookUrl");
 
@@ -475,7 +466,7 @@ app.post("/", async (c) => {
   // SET (owner only) - deprecated, use update instead
   if (action === "set") {
     const url = getParam("url");
-    const token = getSecureParam("token");
+    const token = getParam("token");
     const value = getParam("value");
 
     if (!url || !token || value === undefined) {
@@ -514,7 +505,7 @@ app.post("/", async (c) => {
   // DELETE (owner only)
   if (action === "delete") {
     const url = getParam("url");
-    const token = getSecureParam("token");
+    const token = getParam("token");
 
     if (!url || !token) {
       return c.json({ error: "url and token are required" }, 400);
@@ -544,8 +535,12 @@ app.post("/", async (c) => {
     return c.json({ success: true, message: "Counter deleted" });
   }
 
-  // BATCH CREATE
+  // BATCH CREATE (POST 専用: items 配列を JSON body で受ける)
   if (action === "batchCreate") {
+    if (c.req.method !== "POST") {
+      return c.json({ error: "batchCreate requires POST with a JSON body" }, 400);
+    }
+
     const token = body.token as string | undefined;
     const items = body.items as Array<{ id: string; url: string }> | undefined;
 
@@ -618,8 +613,12 @@ app.post("/", async (c) => {
     return c.json({ success: true, created, skipped });
   }
 
-  // BATCH GET
+  // BATCH GET (POST 専用: ids 配列を JSON body で受ける)
   if (action === "batchGet") {
+    if (c.req.method !== "POST") {
+      return c.json({ error: "batchGet requires POST with a JSON body" }, 400);
+    }
+
     const ids = body.ids as string[] | undefined;
 
     if (!Array.isArray(ids) || ids.length === 0) {
@@ -711,11 +710,14 @@ app.post("/", async (c) => {
   return c.json(
     {
       error:
-        "Invalid action for POST. Use: get (owner), create, update, set, delete, batchGet, batchCreate",
+        "Invalid action. Use: get, increment, sumByPrefix, create, update, set, delete (GET or POST), batchGet, batchCreate (POST only)",
     },
     400
   );
-});
+}
+
+app.get("/", handleVisitAction);
+app.post("/", handleVisitAction);
 
 // === SVG Generator ===
 function generateCounterSVG(value: string, theme: string): string {
