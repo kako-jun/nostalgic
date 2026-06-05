@@ -13,12 +13,34 @@ const RANKING_I18N = {
     noData: "データがありません",
     noRankings: "まだランキングがありません",
     anonymous: "ああああ",
+    networkError: "ネットワークエラー",
+    errors: {
+      "Ranking not found": "ランキングが見つかりません",
+      "id is required": "ID が必要です",
+      "id and score are required": "ID とスコアが必要です",
+      "score must be a number": "スコアは数値で入力してください",
+      "Failed to load ranking data": "ランキングデータの読み込みに失敗しました",
+      "Rate limit exceeded. Please try again later.":
+        "アクセスが集中しています。\nしばらくしてからもう一度お試しください",
+    },
+    voteRateLimitError: (n) => `連投制限中です。\nあと ${n} 秒待ってから投票してください`,
   },
   en: {
     loading: "Loading...",
     noData: "No data available",
     noRankings: "No rankings yet",
     anonymous: "Anonymous",
+    networkError: "Network error",
+    errors: {
+      "Ranking not found": "Ranking not found",
+      "id is required": "id is required",
+      "id and score are required": "id and score are required",
+      "score must be a number": "score must be a number",
+      "Failed to load ranking data": "Failed to load ranking data",
+      "Rate limit exceeded. Please try again later.":
+        "Rate limit exceeded.\nPlease try again later.",
+    },
+    voteRateLimitError: (n) => `Please wait ${n} seconds before voting again`,
   },
 };
 
@@ -29,6 +51,19 @@ function getRankingLang(element) {
 
 function getRankingTranslations(element) {
   return RANKING_I18N[getRankingLang(element)] || RANKING_I18N.en;
+}
+
+function translateRankingError(message, element) {
+  const t = getRankingTranslations(element);
+  if (t.errors[message]) {
+    return t.errors[message];
+  }
+  // Dynamic pattern (vote interval rate limit) — API は 429 で残り秒数を返す
+  const voteRateLimitMatch = message.match(/^Please wait (\d+) seconds before voting again$/);
+  if (voteRateLimitMatch) {
+    return t.voteRateLimitError(voteRateLimitMatch[1]);
+  }
+  return message;
 }
 
 class NostalgicRanking extends HTMLElement {
@@ -134,7 +169,7 @@ class NostalgicRanking extends HTMLElement {
   async loadRankingData() {
     const id = this.safeGetAttribute("id");
     if (!id) {
-      this.renderError("ID attribute is required");
+      this.renderError(translateRankingError("id is required", this));
       return;
     }
 
@@ -156,11 +191,11 @@ class NostalgicRanking extends HTMLElement {
       if (data.success) {
         this.rankingData = data.data;
       } else {
-        this.renderError(data.error || "Failed to load ranking data");
+        this.renderError(translateRankingError(data.error || "Failed to load ranking data", this));
         return;
       }
     } catch (error) {
-      this.renderError(`Network error: ${error.message}`);
+      this.renderError(`${this.t.networkError}: ${error.message}`);
       return;
     } finally {
       this.loading = false;
@@ -517,6 +552,8 @@ class NostalgicRanking extends HTMLElement {
           color: #d32f2f;
           font-size: 12px;
           min-width: 200px;
+          /* 案内文は文単位で \n を挿入しているため、改行をそのまま反映する。 */
+          white-space: pre-line;
         }
       </style>
       <div class="error-container">

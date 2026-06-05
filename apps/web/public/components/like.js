@@ -10,9 +10,25 @@
 const LIKE_I18N = {
   ja: {
     errorIdRequired: "エラー: id属性が必要です",
+    networkError: "ネットワークエラー",
+    errors: {
+      "Like service not found": "いいねサービスが見つかりません",
+      "id is required": "ID が必要です",
+      "API returned an error": "APIエラーが発生しました",
+      "Rate limit exceeded. Please try again later.":
+        "アクセスが集中しています。\nしばらくしてからもう一度お試しください",
+    },
   },
   en: {
     errorIdRequired: "Error: id attribute is required",
+    networkError: "Network error",
+    errors: {
+      "Like service not found": "Like service not found",
+      "id is required": "id is required",
+      "API returned an error": "API returned an error",
+      "Rate limit exceeded. Please try again later.":
+        "Rate limit exceeded.\nPlease try again later.",
+    },
   },
 };
 
@@ -23,6 +39,14 @@ function getLikeLang(element) {
 
 function getLikeTranslations(element) {
   return LIKE_I18N[getLikeLang(element)] || LIKE_I18N.en;
+}
+
+function translateLikeError(message, element) {
+  const t = getLikeTranslations(element);
+  if (t.errors[message]) {
+    return t.errors[message];
+  }
+  return message;
 }
 
 class NostalgicLike extends HTMLElement {
@@ -297,9 +321,11 @@ class NostalgicLike extends HTMLElement {
         this.likeData = responseData.data;
         NostalgicLike.setCachedData(baseUrl, id, responseData.data);
       } else {
-        throw new Error(responseData.error || "API returned an error");
+        throw new Error(translateLikeError(responseData.error || "API returned an error", this));
       }
     } catch (error) {
+      // Like ボタンは小さなインライン Widget のため、トグル失敗時に本体をエラー表示へ置き換えない（サイレント劣化が意図）。
+      // エラー内容は console に出す。translateLikeError は将来エラーを可視化する場合に備えた整備。
       console.error("nostalgic-like: Toggle failed:", error);
     }
 
@@ -314,6 +340,8 @@ class NostalgicLike extends HTMLElement {
           display: inline-block;
           color: red;
           font-size: 12px;
+          /* 案内文は文単位で \n を挿入しているため、改行をそのまま反映する。 */
+          white-space: pre-line;
         }
       </style>
       <span>${message}</span>
