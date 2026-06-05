@@ -51,10 +51,10 @@ const BBS_I18N = {
       "Failed to post message": "メッセージの投稿に失敗しました",
       "Failed to delete message": "メッセージの削除に失敗しました",
       "Rate limit exceeded. Please try again later.":
-        "アクセスが集中しています。しばらくしてからもう一度お試しください",
+        "アクセスが集中しています。\nしばらくしてからもう一度お試しください",
     },
     charLimitError: (n) => `メッセージは${n}文字以内で入力してください`,
-    rateLimitError: (n) => `連投制限中です。あと ${n} 秒待ってから投稿してください`,
+    rateLimitError: (n) => `連投制限中です。\nあと ${n} 秒待ってから投稿してください`,
   },
   en: {
     loading: "Loading...",
@@ -99,7 +99,7 @@ const BBS_I18N = {
       "Failed to post message": "Failed to post message",
       "Failed to delete message": "Failed to delete message",
       "Rate limit exceeded. Please try again later.":
-        "Rate limit exceeded. Please try again later.",
+        "Rate limit exceeded.\nPlease try again later.",
     },
     charLimitError: (n) => `Message must be ${n} characters or less`,
     rateLimitError: (n) => `Please wait ${n} seconds before posting again`,
@@ -919,6 +919,9 @@ class NostalgicBBS extends HTMLElement {
           border-radius: 2px;
           font-size: 13px;
           display: none;
+          /* 案内文は文単位（"。"区切り）で \n を挿入しているため、改行をそのまま反映する。
+             コンテナ幅で文の途中折返しになるのを防ぐ（Issue #26 オーナー実機指摘）。 */
+          white-space: pre-line;
         }
         .message-area.error {
           background: #ffebee;

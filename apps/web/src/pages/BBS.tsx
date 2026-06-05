@@ -11,16 +11,18 @@ import { bbsEmbedConfig } from "../config/embedConfigs";
 import { API_BASE } from "../config/commonSteps";
 
 // 埋め込みページ用の多言語テキスト
+// posted は文単位（"。" / "!" 区切り）で行を分けて配列で持ち、行ごとに描画する。
+// コンテナ幅での文の途中折返しを避ける（Issue #26 オーナー実機指摘）。
 const embedTexts = {
   ja: {
     title: "ここにコメントを書き込んでください！",
     note: "※アカウント不要で誰でも書き込めます",
-    posted: "書き込みありがとうございます。元のページに戻って再読み込みすると反映されます。",
+    posted: ["書き込みありがとうございます。", "元のページに戻って再読み込みすると反映されます。"],
   },
   en: {
     title: "Leave a comment here!",
     note: "*No account required - anyone can post",
-    posted: "Thanks for posting! Go back to the original page and reload to see it reflected.",
+    posted: ["Thanks for posting!", "Go back to the original page and reload to see it reflected."],
   },
 };
 
@@ -525,7 +527,12 @@ export default function BBSPage() {
               padding: "10px 14px",
             }}
           >
-            {t.posted}
+            {t.posted.map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < t.posted.length - 1 && <br />}
+              </span>
+            ))}
           </p>
         )}
         <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>
