@@ -1,7 +1,7 @@
 /**
  * lookup.ts のユニットテスト
  *
- * D1 の最小 fake を使い、BBS / Ranking / Yokoso の URL owner lookup が
+ * D1 の最小 fake を使い、Counter / Like / Ranking / BBS / Yokoso の URL owner lookup が
  * 順序保持・重複保持・missing/invalid token を正規形で返すことを確認する。
  */
 
