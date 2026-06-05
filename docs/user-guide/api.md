@@ -6,26 +6,31 @@ Nostalgic is a comprehensive platform that recreates nostalgic web tools (Counte
 
 ## API Architecture
 
-All services use the same URL pattern with action parameters. Public reads use **GET**.
-Owner actions use **POST** with parameters in the JSON body so owner tokens are not exposed in URLs:
+All services use the same URL pattern with action parameters. Every action accepts **GET** with query parameters — you can run any of them straight from the browser address bar, like the old web:
 
 ```
-GET  /api/{service}?action=get&id={public-id}
-POST /api/{service}?action={owner-action}
-Body: { "url": "https://your-site.example", "token": "your-token", "...": "..." }
+GET /api/{service}?action=get&id={public-id}
+GET /api/{service}?action={owner-action}&url={URL}&token={TOKEN}&...
+```
+
+POST with a JSON body is also supported (body values take precedence over query parameters). The batch actions (`batchGet`, `batchCreate`, `batchLookup`) are POST-only because they carry array payloads:
+
+```
+POST /api/{service}?action=batchLookup
+Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token" }
 ```
 
 ### 🌐 Why GET-based? 1990s Web Culture Revival
 
-Just like the original 1990s web tools, public display and interaction URLs stay simple enough to paste into a browser, an image tag, or a README:
+Just like the original 1990s web tools, every URL stays simple enough to paste into a browser, an image tag, or a README:
 
-1. **URL-based public reads**: Public display URLs stay simple GET links
+1. **URL-based everything**: Create, update, and display are all plain GET links
 2. **Embeddable images**: Counter, Like, BBS, and Yokoso images can be used directly in HTML and Markdown
 3. **Nostalgic simplicity**: No complex forms needed
-4. **Easy sharing**: Public actions remain shareable URLs
+4. **Easy sharing**: Actions remain shareable URLs
 5. **BBS culture**: Even message posting uses GET parameters, just like the old days
 
-> **Note**: Owner actions use POST so owner tokens are not left in URLs. `batchGet`, `batchCreate`, and `batchLookup` also use POST because they carry arrays that do not fit Nostalgic's URL-first shape cleanly. BBS, Ranking, and Yokoso intentionally use lightweight `lookup` / `batchLookup` instead of heavy `batchGet`: `get` reads service content/settings, while `lookup` only checks URL ownership and returns the generated public ID.
+> **Note**: BBS, Ranking, and Yokoso intentionally use lightweight `lookup` / `batchLookup` instead of heavy `batchGet`: `get` reads service content/settings, while `lookup` only checks URL ownership and returns the generated public ID.
 
 `batchLookup` accepts up to 1000 URLs per request. Internally, Nostalgic may split SQL statements into smaller chunks to stay under D1/SQLite bind-variable limits; this is not a client-visible 100 item API limit, and it is separate from response-size concerns.
 

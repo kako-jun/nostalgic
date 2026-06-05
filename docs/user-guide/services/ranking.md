@@ -6,13 +6,14 @@ Score leaderboard system with automatic sorting, score management, and configura
 
 ## Actions
 
+All actions accept GET with query parameters — you can run any of them straight from the browser address bar, like the old web. POST with a JSON body is also supported (body values take precedence over query parameters). The only exception is `batchLookup`, which requires POST because it takes an array payload.
+
 ### create
 
 Create a new ranking leaderboard.
 
 ```
-POST /api/ranking?action=create
-Body: { "url": "{URL}", "token": "{TOKEN}", "title": "{TITLE}", "maxEntries": 100, "sortOrder": "desc" }
+GET /api/ranking?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxEntries=100&sortOrder=desc
 ```
 
 **Parameters:**
@@ -75,8 +76,7 @@ GET /api/ranking?action=submit&id={ID}&name={PLAYER_NAME}&score={SCORE}
 Update ranking settings (owner only).
 
 ```
-POST /api/ranking?action=update
-Body: { "url": "{URL}", "token": "{TOKEN}", "title": "{TITLE}", "maxEntries": 50, "sortOrder": "desc" }
+GET /api/ranking?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxEntries=50&sortOrder=desc
 ```
 
 **Parameters:**
@@ -111,8 +111,7 @@ At least one of title, maxEntries, sortOrder, or webhookUrl is required.
 Remove a specific player's score.
 
 ```
-POST /api/ranking?action=remove
-Body: { "url": "{URL}", "token": "{TOKEN}", "name": "{PLAYER_NAME}" }
+GET /api/ranking?action=remove&url={URL}&token={TOKEN}&name={PLAYER_NAME}
 ```
 
 **Parameters:**
@@ -139,8 +138,7 @@ Body: { "url": "{URL}", "token": "{TOKEN}", "name": "{PLAYER_NAME}" }
 Clear all scores from the ranking.
 
 ```
-POST /api/ranking?action=clear
-Body: { "url": "{URL}", "token": "{TOKEN}" }
+GET /api/ranking?action=clear&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -211,8 +209,7 @@ GET /api/ranking?action=get&id={ID}&limit={LIMIT}
 Get leaderboard entries and full settings including webhookUrl. Use `lookup` if you only need to know whether a ranking exists for a URL and what its public ID is.
 
 ```
-POST /api/ranking?action=get
-Body: { "url": "https://yoursite.com", "token": "your-token", "limit": 10 }
+GET /api/ranking?action=get&url={URL}&token={TOKEN}&limit=10
 ```
 
 **Parameters:**
@@ -244,11 +241,8 @@ Body: { "url": "https://yoursite.com", "token": "your-token", "limit": 10 }
 
 Look up the public ranking ID for a URL without loading leaderboard entries or settings. This is intended for static site build scripts and integrations that only need to know whether the service exists.
 
-`token` must be sent in the POST body, never in the query string.
-
 ```
-POST /api/ranking?action=lookup
-Body: { "url": "https://mygame.com", "token": "your-token" }
+GET /api/ranking?action=lookup&url={URL}&token={TOKEN}
 ```
 
 **Response (found and authorized):**
@@ -328,8 +322,7 @@ Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token
 Delete a ranking (owner only).
 
 ```
-POST /api/ranking?action=delete
-Body: { "url": "{URL}", "token": "{TOKEN}" }
+GET /api/ranking?action=delete&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -351,17 +344,14 @@ Body: { "url": "{URL}", "token": "{TOKEN}" }
 ### Basic Ranking Setup
 
 ```javascript
-// 1. Create ranking for score-based game (high scores win)
-const response = await fetch("/api/ranking?action=create", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    url: "https://mygame.com",
-    token: "game-secret",
-    maxEntries: 50,
-    sortOrder: "desc",
-  }),
+// 1. Create ranking for score-based game (high scores win) — plain GET, old-web style
+const params = new URLSearchParams({
+  url: "https://mygame.com",
+  token: "game-secret",
+  maxEntries: "50",
+  sortOrder: "desc",
 });
+const response = await fetch(`/api/ranking?action=create&${params}`);
 const data = await response.json();
 console.log("Ranking ID:", data.id);
 
@@ -379,16 +369,13 @@ console.log("Top players:", leaderboard.entries);
 
 ```javascript
 // 1. Create ranking for time-based game (lower times win)
-const response = await fetch("/api/ranking?action=create", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    url: "https://racegame.com",
-    token: "race-secret",
-    maxEntries: 100,
-    sortOrder: "asc",
-  }),
+const params = new URLSearchParams({
+  url: "https://racegame.com",
+  token: "race-secret",
+  maxEntries: "100",
+  sortOrder: "asc",
 });
+const response = await fetch(`/api/ranking?action=create&${params}`);
 const data = await response.json();
 console.log("Race Ranking ID:", data.id);
 
@@ -410,30 +397,25 @@ await fetch(
 await fetch("/api/ranking?action=submit&id=mygame-a7b9c3d4&name=Alice&score=1500");
 
 // Remove cheating player
-await fetch("/api/ranking?action=remove", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ url: "https://mygame.com", token: "game-secret", name: "Cheater" }),
+const removeParams = new URLSearchParams({
+  url: "https://mygame.com",
+  token: "game-secret",
+  name: "Cheater",
 });
+await fetch(`/api/ranking?action=remove&${removeParams}`);
 
 // Clear all scores (reset season)
-await fetch("/api/ranking?action=clear", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ url: "https://mygame.com", token: "game-secret" }),
-});
+const clearParams = new URLSearchParams({ url: "https://mygame.com", token: "game-secret" });
+await fetch(`/api/ranking?action=clear&${clearParams}`);
 
 // Update settings
-await fetch("/api/ranking?action=update", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    url: "https://mygame.com",
-    token: "game-secret",
-    maxEntries: 50,
-    sortOrder: "asc",
-  }),
+const updateParams = new URLSearchParams({
+  url: "https://mygame.com",
+  token: "game-secret",
+  maxEntries: "50",
+  sortOrder: "asc",
 });
+await fetch(`/api/ranking?action=update&${updateParams}`);
 ```
 
 ## Features

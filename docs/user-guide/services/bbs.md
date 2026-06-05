@@ -6,13 +6,14 @@ Message board service with customizable dropdown selections and author-based mes
 
 ## Actions
 
+All actions accept GET with query parameters — you can run any of them straight from the browser address bar, like the old web. POST with a JSON body is also supported (body values take precedence over query parameters). The only exception is `batchLookup`, which requires POST because it takes an array payload.
+
 ### create
 
 Create a new BBS message board.
 
 ```
-POST /api/bbs?action=create
-Body: { "url": "{URL}", "token": "{TOKEN}", "title": "{TITLE}", "maxMessages": 100, "messagesPerPage": 20 }
+GET /api/bbs?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxMessages=100&messagesPerPage=20
 ```
 
 **Parameters:**
@@ -96,8 +97,7 @@ GET /api/bbs?action=update&id={ID}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
 #### Message Update - Owner mode (admin)
 
 ```
-POST /api/bbs?action=update
-Body: { "url": "{URL}", "token": "{TOKEN}", "messageId": "{MESSAGE_ID}", "message": "{NEW_MESSAGE}" }
+GET /api/bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
 ```
 
 **Parameters:**
@@ -125,8 +125,7 @@ Body: { "url": "{URL}", "token": "{TOKEN}", "messageId": "{MESSAGE_ID}", "messag
 Update BBS settings without messageId parameter.
 
 ```
-POST /api/bbs?action=update
-Body: { "url": "{URL}", "token": "{TOKEN}", "title": "{TITLE}", "maxMessages": 200, "messagesPerPage": 20 }
+GET /api/bbs?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxMessages=200&messagesPerPage=20
 ```
 
 **Parameters:**
@@ -172,8 +171,7 @@ GET /api/bbs?action=remove&id={ID}&messageId={MESSAGE_ID}
 **Owner mode (admin):**
 
 ```
-POST /api/bbs?action=remove
-Body: { "url": "{URL}", "token": "{TOKEN}", "messageId": "{MESSAGE_ID}" }
+GET /api/bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
 ```
 
 **Parameters:**
@@ -200,8 +198,7 @@ Body: { "url": "{URL}", "token": "{TOKEN}", "messageId": "{MESSAGE_ID}" }
 Clear all messages (owner only).
 
 ```
-POST /api/bbs?action=clear
-Body: { "url": "{URL}", "token": "{TOKEN}" }
+GET /api/bbs?action=clear&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -293,8 +290,7 @@ Note: In GitHub README, the image links to a page where users can post messages.
 Get messages and full settings including webhookUrl. Use `lookup` if you only need to know whether a BBS exists for a URL and what its public ID is.
 
 ```
-POST /api/bbs?action=get
-Body: { "url": "https://yoursite.com", "token": "your-token", "limit": 100 }
+GET /api/bbs?action=get&url={URL}&token={TOKEN}&limit=100
 ```
 
 **Parameters:**
@@ -331,11 +327,8 @@ Body: { "url": "https://yoursite.com", "token": "your-token", "limit": 100 }
 
 Look up the public BBS ID for a URL without loading messages or settings. This is intended for static site build scripts and integrations that only need to know whether the service exists.
 
-`token` must be sent in the POST body, never in the query string.
-
 ```
-POST /api/bbs?action=lookup
-Body: { "url": "https://yoursite.com", "token": "your-token" }
+GET /api/bbs?action=lookup&url={URL}&token={TOKEN}
 ```
 
 **Response (found and authorized):**
@@ -415,8 +408,7 @@ Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token
 Delete a BBS (owner only).
 
 ```
-POST /api/bbs?action=delete
-Body: { "url": "{URL}", "token": "{TOKEN}" }
+GET /api/bbs?action=delete&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -438,17 +430,14 @@ Body: { "url": "{URL}", "token": "{TOKEN}" }
 ### Basic BBS Setup
 
 ```javascript
-// 1. Create BBS
-const response = await fetch("/api/bbs?action=create", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    url: "https://mysite.com",
-    token: "my-secret",
-    title: "My BBS",
-    maxMessages: 500,
-  }),
+// 1. Create BBS — plain GET, old-web style
+const params = new URLSearchParams({
+  url: "https://mysite.com",
+  token: "my-secret",
+  title: "My BBS",
+  maxMessages: "500",
 });
+const response = await fetch(`/api/bbs?action=create&${params}`);
 
 const data = await response.json();
 console.log("BBS ID:", data.id);
@@ -473,11 +462,8 @@ await fetch(
 await fetch("/api/bbs?action=remove&id=mysite-a7b9c3d4&messageId=abc123def456");
 
 // Clear all messages (owner only)
-await fetch("/api/bbs?action=clear", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ url: "https://mysite.com", token: "my-secret" }),
-});
+const clearParams = new URLSearchParams({ url: "https://mysite.com", token: "my-secret" });
+await fetch(`/api/bbs?action=clear&${clearParams}`);
 ```
 
 ## Features
