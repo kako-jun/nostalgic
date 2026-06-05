@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import NostalgicLayout from "../components/NostalgicLayout";
 import BBSFeaturesTab from "../components/bbs/BBSFeaturesTab";
@@ -15,10 +15,12 @@ const embedTexts = {
   ja: {
     title: "ここにコメントを書き込んでください！",
     note: "※アカウント不要で誰でも書き込めます",
+    posted: "書き込みありがとうございます。元のページに戻って再読み込みすると反映されます。",
   },
   en: {
     title: "Leave a comment here!",
     note: "*No account required - anyone can post",
+    posted: "Thanks for posting! Go back to the original page and reload to see it reflected.",
   },
 };
 
@@ -82,6 +84,17 @@ export default function BBSPage() {
 
   // Language demo state
   const [demoLang, setDemoLang] = useState<"" | "ja" | "en">("");
+
+  // 埋め込みページで投稿/編集/削除が成功したらリロード誘導を表示する
+  const [embedPosted, setEmbedPosted] = useState(false);
+
+  // nostalgic-bbs コンポーネントが成功時に発火する CustomEvent を拾う（埋め込み表示時のみ意味を持つ）
+  useEffect(() => {
+    if (!embedId) return;
+    const handlePosted = () => setEmbedPosted(true);
+    document.addEventListener("nostalgic-bbs-posted", handlePosted);
+    return () => document.removeEventListener("nostalgic-bbs-posted", handlePosted);
+  }, [embedId]);
 
   // Field values for StepRenderer
   const fieldValues = {
@@ -498,6 +511,23 @@ export default function BBSPage() {
           <span style={{ fontSize: "12px", color: "#666" }}>{t.note}</span>
         </p>
         <nostalgic-bbs id={embedId!} theme="light" lang={lang} />
+        {embedPosted && (
+          <p
+            style={{
+              margin: 0,
+              maxWidth: "480px",
+              textAlign: "center",
+              fontWeight: "bold",
+              color: "#1b5e20",
+              backgroundColor: "#ccffcc",
+              border: "2px solid #2e7d32",
+              borderRadius: "4px",
+              padding: "10px 14px",
+            }}
+          >
+            {t.posted}
+          </p>
+        )}
         <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>
           Powered by{" "}
           <a
