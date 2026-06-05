@@ -1,7 +1,7 @@
 import { GreenParam } from "../../components/ApiUrlDisplay";
 import { API_BASE, COMMON_FIELDS, type StepConfig } from "../commonSteps";
 
-const ENDPOINT = "/api/like";
+const ENDPOINT = "/like";
 
 // Like-specific format options (no image theme)
 const likeFormatField = {

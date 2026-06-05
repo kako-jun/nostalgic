@@ -1,7 +1,7 @@
 import { GreenParam } from "../../components/ApiUrlDisplay";
 import { API_BASE, COMMON_FIELDS, type StepConfig } from "../commonSteps";
 
-const ENDPOINT = "/api/bbs";
+const ENDPOINT = "/bbs";
 
 // Create step (STEP 1) - with additional fields for BBS
 const createStep: StepConfig = {

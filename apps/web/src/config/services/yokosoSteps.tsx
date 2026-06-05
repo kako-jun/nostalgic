@@ -1,7 +1,7 @@
 import { GreenParam } from "../../components/ApiUrlDisplay";
 import { API_BASE, COMMON_FIELDS, type StepConfig } from "../commonSteps";
 
-const ENDPOINT = "/api/yokoso";
+const ENDPOINT = "/yokoso";
 
 // Yokoso-specific fields
 const modeField = {

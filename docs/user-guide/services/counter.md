@@ -6,14 +6,14 @@ Traditional visitor counter that tracks visits across multiple time periods with
 
 ## Actions
 
-All actions accept GET with query parameters — you can run any of them straight from the browser address bar, like the old web. POST with a JSON body is also supported (body values take precedence over query parameters). The only exceptions are `batchGet` and `batchCreate`, which require POST because they take array payloads.
+All actions accept GET with query parameters — you can run any of them straight from the browser address bar, like the old web. POST with a JSON body is also supported (body values take precedence over query parameters). The only exceptions are `batchGet` and `batchCreate`, which require POST because they take array payloads. The base URL is `https://api.nostalgic.llll-ll.com`, so the paths below resolve to e.g. `https://api.nostalgic.llll-ll.com/visit?action=create&...`.
 
 ### create
 
 Create a new counter.
 
 ```
-GET /api/visit?action=create&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
+GET /visit?action=create&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
@@ -38,7 +38,7 @@ GET /api/visit?action=create&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 Count up the counter (automatic duplicate prevention).
 
 ```
-GET /api/visit?action=increment&id={ID}&format={FORMAT}&theme={THEME}&type={TYPE}
+GET /visit?action=increment&id={ID}&format={FORMAT}&theme={THEME}&type={TYPE}
 ```
 
 **Parameters:**
@@ -82,7 +82,7 @@ Get counter data or image.
 #### Public Mode (by ID)
 
 ```
-GET /api/visit?action=get&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
+GET /visit?action=get&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 ```
 
 **Parameters:**
@@ -126,7 +126,7 @@ GET /api/visit?action=get&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 Get full settings including webhookUrl.
 
 ```
-GET /api/visit?action=get&url={URL}&token={TOKEN}
+GET /visit?action=get&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -156,7 +156,7 @@ GET /api/visit?action=get&url={URL}&token={TOKEN}
 Update counter value and/or settings (owner only).
 
 ```
-GET /api/visit?action=update&url={URL}&token={TOKEN}&value=12345&webhookUrl={WEBHOOK_URL}
+GET /visit?action=update&url={URL}&token={TOKEN}&value=12345&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
@@ -187,7 +187,7 @@ Only specify the parameters you want to change.
 Delete a counter (owner only).
 
 ```
-GET /api/visit?action=delete&url={URL}&token={TOKEN}
+GET /visit?action=delete&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -209,7 +209,7 @@ GET /api/visit?action=delete&url={URL}&token={TOKEN}
 Sum counter values by ID prefix. Useful for aggregating all counters under a common prefix (e.g., all pages of a site).
 
 ```
-GET /api/visit?action=sumByPrefix&prefix={PREFIX}
+GET /visit?action=sumByPrefix&prefix={PREFIX}
 ```
 
 **Parameters:**
@@ -229,7 +229,9 @@ GET /api/visit?action=sumByPrefix&prefix={PREFIX}
 
 ```javascript
 // Sum all counters for osaka-kenpo (e.g., osaka-kenpo-art1, osaka-kenpo-art2, ...)
-const response = await fetch("/api/visit?action=sumByPrefix&prefix=osaka-kenpo");
+const response = await fetch(
+  "https://api.nostalgic.llll-ll.com/visit?action=sumByPrefix&prefix=osaka-kenpo"
+);
 const { total } = await response.json();
 console.log("Total views:", total);
 ```
@@ -241,7 +243,7 @@ console.log("Total views:", total);
 Get counter values for multiple IDs in a single request.
 
 ```
-POST /api/visit?action=batchGet
+POST /visit?action=batchGet
 Content-Type: application/json
 
 {
@@ -278,7 +280,7 @@ Content-Type: application/json
 Create multiple counters in a single request. Existing IDs/URLs are skipped.
 
 ```
-POST /api/visit?action=batchCreate
+POST /visit?action=batchCreate
 Content-Type: application/json
 
 {
@@ -379,7 +381,9 @@ This prevents TypeScript build errors when using Web Components in React/Next.js
 
 ```javascript
 // 1. Create counter
-const response = await fetch("/api/visit?action=create&url=https://myblog.com&token=my-secret");
+const response = await fetch(
+  "https://api.nostalgic.llll-ll.com/visit?action=create&url=https://myblog.com&token=my-secret"
+);
 const data = await response.json();
 console.log("Counter ID:", data.id);
 
@@ -424,12 +428,14 @@ document.body.innerHTML += `
 
 ```javascript
 // Count manually (no automatic counting)
-const count = await fetch("/api/visit?action=increment&id=blog-a7b9c3d4");
+const count = await fetch(
+  "https://api.nostalgic.llll-ll.com/visit?action=increment&id=blog-a7b9c3d4"
+);
 const data = await count.json();
 
 // Get as image
 document.querySelector("#counter").src =
-  `/api/visit?action=get&id=blog-a7b9c3d4&type=total&theme=light`;
+  `https://api.nostalgic.llll-ll.com/visit?action=get&id=blog-a7b9c3d4&type=total&theme=light`;
 ```
 
 ## Security Notes

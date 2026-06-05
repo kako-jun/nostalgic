@@ -181,14 +181,14 @@ if (!response.ok) {
 ```javascript
 // ✅ OK: 未指定属性はURLから除外
 const format = this.safeGetAttribute("format");
-let url = `${baseUrl}/api/service?action=display&id=${id}`;
+let url = `${baseUrl}/${service}?action=display&id=${id}`;
 if (format) {
   url += `&format=${format}`;
 }
 
 // ❌ NG: nullやundefinedをURLに含める
 const format = this.safeGetAttribute("format") || "default";
-const url = `${baseUrl}/api/service?action=display&id=${id}&format=${format}`;
+const url = `${baseUrl}/${service}?action=display&id=${id}&format=${format}`;
 // → format=nullのようなURLになる危険性
 ```
 

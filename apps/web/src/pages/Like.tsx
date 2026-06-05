@@ -8,6 +8,7 @@ import { highlightPublicId } from "../components/ApiUrlDisplay";
 import { callApi, callApiWithFormat } from "../utils/apiHelpers";
 import { likeSteps } from "../config/services/likeSteps";
 import { likeEmbedConfig } from "../config/embedConfigs";
+import { API_BASE } from "../config/commonSteps";
 
 // 埋め込みページ用の多言語テキスト
 const embedTexts = {
@@ -74,7 +75,7 @@ export default function LikePage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    let apiUrl = `/api/like?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    let apiUrl = `${API_BASE}/like?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setCreateResponse, setPublicId);
@@ -84,7 +85,7 @@ export default function LikePage() {
     e.preventDefault();
     if (!publicId) return;
 
-    const apiUrl = `/api/like?action=get&id=${encodeURIComponent(publicId)}&format=${format}`;
+    const apiUrl = `${API_BASE}/like?action=get&id=${encodeURIComponent(publicId)}&format=${format}`;
     await callApiWithFormat(
       apiUrl,
       format as "json" | "text" | "image",
@@ -97,7 +98,7 @@ export default function LikePage() {
     e.preventDefault();
     if (!publicId) return;
 
-    const apiUrl = `/api/like?action=toggle&id=${encodeURIComponent(publicId)}`;
+    const apiUrl = `${API_BASE}/like?action=toggle&id=${encodeURIComponent(publicId)}`;
     await callApi(apiUrl, setToggleResponse);
   };
 
@@ -105,7 +106,7 @@ export default function LikePage() {
     e.preventDefault();
     if (!publicId) return;
 
-    const apiUrl = `/api/like?action=get&id=${encodeURIComponent(publicId)}`;
+    const apiUrl = `${API_BASE}/like?action=get&id=${encodeURIComponent(publicId)}`;
     await callApi(apiUrl, setGetResponse);
   };
 
@@ -113,7 +114,7 @@ export default function LikePage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    const apiUrl = `/api/like?action=delete&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    const apiUrl = `${API_BASE}/like?action=delete&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setDeleteResponse);
   };
 
@@ -121,7 +122,7 @@ export default function LikePage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    let apiUrl = `/api/like?action=update&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    let apiUrl = `${API_BASE}/like?action=update&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setUpdateSettingsResponse);
@@ -139,7 +140,7 @@ export default function LikePage() {
     if (ids.length === 0) return;
 
     try {
-      const response = await fetch("/api/like?action=batchGet", {
+      const response = await fetch(`${API_BASE}/like?action=batchGet`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids }),
@@ -271,7 +272,7 @@ export default function LikePage() {
               wordBreak: "break-all",
             }}
           >
-            POST /api/like?action=batchGet
+            POST {API_BASE}/like?action=batchGet
             <br />
             Body: {"{"} &quot;ids&quot;: [&quot;id-1&quot;, &quot;id-2&quot;, ...] {"}"}
           </code>

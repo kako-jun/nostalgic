@@ -154,11 +154,11 @@ Visit our interactive demo pages:
 
 ## 🔧 API Architecture
 
-All services follow a unified action-based API pattern. Every action accepts **GET** with query parameters — you can run any of them straight from the browser address bar, like the old web:
+All services follow a unified action-based API pattern. Every action accepts **GET** with query parameters — you can run any of them straight from the browser address bar, like the old web. The base URL is `https://api.nostalgic.llll-ll.com`:
 
 ```
-GET /api/{service}?action=get&id={public-id}
-GET /api/{service}?action={owner-action}&url={your-site}&token={your-token}
+GET /{service}?action=get&id={public-id}
+GET /{service}?action={owner-action}&url={your-site}&token={your-token}
 ```
 
 POST with a JSON body is also supported (body values take precedence over query parameters; `action` is always read from the query string). The batch actions (`batchGet`, `batchCreate`, `batchLookup`) are POST-only because they carry array payloads.

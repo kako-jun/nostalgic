@@ -8,6 +8,7 @@ import { highlightPublicId } from "../components/ApiUrlDisplay";
 import { callApi, callApiWithFormat } from "../utils/apiHelpers";
 import { yokosoSteps } from "../config/services/yokosoSteps";
 import { yokosoEmbedConfig } from "../config/embedConfigs";
+import { API_BASE } from "../config/commonSteps";
 
 export default function YokosoPage() {
   const location = useLocation();
@@ -55,7 +56,7 @@ export default function YokosoPage() {
     e.preventDefault();
     if (!url || !token || !message) return;
 
-    let apiUrl = `/api/yokoso?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}&message=${encodeURIComponent(message)}&mode=${mode}`;
+    let apiUrl = `${API_BASE}/yokoso?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}&message=${encodeURIComponent(message)}&mode=${mode}`;
     if (name) apiUrl += `&name=${encodeURIComponent(name)}`;
     if (avatar) apiUrl += `&avatar=${encodeURIComponent(avatar)}`;
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
@@ -67,7 +68,7 @@ export default function YokosoPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    const apiUrl = `/api/yokoso?action=lookup&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    const apiUrl = `${API_BASE}/yokoso?action=lookup&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setLookupResponse, setPublicId);
   };
 
@@ -75,7 +76,7 @@ export default function YokosoPage() {
     e.preventDefault();
     if (!publicId) return;
 
-    const apiUrl = `/api/yokoso?action=get&id=${encodeURIComponent(publicId)}&format=${format}`;
+    const apiUrl = `${API_BASE}/yokoso?action=get&id=${encodeURIComponent(publicId)}&format=${format}`;
     await callApiWithFormat(
       apiUrl,
       format as "json" | "text" | "image",
@@ -88,7 +89,7 @@ export default function YokosoPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    let apiUrl = `/api/yokoso?action=update&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    let apiUrl = `${API_BASE}/yokoso?action=update&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     if (message) apiUrl += `&message=${encodeURIComponent(message)}`;
     if (mode) apiUrl += `&mode=${mode}`;
     if (name) apiUrl += `&name=${encodeURIComponent(name)}`;
@@ -101,7 +102,7 @@ export default function YokosoPage() {
     e.preventDefault();
     if (!publicId) return;
 
-    const apiUrl = `/api/yokoso?action=get&id=${encodeURIComponent(publicId)}`;
+    const apiUrl = `${API_BASE}/yokoso?action=get&id=${encodeURIComponent(publicId)}`;
     await callApi(apiUrl, setGetResponse);
   };
 
@@ -109,7 +110,7 @@ export default function YokosoPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    const apiUrl = `/api/yokoso?action=delete&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    const apiUrl = `${API_BASE}/yokoso?action=delete&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setDeleteResponse);
   };
 

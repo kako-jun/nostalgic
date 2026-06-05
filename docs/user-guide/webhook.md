@@ -13,19 +13,19 @@ Nostalgicの全サービスはWebHook通知に対応しています。Discord、
 ### サービス作成時
 
 ```
-/api/visit?action=create&url=https://your-site.com&token=yourtoken&webhookUrl=https://discord.com/api/webhooks/xxx
+https://api.nostalgic.llll-ll.com/visit?action=create&url=https://your-site.com&token=yourtoken&webhookUrl=https://discord.com/api/webhooks/xxx
 ```
 
 ### 後から設定/変更
 
 ```
-/api/visit?action=update&url=https://your-site.com&token=yourtoken&webhookUrl=https://hooks.slack.com/xxx
+https://api.nostalgic.llll-ll.com/visit?action=update&url=https://your-site.com&token=yourtoken&webhookUrl=https://hooks.slack.com/xxx
 ```
 
 ### 解除
 
 ```
-/api/visit?action=update&url=https://your-site.com&token=yourtoken&webhookUrl=
+https://api.nostalgic.llll-ll.com/visit?action=update&url=https://your-site.com&token=yourtoken&webhookUrl=
 ```
 
 ## イベント一覧

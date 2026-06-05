@@ -13,7 +13,7 @@ All actions accept GET with query parameters — you can run any of them straigh
 Create a new like button.
 
 ```
-GET /api/like?action=create&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
+GET /like?action=create&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
@@ -37,7 +37,7 @@ GET /api/like?action=create&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 Toggle like/unlike state for current user.
 
 ```
-GET /api/like?action=toggle&id={ID}
+GET /like?action=toggle&id={ID}
 ```
 
 **Parameters:**
@@ -64,7 +64,7 @@ Get current like data.
 #### Public Mode (by ID)
 
 ```
-GET /api/like?action=get&id={ID}&format={FORMAT}
+GET /like?action=get&id={ID}&format={FORMAT}
 ```
 
 **Parameters:**
@@ -102,7 +102,7 @@ Note: In GitHub README, the image links to a page where users can actually click
 Get full settings including webhookUrl.
 
 ```
-GET /api/like?action=get&url={URL}&token={TOKEN}
+GET /like?action=get&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -132,7 +132,7 @@ GET /api/like?action=get&url={URL}&token={TOKEN}
 Update settings (owner only).
 
 ```
-GET /api/like?action=update&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
+GET /like?action=update&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
@@ -159,7 +159,7 @@ GET /api/like?action=update&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 Delete a like button (owner only).
 
 ```
-GET /api/like?action=delete&url={URL}&token={TOKEN}
+GET /like?action=delete&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -183,7 +183,7 @@ GET /api/like?action=delete&url={URL}&token={TOKEN}
 Get like counts for multiple IDs in a single request. Useful for displaying like counts on list pages without making individual API calls for each item.
 
 ```
-POST /api/like?action=batchGet
+POST /like?action=batchGet
 Content-Type: application/json
 
 {
@@ -218,7 +218,7 @@ Content-Type: application/json
 
 ```javascript
 // Fetch like counts for 100 articles in one request
-const response = await fetch("/api/like?action=batchGet", {
+const response = await fetch("https://api.nostalgic.llll-ll.com/like?action=batchGet", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -290,7 +290,9 @@ This prevents TypeScript build errors when using Web Components in React/Next.js
 
 ```javascript
 // 1. Create like button
-const response = await fetch("/api/like?action=create&url=https://myblog.com&token=my-secret");
+const response = await fetch(
+  "https://api.nostalgic.llll-ll.com/like?action=create&url=https://myblog.com&token=my-secret"
+);
 const data = await response.json();
 console.log("Like Button ID:", data.id);
 
@@ -326,12 +328,14 @@ document.body.innerHTML += `
 
 ```javascript
 // Toggle like manually
-const response = await fetch("/api/like?action=toggle&id=myblog-a7b9c3d4");
+const response = await fetch(
+  "https://api.nostalgic.llll-ll.com/like?action=toggle&id=myblog-a7b9c3d4"
+);
 const data = await response.json();
 console.log("User liked:", data.userLiked, "Total:", data.total);
 
 // Get current state
-const current = await fetch("/api/like?action=get&id=myblog-a7b9c3d4");
+const current = await fetch("https://api.nostalgic.llll-ll.com/like?action=get&id=myblog-a7b9c3d4");
 const state = await current.json();
 console.log("Current likes:", state.total);
 ```

@@ -52,7 +52,7 @@ All actions accept GET with query parameters — you can run any of them straigh
 Create a new yokoso.
 
 ```
-GET /api/yokoso?action=create&url={URL}&token={TOKEN}&message={MESSAGE}&mode=badge
+GET /yokoso?action=create&url={URL}&token={TOKEN}&message={MESSAGE}&mode=badge
 ```
 
 **Parameters:**
@@ -82,7 +82,7 @@ Get current yokoso data.
 #### Public Mode (by ID)
 
 ```
-GET /api/yokoso?action=get&id={ID}&format={FORMAT}
+GET /yokoso?action=get&id={ID}&format={FORMAT}
 ```
 
 **Parameters:**
@@ -121,7 +121,7 @@ GET /api/yokoso?action=get&id={ID}&format={FORMAT}
 Get message data and full settings including webhookUrl. Use `lookup` if you only need to know whether a yokoso exists for a URL and what its public ID is.
 
 ```
-GET /api/yokoso?action=get&url={URL}&token={TOKEN}
+GET /yokoso?action=get&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -154,7 +154,7 @@ GET /api/yokoso?action=get&url={URL}&token={TOKEN}
 Look up the public yokoso ID for a URL without loading message data or settings. This is intended for static site build scripts and integrations that only need to know whether the service exists.
 
 ```
-GET /api/yokoso?action=lookup&url={URL}&token={TOKEN}
+GET /yokoso?action=lookup&url={URL}&token={TOKEN}
 ```
 
 **Response (found and authorized):**
@@ -204,7 +204,7 @@ Invalid tokens are reported per item instead of returning request-level `403`, s
 Look up multiple yokoso URLs in request order. Missing URLs are included as `{ "exists": false }`; found URLs with a wrong token are included as `{ "exists": true, "authorized": false }`. A single request accepts up to 1000 URLs and internally chunks D1 queries to stay under SQLite bind limits.
 
 ```
-POST /api/yokoso?action=batchLookup
+POST /yokoso?action=batchLookup
 Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token" }
 ```
 
@@ -234,7 +234,7 @@ Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token
 Update yokoso message and settings (owner only).
 
 ```
-GET /api/yokoso?action=update&url={URL}&token={TOKEN}&message={MESSAGE}&mode=badge
+GET /yokoso?action=update&url={URL}&token={TOKEN}&message={MESSAGE}&mode=badge
 ```
 
 **Parameters:**
@@ -266,7 +266,7 @@ GET /api/yokoso?action=update&url={URL}&token={TOKEN}&message={MESSAGE}&mode=bad
 Delete a yokoso (owner only).
 
 ```
-GET /api/yokoso?action=delete&url={URL}&token={TOKEN}
+GET /yokoso?action=delete&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -339,7 +339,7 @@ const params = new URLSearchParams({
   token: "my-secret",
   message: "ようこそ！",
 });
-const response = await fetch(`/api/yokoso?action=create&${params}`);
+const response = await fetch(`https://api.nostalgic.llll-ll.com/yokoso?action=create&${params}`);
 const data = await response.json();
 console.log("Yokoso ID:", data.id);
 
@@ -362,7 +362,7 @@ const params = new URLSearchParams({
   name: "kako-jun",
   avatar: "https://github.com/kako-jun.png",
 });
-const response = await fetch(`/api/yokoso?action=create&${params}`);
+const response = await fetch(`https://api.nostalgic.llll-ll.com/yokoso?action=create&${params}`);
 ```
 
 ### Update Yokoso Message
@@ -374,7 +374,7 @@ const params = new URLSearchParams({
   token: "my-secret",
   message: "v2.0リリースしました！",
 });
-await fetch(`/api/yokoso?action=update&${params}`);
+await fetch(`https://api.nostalgic.llll-ll.com/yokoso?action=update&${params}`);
 // The badge/card in README automatically shows new message
 ```
 
