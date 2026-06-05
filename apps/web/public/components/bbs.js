@@ -50,6 +50,8 @@ const BBS_I18N = {
       "Failed to load BBS data": "掲示板データの読み込みに失敗しました",
       "Failed to post message": "メッセージの投稿に失敗しました",
       "Failed to delete message": "メッセージの削除に失敗しました",
+      "Rate limit exceeded. Please try again later.":
+        "アクセスが集中しています。しばらくしてからもう一度お試しください",
     },
     charLimitError: (n) => `メッセージは${n}文字以内で入力してください`,
     rateLimitError: (n) => `連投制限中です。あと ${n} 秒待ってから投稿してください`,
@@ -96,6 +98,8 @@ const BBS_I18N = {
       "Failed to load BBS data": "Failed to load BBS data",
       "Failed to post message": "Failed to post message",
       "Failed to delete message": "Failed to delete message",
+      "Rate limit exceeded. Please try again later.":
+        "Rate limit exceeded. Please try again later.",
     },
     charLimitError: (n) => `Message must be ${n} characters or less`,
     rateLimitError: (n) => `Please wait ${n} seconds before posting again`,
