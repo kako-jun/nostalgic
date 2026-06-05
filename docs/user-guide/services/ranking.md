@@ -468,6 +468,8 @@ Rankings use D1 (SQLite) with indexed ORDER BY for efficient sorting:
 - `lang`: UI language (ja, en) - default: auto-detect from browser (non-Japanese browsers use English)
 - `api-base`: Custom API base URL (optional)
 
+**Localized feedback:** API responses are always returned in English (for example `Please wait 3 seconds before voting again` on the 5-second submit interval). The Web Component translates these into the active `lang` before showing them in the error display, so embedded ranking users see localized guidance instead of raw English errors. Unknown error strings fall through unchanged.
+
 ## TypeScript Support
 
 For TypeScript projects using Web Components, create a `types.d.ts` file in your project root:
