@@ -5,6 +5,7 @@
  * （query フォールバックあり、body 優先）。batch 系のみ配列を body で受けるため POST 専用。
  *
  * GET/POST /?action=get          - Read (public: id / owner: url + token)
+ * GET/POST /?action=lookup       - Owner URL lookup (url, token) - lightweight id check
  * GET/POST /?action=sumByPrefix  - Sum likes by prefix
  * GET/POST /?action=create       - Create a new like service (url, token, ...)
  * GET/POST /?action=toggle       - Toggle like (by id)
@@ -12,6 +13,7 @@
  * GET/POST /?action=delete       - Delete like service (url, token)
  * POST     /?action=batchCreate  - Batch create (body: token, items)
  * POST     /?action=batchGet     - Batch get (body: ids)
+ * POST     /?action=batchLookup  - Owner URL lookup (body: urls, token) - ordered lightweight id checks
  */
 
 import { Hono } from "hono";
@@ -24,6 +26,7 @@ import { URL_CONST } from "../lib/core/constants.ts";
 import { chunkArray, BATCH_GET_CHUNK_SIZE } from "../lib/core/batch.ts";
 import { sendWebHook, WebHookMessages } from "../lib/core/webhook.ts";
 import { runCreateBatch, AlreadyExistsError } from "../lib/core/storage.ts";
+import { batchLookupServices, lookupService, MAX_LOOKUP_BATCH_SIZE } from "../lib/core/lookup.ts";
 
 type Bindings = { DB: D1Database };
 
@@ -101,7 +104,7 @@ async function verifyOwnerToken(
 // 「URL を組み立てるだけで全操作できる」昔の Web の再現がプロダクト思想のため、
 // 書き込み系アクションも GET（query パラメータ）で動く。POST では JSON body の
 // パラメータが query より優先される（管理 Web UI が使用）。
-// batch 系（batchGet / batchCreate）だけは配列を JSON body で受ける設計のため POST 専用。
+// batch 系（batchGet / batchCreate / batchLookup）だけは配列を JSON body で受ける設計のため POST 専用。
 
 type AppContext = Context<{ Bindings: Bindings }>;
 
@@ -212,6 +215,42 @@ async function handleLikeAction(c: AppContext) {
       success: true,
       data: { id, total, liked: isLiked, icon: metadata.icon || "heart" },
     });
+  }
+
+  // LOOKUP (owner URL lookup - lightweight id check, no like values payload)
+  if (action === "lookup") {
+    const url = getParam("url");
+    const token = getParam("token");
+
+    if (!url || !token) {
+      return c.json({ error: "url and token are required for lookup" }, 400);
+    }
+
+    const data = await lookupService(db, "like", url, token);
+    return c.json({ success: true, data });
+  }
+
+  // BATCH LOOKUP (POST 専用: urls 配列を JSON body で受ける)
+  if (action === "batchLookup") {
+    if (c.req.method !== "POST") {
+      return c.json({ error: "batchLookup requires POST with a JSON body" }, 400);
+    }
+
+    const urls = body.urls;
+    const token = getParam("token");
+
+    if (!Array.isArray(urls) || urls.some((url) => typeof url !== "string")) {
+      return c.json({ error: "urls must be an array of strings" }, 400);
+    }
+    if (urls.length > MAX_LOOKUP_BATCH_SIZE) {
+      return c.json({ error: `Maximum ${MAX_LOOKUP_BATCH_SIZE} urls per request` }, 400);
+    }
+    if (!token) {
+      return c.json({ error: "token is required for batchLookup" }, 400);
+    }
+
+    const data = await batchLookupServices(db, "like", urls, token);
+    return c.json({ success: true, data });
   }
 
   // SUM BY PREFIX
@@ -641,7 +680,7 @@ async function handleLikeAction(c: AppContext) {
   return c.json(
     {
       error:
-        "Invalid action. Use: get, sumByPrefix, create, toggle, update, delete (GET or POST), batchGet, batchCreate (POST only)",
+        "Invalid action. Use: get, lookup, sumByPrefix, create, toggle, update, delete (GET or POST), batchGet, batchCreate, batchLookup (POST only)",
     },
     400
   );
