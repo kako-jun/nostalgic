@@ -30,7 +30,7 @@ Just like the original 1990s web tools, every URL stays simple enough to paste i
 4. **Easy sharing**: Actions remain shareable URLs
 5. **BBS culture**: Even message posting uses GET parameters, just like the old days
 
-> **Note**: BBS, Ranking, and Yokoso intentionally use lightweight `lookup` / `batchLookup` instead of heavy `batchGet`: `get` reads service content/settings, while `lookup` only checks URL ownership and returns the generated public ID.
+> **Note**: All services (Counter, Like, BBS, Ranking, Yokoso) provide lightweight `lookup` / `batchLookup` for owner URL → public ID resolution: `get` reads service content/settings, while `lookup` only checks URL ownership and returns the generated public ID. Counter and Like additionally offer `batchGet` for reading many public IDs at once.
 
 `batchLookup` accepts up to 1000 URLs per request. Internally, Nostalgic may split SQL statements into smaller chunks to stay under D1/SQLite bind-variable limits; this is not a client-visible 100 item API limit, and it is separate from response-size concerns.
 

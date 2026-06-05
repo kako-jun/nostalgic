@@ -1,7 +1,7 @@
 /**
  * lookup.ts のユニットテスト
  *
- * D1 の最小 fake を使い、BBS / Ranking / Yokoso の URL owner lookup が
+ * D1 の最小 fake を使い、Counter / Like / Ranking / BBS / Yokoso の URL owner lookup が
  * 順序保持・重複保持・missing/invalid token を正規形で返すことを確認する。
  */
 
@@ -127,6 +127,25 @@ async function makeDb(): Promise<FakeD1Database> {
       url: "https://no-token.example/",
       serviceId: "bbs:bbs-no-token",
       metadata: JSON.stringify({ title: "No Token" }),
+    },
+    {
+      // counter は title を持たない（メタデータは webhookUrl 等のみ）。
+      // lookup 応答に title が漏れないことの検証に使う。
+      id: "counter-a1",
+      type: "counter",
+      url: "https://counter.example/",
+      serviceId: "counter:counter-a1",
+      metadata: JSON.stringify({ webhookUrl: null }),
+      tokenHash: valid,
+    },
+    {
+      // like も同様に title を持たない。
+      id: "like-a1",
+      type: "like",
+      url: "https://like.example/",
+      serviceId: "like:like-a1",
+      metadata: JSON.stringify({ webhookUrl: null, icon: "heart" }),
+      tokenHash: other,
     },
   ]);
 }
@@ -317,4 +336,155 @@ test("batchLookupServices: chunks URL and token queries under D1 bind limit", as
     assert.ok(values.length <= BATCH_GET_CHUNK_SIZE + 2, "URL lookup bind count stays chunked");
     assert.ok(values.length <= 100, "D1 bind count stays under 100");
   }
+});
+
+// --- #23: counter / like の lookup を helper レベルで検証 ---
+
+test("lookupService(counter): authorized は id を返すが title は付かない", async () => {
+  const db = await makeDb();
+  const result = await lookupService(
+    db as unknown as D1Database,
+    "counter",
+    "https://counter.example/",
+    "valid-token"
+  );
+
+  assert.deepEqual(result, {
+    url: "https://counter.example/",
+    exists: true,
+    authorized: true,
+    id: "counter-a1",
+    title: undefined,
+  });
+  assert.equal("title" in result && result.title !== undefined, false);
+});
+
+test("lookupService(like): authorized は id を返すが title は付かない", async () => {
+  const db = await makeDb();
+  const result = await lookupService(
+    db as unknown as D1Database,
+    "like",
+    "https://like.example/",
+    "other-token"
+  );
+
+  assert.deepEqual(result, {
+    url: "https://like.example/",
+    exists: true,
+    authorized: true,
+    id: "like-a1",
+    title: undefined,
+  });
+});
+
+test("lookupService(counter): 未存在 URL は exists false を返す", async () => {
+  const db = await makeDb();
+  const result = await lookupService(
+    db as unknown as D1Database,
+    "counter",
+    "https://missing-counter.example/",
+    "valid-token"
+  );
+
+  assert.deepEqual(result, {
+    url: "https://missing-counter.example/",
+    exists: false,
+  });
+});
+
+test("lookupService(like): token 不一致は authorized false かつ id を隠す", async () => {
+  const db = await makeDb();
+  const result = await lookupService(
+    db as unknown as D1Database,
+    "like",
+    "https://like.example/",
+    "valid-token" // like-a1 の所有者トークンは other-token なので不一致
+  );
+
+  assert.deepEqual(result, {
+    url: "https://like.example/",
+    exists: true,
+    authorized: false,
+    id: undefined,
+    title: undefined,
+  });
+});
+
+test("batchLookupServices(counter): 入力順を保持して結果を返す", async () => {
+  const db = await makeDb();
+  const result = await batchLookupServices(
+    db as unknown as D1Database,
+    "counter",
+    ["https://missing-counter.example/", "https://counter.example/"],
+    "valid-token"
+  );
+
+  assert.equal(result.length, 2);
+  assert.equal(result[0].url, "https://missing-counter.example/");
+  assert.equal(result[0].exists, false);
+  assert.equal(result[1].url, "https://counter.example/");
+  assert.equal(result[1].exists, true);
+  assert.equal(result[1].authorized, true);
+  assert.equal(result[1].id, "counter-a1");
+});
+
+test("batchLookupServices(counter): 空配列は許容して空配列を返す", async () => {
+  const db = await makeDb();
+  const result = await batchLookupServices(
+    db as unknown as D1Database,
+    "counter",
+    [],
+    "valid-token"
+  );
+
+  assert.deepEqual(result, []);
+});
+
+test("batchLookupServices(counter): 境界値 MAX_LOOKUP_BATCH_SIZE - 1 件を処理する", async () => {
+  const valid = await sha256("valid-token");
+  const size = MAX_LOOKUP_BATCH_SIZE - 1;
+  const rows = Array.from({ length: size }, (_, i) => ({
+    id: `counter-${i}`,
+    type: "counter" as const,
+    url: `https://counter.example/${i}`,
+    serviceId: `counter:counter-${i}`,
+    metadata: JSON.stringify({ webhookUrl: null }),
+    tokenHash: valid,
+  }));
+  const db = new FakeD1Database(rows);
+  const urls = rows.map((row) => row.url);
+  const result = await batchLookupServices(
+    db as unknown as D1Database,
+    "counter",
+    urls,
+    "valid-token"
+  );
+
+  assert.equal(result.length, size);
+  assert.equal(
+    result.every((item) => item.exists && item.authorized),
+    true
+  );
+});
+
+test("batchLookupServices(counter): 境界値 MAX_LOOKUP_BATCH_SIZE 件ちょうどを処理する", async () => {
+  const valid = await sha256("valid-token");
+  const rows = Array.from({ length: MAX_LOOKUP_BATCH_SIZE }, (_, i) => ({
+    id: `counter-${i}`,
+    type: "counter" as const,
+    url: `https://counter.example/${i}`,
+    serviceId: `counter:counter-${i}`,
+    metadata: JSON.stringify({ webhookUrl: null }),
+    tokenHash: valid,
+  }));
+  const db = new FakeD1Database(rows);
+  const urls = rows.map((row) => row.url);
+  const result = await batchLookupServices(
+    db as unknown as D1Database,
+    "counter",
+    urls,
+    "valid-token"
+  );
+
+  assert.equal(result.length, MAX_LOOKUP_BATCH_SIZE);
 });

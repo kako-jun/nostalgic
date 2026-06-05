@@ -6,7 +6,7 @@ Toggle-based like/unlike button service with user state tracking. Users can like
 
 ## Actions
 
-All actions accept GET with query parameters — you can run any of them straight from the browser address bar, like the old web. POST with a JSON body is also supported (body values take precedence over query parameters). The only exception is `batchGet`, which requires POST because it takes an array payload.
+All actions accept GET with query parameters — you can run any of them straight from the browser address bar, like the old web. POST with a JSON body is also supported (body values take precedence over query parameters). The only exceptions are `batchGet`, `batchCreate`, and `batchLookup`, which require POST because they take array payloads.
 
 ### create
 
@@ -99,7 +99,7 @@ Note: In GitHub README, the image links to a page where users can actually click
 
 #### Owner Mode (by URL + Token)
 
-Get full settings including webhookUrl.
+Get full settings including webhookUrl. Use `lookup` if you only need to know whether a like service exists for a URL and what its public ID is.
 
 ```
 GET /like?action=get&url={URL}&token={TOKEN}
@@ -124,6 +124,84 @@ GET /like?action=get&url={URL}&token={TOKEN}
       "webhookUrl": "https://hooks.example.com/notify"
     }
   }
+}
+```
+
+### lookup
+
+Look up the public like service ID for a URL without loading like values or settings. This is intended for static site build scripts and integrations that only need to know whether the service exists.
+
+```
+GET /like?action=lookup&url={URL}&token={TOKEN}
+```
+
+**Response (found and authorized):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://yoursite.com",
+    "exists": true,
+    "authorized": true,
+    "id": "yoursite-a7b9c3d4"
+  }
+}
+```
+
+**Response (not found):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://missing.example",
+    "exists": false
+  }
+}
+```
+
+**Response (found but token does not match):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://yoursite.com",
+    "exists": true,
+    "authorized": false
+  }
+}
+```
+
+Invalid tokens are reported per item instead of returning request-level `403`, so batch clients can keep ordered results for every requested URL.
+
+### batchLookup
+
+Look up multiple like service URLs in request order. Missing URLs are included as `{ "exists": false }`; found URLs with a wrong token are included as `{ "exists": true, "authorized": false }`. A single request accepts up to 1000 URLs and internally chunks D1 queries to stay under SQLite bind limits.
+
+```
+POST /like?action=batchLookup
+Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token" }
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "url": "https://a.example",
+      "exists": true,
+      "authorized": true,
+      "id": "a-a7b9c3d4"
+    },
+    {
+      "url": "https://b.example",
+      "exists": false
+    }
+  ]
 }
 ```
 

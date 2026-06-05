@@ -1,7 +1,7 @@
 import { verifyToken } from "./auth.ts";
 import { BATCH_GET_CHUNK_SIZE, chunkArray } from "./batch.ts";
 
-export type LookupServiceType = "bbs" | "ranking" | "yokoso";
+export type LookupServiceType = "counter" | "like" | "bbs" | "ranking" | "yokoso";
 export const MAX_LOOKUP_BATCH_SIZE = 1000;
 
 export type LookupResult = {
