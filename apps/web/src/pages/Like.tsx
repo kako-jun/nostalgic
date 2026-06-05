@@ -86,9 +86,7 @@ export default function LikePage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    let apiUrl = `${API_BASE}/like?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
-    if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
-
+    const apiUrl = `${API_BASE}/like?action=lookup&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setConfirmIdResponse, setPublicId);
   };
 

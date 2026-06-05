@@ -70,22 +70,14 @@ const confirmIdStep: StepConfig = {
   buildApiUrl: (values) => {
     const url = values.url || "サイトURL";
     const token = values.token || "オーナートークン";
-    const webhookUrl = values.webhookUrl;
-    let apiUrl = `${API_BASE}${ENDPOINT}?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
-    if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
-    return apiUrl;
+    return `${API_BASE}${ENDPOINT}?action=lookup&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
   },
   buildApiUrlDisplay: (values) => (
     <>
       {API_BASE}
-      {ENDPOINT}?action=create&url=
+      {ENDPOINT}?action=lookup&url=
       <GreenParam>{values.url || "サイトURL"}</GreenParam>
       &token=<GreenParam>{values.token || "オーナートークン"}</GreenParam>
-      {values.webhookUrl && (
-        <>
-          &webhookUrl=<GreenParam>{encodeURIComponent(values.webhookUrl)}</GreenParam>
-        </>
-      )}
     </>
   ),
 };

@@ -62,9 +62,7 @@ export default function CounterPage() {
     e.preventDefault();
     if (!url || !token) return;
 
-    let apiUrl = `${API_BASE}/visit?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
-    if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
-
+    const apiUrl = `${API_BASE}/visit?action=lookup&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
     await callApi(apiUrl, setConfirmIdResponse, setPublicId);
   };
 
