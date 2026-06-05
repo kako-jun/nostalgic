@@ -508,6 +508,16 @@ Messages are stored in D1 (SQLite) database:
 - `width`: Component width as a CSS length (for example `760`, `760px`, `100%`). Defaults to `100%` and never exceeds the parent width.
 - `api-base`: Custom API base URL (optional)
 
+**Localized feedback:** API responses are always returned in English (for example `Please wait 7 seconds before posting again` on the 10-second post interval, or `Message must be 420 characters or less`). The Web Component translates these into the active `lang` before showing them in the form's message area, so embedded BBS users see localized guidance instead of raw English errors. Unknown error strings fall through unchanged. Successful posts/edits clear the form and show a green success message; both success and error messages stay visible for about 7 seconds.
+
+**Events:** On a successful post, edit, or delete, the component dispatches a `nostalgic-bbs-posted` `CustomEvent` from the `<nostalgic-bbs>` element. It is `bubbles: true` and `composed: true`, so it crosses the shadow DOM boundary and can be observed on `document`. The `detail` payload is `{ id, action }` where `action` is `"post"`, `"update"`, or `"remove"`. The standalone embed page (`/bbs?id=<publicId>`) listens for this event to show a "reload the original page to see your post" notice, since image-embedded BBS views do not auto-refresh the host page.
+
+```js
+document.addEventListener("nostalgic-bbs-posted", (e) => {
+  // e.detail = { id: "yoursite-a7b9c3d4", action: "post" }
+});
+```
+
 ## TypeScript Support
 
 For TypeScript projects using Web Components, create a `types.d.ts` file in your project root:
