@@ -6,7 +6,7 @@ Traditional visitor counter that tracks visits across multiple time periods with
 
 ## Actions
 
-All actions accept GET with query parameters — you can run any of them straight from the browser address bar, like the old web. POST with a JSON body is also supported (body values take precedence over query parameters). The only exceptions are `batchGet` and `batchCreate`, which require POST because they take array payloads. The base URL is `https://api.nostalgic.llll-ll.com`, so the paths below resolve to e.g. `https://api.nostalgic.llll-ll.com/visit?action=create&...`.
+All actions accept GET with query parameters — you can run any of them straight from the browser address bar, like the old web. POST with a JSON body is also supported (body values take precedence over query parameters). The only exceptions are `batchGet`, `batchCreate`, and `batchLookup`, which require POST because they take array payloads. The base URL is `https://api.nostalgic.llll-ll.com`, so the paths below resolve to e.g. `https://api.nostalgic.llll-ll.com/visit?action=create&...`.
 
 ### create
 
@@ -123,7 +123,7 @@ GET /visit?action=get&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 
 #### Owner Mode (by URL + Token)
 
-Get full settings including webhookUrl.
+Get full settings including webhookUrl. Use `lookup` if you only need to know whether a counter exists for a URL and what its public ID is.
 
 ```
 GET /visit?action=get&url={URL}&token={TOKEN}
@@ -148,6 +148,84 @@ GET /visit?action=get&url={URL}&token={TOKEN}
   "settings": {
     "webhookUrl": "https://hooks.example.com/notify"
   }
+}
+```
+
+### lookup
+
+Look up the public counter ID for a URL without loading counter values or settings. This is intended for static site build scripts and integrations that only need to know whether the service exists.
+
+```
+GET /visit?action=lookup&url={URL}&token={TOKEN}
+```
+
+**Response (found and authorized):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://yoursite.com",
+    "exists": true,
+    "authorized": true,
+    "id": "yoursite-a7b9c3d4"
+  }
+}
+```
+
+**Response (not found):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://missing.example",
+    "exists": false
+  }
+}
+```
+
+**Response (found but token does not match):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://yoursite.com",
+    "exists": true,
+    "authorized": false
+  }
+}
+```
+
+Invalid tokens are reported per item instead of returning request-level `403`, so batch clients can keep ordered results for every requested URL.
+
+### batchLookup
+
+Look up multiple counter URLs in request order. Missing URLs are included as `{ "exists": false }`; found URLs with a wrong token are included as `{ "exists": true, "authorized": false }`. A single request accepts up to 1000 URLs and internally chunks D1 queries to stay under SQLite bind limits.
+
+```
+POST /visit?action=batchLookup
+Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token" }
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "url": "https://a.example",
+      "exists": true,
+      "authorized": true,
+      "id": "a-a7b9c3d4"
+    },
+    {
+      "url": "https://b.example",
+      "exists": false
+    }
+  ]
 }
 ```
 
