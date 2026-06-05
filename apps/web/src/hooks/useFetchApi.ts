@@ -2,54 +2,9 @@ import { useState } from "react";
 
 export type ResponseType = "json" | "text" | "svg";
 
-/**
- * Actions that must use POST instead of GET.
- * Owner tokens stay in the request body, and batch payloads do not fit URL-first GET cleanly.
- */
-const POST_ACTIONS = new Set([
-  "create",
-  "update",
-  "set",
-  "delete",
-  "toggle",
-  "post",
-  "submit",
-  "remove",
-  "clear",
-  "batchCreate",
-  "batchGet",
-  "lookup",
-  "batchLookup",
-]);
-
-function shouldUsePost(url: string): boolean {
-  const urlObj = new URL(url, window.location.origin);
-  const action = urlObj.searchParams.get("action");
-  return action !== null && POST_ACTIONS.has(action);
-}
-
-/**
- * For POST requests, move all params except 'action' from URL to JSON body.
- */
-function extractBodyParams(url: string): { cleanUrl: string; bodyParams: Record<string, string> } {
-  const urlObj = new URL(url, window.location.origin);
-  const bodyParams: Record<string, string> = {};
-  const paramsToMove: string[] = [];
-
-  urlObj.searchParams.forEach((_value, key) => {
-    if (key !== "action") paramsToMove.push(key);
-  });
-
-  for (const key of paramsToMove) {
-    const value = urlObj.searchParams.get(key);
-    if (value !== null) {
-      bodyParams[key] = value;
-      urlObj.searchParams.delete(key);
-    }
-  }
-
-  return { cleanUrl: urlObj.toString(), bodyParams };
-}
+// デモページは「表示している GET URL をそのまま叩く」のがプロダクトの体験。
+// 書き込み系アクションも token も query パラメータごと GET で送る（API が全アクション
+// GET 対応）。
 
 interface UseFetchApiReturn {
   response: string;
@@ -69,19 +24,7 @@ export default function useFetchApi(initialType: ResponseType = "json"): UseFetc
     const typeToUse = expectedType || responseType;
 
     try {
-      let res: Response;
-
-      if (shouldUsePost(url)) {
-        const { cleanUrl, bodyParams } = extractBodyParams(url);
-        res = await fetch(cleanUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(bodyParams),
-        });
-      } else {
-        res = await fetch(url, { method: "GET" });
-      }
-
+      const res = await fetch(url, { method: "GET" });
       let responseText = "";
 
       if (typeToUse === "svg") {

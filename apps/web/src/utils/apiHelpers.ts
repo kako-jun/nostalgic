@@ -18,65 +18,9 @@ function translateApiResponse(jsonResponse: Record<string, unknown>): Record<str
   return jsonResponse;
 }
 
-/**
- * Determine if a request should use POST instead of GET.
- * This includes mutating operations, owner-token requests, and batch payloads
- * that do not fit URL-first GET cleanly.
- */
-function shouldUsePost(url: string): boolean {
-  const urlObj = new URL(url, window.location.origin);
-  const action = urlObj.searchParams.get("action");
-
-  // Any request with a token must use POST to keep token out of URL
-  if (urlObj.searchParams.has("token")) {
-    return true;
-  }
-
-  const postActions = [
-    "create",
-    "update",
-    "set",
-    "delete",
-    "toggle",
-    "post",
-    "submit",
-    "remove",
-    "clear",
-    "batchCreate",
-    "batchGet",
-    "lookup",
-    "batchLookup",
-  ];
-  return action !== null && postActions.includes(action);
-}
-
-/**
- * Extract body params from URL query string for POST requests.
- * Returns { cleanUrl, bodyParams } where cleanUrl has sensitive params removed
- * and bodyParams contains them as a JSON-serializable object.
- */
-function extractBodyParams(url: string): { cleanUrl: string; bodyParams: Record<string, string> } {
-  const urlObj = new URL(url, window.location.origin);
-  const bodyParams: Record<string, string> = {};
-
-  // Move all params except 'action' to body
-  const paramsToMove: string[] = [];
-  urlObj.searchParams.forEach((_value, key) => {
-    if (key !== "action") {
-      paramsToMove.push(key);
-    }
-  });
-
-  for (const key of paramsToMove) {
-    const value = urlObj.searchParams.get(key);
-    if (value !== null) {
-      bodyParams[key] = value;
-      urlObj.searchParams.delete(key);
-    }
-  }
-
-  return { cleanUrl: urlObj.toString(), bodyParams };
-}
+// デモページは「表示している GET URL をそのまま叩く」のがプロダクトの体験。
+// 書き込み系アクションも token も query パラメータごと GET で送る（API が全アクション
+// GET 対応）。batch 系（batchGet 等）だけは呼び出し側が直接 POST する。
 
 export async function callApi(
   url: string,
@@ -85,19 +29,7 @@ export async function callApi(
   options?: ApiCallOptions
 ): Promise<void> {
   try {
-    let res: Response;
-
-    if (shouldUsePost(url)) {
-      const { cleanUrl, bodyParams } = extractBodyParams(url);
-      res = await fetch(cleanUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bodyParams),
-      });
-    } else {
-      res = await fetch(url, { method: "GET" });
-    }
-
+    const res = await fetch(url, { method: "GET" });
     const contentType = res.headers.get("content-type");
     let responseText = "";
 
@@ -144,19 +76,7 @@ export async function callApiWithFormat(
   setResponseType(format === "image" ? "svg" : format);
 
   try {
-    let res: Response;
-
-    if (shouldUsePost(url)) {
-      const { cleanUrl, bodyParams } = extractBodyParams(url);
-      res = await fetch(cleanUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bodyParams),
-      });
-    } else {
-      res = await fetch(url, { method: "GET" });
-    }
-
+    const res = await fetch(url, { method: "GET" });
     let responseText = "";
 
     if (format === "image") {
