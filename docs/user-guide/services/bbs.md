@@ -520,7 +520,7 @@ document.addEventListener("nostalgic-bbs-posted", (e) => {
 
 ## Using BBS as a Blog Comment Section
 
-BBS works well as a comment section for static site blogs. Because each BBS is keyed to a URL, you can create one per post and embed it with the Web Component.
+BBS works well as a comment section for static site blogs. Because each BBS is keyed to a URL, you can create one per post and embed it with the Web Component, or as a static SVG image (`format=image`) that works without any JavaScript.
 
 [avel](https://github.com/kako-jun/avel), a Zola theme, is the reference implementation: it calls the `batchLookup` API at build time and auto-creates a BBS for every article. A step-by-step recipe for adding the same pattern to any other Zola theme (or static site generator) is available at [Comments on any Zola theme](https://avel.llll-ll.com/posts/comments-on-any-theme/).
 
