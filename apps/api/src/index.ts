@@ -1,11 +1,11 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 
-import visitRoute from "./routes/visit";
-import likeRoute from "./routes/like";
-import rankingRoute from "./routes/ranking";
-import bbsRoute from "./routes/bbs";
-import yokosoRoute from "./routes/yokoso";
+import visitRoute from "./routes/visit.ts";
+import likeRoute from "./routes/like.ts";
+import rankingRoute from "./routes/ranking.ts";
+import bbsRoute from "./routes/bbs.ts";
+import yokosoRoute from "./routes/yokoso.ts";
 
 type Bindings = {
   DB: D1Database;
