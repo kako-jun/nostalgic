@@ -37,6 +37,9 @@ const BBS_I18N = {
       "BBS not found": "掲示板が見つかりません",
       "BBS already exists for this URL": "この URL には既に掲示板が存在します",
       "id and message are required": "ID とメッセージが必要です",
+      "messageId and message are required": "メッセージ ID とメッセージが必要です",
+      "messageId is required": "メッセージ ID が必要です",
+      "id or (url + token) is required": "ID（または URL とトークン）が必要です",
       "Message must be 420 characters or less": "メッセージは420文字以内で入力してください",
       "Message not found": "メッセージが見つかりません",
       "You can only edit your own messages": "自分のメッセージのみ編集できます",
@@ -49,6 +52,7 @@ const BBS_I18N = {
       "Failed to delete message": "メッセージの削除に失敗しました",
     },
     charLimitError: (n) => `メッセージは${n}文字以内で入力してください`,
+    rateLimitError: (n) => `連投制限中です。あと ${n} 秒待ってから投稿してください`,
   },
   en: {
     loading: "Loading...",
@@ -79,6 +83,9 @@ const BBS_I18N = {
       "BBS not found": "BBS not found",
       "BBS already exists for this URL": "BBS already exists for this URL",
       "id and message are required": "ID and message are required",
+      "messageId and message are required": "Message ID and message are required",
+      "messageId is required": "Message ID is required",
+      "id or (url + token) is required": "ID (or URL + token) is required",
       "Message must be 420 characters or less": "Message must be 420 characters or less",
       "Message not found": "Message not found",
       "You can only edit your own messages": "You can only edit your own messages",
@@ -91,6 +98,7 @@ const BBS_I18N = {
       "Failed to delete message": "Failed to delete message",
     },
     charLimitError: (n) => `Message must be ${n} characters or less`,
+    rateLimitError: (n) => `Please wait ${n} seconds before posting again`,
   },
 };
 
@@ -112,6 +120,11 @@ function translateBBSError(message, element) {
   const charLimitMatch = message.match(/^Message must be (\d+) characters or less$/);
   if (charLimitMatch) {
     return t.charLimitError(charLimitMatch[1]);
+  }
+  // Dynamic pattern (post interval / rate limit) — API は 429 で残り秒数を返す
+  const rateLimitMatch = message.match(/^Please wait (\d+) seconds before posting again$/);
+  if (rateLimitMatch) {
+    return t.rateLimitError(rateLimitMatch[1]);
   }
   return message;
 }
@@ -174,6 +187,7 @@ class NostalgicBBS extends HTMLElement {
     this.posting = false;
     this.editMode = false;
     this.editingMessageId = null;
+    this._messageTimer = null;
   }
 
   // Load BIZ UDGothic font from Google Fonts
@@ -897,20 +911,25 @@ class NostalgicBBS extends HTMLElement {
         }
         .message-area {
           margin: 8px 0;
-          padding: 6px 8px;
+          padding: 8px 10px;
           border-radius: 2px;
-          font-size: 12px;
+          font-size: 13px;
           display: none;
         }
         .message-area.error {
           background: #ffebee;
-          border: 1px solid #f44336;
-          color: #d32f2f;
+          border: 2px solid #f44336;
+          color: #b71c1c;
+          font-weight: bold;
         }
+        /* 成功表示は全テーマで視認できるよう、テーマ背景に依存しない明るい緑系で固定。
+           DESIGN.md の green アクセント(#ccffcc)を背景に、濃い緑の枠+太字で「成功」を明示する。 */
         .message-area.success {
-          background: #e8f5e8;
-          border: 1px solid #4caf50;
-          color: #2e7d32;
+          background: #ccffcc;
+          border: 2px solid #2e7d32;
+          color: #1b5e20;
+          font-weight: bold;
+          text-shadow: none;
         }
         /* Emote Picker */
         .emote-picker-container {
@@ -1233,6 +1252,17 @@ class NostalgicBBS extends HTMLElement {
     items.forEach((item) => item.classList.remove("selected"));
   }
 
+  // 投稿/編集/削除の成功を host 要素から CustomEvent で通知する。
+  // 埋め込みページ（BBS.tsx）など shadow DOM の外がリロード誘導を出すための唯一の通知経路。
+  // composed:true で shadow 境界を越え、bubbles:true で祖先まで届ける。
+  dispatchBBSEvent(name, detail) {
+    try {
+      this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
+    } catch (e) {
+      // CustomEvent 未対応など想定外環境でも投稿フロー自体は壊さない
+    }
+  }
+
   showMessage(text, type = "error") {
     const messageArea = this.shadowRoot.querySelector("#form-message");
     if (messageArea) {
@@ -1240,10 +1270,17 @@ class NostalgicBBS extends HTMLElement {
       messageArea.className = `message-area ${type}`;
       messageArea.style.display = "block";
 
-      // 3秒後に自動で消去
-      setTimeout(() => {
+      // 直前の自動消去タイマーをクリア（連続表示で前のタイマーが新しい表示を消すのを防ぐ）
+      if (this._messageTimer) {
+        clearTimeout(this._messageTimer);
+        this._messageTimer = null;
+      }
+
+      // 成功は誘導文まで読めるよう長め(7秒)、エラーは原因を読めるよう長め(7秒)に表示
+      this._messageTimer = setTimeout(() => {
         messageArea.style.display = "none";
-      }, 3000);
+        this._messageTimer = null;
+      }, 7000);
     }
   }
 
@@ -1326,6 +1363,9 @@ class NostalgicBBS extends HTMLElement {
       const data = await response.json();
 
       if (data.success) {
+        // clearEditMode で this.editMode が落ちる前に、新規投稿か編集かを保持しておく
+        const wasEdit = this.editMode;
+
         // 成功: フォームをクリアして再読み込み
         authorInput.value = "";
         messageInput.value = "";
@@ -1347,11 +1387,15 @@ class NostalgicBBS extends HTMLElement {
         await this.loadBBSData();
 
         // 成功メッセージ
-        if (this.editMode) {
+        if (wasEdit) {
           this.showMessage(this.t.messageUpdated, "success");
         } else {
           this.showMessage(this.t.messagePosted, "success");
         }
+
+        // ページ側（埋め込みページ等）が成功を検知してリロード誘導を出せるよう CustomEvent を発火。
+        // shadow DOM 境界を越えるため composed:true、祖先で拾えるよう bubbles:true。
+        this.dispatchBBSEvent("nostalgic-bbs-posted", { id, action: wasEdit ? "update" : "post" });
       } else {
         throw new Error(translateBBSError(data.error || "Failed to post message", this));
       }
@@ -1520,6 +1564,11 @@ class NostalgicBBS extends HTMLElement {
         // BBSデータを再読み込み
         await this.loadBBSData();
         this.showMessage(this.t.messageDeleted, "success");
+        // 投稿同様、埋め込みページがリロード誘導を出せるよう成功を通知する
+        this.dispatchBBSEvent("nostalgic-bbs-posted", {
+          id: this.safeGetAttribute("id"),
+          action: "remove",
+        });
       } else {
         throw new Error(translateBBSError(data.error || "Failed to delete message", this));
       }
