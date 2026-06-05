@@ -11,7 +11,8 @@ Message board service with customizable dropdown selections and author-based mes
 Create a new BBS message board.
 
 ```
-GET /api/bbs?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MAX_MESSAGES}&messagesPerPage={MESSAGES_PER_PAGE}&webhookUrl={WEBHOOK_URL}&standardSelectLabel={LABEL}&standardSelectOptions={OPTIONS}&incrementalSelectLabel={LABEL}&incrementalSelectOptions={OPTIONS}&emoteSelectLabel={LABEL}&emoteSelectOptions={OPTIONS}
+POST /api/bbs?action=create
+Body: { "url": "{URL}", "token": "{TOKEN}", "title": "{TITLE}", "maxMessages": 100, "messagesPerPage": 20 }
 ```
 
 **Parameters:**
@@ -95,7 +96,8 @@ GET /api/bbs?action=update&id={ID}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
 #### Message Update - Owner mode (admin)
 
 ```
-GET /api/bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&message={NEW_MESSAGE}
+POST /api/bbs?action=update
+Body: { "url": "{URL}", "token": "{TOKEN}", "messageId": "{MESSAGE_ID}", "message": "{NEW_MESSAGE}" }
 ```
 
 **Parameters:**
@@ -123,7 +125,8 @@ GET /api/bbs?action=update&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}&messag
 Update BBS settings without messageId parameter.
 
 ```
-GET /api/bbs?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxMessages={MAX_MESSAGES}&messagesPerPage={MESSAGES_PER_PAGE}&webhookUrl={WEBHOOK_URL}&standardSelectLabel={LABEL}&standardSelectOptions={OPTIONS}&incrementalSelectLabel={LABEL}&incrementalSelectOptions={OPTIONS}&emoteSelectLabel={LABEL}&emoteSelectOptions={OPTIONS}
+POST /api/bbs?action=update
+Body: { "url": "{URL}", "token": "{TOKEN}", "title": "{TITLE}", "maxMessages": 200, "messagesPerPage": 20 }
 ```
 
 **Parameters:**
@@ -169,7 +172,8 @@ GET /api/bbs?action=remove&id={ID}&messageId={MESSAGE_ID}
 **Owner mode (admin):**
 
 ```
-GET /api/bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
+POST /api/bbs?action=remove
+Body: { "url": "{URL}", "token": "{TOKEN}", "messageId": "{MESSAGE_ID}" }
 ```
 
 **Parameters:**
@@ -196,7 +200,8 @@ GET /api/bbs?action=remove&url={URL}&token={TOKEN}&messageId={MESSAGE_ID}
 Clear all messages (owner only).
 
 ```
-GET /api/bbs?action=clear&url={URL}&token={TOKEN}
+POST /api/bbs?action=clear
+Body: { "url": "{URL}", "token": "{TOKEN}" }
 ```
 
 **Parameters:**
@@ -284,10 +289,11 @@ Note: In GitHub README, the image links to a page where users can post messages.
 
 #### Owner Mode (by URL + Token)
 
-Get full settings including webhookUrl.
+Get messages and full settings including webhookUrl. Use `lookup` if you only need to know whether a BBS exists for a URL and what its public ID is.
 
 ```
-GET /api/bbs?action=get&url={URL}&token={TOKEN}&limit={LIMIT}
+POST /api/bbs?action=get
+Body: { "url": "https://yoursite.com", "token": "your-token", "limit": 100 }
 ```
 
 **Parameters:**
@@ -320,12 +326,96 @@ GET /api/bbs?action=get&url={URL}&token={TOKEN}&limit={LIMIT}
 }
 ```
 
+### lookup
+
+Look up the public BBS ID for a URL without loading messages or settings. This is intended for static site build scripts and integrations that only need to know whether the service exists.
+
+`token` must be sent in the POST body, never in the query string.
+
+```
+POST /api/bbs?action=lookup
+Body: { "url": "https://yoursite.com", "token": "your-token" }
+```
+
+**Response (found and authorized):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://yoursite.com",
+    "exists": true,
+    "authorized": true,
+    "id": "yoursite-a7b9c3d4",
+    "title": "BBS"
+  }
+}
+```
+
+**Response (not found):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://missing.example",
+    "exists": false
+  }
+}
+```
+
+**Response (found but token does not match):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://yoursite.com",
+    "exists": true,
+    "authorized": false
+  }
+}
+```
+
+Invalid tokens are reported per item instead of returning request-level `403`, so batch clients can keep ordered results for every requested URL.
+
+### batchLookup
+
+Look up multiple BBS URLs in request order. Missing URLs are included as `{ "exists": false }`; found URLs with a wrong token are included as `{ "exists": true, "authorized": false }`. A single request accepts up to 1000 URLs and internally chunks D1 queries to stay under SQLite bind limits.
+
+```
+POST /api/bbs?action=batchLookup
+Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token" }
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "url": "https://a.example",
+      "exists": true,
+      "authorized": true,
+      "id": "a-a7b9c3d4",
+      "title": "BBS"
+    },
+    {
+      "url": "https://b.example",
+      "exists": false
+    }
+  ]
+}
+```
+
 ### delete
 
 Delete a BBS (owner only).
 
 ```
-GET /api/bbs?action=delete&url={URL}&token={TOKEN}
+POST /api/bbs?action=delete
+Body: { "url": "{URL}", "token": "{TOKEN}" }
 ```
 
 **Parameters:**
@@ -348,9 +438,16 @@ GET /api/bbs?action=delete&url={URL}&token={TOKEN}
 
 ```javascript
 // 1. Create BBS
-const response = await fetch(
-  `/api/bbs?action=create&url=https://mysite.com&token=my-secret&title=My BBS&maxMessages=500`
-);
+const response = await fetch("/api/bbs?action=create", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    url: "https://mysite.com",
+    token: "my-secret",
+    title: "My BBS",
+    maxMessages: 500,
+  }),
+});
 
 const data = await response.json();
 console.log("BBS ID:", data.id);
@@ -375,7 +472,11 @@ await fetch(
 await fetch("/api/bbs?action=remove&id=mysite-a7b9c3d4&messageId=abc123def456");
 
 // Clear all messages (owner only)
-await fetch("/api/bbs?action=clear&url=https://mysite.com&token=my-secret");
+await fetch("/api/bbs?action=clear", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ url: "https://mysite.com", token: "my-secret" }),
+});
 ```
 
 ## Features

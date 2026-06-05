@@ -200,6 +200,32 @@ const getStep: StepConfig = {
   ),
 };
 
+// Confirm Public ID step
+const confirmIdStep: StepConfig = {
+  id: "confirmId",
+  title: "◆公開IDを再確認したいときは？◆",
+  isOwnerStep: true,
+  fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
+  buttonText: "公開ID確認",
+  handlerKey: "handleLookup",
+  responseKey: "lookupResponse",
+  buildApiUrl: (_values) => {
+    return `${API_BASE}${ENDPOINT}?action=lookup`;
+  },
+  buildApiUrlDisplay: (values) => (
+    <>
+      POST {API_BASE}
+      {ENDPOINT}?action=lookup
+      <br />
+      Body: {'{ "url": "'}
+      <GreenParam>{values.url || "サイトURL"}</GreenParam>
+      {'", "token": "'}
+      <GreenParam>{values.token || "オーナートークン"}</GreenParam>
+      {'" }'}
+    </>
+  ),
+};
+
 // Delete step
 const deleteStep: StepConfig = {
   id: "delete",
@@ -235,5 +261,6 @@ export const yokosoSteps: StepConfig[] = [
   displayStep,
   updateMessageStep,
   getStep,
+  confirmIdStep,
   deleteStep,
 ];

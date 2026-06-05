@@ -20,8 +20,8 @@ function translateApiResponse(jsonResponse: Record<string, unknown>): Record<str
 
 /**
  * Determine if a request should use POST instead of GET.
- * This includes mutating operations AND any request containing a token
- * (to prevent token exposure in URLs/logs).
+ * This includes mutating operations, owner-token requests, and batch payloads
+ * that do not fit URL-first GET cleanly.
  */
 function shouldUsePost(url: string): boolean {
   const urlObj = new URL(url, window.location.origin);
@@ -44,6 +44,8 @@ function shouldUsePost(url: string): boolean {
     "clear",
     "batchCreate",
     "batchGet",
+    "lookup",
+    "batchLookup",
   ];
   return action !== null && postActions.includes(action);
 }

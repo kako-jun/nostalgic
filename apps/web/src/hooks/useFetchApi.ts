@@ -3,10 +3,10 @@ import { useState } from "react";
 export type ResponseType = "json" | "text" | "svg";
 
 /**
- * Mutating actions that must use POST instead of GET.
- * Tokens and sensitive data are sent in the request body, not URL.
+ * Actions that must use POST instead of GET.
+ * Owner tokens stay in the request body, and batch payloads do not fit URL-first GET cleanly.
  */
-const MUTATING_ACTIONS = new Set([
+const POST_ACTIONS = new Set([
   "create",
   "update",
   "set",
@@ -18,12 +18,14 @@ const MUTATING_ACTIONS = new Set([
   "clear",
   "batchCreate",
   "batchGet",
+  "lookup",
+  "batchLookup",
 ]);
 
-function isMutatingAction(url: string): boolean {
+function shouldUsePost(url: string): boolean {
   const urlObj = new URL(url, window.location.origin);
   const action = urlObj.searchParams.get("action");
-  return action !== null && MUTATING_ACTIONS.has(action);
+  return action !== null && POST_ACTIONS.has(action);
 }
 
 /**
@@ -69,7 +71,7 @@ export default function useFetchApi(initialType: ResponseType = "json"): UseFetc
     try {
       let res: Response;
 
-      if (isMutatingAction(url)) {
+      if (shouldUsePost(url)) {
         const { cleanUrl, bodyParams } = extractBodyParams(url);
         res = await fetch(cleanUrl, {
           method: "POST",

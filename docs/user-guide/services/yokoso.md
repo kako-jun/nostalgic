@@ -50,7 +50,8 @@ Longer message up to 140 characters with avatar, name, and date.
 Create a new yokoso.
 
 ```
-GET /api/yokoso?action=create&url={URL}&token={TOKEN}&message={MESSAGE}&mode={MODE}&name={NAME}&avatar={AVATAR_URL}&webhookUrl={WEBHOOK_URL}
+POST /api/yokoso?action=create
+Body: { "url": "{URL}", "token": "{TOKEN}", "message": "{MESSAGE}", "mode": "badge" }
 ```
 
 **Parameters:**
@@ -116,10 +117,11 @@ GET /api/yokoso?action=get&id={ID}&format={FORMAT}
 
 #### Owner Mode (by URL + Token)
 
-Get full settings including webhookUrl.
+Get message data and full settings including webhookUrl. Use `lookup` if you only need to know whether a yokoso exists for a URL and what its public ID is.
 
 ```
-GET /api/yokoso?action=get&url={URL}&token={TOKEN}
+POST /api/yokoso?action=get
+Body: { "url": "https://yoursite.com", "token": "your-token" }
 ```
 
 **Parameters:**
@@ -147,12 +149,96 @@ GET /api/yokoso?action=get&url={URL}&token={TOKEN}
 }
 ```
 
+### lookup
+
+Look up the public yokoso ID for a URL without loading message data or settings. This is intended for static site build scripts and integrations that only need to know whether the service exists.
+
+`token` must be sent in the POST body, never in the query string.
+
+```
+POST /api/yokoso?action=lookup
+Body: { "url": "https://myproject.com", "token": "your-token" }
+```
+
+**Response (found and authorized):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://myproject.com",
+    "exists": true,
+    "authorized": true,
+    "id": "myproject-a7b9c3d4",
+    "title": "Yokoso"
+  }
+}
+```
+
+**Response (not found):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://missing.example",
+    "exists": false
+  }
+}
+```
+
+**Response (found but token does not match):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://myproject.com",
+    "exists": true,
+    "authorized": false
+  }
+}
+```
+
+Invalid tokens are reported per item instead of returning request-level `403`, so batch clients can keep ordered results for every requested URL.
+
+### batchLookup
+
+Look up multiple yokoso URLs in request order. Missing URLs are included as `{ "exists": false }`; found URLs with a wrong token are included as `{ "exists": true, "authorized": false }`. A single request accepts up to 1000 URLs and internally chunks D1 queries to stay under SQLite bind limits.
+
+```
+POST /api/yokoso?action=batchLookup
+Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token" }
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "url": "https://a.example",
+      "exists": true,
+      "authorized": true,
+      "id": "a-a7b9c3d4",
+      "title": "Yokoso"
+    },
+    {
+      "url": "https://b.example",
+      "exists": false
+    }
+  ]
+}
+```
+
 ### update
 
 Update yokoso message and settings (owner only).
 
 ```
-GET /api/yokoso?action=update&url={URL}&token={TOKEN}&message={MESSAGE}&mode={MODE}&name={NAME}&avatar={AVATAR_URL}&webhookUrl={WEBHOOK_URL}
+POST /api/yokoso?action=update
+Body: { "url": "{URL}", "token": "{TOKEN}", "message": "{MESSAGE}", "mode": "badge" }
 ```
 
 **Parameters:**
@@ -184,7 +270,8 @@ GET /api/yokoso?action=update&url={URL}&token={TOKEN}&message={MESSAGE}&mode={MO
 Delete a yokoso (owner only).
 
 ```
-GET /api/yokoso?action=delete&url={URL}&token={TOKEN}
+POST /api/yokoso?action=delete
+Body: { "url": "{URL}", "token": "{TOKEN}" }
 ```
 
 **Parameters:**
@@ -252,9 +339,15 @@ declare module "react" {
 
 ```javascript
 // 1. Create yokoso (badge mode)
-const response = await fetch(
-  "/api/yokoso?action=create&url=https://myproject.com&token=my-secret&message=ようこそ！"
-);
+const response = await fetch("/api/yokoso?action=create", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    url: "https://myproject.com",
+    token: "my-secret",
+    message: "ようこそ！",
+  }),
+});
 const data = await response.json();
 console.log("Yokoso ID:", data.id);
 
@@ -269,27 +362,33 @@ document.body.innerHTML += `
 
 ```javascript
 // Create card mode yokoso with your own avatar
-const response = await fetch(
-  "/api/yokoso?action=create" +
-    "&url=https://myproject.com" +
-    "&token=my-secret" +
-    "&message=v2.0開発中です！新機能としてYokoso機能を追加予定。お楽しみに！" +
-    "&mode=card" +
-    "&name=kako-jun" +
-    "&avatar=https://github.com/kako-jun.png"
-);
+const response = await fetch("/api/yokoso?action=create", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    url: "https://myproject.com",
+    token: "my-secret",
+    message: "v2.0開発中です！新機能としてYokoso機能を追加予定。お楽しみに！",
+    mode: "card",
+    name: "kako-jun",
+    avatar: "https://github.com/kako-jun.png",
+  }),
+});
 ```
 
 ### Update Yokoso Message
 
 ```javascript
 // Update message without editing README
-await fetch(
-  "/api/yokoso?action=update" +
-    "&url=https://myproject.com" +
-    "&token=my-secret" +
-    "&message=v2.0リリースしました！"
-);
+await fetch("/api/yokoso?action=update", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    url: "https://myproject.com",
+    token: "my-secret",
+    message: "v2.0リリースしました！",
+  }),
+});
 // The badge/card in README automatically shows new message
 ```
 

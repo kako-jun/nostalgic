@@ -49,6 +49,7 @@ APIを直接触らずに、すべての機能を試せます。
 - 自動ソート（昇順/降順）
 - 最大エントリー数制限
 - フォーマット済みスコア表示
+- URL owner lookup / batchLookup 対応
 
 ### [6. BBS（掲示板）](./services/bbs.md)
 
@@ -57,6 +58,7 @@ APIを直接触らずに、すべての機能を試せます。
 - 投稿時のオプションフィールド（アイコン、セレクト）
 - 投稿者/管理者による編集・削除
 - IP+UserAgentによる投稿者認証
+- URL owner lookup / batchLookup 対応
 
 ### [7. Yokoso（ようこそ）](./services/yokoso.md)
 
@@ -66,6 +68,7 @@ APIを直接触らずに、すべての機能を試せます。
 - カードモード（長文140文字、アバター・名前付き）
 - デフォルトアバターはピクセルアート招き猫（Lucky Cat、36x36）
 - API経由でメッセージを更新
+- URL owner lookup / batchLookup 対応
 
 ---
 
@@ -94,7 +97,7 @@ Web Componentsのカスタマイズ方法。
 
 ### [10. API仕様](./api.md)
 
-GET専用の統一アクション型API。URLバーから直接操作も可能。
+公開読み取りは GET、オーナー操作は POST body を使う統一アクション型API。
 
 - 全サービス共通のURLパターン
 - 認証とセキュリティ

@@ -100,7 +100,8 @@ Note: In GitHub README, the image links to a page where users can actually click
 Get full settings including webhookUrl.
 
 ```
-GET /api/like?action=get&url={URL}&token={TOKEN}
+POST /api/like?action=get
+Body: { "url": "{URL}", "token": "{TOKEN}" }
 ```
 
 **Parameters:**
@@ -130,7 +131,8 @@ GET /api/like?action=get&url={URL}&token={TOKEN}
 Update settings (owner only).
 
 ```
-GET /api/like?action=update&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
+POST /api/like?action=update
+Body: { "url": "{URL}", "token": "{TOKEN}", "webhookUrl": "{WEBHOOK_URL}" }
 ```
 
 **Parameters:**
@@ -157,7 +159,8 @@ GET /api/like?action=update&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 Delete a like button (owner only).
 
 ```
-GET /api/like?action=delete&url={URL}&token={TOKEN}
+POST /api/like?action=delete
+Body: { "url": "{URL}", "token": "{TOKEN}" }
 ```
 
 **Parameters:**

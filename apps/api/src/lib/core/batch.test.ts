@@ -10,12 +10,19 @@
  * 観点:
  *  - chunkArray が全件を「重複なく・順序を保ったまま」被覆する（batchGet で欠落しない証明）
  *  - 閾値超（98 / 100 / 200 / 1000 件）でも各チャンクが D1 の 100 バインド上限を超えない
- *    （like の likedQuery は chunkSize+3 バインドになるため、その値が 100 未満であること）
+ *    （like の likedQuery は chunkSize+3 バインドになるため、その値が 100 以下であること）
  */
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { chunkArray, BATCH_GET_CHUNK_SIZE } from "./batch.ts";
+import {
+  chunkArray,
+  BATCH_GET_CHUNK_SIZE,
+  D1_BIND_LIMIT,
+  MAX_BATCH_QUERY_FIXED_BINDS,
+} from "./batch.ts";
+
+const TEST_CHUNK_SIZE = 3;
 
 // 連結すると元配列に完全一致する（順序保持 + 全件被覆 + 重複なし）
 function assertCovers<T>(original: readonly T[], chunks: T[][], size: number): void {
@@ -32,30 +39,30 @@ function assertCovers<T>(original: readonly T[], chunks: T[][], size: number): v
 }
 
 test("chunkArray: empty array -> no chunks", () => {
-  assert.deepEqual(chunkArray([], 50), []);
+  assert.deepEqual(chunkArray([], TEST_CHUNK_SIZE), []);
 });
 
 test("chunkArray: fewer than size -> single chunk", () => {
-  const ids = Array.from({ length: 10 }, (_, i) => `id-${i}`);
-  const chunks = chunkArray(ids, 50);
+  const ids = Array.from({ length: TEST_CHUNK_SIZE - 1 }, (_, i) => `id-${i}`);
+  const chunks = chunkArray(ids, TEST_CHUNK_SIZE);
   assert.equal(chunks.length, 1);
-  assertCovers(ids, chunks, 50);
+  assertCovers(ids, chunks, TEST_CHUNK_SIZE);
 });
 
 test("chunkArray: exactly size -> single full chunk", () => {
-  const ids = Array.from({ length: 50 }, (_, i) => `id-${i}`);
-  const chunks = chunkArray(ids, 50);
+  const ids = Array.from({ length: TEST_CHUNK_SIZE }, (_, i) => `id-${i}`);
+  const chunks = chunkArray(ids, TEST_CHUNK_SIZE);
   assert.equal(chunks.length, 1);
-  assertCovers(ids, chunks, 50);
+  assertCovers(ids, chunks, TEST_CHUNK_SIZE);
 });
 
-test("chunkArray: size+1 -> two chunks (50 + 1)", () => {
-  const ids = Array.from({ length: 51 }, (_, i) => `id-${i}`);
-  const chunks = chunkArray(ids, 50);
+test("chunkArray: size+1 -> two chunks", () => {
+  const ids = Array.from({ length: TEST_CHUNK_SIZE + 1 }, (_, i) => `id-${i}`);
+  const chunks = chunkArray(ids, TEST_CHUNK_SIZE);
   assert.equal(chunks.length, 2);
-  assert.equal(chunks[0].length, 50);
+  assert.equal(chunks[0].length, TEST_CHUNK_SIZE);
   assert.equal(chunks[1].length, 1);
-  assertCovers(ids, chunks, 50);
+  assertCovers(ids, chunks, TEST_CHUNK_SIZE);
 });
 
 // 実機で 500 になっていた閾値超のケースを網羅
@@ -71,16 +78,24 @@ for (const total of [98, 100, 200, 1000]) {
 }
 
 test("BATCH_GET_CHUNK_SIZE: 各チャンクは D1 の 100 バインド上限を超えない", () => {
+  assert.equal(
+    BATCH_GET_CHUNK_SIZE,
+    D1_BIND_LIMIT - MAX_BATCH_QUERY_FIXED_BINDS,
+    "chunk size is derived from D1 bind limit and worst-case fixed binds"
+  );
   // like batchGet の likedQuery が最もバインドが多い:
   // IN(...N...) + user_hash + date + action_type = N+3
-  const likeWorstCaseBinds = BATCH_GET_CHUNK_SIZE + 3;
+  const likeWorstCaseBinds = BATCH_GET_CHUNK_SIZE + MAX_BATCH_QUERY_FIXED_BINDS;
   assert.ok(
-    likeWorstCaseBinds < 100,
-    `like worst-case binds (${likeWorstCaseBinds}) must stay under SQLite limit 100`
+    likeWorstCaseBinds <= D1_BIND_LIMIT,
+    `like worst-case binds (${likeWorstCaseBinds}) must stay within SQLite limit ${D1_BIND_LIMIT}`
   );
   // visit batchGet の dailyQuery: IN(...N...) + monthStart = N+1
   const visitBinds = BATCH_GET_CHUNK_SIZE + 1;
-  assert.ok(visitBinds < 100, `visit dailyQuery binds (${visitBinds}) must stay under 100`);
+  assert.ok(
+    visitBinds <= D1_BIND_LIMIT,
+    `visit dailyQuery binds (${visitBinds}) must stay within ${D1_BIND_LIMIT}`
+  );
 });
 
 test("chunkArray: size が不正なら例外", () => {

@@ -4,6 +4,8 @@
  *
  * GET  /?action=get     - Public read (by id)
  * POST /?action=get     - Owner read (body: url, token) - token never in URL
+ * POST /?action=lookup  - Owner URL lookup (body: url, token) - lightweight id check
+ * POST /?action=batchLookup - Owner URL lookup (body: urls, token) - ordered lightweight id checks
  * POST /?action=create  - Create a new yokoso (body: url, token, message, ...)
  * POST /?action=update  - Update message/settings (body: url, token, ...)
  * POST /?action=delete  - Delete yokoso (body: url, token)
@@ -14,6 +16,7 @@ import { hashToken, verifyToken, validateOwnerToken } from "../lib/core/auth";
 import { generatePublicId } from "../lib/core/id";
 import { sendWebHook, WebHookMessages } from "../lib/core/webhook";
 import { LUCKY_CAT_DATA_URL } from "../assets/lucky-cat";
+import { batchLookupServices, lookupService, MAX_LOOKUP_BATCH_SIZE } from "../lib/core/lookup";
 
 type Bindings = { DB: D1Database };
 
@@ -385,6 +388,38 @@ app.post("/", async (c) => {
     return undefined;
   };
 
+  // LOOKUP (owner URL lookup - lightweight id check, no message/settings payload)
+  if (action === "lookup") {
+    const url = getParam("url");
+    const token = getSecureParam("token");
+
+    if (!url || !token) {
+      return c.json({ error: "url and token are required for lookup" }, 400);
+    }
+
+    const data = await lookupService(db, "yokoso", url, token);
+    return c.json({ success: true, data });
+  }
+
+  // BATCH LOOKUP (ordered owner URL lookup - no message/settings payload)
+  if (action === "batchLookup") {
+    const urls = body.urls;
+    const token = getSecureParam("token");
+
+    if (!Array.isArray(urls) || urls.some((url) => typeof url !== "string")) {
+      return c.json({ error: "urls must be an array of strings" }, 400);
+    }
+    if (urls.length > MAX_LOOKUP_BATCH_SIZE) {
+      return c.json({ error: `Maximum ${MAX_LOOKUP_BATCH_SIZE} urls per request` }, 400);
+    }
+    if (!token) {
+      return c.json({ error: "token is required for batchLookup" }, 400);
+    }
+
+    const data = await batchLookupServices(db, "yokoso", urls, token);
+    return c.json({ success: true, data });
+  }
+
   // GET (owner mode - token in body, not URL)
   if (action === "get") {
     const url = getParam("url");
@@ -629,7 +664,10 @@ app.post("/", async (c) => {
   }
 
   return c.json(
-    { error: "Invalid action for POST. Use: get (owner), create, update, delete" },
+    {
+      error:
+        "Invalid action for POST. Use: lookup, batchLookup, get (owner), create, update, delete",
+    },
     400
   );
 });

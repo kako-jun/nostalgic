@@ -26,6 +26,7 @@ export default function YokosoPage() {
 
   // Response state
   const [createResponse, setCreateResponse] = useState("");
+  const [lookupResponse, setLookupResponse] = useState("");
   const [displayResponse, setDisplayResponse] = useState("");
   const [updateResponse, setUpdateResponse] = useState("");
   const [getResponse, setGetResponse] = useState("");
@@ -60,6 +61,14 @@ export default function YokosoPage() {
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setCreateResponse, setPublicId);
+  };
+
+  const handleLookup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!url || !token) return;
+
+    const apiUrl = `/api/yokoso?action=lookup&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    await callApi(apiUrl, setLookupResponse, setPublicId);
   };
 
   const handleDisplay = async (e: React.FormEvent) => {
@@ -106,6 +115,7 @@ export default function YokosoPage() {
 
   const handlers = {
     handleCreate,
+    handleLookup,
     handleDisplay,
     handleUpdate,
     handleGet,
@@ -114,6 +124,7 @@ export default function YokosoPage() {
 
   const responses = {
     createResponse,
+    lookupResponse,
     displayResponse,
     updateResponse,
     getResponse,

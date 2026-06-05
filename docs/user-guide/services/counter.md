@@ -124,7 +124,8 @@ GET /api/visit?action=get&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 Get full settings including webhookUrl.
 
 ```
-GET /api/visit?action=get&url={URL}&token={TOKEN}
+POST /api/visit?action=get
+Body: { "url": "{URL}", "token": "{TOKEN}" }
 ```
 
 **Parameters:**
@@ -154,7 +155,8 @@ GET /api/visit?action=get&url={URL}&token={TOKEN}
 Update counter value and/or settings (owner only).
 
 ```
-GET /api/visit?action=update&url={URL}&token={TOKEN}&value={VALUE}&webhookUrl={WEBHOOK_URL}
+POST /api/visit?action=update
+Body: { "url": "{URL}", "token": "{TOKEN}", "value": 12345, "webhookUrl": "{WEBHOOK_URL}" }
 ```
 
 **Parameters:**
@@ -185,7 +187,8 @@ Only specify the parameters you want to change.
 Delete a counter (owner only).
 
 ```
-GET /api/visit?action=delete&url={URL}&token={TOKEN}
+POST /api/visit?action=delete
+Body: { "url": "{URL}", "token": "{TOKEN}" }
 ```
 
 **Parameters:**

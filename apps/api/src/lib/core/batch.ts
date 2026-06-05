@@ -1,7 +1,7 @@
 /**
  * Batch utilities
  *
- * D1 (SQLite) は 1 ステートメントあたりのバインド変数を 100 個までしか許可しない
+ * D1 (SQLite) は 1 ステートメントあたりのバインド変数を D1_BIND_LIMIT 個までしか許可しない
  * (SQLITE_MAX_VARIABLE_NUMBER = 100)。batchGet は `WHERE service_id IN (?,?,...)`
  * を組み立てるため、ids が ~98 件を超えると bind 変数が 100 を超えて D1 が 500 を返す。
  *
@@ -15,12 +15,16 @@
  */
 
 /**
- * batchGet の内部 D1 サブチャンクサイズ。
+ * D1 の内部サブチャンクサイズ。
  *
- * 最もバインドの多いクエリ（like の likedQuery: N+3 バインド）でも
- * 50+3=53 と 100 の半分以下に収め、固定列が増えても安全マージンを残す。
+ * 最もバインドの多い batch クエリ（like の likedQuery）は、ID の IN 句に加えて
+ * user_hash / date / action_type の 3 固定 bind を使う。公開 API 上限とは別に、
+ * 1 SQL statement が D1_BIND_LIMIT を超えないよう、ここから機械的に算出する。
  */
-export const BATCH_GET_CHUNK_SIZE = 50;
+export const D1_BIND_LIMIT = 100;
+export const MAX_BATCH_QUERY_FIXED_BINDS = 3;
+export const D1_BATCH_CHUNK_SIZE = D1_BIND_LIMIT - MAX_BATCH_QUERY_FIXED_BINDS;
+export const BATCH_GET_CHUNK_SIZE = D1_BATCH_CHUNK_SIZE;
 
 /**
  * 配列を指定サイズのチャンクに分割する純粋関数。

@@ -1,4 +1,4 @@
-import { hashTokenWithSalt, verifyTokenHash } from "./crypto";
+import { hashTokenWithSalt, verifyTokenHash } from "./crypto.ts";
 
 /**
  * トークンをハッシュ化（PBKDF2 + salt）- async version

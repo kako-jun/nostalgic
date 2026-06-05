@@ -6,23 +6,28 @@ Nostalgic is a comprehensive platform that recreates nostalgic web tools (Counte
 
 ## API Architecture
 
-All services use the same URL pattern with action parameters using **GET requests** (with one exception):
+All services use the same URL pattern with action parameters. Public reads use **GET**.
+Owner actions use **POST** with parameters in the JSON body so owner tokens are not exposed in URLs:
 
 ```
-/api/{service}?action={action}&url={your-site}&token={your-token}&...params
+GET  /api/{service}?action=get&id={public-id}
+POST /api/{service}?action={owner-action}
+Body: { "url": "https://your-site.example", "token": "your-token", "...": "..." }
 ```
 
 ### 🌐 Why GET-based? 1990s Web Culture Revival
 
-Just like the original 1990s web tools, everything can be operated directly from the browser URL bar:
+Just like the original 1990s web tools, public display and interaction URLs stay simple enough to paste into a browser, an image tag, or a README:
 
-1. **Click-to-create**: Share a link and instantly create services
-2. **URL-based operations**: All actions are simple GET links
+1. **URL-based public reads**: Public display URLs stay simple GET links
+2. **Embeddable images**: Counter, Like, BBS, and Yokoso images can be used directly in HTML and Markdown
 3. **Nostalgic simplicity**: No complex forms needed
-4. **Easy sharing**: Every operation is a shareable URL
+4. **Easy sharing**: Public actions remain shareable URLs
 5. **BBS culture**: Even message posting uses GET parameters, just like the old days
 
-> **Note**: `batchGet` and `batchCreate` use POST to handle large request bodies that exceed URL length limits. This applies to both Counter and Like services.
+> **Note**: Owner actions use POST so owner tokens are not left in URLs. `batchGet`, `batchCreate`, and `batchLookup` also use POST because they carry arrays that do not fit Nostalgic's URL-first shape cleanly. BBS, Ranking, and Yokoso intentionally use lightweight `lookup` / `batchLookup` instead of heavy `batchGet`: `get` reads service content/settings, while `lookup` only checks URL ownership and returns the generated public ID.
+
+`batchLookup` accepts up to 1000 URLs per request. Internally, Nostalgic may split SQL statements into smaller chunks to stay under D1/SQLite bind-variable limits; this is not a client-visible 100 item API limit, and it is separate from response-size concerns.
 
 ## Services
 
@@ -73,6 +78,7 @@ All services support webhook functionality for real-time event notifications:
 1. **Create**: URL + token → returns public ID
 2. **Use**: Public ID for display/interaction
 3. **Manage**: URL + token for owner operations
+4. **Lookup**: URL + token → exists/id without loading service content
 
 ## Try the Demos
 
