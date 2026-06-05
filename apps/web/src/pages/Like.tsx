@@ -46,6 +46,7 @@ export default function LikePage() {
 
   // Response state
   const [createResponse, setCreateResponse] = useState("");
+  const [confirmIdResponse, setConfirmIdResponse] = useState("");
   const [displayResponse, setDisplayResponse] = useState("");
   const [toggleResponse, setToggleResponse] = useState("");
   const [getResponse, setGetResponse] = useState("");
@@ -79,6 +80,16 @@ export default function LikePage() {
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setCreateResponse, setPublicId);
+  };
+
+  const handleConfirmId = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!url || !token) return;
+
+    let apiUrl = `${API_BASE}/like?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
+
+    await callApi(apiUrl, setConfirmIdResponse, setPublicId);
   };
 
   const handleDisplay = async (e: React.FormEvent) => {
@@ -154,6 +165,7 @@ export default function LikePage() {
 
   const handlers = {
     handleCreate,
+    handleConfirmId,
     handleDisplay,
     handleToggle,
     handleGet,
@@ -163,6 +175,7 @@ export default function LikePage() {
 
   const responses = {
     createResponse,
+    confirmIdResponse,
     displayResponse,
     toggleResponse,
     getResponse,

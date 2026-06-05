@@ -305,7 +305,7 @@ const updateAuthorStep: StepConfig = {
   ],
   buttonText: "編集",
   handlerKey: "handleEditMessageById",
-  responseKey: "updateResponse",
+  responseKey: "updateAuthorResponse",
   buildApiUrl: (values) => {
     const id = values.publicId || "公開ID";
     const messageId = values.messageId || "メッセージID";
@@ -339,7 +339,7 @@ const removeAuthorStep: StepConfig = {
   ],
   buttonText: "削除",
   handlerKey: "handleDeleteMessageById",
-  responseKey: "removeResponse",
+  responseKey: "removeAuthorResponse",
   buildApiUrl: (values) => {
     const id = values.publicId || "公開ID";
     const messageId = values.messageId || "メッセージID";

@@ -74,6 +74,8 @@ export default function BBSPage() {
   const [getResponse, setGetResponse] = useState("");
   const [updateResponse, setUpdateResponse] = useState("");
   const [removeResponse, setRemoveResponse] = useState("");
+  const [updateAuthorResponse, setUpdateAuthorResponse] = useState("");
+  const [removeAuthorResponse, setRemoveAuthorResponse] = useState("");
   const [clearResponse, setClearResponse] = useState("");
   const [deleteResponse, setDeleteResponse] = useState("");
   const [updateSettingsResponse, setUpdateSettingsResponse] = useState("");
@@ -217,7 +219,7 @@ export default function BBSPage() {
     if (!publicId || !messageId || !editMessage) return;
 
     const apiUrl = `${API_BASE}/bbs?action=update&id=${encodeURIComponent(publicId)}&messageId=${messageId}&message=${encodeURIComponent(editMessage)}`;
-    await callApi(apiUrl, setUpdateResponse);
+    await callApi(apiUrl, setUpdateAuthorResponse);
   };
 
   const handleDeleteMessageById = async (e: React.FormEvent) => {
@@ -225,7 +227,7 @@ export default function BBSPage() {
     if (!publicId || !messageId) return;
 
     const apiUrl = `${API_BASE}/bbs?action=remove&id=${encodeURIComponent(publicId)}&messageId=${messageId}`;
-    await callApi(apiUrl, setRemoveResponse);
+    await callApi(apiUrl, setRemoveAuthorResponse);
   };
 
   const handlers = {
@@ -249,6 +251,8 @@ export default function BBSPage() {
     getResponse,
     updateResponse,
     removeResponse,
+    updateAuthorResponse,
+    removeAuthorResponse,
     clearResponse,
     deleteResponse,
     updateSettingsResponse,

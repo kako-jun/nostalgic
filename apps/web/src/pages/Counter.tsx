@@ -24,6 +24,7 @@ export default function CounterPage() {
 
   // Response state
   const [createResponse, setCreateResponse] = useState("");
+  const [confirmIdResponse, setConfirmIdResponse] = useState("");
   const [displayResponse, setDisplayResponse] = useState("");
   const [incrementResponse, setIncrementResponse] = useState("");
   const [getResponse, setGetResponse] = useState("");
@@ -55,6 +56,16 @@ export default function CounterPage() {
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setCreateResponse, setPublicId);
+  };
+
+  const handleConfirmId = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!url || !token) return;
+
+    let apiUrl = `${API_BASE}/visit?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
+
+    await callApi(apiUrl, setConfirmIdResponse, setPublicId);
   };
 
   const handleDisplay = async (e: React.FormEvent) => {
@@ -114,6 +125,7 @@ export default function CounterPage() {
 
   const handlers = {
     handleCreate,
+    handleConfirmId,
     handleDisplay,
     handleIncrement,
     handleGet,
@@ -124,6 +136,7 @@ export default function CounterPage() {
 
   const responses = {
     createResponse,
+    confirmIdResponse,
     displayResponse,
     incrementResponse,
     getResponse,
