@@ -10,6 +10,9 @@
 /** D1 が返す UNIQUE 制約違反かどうかを判定する */
 export function isUniqueConstraintError(err: unknown): boolean {
   const message = err instanceof Error ? err.message : typeof err === "string" ? err : String(err);
+  // SQLite/D1 は PRIMARY KEY 違反も "UNIQUE constraint failed: <table>.<col>" として
+  // 報告するため、この判定は PK 競合（url_mappings の複合PK等）もカバーする。
+  // D1_ERROR: プレフィックスが付く場合も substring 一致で拾える。
   return message.includes("UNIQUE constraint failed");
 }
 
