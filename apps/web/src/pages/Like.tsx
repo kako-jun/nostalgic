@@ -13,11 +13,11 @@ import { likeEmbedConfig } from "../config/embedConfigs";
 const embedTexts = {
   ja: {
     title: "このプロジェクトにいいねを押してください！",
-    note: "※GitHubアカウント不要で誰でも押せます",
+    note: "※アカウント不要で誰でも押せます",
   },
   en: {
     title: "Please like this project!",
-    note: "*No GitHub account required - anyone can like",
+    note: "*No account required - anyone can like",
   },
 };
 
