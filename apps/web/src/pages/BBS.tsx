@@ -13,11 +13,11 @@ import { bbsEmbedConfig } from "../config/embedConfigs";
 const embedTexts = {
   ja: {
     title: "ここにコメントを書き込んでください！",
-    note: "※GitHubアカウント不要で誰でも書き込めます",
+    note: "※アカウント不要で誰でも書き込めます",
   },
   en: {
     title: "Leave a comment here!",
-    note: "*No GitHub account required - anyone can post",
+    note: "*No account required - anyone can post",
   },
 };
 
