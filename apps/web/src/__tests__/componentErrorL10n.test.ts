@@ -210,6 +210,13 @@ describe("横断: bbs / like / ranking の3コンポーネントに translate〜
     expect(rankingJs).toMatch(/function translateRankingError\s*\(/);
   });
 
+  // テスト16b: bbs.js の renderError CSS に white-space: pre-line が存在する
+  test("bbs.js の renderError CSS に white-space: pre-line が存在する", () => {
+    const fn = bbsJs.match(/renderError\(\s*message\s*\)\s*\{([\s\S]*?)\n {2}\}/);
+    expect(fn).not.toBeNull();
+    expect(fn![1]).toMatch(/white-space:\s*pre-line/);
+  });
+
   // テスト17: 全体レート制限文字列が3コンポーネント全部の対訳表に存在し、
   //           API 実装（apps/api/src/index.ts）の実文言と一字一句一致する
   test("Rate limit exceeded 文字列が3コンポーネントすべての errors テーブルに存在し API 実文言と一致する", () => {

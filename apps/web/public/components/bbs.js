@@ -1111,6 +1111,8 @@ class NostalgicBBS extends HTMLElement {
           color: #d32f2f;
           font-size: 12px;
           min-width: 300px;
+          /* 全体レート制限など \n 入り文言が流れてきたとき文単位で改行する（like.js / ranking.js と統一）。 */
+          white-space: pre-line;
         }
       </style>
       <div class="error-container">

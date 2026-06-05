@@ -324,6 +324,8 @@ class NostalgicLike extends HTMLElement {
         throw new Error(translateLikeError(responseData.error || "API returned an error", this));
       }
     } catch (error) {
+      // Like ボタンは小さなインライン Widget のため、トグル失敗時に本体をエラー表示へ置き換えない（サイレント劣化が意図）。
+      // エラー内容は console に出す。translateLikeError は将来エラーを可視化する場合に備えた整備。
       console.error("nostalgic-like: Toggle failed:", error);
     }
 
