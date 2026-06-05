@@ -171,6 +171,25 @@ describe("null/空文字/未設定: optional フィールド", () => {
   });
 });
 
+describe("再発防止: confirmId は lookup を使い create に戻らない (#23)", () => {
+  // confirmId の公開ID確認は軽量 lookup を叩く。誤って create に戻ると
+  // 「確認」のつもりでサービスを新規作成してしまうため、action を固定で検証する。
+  const counterConfirmId = counterSteps.find((s) => s.id === "confirmId")!;
+  const likeConfirmId = likeSteps.find((s) => s.id === "confirmId")!;
+
+  test("counter confirmId: buildApiUrl は action=lookup を含み action=create を含まない", () => {
+    const url = counterConfirmId.buildApiUrl({ url: "https://a.com", token: "tok" });
+    expect(url).toContain("action=lookup");
+    expect(url).not.toContain("action=create");
+  });
+
+  test("like confirmId: buildApiUrl は action=lookup を含み action=create を含まない", () => {
+    const url = likeConfirmId.buildApiUrl({ url: "https://a.com", token: "tok" });
+    expect(url).toContain("action=lookup");
+    expect(url).not.toContain("action=create");
+  });
+});
+
 describe("文字種/エンコード: url 値の percent-encode", () => {
   const counterCreate = counterSteps.find((s) => s.id === "create")!;
 

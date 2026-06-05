@@ -134,6 +134,14 @@ test("GET: lookup が query パラメータで action 分岐に到達する", as
   }
 });
 
+test("GET: visit / like の lookup が action 分岐に到達する（#23 で追加）", async () => {
+  for (const app of [visitApp, likeApp]) {
+    const lookup = await getJson(app, "/?action=lookup");
+    assert.equal(lookup.status, 400);
+    assert.equal(lookup.json.error, "url and token are required for lookup");
+  }
+});
+
 test("POST: JSON body のパラメータが query より優先される（body 優先の実証）", async () => {
   // query に正形式 token（8-16 文字）、body に不正形式 token（2 文字）を同時に載せる。
   // query 側が使われると format 検証を通過して DB アクセスへ進んでしまうため、
@@ -174,9 +182,64 @@ test("batch 系は POST 専用のまま（GET は明示エラー）", async () =
   }
 });
 
+test("visit / like の batchLookup は POST 専用のまま（GET は明示エラー、#23 で追加）", async () => {
+  for (const app of [visitApp, likeApp]) {
+    const batchLookup = await getJson(app, "/?action=batchLookup");
+    assert.equal(batchLookup.status, 400);
+    assert.equal(batchLookup.json.error, "batchLookup requires POST with a JSON body");
+  }
+});
+
 test("不明な action は GET でも 400（メソッドではなく action の問題として返る）", async () => {
   const res = await getJson(visitApp, "/?action=unknown");
   assert.equal(res.status, 400);
   assert.ok(res.json.error?.startsWith("Invalid action."));
   assert.ok(!res.json.error?.includes("Invalid action for GET"));
+});
+
+// --- #23: visit / like の batchLookup 入力検証（DB に到達する前に弾く）---
+// バリデーションは DB アクセスより先に走るため、env の DB スタブ未設定のまま検証できる。
+
+test("POST batchLookup: urls が配列でないと 400「urls must be an array of strings」", async () => {
+  for (const app of [visitApp, likeApp]) {
+    const res = await getJson(app, "/?action=batchLookup", "POST", {
+      urls: "https://example.com",
+      token: "valid-token-12",
+    });
+    assert.equal(res.status, 400);
+    assert.equal(res.json.error, "urls must be an array of strings");
+  }
+});
+
+test("POST batchLookup: 非文字列要素を含むと 400「urls must be an array of strings」", async () => {
+  for (const app of [visitApp, likeApp]) {
+    const res = await getJson(app, "/?action=batchLookup", "POST", {
+      urls: ["https://example.com", 123],
+      token: "valid-token-12",
+    });
+    assert.equal(res.status, 400);
+    assert.equal(res.json.error, "urls must be an array of strings");
+  }
+});
+
+test("POST batchLookup: MAX_LOOKUP_BATCH_SIZE 超過（1001 件）は 400「Maximum 1000 urls per request」", async () => {
+  const urls = Array.from({ length: 1001 }, (_, i) => `https://example.com/${i}`);
+  for (const app of [visitApp, likeApp]) {
+    const res = await getJson(app, "/?action=batchLookup", "POST", {
+      urls,
+      token: "valid-token-12",
+    });
+    assert.equal(res.status, 400);
+    assert.equal(res.json.error, "Maximum 1000 urls per request");
+  }
+});
+
+test("POST batchLookup: token 欠如は 400「token is required for batchLookup」", async () => {
+  for (const app of [visitApp, likeApp]) {
+    const res = await getJson(app, "/?action=batchLookup", "POST", {
+      urls: ["https://example.com"],
+    });
+    assert.equal(res.status, 400);
+    assert.equal(res.json.error, "token is required for batchLookup");
+  }
 });
