@@ -97,7 +97,7 @@ Web Componentsのカスタマイズ方法。
 
 ### [10. API仕様](./api.md)
 
-公開読み取りは GET、オーナー操作は POST body を使う統一アクション型API。
+全アクションを GET の query パラメータで実行できる統一アクション型API（POST + JSON body も併用可。batch 系のみ POST 専用）。
 
 - 全サービス共通のURLパターン
 - 認証とセキュリティ

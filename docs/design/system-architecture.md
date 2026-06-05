@@ -69,12 +69,14 @@ Web Components の runtime state と混ぜない。
 
 `apps/api/src/index.ts` で CORS と rate limit をまとめて扱う。
 
+- 全アクションは GET の query パラメータで実行できる（token も query 可）。「GET しかなかった時代の Web の再現」という思想による
+- POST + JSON body も併用できる。query と body の両方がある場合は body の値が優先される
+- batch 系（`batchGet` / `batchCreate` / `batchLookup`）だけは配列 payload を受けるため POST 専用
 - `GET` / `HEAD` / `OPTIONS` / `batchGet`: 第三者埋め込みのため `origin: "*"`
-- mutation や token を含む操作: POST body を使い、許可 origin を絞る
-- `batchGet` は読み取りだが、大量 ID を扱うため POST body を使う
+- それ以外の POST: 許可 origin（`*.llll-ll.com` + localhost）に絞る
 
 React 側の `apps/web/src/utils/apiHelpers.ts` と `apps/web/src/hooks/useFetchApi.ts`
-は、token や POST action を URL から body に移す責務を持つ。
+は、表示している GET URL をそのまま叩く（token や action を URL から body に移す変換層は撤去済み）。
 
 ## 現在の設計上の注意点
 
@@ -83,7 +85,8 @@ React 側の `apps/web/src/utils/apiHelpers.ts` と `apps/web/src/hooks/useFetch
 - `visit` の `batchGet` は `id` / `total` / `today` / `yesterday` / `week` / `month` を返す正規の一覧取得 API とする
 - `ranking` / `bbs` / `yokoso` には、重い内容一覧の `batchGet` ではなく URL owner の存在確認だけを行う
   `lookup` / `batchLookup` がある。静的サイトのビルド時に「この URL にサービスがあるか」「公開 ID は何か」
-  をまとめて確認するための API で、token は POST body に置く。
+  をまとめて確認するための API。`lookup` は GET でも実行でき、`batchLookup` は配列 payload のため
+  POST 専用（token は body に置く）。
 - `ranking` / `bbs` / `yokoso` の Web Components は、通常1ページに1個（singleton）運用なので、
   同一 ID の読み取りはクライアント側の **in-flight dedupe + 短期 TTL 読み取りキャッシュ**
   （静的 `sharedRead(key, url)`）で1リクエストに畳む。

@@ -15,7 +15,8 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 // CORS設定
 // GET requests: allow any origin (web components are embedded on third-party sites)
-// Mutation requests (POST/PUT/DELETE): restrict to *.llll-ll.com + localhost
+// 製品思想として書き込み系アクションも GET で受けるため、mutation も origin "*" で動く。
+// POST (JSON body, 管理 Web UI 用): restrict to *.llll-ll.com + localhost（batchGet を除く）
 app.use("*", async (c, next) => {
   const method = c.req.method;
   const action = c.req.query("action");

@@ -54,30 +54,22 @@ A comprehensive nostalgic web tools platform that brings back the 90s internet c
 - 🔒 **Secure ownership**: SHA256 hashed tokens, public ID system
 - 🌐 **Easy integration**: RESTful APIs with action parameters
 - ⚡ **Fast & reliable**: Built on Cloudflare Workers + D1
-- 🔗 **RESTful APIs**: Read operations via GET, mutations via POST
+- 🔗 **GET-first APIs**: Every action works as a plain GET URL — run it straight from the address bar, like the old web
 
 ## 🚀 Quick Start
 
 ### Counter Service
 
-1. **Create your counter** (POST):
-
-```js
-fetch("https://api.nostalgic.llll-ll.com/visit", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    action: "create",
-    url: "https://yoursite.com",
-    token: "your-secret-token",
-  }),
-});
-```
-
-2. **Display counter** (GET):
+1. **Create your counter** (GET):
 
 ```
-https://api.nostalgic.llll-ll.com/visit?action=display&url=https://yoursite.com
+https://api.nostalgic.llll-ll.com/visit?action=create&url=https://yoursite.com&token=your-secret-token
+```
+
+2. **Display counter** (GET, using the public ID returned by create):
+
+```
+https://api.nostalgic.llll-ll.com/visit?action=get&id=yoursite-a7b9c3d4
 ```
 
 3. **Embed in your site**:
@@ -89,104 +81,58 @@ https://api.nostalgic.llll-ll.com/visit?action=display&url=https://yoursite.com
 
 ### Like Service
 
-1. **Create like button** (POST):
+1. **Create like button** (GET):
 
-```js
-fetch("https://api.nostalgic.llll-ll.com/like", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    action: "create",
-    url: "https://yoursite.com",
-    token: "your-secret-token",
-  }),
-});
+```
+https://api.nostalgic.llll-ll.com/like?action=create&url=https://yoursite.com&token=your-secret-token
 ```
 
-2. **Toggle like** (POST):
+2. **Toggle like** (GET, by public ID):
 
-```js
-fetch("https://api.nostalgic.llll-ll.com/like", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    action: "toggle",
-    url: "https://yoursite.com",
-    token: "your-secret-token",
-  }),
-});
+```
+https://api.nostalgic.llll-ll.com/like?action=toggle&id=yoursite-a7b9c3d4
 ```
 
 ### Ranking Service
 
-1. **Create ranking** (POST):
-
-```js
-fetch("https://api.nostalgic.llll-ll.com/ranking", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    action: "create",
-    url: "https://yoursite.com",
-    token: "your-secret-token",
-    maxEntries: 100,
-  }),
-});
-```
-
-2. **Get ranking** (GET):
+1. **Create ranking** (GET):
 
 ```
-https://api.nostalgic.llll-ll.com/ranking?action=get&url=https://yoursite.com
+https://api.nostalgic.llll-ll.com/ranking?action=create&url=https://yoursite.com&token=your-secret-token&maxEntries=100
+```
+
+2. **Submit a score** (GET, by public ID):
+
+```
+https://api.nostalgic.llll-ll.com/ranking?action=submit&id=yoursite-a7b9c3d4&name=Alice&score=1000
+```
+
+3. **Get ranking** (GET):
+
+```
+https://api.nostalgic.llll-ll.com/ranking?action=get&id=yoursite-a7b9c3d4
 ```
 
 ### BBS Service
 
-1. **Create BBS** (POST):
+1. **Create BBS** (GET):
 
-```js
-fetch("https://api.nostalgic.llll-ll.com/bbs", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    action: "create",
-    url: "https://yoursite.com",
-    token: "your-secret-token",
-    maxMessages: 1000,
-  }),
-});
+```
+https://api.nostalgic.llll-ll.com/bbs?action=create&url=https://yoursite.com&token=your-secret-token&maxMessages=100
 ```
 
-2. **Post messages** (POST):
+2. **Post messages** (GET, by public ID — just like the old days):
 
-```js
-fetch("https://api.nostalgic.llll-ll.com/bbs", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    action: "post",
-    url: "https://yoursite.com",
-    token: "your-secret-token",
-    author: "User",
-    message: "Hello!",
-  }),
-});
+```
+https://api.nostalgic.llll-ll.com/bbs?action=post&id=yoursite-a7b9c3d4&author=User&message=Hello!
 ```
 
 ### Yokoso Service
 
-1. **Create Yokoso** (POST):
+1. **Create Yokoso** (GET):
 
-```js
-fetch("https://api.nostalgic.llll-ll.com/yokoso", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    action: "create",
-    url: "https://yoursite.com",
-    token: "your-secret-token",
-  }),
-});
+```
+https://api.nostalgic.llll-ll.com/yokoso?action=create&url=https://yoursite.com&token=your-secret-token&message=Welcome!
 ```
 
 2. **Embed in your site**:
@@ -208,34 +154,33 @@ Visit our interactive demo pages:
 
 ## 🔧 API Architecture
 
-All services follow a unified action-based API pattern:
-
-- **GET** for read-only operations (display, get)
-- **POST** for mutations (create, update, delete, toggle, submit, post)
+All services follow a unified action-based API pattern. Every action accepts **GET** with query parameters — you can run any of them straight from the browser address bar, like the old web:
 
 ```
-GET  /api/{service}?action=get&url={your-site}
-POST /api/{service}  { "action": "create", "url": "...", "token": "..." }
+GET /api/{service}?action=get&id={public-id}
+GET /api/{service}?action={owner-action}&url={your-site}&token={your-token}
 ```
+
+POST with a JSON body is also supported (body values take precedence over query parameters; `action` is always read from the query string). The batch actions (`batchGet`, `batchCreate`, `batchLookup`) are POST-only because they carry array payloads.
 
 ### 🌐 Nostalgic Yet Modern
 
 Inspired by 1990s web culture, but with modern best practices:
 
 1. **Simple APIs**: Action-based routing keeps things straightforward
-2. **Secure mutations**: POST requests protect tokens from URL leakage
+2. **URL-based everything**: Create, update, and display are all plain GET links you can share
 3. **Easy embedding**: Web Components for drop-in integration
 4. **No registration**: Just a URL and a secret token
 
 ### Available Actions by Service:
 
-| Service     | Actions                                                | Description                 |
-| ----------- | ------------------------------------------------------ | --------------------------- |
-| **Counter** | `create`, `increment`, `display`, `set`                | Traditional visitor counter |
-| **Like**    | `create`, `toggle`, `get`                              | Like/unlike button          |
-| **Ranking** | `create`, `submit`, `update`, `remove`, `clear`, `get` | Score leaderboard           |
-| **BBS**     | `create`, `post`, `update`, `remove`, `clear`, `get`   | Message board               |
-| **Yokoso**  | `create`, `update`, `get`                              | Lucky cat widget            |
+| Service     | Actions                                                          | Description                 |
+| ----------- | ---------------------------------------------------------------- | --------------------------- |
+| **Counter** | `create`, `increment`, `get`, `update`, `delete`                 | Traditional visitor counter |
+| **Like**    | `create`, `toggle`, `get`, `update`, `delete`                    | Like/unlike button          |
+| **Ranking** | `create`, `submit`, `update`, `remove`, `clear`, `get`, `delete` | Score leaderboard           |
+| **BBS**     | `create`, `post`, `update`, `remove`, `clear`, `get`, `delete`   | Message board               |
+| **Yokoso**  | `create`, `update`, `get`, `delete`                              | Lucky cat widget            |
 
 ## 📖 Documentation
 

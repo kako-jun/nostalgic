@@ -6,6 +6,8 @@ Toggle-based like/unlike button service with user state tracking. Users can like
 
 ## Actions
 
+All actions accept GET with query parameters — you can run any of them straight from the browser address bar, like the old web. POST with a JSON body is also supported (body values take precedence over query parameters). The only exception is `batchGet`, which requires POST because it takes an array payload.
+
 ### create
 
 Create a new like button.
@@ -100,8 +102,7 @@ Note: In GitHub README, the image links to a page where users can actually click
 Get full settings including webhookUrl.
 
 ```
-POST /api/like?action=get
-Body: { "url": "{URL}", "token": "{TOKEN}" }
+GET /api/like?action=get&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -131,8 +132,7 @@ Body: { "url": "{URL}", "token": "{TOKEN}" }
 Update settings (owner only).
 
 ```
-POST /api/like?action=update
-Body: { "url": "{URL}", "token": "{TOKEN}", "webhookUrl": "{WEBHOOK_URL}" }
+GET /api/like?action=update&url={URL}&token={TOKEN}&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
@@ -159,8 +159,7 @@ Body: { "url": "{URL}", "token": "{TOKEN}", "webhookUrl": "{WEBHOOK_URL}" }
 Delete a like button (owner only).
 
 ```
-POST /api/like?action=delete
-Body: { "url": "{URL}", "token": "{TOKEN}" }
+GET /api/like?action=delete&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -179,7 +178,7 @@ Body: { "url": "{URL}", "token": "{TOKEN}" }
 
 ### batchGet
 
-> **⚠️ POST Method Required** - This is the only action that uses POST instead of GET.
+> **⚠️ POST Method Required** - This is the only action that requires POST, because it takes an array payload.
 
 Get like counts for multiple IDs in a single request. Useful for displaying like counts on list pages without making individual API calls for each item.
 

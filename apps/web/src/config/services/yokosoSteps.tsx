@@ -209,19 +209,17 @@ const confirmIdStep: StepConfig = {
   buttonText: "公開ID確認",
   handlerKey: "handleLookup",
   responseKey: "lookupResponse",
-  buildApiUrl: (_values) => {
-    return `${API_BASE}${ENDPOINT}?action=lookup`;
+  buildApiUrl: (values) => {
+    const url = values.url || "サイトURL";
+    const token = values.token || "オーナートークン";
+    return `${API_BASE}${ENDPOINT}?action=lookup&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
   },
   buildApiUrlDisplay: (values) => (
     <>
-      POST {API_BASE}
-      {ENDPOINT}?action=lookup
-      <br />
-      Body: {'{ "url": "'}
+      {API_BASE}
+      {ENDPOINT}?action=lookup&url=
       <GreenParam>{values.url || "サイトURL"}</GreenParam>
-      {'", "token": "'}
-      <GreenParam>{values.token || "オーナートークン"}</GreenParam>
-      {'" }'}
+      &token=<GreenParam>{values.token || "オーナートークン"}</GreenParam>
     </>
   ),
 };

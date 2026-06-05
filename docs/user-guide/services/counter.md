@@ -6,6 +6,8 @@ Traditional visitor counter that tracks visits across multiple time periods with
 
 ## Actions
 
+All actions accept GET with query parameters — you can run any of them straight from the browser address bar, like the old web. POST with a JSON body is also supported (body values take precedence over query parameters). The only exceptions are `batchGet` and `batchCreate`, which require POST because they take array payloads.
+
 ### create
 
 Create a new counter.
@@ -124,8 +126,7 @@ GET /api/visit?action=get&id={ID}&type={TYPE}&theme={THEME}&format={FORMAT}
 Get full settings including webhookUrl.
 
 ```
-POST /api/visit?action=get
-Body: { "url": "{URL}", "token": "{TOKEN}" }
+GET /api/visit?action=get&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -155,8 +156,7 @@ Body: { "url": "{URL}", "token": "{TOKEN}" }
 Update counter value and/or settings (owner only).
 
 ```
-POST /api/visit?action=update
-Body: { "url": "{URL}", "token": "{TOKEN}", "value": 12345, "webhookUrl": "{WEBHOOK_URL}" }
+GET /api/visit?action=update&url={URL}&token={TOKEN}&value=12345&webhookUrl={WEBHOOK_URL}
 ```
 
 **Parameters:**
@@ -187,8 +187,7 @@ Only specify the parameters you want to change.
 Delete a counter (owner only).
 
 ```
-POST /api/visit?action=delete
-Body: { "url": "{URL}", "token": "{TOKEN}" }
+GET /api/visit?action=delete&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -237,7 +236,7 @@ console.log("Total views:", total);
 
 ### batchGet
 
-> **⚠️ POST Method Required**
+> **⚠️ POST Method Required** - This action requires POST because it takes an array payload.
 
 Get counter values for multiple IDs in a single request.
 
@@ -274,7 +273,7 @@ Content-Type: application/json
 
 ### batchCreate
 
-> **⚠️ POST Method Required**
+> **⚠️ POST Method Required** - This action requires POST because it takes an array payload.
 
 Create multiple counters in a single request. Existing IDs/URLs are skipped.
 

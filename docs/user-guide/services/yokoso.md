@@ -45,13 +45,14 @@ Longer message up to 140 characters with avatar, name, and date.
 
 ## Actions
 
+All actions accept GET with query parameters — you can run any of them straight from the browser address bar, like the old web. POST with a JSON body is also supported (body values take precedence over query parameters). The only exception is `batchLookup`, which requires POST because it takes an array payload.
+
 ### create
 
 Create a new yokoso.
 
 ```
-POST /api/yokoso?action=create
-Body: { "url": "{URL}", "token": "{TOKEN}", "message": "{MESSAGE}", "mode": "badge" }
+GET /api/yokoso?action=create&url={URL}&token={TOKEN}&message={MESSAGE}&mode=badge
 ```
 
 **Parameters:**
@@ -120,8 +121,7 @@ GET /api/yokoso?action=get&id={ID}&format={FORMAT}
 Get message data and full settings including webhookUrl. Use `lookup` if you only need to know whether a yokoso exists for a URL and what its public ID is.
 
 ```
-POST /api/yokoso?action=get
-Body: { "url": "https://yoursite.com", "token": "your-token" }
+GET /api/yokoso?action=get&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -153,11 +153,8 @@ Body: { "url": "https://yoursite.com", "token": "your-token" }
 
 Look up the public yokoso ID for a URL without loading message data or settings. This is intended for static site build scripts and integrations that only need to know whether the service exists.
 
-`token` must be sent in the POST body, never in the query string.
-
 ```
-POST /api/yokoso?action=lookup
-Body: { "url": "https://myproject.com", "token": "your-token" }
+GET /api/yokoso?action=lookup&url={URL}&token={TOKEN}
 ```
 
 **Response (found and authorized):**
@@ -237,8 +234,7 @@ Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token
 Update yokoso message and settings (owner only).
 
 ```
-POST /api/yokoso?action=update
-Body: { "url": "{URL}", "token": "{TOKEN}", "message": "{MESSAGE}", "mode": "badge" }
+GET /api/yokoso?action=update&url={URL}&token={TOKEN}&message={MESSAGE}&mode=badge
 ```
 
 **Parameters:**
@@ -270,8 +266,7 @@ Body: { "url": "{URL}", "token": "{TOKEN}", "message": "{MESSAGE}", "mode": "bad
 Delete a yokoso (owner only).
 
 ```
-POST /api/yokoso?action=delete
-Body: { "url": "{URL}", "token": "{TOKEN}" }
+GET /api/yokoso?action=delete&url={URL}&token={TOKEN}
 ```
 
 **Parameters:**
@@ -338,16 +333,13 @@ declare module "react" {
 ### Basic Yokoso Setup
 
 ```javascript
-// 1. Create yokoso (badge mode)
-const response = await fetch("/api/yokoso?action=create", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    url: "https://myproject.com",
-    token: "my-secret",
-    message: "ようこそ！",
-  }),
+// 1. Create yokoso (badge mode) — plain GET, old-web style
+const params = new URLSearchParams({
+  url: "https://myproject.com",
+  token: "my-secret",
+  message: "ようこそ！",
 });
+const response = await fetch(`/api/yokoso?action=create&${params}`);
 const data = await response.json();
 console.log("Yokoso ID:", data.id);
 
@@ -362,33 +354,27 @@ document.body.innerHTML += `
 
 ```javascript
 // Create card mode yokoso with your own avatar
-const response = await fetch("/api/yokoso?action=create", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    url: "https://myproject.com",
-    token: "my-secret",
-    message: "v2.0開発中です！新機能としてYokoso機能を追加予定。お楽しみに！",
-    mode: "card",
-    name: "kako-jun",
-    avatar: "https://github.com/kako-jun.png",
-  }),
+const params = new URLSearchParams({
+  url: "https://myproject.com",
+  token: "my-secret",
+  message: "v2.0開発中です！新機能としてYokoso機能を追加予定。お楽しみに！",
+  mode: "card",
+  name: "kako-jun",
+  avatar: "https://github.com/kako-jun.png",
 });
+const response = await fetch(`/api/yokoso?action=create&${params}`);
 ```
 
 ### Update Yokoso Message
 
 ```javascript
 // Update message without editing README
-await fetch("/api/yokoso?action=update", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    url: "https://myproject.com",
-    token: "my-secret",
-    message: "v2.0リリースしました！",
-  }),
+const params = new URLSearchParams({
+  url: "https://myproject.com",
+  token: "my-secret",
+  message: "v2.0リリースしました！",
 });
+await fetch(`/api/yokoso?action=update&${params}`);
 // The badge/card in README automatically shows new message
 ```
 
