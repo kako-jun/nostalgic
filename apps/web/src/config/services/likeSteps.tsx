@@ -78,8 +78,8 @@ const confirmIdStep: StepConfig = {
   isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "公開ID確認",
-  handlerKey: "handleCreate",
-  responseKey: "createResponse",
+  handlerKey: "handleConfirmId",
+  responseKey: "confirmIdResponse",
   buildApiUrl: (values) => {
     const url = values.url || "サイトURL";
     const token = values.token || "オーナートークン";
