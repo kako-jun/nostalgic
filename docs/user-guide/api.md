@@ -13,7 +13,7 @@ GET /api/{service}?action=get&id={public-id}
 GET /api/{service}?action={owner-action}&url={URL}&token={TOKEN}&...
 ```
 
-POST with a JSON body is also supported (body values take precedence over query parameters). The batch actions (`batchGet`, `batchCreate`, `batchLookup`) are POST-only because they carry array payloads:
+POST with a JSON body is also supported (body values take precedence over query parameters). POST bodies must be JSON; HTML form bodies (`application/x-www-form-urlencoded`) are not parsed — use GET forms instead. The batch actions (`batchGet`, `batchCreate`, `batchLookup`) are POST-only because they carry array payloads:
 
 ```
 POST /api/{service}?action=batchLookup

@@ -134,16 +134,27 @@ test("GET: lookup が query パラメータで action 分岐に到達する", as
   }
 });
 
-test("POST: JSON body でも従来どおり同じ分岐に到達する（body 優先経路）", async () => {
-  // body も query も空 → 各アクションのバリデーションエラー（「Invalid action」ではない）
-  const toggle = await getJson(likeApp, "/?action=toggle", "POST", {});
-  assert.equal(toggle.json.error, "id is required");
+test("POST: JSON body のパラメータが query より優先される（body 優先の実証）", async () => {
+  // query に正形式 token（8-16 文字）、body に不正形式 token（2 文字）を同時に載せる。
+  // query 側が使われると format 検証を通過して DB アクセスへ進んでしまうため、
+  // 「Token must be 8-16 characters」が返ること自体が body 優先の証明になる。
+  const visitCreate = await getJson(
+    visitApp,
+    "/?action=create&url=https://example.com&token=valid-token-12",
+    "POST",
+    { token: "xx" }
+  );
+  assert.equal(visitCreate.status, 400);
+  assert.equal(visitCreate.json.error, "Token must be 8-16 characters");
 
-  const post = await getJson(bbsApp, "/?action=post", "POST", {});
-  assert.equal(post.json.error, "id and message are required");
-
-  const create = await getJson(visitApp, "/?action=create", "POST", {});
-  assert.equal(create.json.error, "url and token are required");
+  const likeCreate = await getJson(
+    likeApp,
+    "/?action=create&url=https://example.com&token=valid-token-12",
+    "POST",
+    { token: "xx" }
+  );
+  assert.equal(likeCreate.status, 400);
+  assert.equal(likeCreate.json.error, "Token must be 8-16 characters");
 });
 
 test("batch 系は POST 専用のまま（GET は明示エラー）", async () => {
