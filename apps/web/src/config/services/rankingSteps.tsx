@@ -166,19 +166,21 @@ const confirmIdStep: StepConfig = {
   isOwnerStep: true,
   fields: [COMMON_FIELDS.url, COMMON_FIELDS.token],
   buttonText: "公開ID確認",
-  handlerKey: "handleCreate",
-  responseKey: "createResponse",
-  buildApiUrl: (values) => {
-    const url = values.url || "サイトURL";
-    const token = values.token || "オーナートークン";
-    return `${API_BASE}${ENDPOINT}?action=create&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+  handlerKey: "handleLookup",
+  responseKey: "lookupResponse",
+  buildApiUrl: (_values) => {
+    return `${API_BASE}${ENDPOINT}?action=lookup`;
   },
   buildApiUrlDisplay: (values) => (
     <>
-      {API_BASE}
-      {ENDPOINT}?action=create&url=
+      POST {API_BASE}
+      {ENDPOINT}?action=lookup
+      <br />
+      Body: {'{ "url": "'}
       <GreenParam>{values.url || "サイトURL"}</GreenParam>
-      &token=<GreenParam>{values.token || "オーナートークン"}</GreenParam>
+      {'", "token": "'}
+      <GreenParam>{values.token || "オーナートークン"}</GreenParam>
+      {'" }'}
     </>
   ),
 };

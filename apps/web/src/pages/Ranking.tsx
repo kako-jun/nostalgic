@@ -46,6 +46,7 @@ export default function RankingPage() {
 
   // Response state
   const [createResponse, setCreateResponse] = useState("");
+  const [lookupResponse, setLookupResponse] = useState("");
   const [submitResponse, setSubmitResponse] = useState("");
   const [getResponse, setGetResponse] = useState("");
   const [updateResponse, setUpdateResponse] = useState("");
@@ -91,6 +92,14 @@ export default function RankingPage() {
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setCreateResponse, setPublicId);
+  };
+
+  const handleLookup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!url || !token) return;
+
+    const apiUrl = `/api/ranking?action=lookup&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    await callApi(apiUrl, setLookupResponse, setPublicId);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -160,6 +169,7 @@ export default function RankingPage() {
 
   const handlers = {
     handleCreate,
+    handleLookup,
     handleSubmit,
     handleGet,
     handleUpdate,
@@ -171,6 +181,7 @@ export default function RankingPage() {
 
   const responses = {
     createResponse,
+    lookupResponse,
     submitResponse,
     getResponse,
     updateResponse,

@@ -68,6 +68,7 @@ export default function BBSPage() {
 
   // Response state
   const [createResponse, setCreateResponse] = useState("");
+  const [lookupResponse, setLookupResponse] = useState("");
   const [postResponse, setPostResponse] = useState("");
   const [getResponse, setGetResponse] = useState("");
   const [updateResponse, setUpdateResponse] = useState("");
@@ -125,6 +126,14 @@ export default function BBSPage() {
     if (webhookUrl) apiUrl += `&webhookUrl=${encodeURIComponent(webhookUrl)}`;
 
     await callApi(apiUrl, setCreateResponse, setPublicId);
+  };
+
+  const handleLookup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!url || !token) return;
+
+    const apiUrl = `/api/bbs?action=lookup&url=${encodeURIComponent(url)}&token=${encodeURIComponent(token)}`;
+    await callApi(apiUrl, setLookupResponse, setPublicId);
   };
 
   const handlePost = async (e: React.FormEvent) => {
@@ -220,6 +229,7 @@ export default function BBSPage() {
 
   const handlers = {
     handleCreate,
+    handleLookup,
     handlePost,
     handleGet,
     handleUpdate,
@@ -233,6 +243,7 @@ export default function BBSPage() {
 
   const responses = {
     createResponse,
+    lookupResponse,
     postResponse,
     getResponse,
     updateResponse,

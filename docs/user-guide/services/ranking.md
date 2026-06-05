@@ -11,7 +11,8 @@ Score leaderboard system with automatic sorting, score management, and configura
 Create a new ranking leaderboard.
 
 ```
-GET /api/ranking?action=create&url={URL}&token={TOKEN}&title={TITLE}&maxEntries={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
+POST /api/ranking?action=create
+Body: { "url": "{URL}", "token": "{TOKEN}", "title": "{TITLE}", "maxEntries": 100, "sortOrder": "desc" }
 ```
 
 **Parameters:**
@@ -74,7 +75,8 @@ GET /api/ranking?action=submit&id={ID}&name={PLAYER_NAME}&score={SCORE}
 Update ranking settings (owner only).
 
 ```
-GET /api/ranking?action=update&url={URL}&token={TOKEN}&title={TITLE}&maxEntries={MAX_ENTRIES}&sortOrder={SORT_ORDER}&webhookUrl={WEBHOOK_URL}
+POST /api/ranking?action=update
+Body: { "url": "{URL}", "token": "{TOKEN}", "title": "{TITLE}", "maxEntries": 50, "sortOrder": "desc" }
 ```
 
 **Parameters:**
@@ -109,7 +111,8 @@ At least one of title, maxEntries, sortOrder, or webhookUrl is required.
 Remove a specific player's score.
 
 ```
-GET /api/ranking?action=remove&url={URL}&token={TOKEN}&name={PLAYER_NAME}
+POST /api/ranking?action=remove
+Body: { "url": "{URL}", "token": "{TOKEN}", "name": "{PLAYER_NAME}" }
 ```
 
 **Parameters:**
@@ -136,7 +139,8 @@ GET /api/ranking?action=remove&url={URL}&token={TOKEN}&name={PLAYER_NAME}
 Clear all scores from the ranking.
 
 ```
-GET /api/ranking?action=clear&url={URL}&token={TOKEN}
+POST /api/ranking?action=clear
+Body: { "url": "{URL}", "token": "{TOKEN}" }
 ```
 
 **Parameters:**
@@ -204,10 +208,11 @@ GET /api/ranking?action=get&id={ID}&limit={LIMIT}
 
 #### Owner Mode (by URL + Token)
 
-Get full settings including webhookUrl.
+Get leaderboard entries and full settings including webhookUrl. Use `lookup` if you only need to know whether a ranking exists for a URL and what its public ID is.
 
 ```
-GET /api/ranking?action=get&url={URL}&token={TOKEN}&limit={LIMIT}
+POST /api/ranking?action=get
+Body: { "url": "https://yoursite.com", "token": "your-token", "limit": 10 }
 ```
 
 **Parameters:**
@@ -235,12 +240,96 @@ GET /api/ranking?action=get&url={URL}&token={TOKEN}&limit={LIMIT}
 }
 ```
 
+### lookup
+
+Look up the public ranking ID for a URL without loading leaderboard entries or settings. This is intended for static site build scripts and integrations that only need to know whether the service exists.
+
+`token` must be sent in the POST body, never in the query string.
+
+```
+POST /api/ranking?action=lookup
+Body: { "url": "https://mygame.com", "token": "your-token" }
+```
+
+**Response (found and authorized):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://mygame.com",
+    "exists": true,
+    "authorized": true,
+    "id": "mygame-a7b9c3d4",
+    "title": "HIGH SCORE"
+  }
+}
+```
+
+**Response (not found):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://missing.example",
+    "exists": false
+  }
+}
+```
+
+**Response (found but token does not match):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://mygame.com",
+    "exists": true,
+    "authorized": false
+  }
+}
+```
+
+Invalid tokens are reported per item instead of returning request-level `403`, so batch clients can keep ordered results for every requested URL.
+
+### batchLookup
+
+Look up multiple ranking URLs in request order. Missing URLs are included as `{ "exists": false }`; found URLs with a wrong token are included as `{ "exists": true, "authorized": false }`. A single request accepts up to 1000 URLs and internally chunks D1 queries to stay under SQLite bind limits.
+
+```
+POST /api/ranking?action=batchLookup
+Body: { "urls": ["https://a.example", "https://b.example"], "token": "your-token" }
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "url": "https://a.example",
+      "exists": true,
+      "authorized": true,
+      "id": "a-a7b9c3d4",
+      "title": "HIGH SCORE"
+    },
+    {
+      "url": "https://b.example",
+      "exists": false
+    }
+  ]
+}
+```
+
 ### delete
 
 Delete a ranking (owner only).
 
 ```
-GET /api/ranking?action=delete&url={URL}&token={TOKEN}
+POST /api/ranking?action=delete
+Body: { "url": "{URL}", "token": "{TOKEN}" }
 ```
 
 **Parameters:**
@@ -263,9 +352,16 @@ GET /api/ranking?action=delete&url={URL}&token={TOKEN}
 
 ```javascript
 // 1. Create ranking for score-based game (high scores win)
-const response = await fetch(
-  "/api/ranking?action=create&url=https://mygame.com&token=game-secret&maxEntries=50&sortOrder=desc"
-);
+const response = await fetch("/api/ranking?action=create", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    url: "https://mygame.com",
+    token: "game-secret",
+    maxEntries: 50,
+    sortOrder: "desc",
+  }),
+});
 const data = await response.json();
 console.log("Ranking ID:", data.id);
 
@@ -283,9 +379,16 @@ console.log("Top players:", leaderboard.entries);
 
 ```javascript
 // 1. Create ranking for time-based game (lower times win)
-const response = await fetch(
-  "/api/ranking?action=create&url=https://racegame.com&token=race-secret&maxEntries=100&sortOrder=asc"
-);
+const response = await fetch("/api/ranking?action=create", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    url: "https://racegame.com",
+    token: "race-secret",
+    maxEntries: 100,
+    sortOrder: "asc",
+  }),
+});
 const data = await response.json();
 console.log("Race Ranking ID:", data.id);
 
@@ -307,15 +410,30 @@ await fetch(
 await fetch("/api/ranking?action=submit&id=mygame-a7b9c3d4&name=Alice&score=1500");
 
 // Remove cheating player
-await fetch("/api/ranking?action=remove&url=https://mygame.com&token=game-secret&name=Cheater");
+await fetch("/api/ranking?action=remove", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ url: "https://mygame.com", token: "game-secret", name: "Cheater" }),
+});
 
 // Clear all scores (reset season)
-await fetch("/api/ranking?action=clear&url=https://mygame.com&token=game-secret");
+await fetch("/api/ranking?action=clear", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ url: "https://mygame.com", token: "game-secret" }),
+});
 
 // Update settings
-await fetch(
-  "/api/ranking?action=update&url=https://mygame.com&token=game-secret&maxEntries=50&sortOrder=asc"
-);
+await fetch("/api/ranking?action=update", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    url: "https://mygame.com",
+    token: "game-secret",
+    maxEntries: 50,
+    sortOrder: "asc",
+  }),
+});
 ```
 
 ## Features
