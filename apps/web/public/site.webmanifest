@@ -1,0 +1,23 @@
+{
+  "name": "Nostalgic",
+  "short_name": "Nostalgic",
+  "description": "Retro web tools for counters, likes, rankings, BBS, and welcome banners.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020402",
+  "theme_color": "#020402",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
