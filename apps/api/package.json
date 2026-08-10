@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "deploy": "wrangler deploy --config ../../wrangler.jsonc",
     "test": "node --experimental-strip-types --test 'src/**/*.test.ts'",
     "typecheck": "tsc --noEmit",
-    "db:init": "wrangler d1 execute nostalgic-db --local --file=schema.sql",
-    "db:local": "wrangler d1 execute nostalgic-db --local",
-    "db:remote": "wrangler d1 execute nostalgic-db --remote"
+    "db:create": "wrangler d1 create benjiisworld-guestbook",
+    "db:init": "wrangler d1 execute benjiisworld-guestbook --remote --file=schema.sql --config ../../wrangler.jsonc",
+    "db:local": "wrangler d1 execute benjiisworld-guestbook --local --config ../../wrangler.jsonc",
+    "db:remote": "wrangler d1 execute benjiisworld-guestbook --remote --config ../../wrangler.jsonc"
   },
   "dependencies": {
     "hono": "^4.6.0",

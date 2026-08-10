@@ -1,8 +1,6 @@
 import { ReactNode } from "react";
 
-export const API_BASE = import.meta.env.DEV
-  ? "http://localhost:8787"
-  : "https://api.nostalgic.llll-ll.com";
+export const API_BASE = "/guestbook/api";
 
 // Field types
 export type FieldType = "text" | "url" | "number" | "select";

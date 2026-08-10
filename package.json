@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "description": "懐かしのWebツールを最新技術で復活させた総合プラットフォーム - カウンター、いいね、ランキング、BBS機能を提供",
-  "author": "kako-jun",
+  "description": "A self-hosted guestbook for benjiisworld.com",
+  "author": "Accentaro",
   "license": "MIT",
   "homepage": "https://nostalgic.llll-ll.com",
   "repository": {
@@ -26,9 +26,9 @@
     "d1"
   ],
   "scripts": {
-    "dev": "pnpm --parallel -r dev",
-    "build": "pnpm -r build",
-    "deploy": "pnpm --filter @nostalgic/api deploy",
+    "dev": "pnpm --parallel --filter @nostalgic/api --filter @nostalgic/web dev",
+    "build": "pnpm --filter @nostalgic/web build && pnpm --filter @nostalgic/api typecheck",
+    "deploy": "pnpm --filter @nostalgic/api run deploy",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",

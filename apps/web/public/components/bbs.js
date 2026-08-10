@@ -135,7 +135,7 @@ function translateBBSError(message, element) {
 
 class NostalgicBBS extends HTMLElement {
   // APIのベースURL
-  static apiBaseUrl = "https://api.nostalgic.llll-ll.com";
+  static apiBaseUrl = `${window.location.origin}/guestbook/api`;
 
   // --- 読み取りの in-flight dedupe + 短期 TTL キャッシュ（dev-doctrine Phase 4 / Issue #6）---
   // bbs は内容が多人数の投稿で揮発的・ページング有り。実機検証で「複数ウィジェットは逐次ロード

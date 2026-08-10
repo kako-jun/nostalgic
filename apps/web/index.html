@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -10,31 +10,28 @@
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#020402" />
-    <meta
-      name="description"
-      content="Nostalgic はアクセスカウンター、いいね、ランキング、BBS、ようこそ表示を現代の API と Web Components で使えるレトロWebツール集です。"
-    />
-    <link rel="canonical" href="https://nostalgic.llll-ll.com/" />
-    <meta property="og:site_name" content="Nostalgic" />
+    <meta name="description" content="Leave a message in Benjii's guestbook." />
+    <link rel="canonical" href="https://benjiisworld.com/guestbook" />
+    <meta property="og:site_name" content="benjii.home" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://nostalgic.llll-ll.com/" />
-    <meta property="og:title" content="Nostalgic - 懐かしのWebツールを現代に" />
+    <meta property="og:url" content="https://benjiisworld.com/guestbook" />
+    <meta property="og:title" content="Guestbook — benjii.home" />
     <meta
       property="og:description"
-      content="アクセスカウンター、いいね、ランキング、BBS、ようこそ表示を現代の API と Web Components で使えるレトロWebツール集。"
+      content="Leave a message in Benjii's guestbook."
     />
-    <meta property="og:image" content="https://nostalgic.llll-ll.com/og-image.png" />
+    <meta property="og:image" content="https://benjiisworld.com/guestbook/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Nostalgic の緑色7セグメント風ロゴ" />
+    <meta property="og:image:alt" content="benjii.home guestbook" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Nostalgic - 懐かしのWebツールを現代に" />
+    <meta name="twitter:title" content="Guestbook — benjii.home" />
     <meta
       name="twitter:description"
-      content="アクセスカウンター、いいね、ランキング、BBS、ようこそ表示を現代の API と Web Components で使えるレトロWebツール集。"
+      content="Leave a message in Benjii's guestbook."
     />
-    <meta name="twitter:image" content="https://nostalgic.llll-ll.com/og-image.png" />
-    <title>Nostalgic - 懐かしのWebツールを現代に</title>
+    <meta name="twitter:image" content="https://benjiisworld.com/guestbook/og-image.png" />
+    <title>Guestbook — benjii.home</title>
     <!-- BIZ UDGothic Webフォント（OS間で統一された等幅フォント） -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -46,11 +43,6 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- Nostalgic Web Components -->
-    <script src="/components/visit.js" defer></script>
-    <script src="/components/like.js" defer></script>
-    <script src="/components/ranking.js" defer></script>
-    <script src="/components/bbs.js" defer></script>
-    <script src="/components/yokoso.js" defer></script>
+    <script src="/guestbook/components/bbs.js" defer></script>
   </body>
 </html>
